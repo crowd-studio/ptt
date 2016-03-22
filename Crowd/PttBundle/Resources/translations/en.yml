@@ -1,0 +1,51 @@
+actions : Actions
+add : Add
+cancel : Cancel
+content_was_saved : The content was saved
+create : Create
+create : Create
+delete : Delete
+delete_the_entity_name : Delete the %@ "%@"?
+download_file : Download file
+edit : Edit
+error : Error
+filter : Filter
+free_size : Free size
+list : List
+login : Login
+logout : Logout
+must_be_valid_number : Must be a valid number
+no : No
+no_results_found : No results found.
+on : on
+password : Password
+publish : Publish
+published : Published
+recover : Recover
+recover_the_published_version_on : Recover the published version on %@?
+recover_the_saved_version_on : Recover the saved version on %@?
+remember_me : Remember me
+remove : Remove
+required_field : Required field
+reset_filters : Reset filters
+save : Save
+save_and_create_another : Save and create another
+saved : Saved
+sign_in : Sign in
+snap_picture : Snap picture
+the_current_user_cant_access : The current user can\'t access to this content
+the_entity_couldnt_be_deleted : The %@ couldn\'t be deleted
+the_entity_does_not_exist : The %@ does not exist
+the_entity_was_deleted : The %@ was deleted
+title : Title
+toggle_webcam_viewer : Toggle webcam viewer
+unpublish : Unpublish
+username : Username
+validation_errors_were_found : Validation errors were found
+view_in_larger_size : View in larger size
+yes : Yes
+order: Order
+collapse: Collapse
+expand: Expand
+pick_file: Choose file
+open: Open

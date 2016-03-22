@@ -1,0 +1,1 @@
+r.js -o `dirname "$0"`/Build/admin.build.js

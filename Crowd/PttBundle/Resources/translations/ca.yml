@@ -1,0 +1,51 @@
+actions : Accions
+add : Afegir
+cancel : Cancelar
+content_was_saved : El contingut s'ha desat correctament
+create : Crear
+create : Crear
+delete : Eliminar
+delete_the_entity_name : Eliminar el %@ "%@"?
+download_file : Descarregar
+edit : Editar
+error : Error
+filter : Filtrar
+free_size : la imatge es guarda en la seva mida real
+list : Llista
+login : Iniciar sessió
+logout : Tancar sessió
+must_be_valid_number : Ha de ser un número vàlid
+no : No
+no_results_found : No s'han trobat resultats.
+on : el
+password : Contrasenya
+publish : Publicar
+published : Publicat
+recover : Recuperar
+recover_the_published_version_on : Recuperar la versió publicada el %@?
+recover_the_saved_version_on : Recuperar la versió desada el %@?
+remember_me : Recorda'm
+remove : Eliminar
+required_field : Camp obligatori
+reset_filters : Reiniciar filtres
+save : Desar
+save_and_create_another : Desar i crear-ne un altre
+saved : Desat
+sign_in : Accedir
+snap_picture : Fer foto
+the_current_user_cant_access : No es pot accedir al contingut sol·licitat amb l'usuari actual
+the_entity_couldnt_be_deleted : %@ no s'ha pogut eliminar
+the_entity_does_not_exist : El %@ no existeix
+the_entity_was_deleted : %@ s'ha eliminat
+title : Títol
+toggle_webcam_viewer : Mostrar/amagar el visualitzador
+unpublish : Despublicar
+username : Usuari
+validation_errors_were_found : S'han trobat errors de validació
+view_in_larger_size : Veure més gran
+yes: Sí
+order: Ordenar
+collapse: Plegar
+expand: Expandir
+pick_file: Tria un fitxer
+open: Anar

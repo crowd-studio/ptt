@@ -1,0 +1,53 @@
+{% macro menu(list, principal) %}
+	{% import _self as sidebar %}
+    <ul{% if principal %} class="menu"{% endif %}>
+    	{% for key,info in list %}
+    		{% if isAllowed(info) %}
+    			{% if info.path is defined %}
+					{# li final #}
+					<li{% if info.class is defined %} class="{{ info.class }}"{% endif %}>
+						<a{% if path(app.request.attributes.get('_route'), app.request.attributes.get('_route_params')) == path(info.path, info.parameters|default({})) %} class="selected"{% endif %} href="{{ path(info.path, info.parameters|default({})) }}">
+							<span>{{info.label|trans}}</span>
+						</a>
+					</li>
+    			{% elseif info.subSections|length > 0 %}
+					<li class="subSections {{ info.class|default('') }}">
+						<a href="#">{{info.label|trans}}</a>
+						{{ sidebar.menu(info.subSections) }}
+					</li>
+    			{% endif %}
+    		{% endif %}
+    	{% endfor %}
+    </ul>
+{% endmacro %}
+
+{% import _self as sidebar %}
+
+<div class="sidebar-container">
+	<div class="menu-container">
+		<h3>{{info('admin').title}}</h3>
+		{{ sidebar.menu(info('admin').sidebar, true) }}
+	</div>
+	<ul class="options">
+		<li class="user">
+			{% if info('admin', 'noLinkToUser') == true %}
+				<div class="info">
+					<div class="img">
+						<div class="img-container" style="background-image:url('{{ asset('uploads/60-60-' ~ app.user.image) }}');"></div>
+					</div>
+					<span>{{app.user}}</span>
+				</div>
+			{% else %}
+				<a href="{{ path('user_edit', {id:app.user.id}) }}">
+					<div class="img">
+						<div class="img-container" style="background-image:url('{{ asset('uploads/60-60-' ~ app.user.image) }}');"></div>
+					</div>
+					<span>{{app.user}}</span>
+				</a>
+			{% endif %}
+		</li>
+
+
+		<li class="logout"><a href="{{ path('logout') }}">{{'logout'|trans}}</a></li>
+	</ul>
+</div>

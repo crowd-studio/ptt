@@ -1,0 +1,65 @@
+{% extends 'PttBundle:Default:base.html.twig' %}
+{% block content %}
+{% if page.title is defined %}
+	<h1>{{page.title|trans}}</h1>
+{% endif %}
+<ul class="nav nav-pills">
+	<li class="active"><a href="{{ path(entityConfigurationInfo.entityName ~ '_create') }}">{{'create'|trans}} {{entityInfo.lowercase}}</a></li>
+</ul>
+
+{% if filters|length > 0 %}
+	<div class="well filters">
+		<form action="{{ path(entityConfigurationInfo.entityName ~ '_list') }}" method="post" name="filter-{{ entityConfigurationInfo.entityName }}" class="row">
+		{% for key,filter in filters %}
+			{% if filter.type == 'text' %}
+				<div class="form-group col-xs-6 col-sm-4 col-md-3">
+					<label for="filter-{{ entityConfigurationInfo.entityName }}-{{ key }}">{{ filter.label }}</label>
+					<input class="form-control" type="text" id="filter-{{ entityConfigurationInfo.entityName }}-{{ key }}" name="filter-{{ entityConfigurationInfo.entityName }}-{{ key }}" placeholder="{{ filter.label }}" value="{{ filter(key, entityConfigurationInfo.entityName) }}">
+				</div>
+			{% endif %}
+		{% endfor %}
+		<div class="form-group submit col-xs-12">
+			<button type="submit" class="btn btn-default">{{'filter'|trans}}</button>
+			<a href="{{ path(entityConfigurationInfo.entityName ~ '_list', {filter:'reset'}) }}" class="btn btn-cancel">{{'reset_filters'|trans}}</a>
+		</div>
+		</form>
+	</div>
+{% endif %}
+
+{% if rows|length > 0 %}
+
+
+<ul {%if sortable %} id="sortable-with-handles" class="sortable" {% else %} class="table"{% endif %}>
+	<li class="head">
+		{%if sortable %}<span class="handle">Order</span>{% endif %}
+            {% for field, title in fields %}
+            <span{% if not loop.first %} class="hidden-xs"{% endif %}>{%if sortable == false %}<a href="{{ path(entityConfigurationInfo.entityName ~ '_list', {order : field}) }}">{% endif %}{{title}}{%if sortable == false %}</a>{% endif %}</span>
+            {% endfor %}
+            <span class="actions">{{'actions'|trans}}</span>
+	</li>
+	{% for row in rows %}
+	        <li class="list" {%if sortable %}draggable="true" data-id="{{row.id}}"{% endif %}>
+	        	{%if sortable %}<span class="handle"></span>{% endif %}
+	            {% for field, title in fields %}
+	            <span{% if not loop.first %} class="hidden-xs"{% endif %}>{{ row|dynamicValue(field) }}</span>
+	            {% endfor %}
+	            <span class="actions">
+	                <div class="btn-group">
+	                    <a href="{{ path(entityConfigurationInfo.entityName ~ '_edit', {id : row.id}) }}" class="list-editar">{{'edit'|trans}}</a>
+	                    <a href="{{ path(entityConfigurationInfo.entityName ~ '_delete', {id : row.id}) }}" data-alert='{{ 'delete_the_entity_name'|trans([entityInfo.lowercase, row]) }}' class="list-eliminar">{{'delete'|trans}}</a>
+	                </div>
+	            </span>
+	        </li>
+
+	 {% endfor %}
+ </ul>
+
+{% include 'PttBundle:Default:pagination.html.twig' %}
+
+{% else %}
+
+<p>{{'no_results_found'|trans}}</p>
+
+{% endif %}
+
+{% endblock %}

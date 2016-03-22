@@ -1,0 +1,26 @@
+services:
+    pttRouting:
+        class: Crowd\PttBundle\Routing\PttRouting
+    pttEntityMetadata:
+        class: Crowd\PttBundle\Util\PttEntityMetadata
+        arguments: [@doctrine.orm.entity_manager]
+    pttTrans:
+        class: Crowd\PttBundle\Util\PttTrans
+        arguments: [@doctrine.orm.entity_manager, @security.context, @service_container]
+        calls:
+            - [setRequest, [@request_stack]]
+    pttForm:
+        class: Crowd\PttBundle\Form\PttForm
+        scope: prototype
+        arguments: [@doctrine.orm.entity_manager, @security.context, @service_container]
+        calls:
+            - [setRequest, [@request_stack]]
+            - [setPttTrans, [@pttTrans]]
+    pttTwigExtension:
+        class: Crowd\PttBundle\Twig\PttTwigExtension
+        arguments: [@doctrine.orm.entity_manager, @security.context, @kernel, @service_container]
+        tags:
+            - { name: twig.extension }
+        calls:
+            - [setRequest, [@request_stack]]
+            - [setPttTrans, [@pttTrans]]

@@ -1,0 +1,25 @@
+{
+    "name": "crowd/ptt",
+    "description": "base CMS by CROWD",
+    "keywords": ["CMS"],
+    "homepage": "https://bitbucket.org/crowd/ptt",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Raül Drechsel",
+            "email": "raul@crowd.st"
+        },
+        {
+            "name": "Pau Arjona",
+            "email": "pau@crowd.st"
+        }
+    ],
+    "require": {
+        "php": ">=5.6",
+        "smottt/wideimage" : "dev-master",
+        "tpyo/amazon-s3-php-class" : "dev-master"
+    },
+    "autoload": {
+        "psr-0": { "Crowd\\PttBundle": "" }
+    }
+}

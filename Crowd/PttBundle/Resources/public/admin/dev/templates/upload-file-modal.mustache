@@ -1,0 +1,30 @@
+<div class="modal fade" id="uploadFileModal" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true" style="color:black">&times;</span><span class="sr-only">Close</span></button>
+            <h4 class="modal-title">Upload file</h4>
+        </div>
+        <div class="modal-body">
+            <form action="ptt/media/upload/" method="POST">
+                <p><label for="description">Image description</label><br/>
+                <input type="text" id="description" class="form-control">
+                </p>
+                <p><label for="file">Select file</label><br/>
+                <input type="file" id="file" accept="image/*">
+                </p>
+                <div><label>Resize size</label>
+                <div class="btn-group" role="toolbar">
+                    <div class="btn btn-default active" data-width="0" data-height="0">Original size</div>
+                    <div class="btn btn-default" data-width="600" data-height="300">600x300</div>
+                    <div class="btn btn-default" data-width="600" data-height="600">600x600</div>
+                    <div class="btn btn-default" data-width="300" data-height="300">300x300</div>
+                    <div class="btn btn-default" data-width="150" data-height="150">150x150</div>
+                </div></div>
+                <br/>
+                <input type="submit" class="btn btn-sm btn-primary" value="Upload">
+            </form>
+        </div>
+    </div>
+  </div>
+</div>

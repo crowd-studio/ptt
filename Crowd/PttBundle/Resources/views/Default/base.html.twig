@@ -1,0 +1,104 @@
+{% extends 'PttBundle:Default:layout.html.twig' %}
+{% block body %}
+	<div class="loader">
+		<svg width="105" height="105" viewBox="0 0 105 105" xmlns="http://www.w3.org/2000/svg" fill="#fff">
+		    <circle cx="12.5" cy="12.5" r="12.5">
+		        <animate attributeName="fill-opacity"
+		         begin="0s" dur="1s"
+		         values="1;.2;1" calcMode="linear"
+		         repeatCount="indefinite" />
+		    </circle>
+		    <circle cx="12.5" cy="52.5" r="12.5" fill-opacity=".5">
+		        <animate attributeName="fill-opacity"
+		         begin="100ms" dur="1s"
+		         values="1;.2;1" calcMode="linear"
+		         repeatCount="indefinite" />
+		    </circle>
+		    <circle cx="52.5" cy="12.5" r="12.5">
+		        <animate attributeName="fill-opacity"
+		         begin="300ms" dur="1s"
+		         values="1;.2;1" calcMode="linear"
+		         repeatCount="indefinite" />
+		    </circle>
+		    <circle cx="52.5" cy="52.5" r="12.5">
+		        <animate attributeName="fill-opacity"
+		         begin="600ms" dur="1s"
+		         values="1;.2;1" calcMode="linear"
+		         repeatCount="indefinite" />
+		    </circle>
+		    <circle cx="92.5" cy="12.5" r="12.5">
+		        <animate attributeName="fill-opacity"
+		         begin="800ms" dur="1s"
+		         values="1;.2;1" calcMode="linear"
+		         repeatCount="indefinite" />
+		    </circle>
+		    <circle cx="92.5" cy="52.5" r="12.5">
+		        <animate attributeName="fill-opacity"
+		         begin="400ms" dur="1s"
+		         values="1;.2;1" calcMode="linear"
+		         repeatCount="indefinite" />
+		    </circle>
+		    <circle cx="12.5" cy="92.5" r="12.5">
+		        <animate attributeName="fill-opacity"
+		         begin="700ms" dur="1s"
+		         values="1;.2;1" calcMode="linear"
+		         repeatCount="indefinite" />
+		    </circle>
+		    <circle cx="52.5" cy="92.5" r="12.5">
+		        <animate attributeName="fill-opacity"
+		         begin="500ms" dur="1s"
+		         values="1;.2;1" calcMode="linear"
+		         repeatCount="indefinite" />
+		    </circle>
+		    <circle cx="92.5" cy="92.5" r="12.5">
+		        <animate attributeName="fill-opacity"
+		         begin="200ms" dur="1s"
+		         values="1;.2;1" calcMode="linear"
+		         repeatCount="indefinite" />
+		    </circle>
+		</svg>
+	</div>
+	<div class="wrapper">
+		<div class="container-fluid">
+			<div class="mobile-nav-row">
+				<div class="col-xs-12 visible-xs mobile-nav">
+					<a class="pull-left">&#9776;</a>
+					<span class="pull-right">{{info('admin').title}}</span>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-md-3 col-sm-3 col-xs-12 sidebar hidden-xs ">
+					{% include 'PttBundle:Default:sidebar.html.twig' %}
+				</div>
+				<div class="col-md-9 col-md-offset-3 col-sm-9 col-sm-offset-3 col-xs-12 main">
+
+					{% for flashMessage in app.session.flashbag.get('success') %}
+					    <div class="alert alert-success">{{ flashMessage }}
+					    <button type="button" class="close" data-dismiss="alert">×</button></div>
+					{% endfor %}
+
+					{% for flashMessage in app.session.flashbag.get('success_persist') %}
+					    <div class="alert alert-success persist">{{ flashMessage }}
+					    <button type="button" class="close" data-dismiss="alert">×</button></div>
+					{% endfor %}
+
+					{% for flashMessage in app.session.flashbag.get('error') %}
+					    <div class="alert alert-danger">{{ flashMessage }}
+					    <button type="button" class="close" data-dismiss="alert">×</button></div>
+					{% endfor %}
+
+					{% for flashMessage in app.session.flashbag.get('error_persist') %}
+					    <div class="alert alert-danger persist">{{ flashMessage }}
+					    <button type="button" class="close" data-dismiss="alert">×</button></div>
+					{% endfor %}
+
+					<div class="content">
+					{% block content %}{% endblock %}
+
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+{% endblock %}

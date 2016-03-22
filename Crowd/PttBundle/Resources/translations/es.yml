@@ -1,0 +1,51 @@
+actions : Acciones
+add : Añadir
+cancel : Cancelar
+content_was_saved : El contenido se ha guardado
+create : Crear
+create : Crear
+delete : Eliminar
+delete_the_entity_name : Eliminar el %@ "%@"?
+download_file : Descargar
+edit : Editar
+error : Error
+filter : Filtrar
+free_size : la imagen se guarda en tamaño original
+list : Listar
+login : Iniciar sesión
+logout : Cerrar sesión
+must_be_valid_number : Tiene que ser un número
+no : No
+no_results_found : No se han encontrado resultados.
+on : el
+password : Contraseña
+publish : Publicar
+published : Publicado
+recover : Recuperar
+recover_the_published_version_on : Recuperar la versión publicada el %@?
+recover_the_saved_version_on : Recuperar la versión guardada el %@?
+remember_me : Recuérdame
+remove : Eliminar
+required_field : Campo obligatorio
+reset_filters : Reiniciar filtros
+save : Guardar
+save_and_create_another : Guardar y crear otro
+saved : Guardado
+sign_in : Acceder
+snap_picture : Tomar foto
+the_current_user_cant_access : No se puede acceder al siguiente contenido con el usuario actual
+the_entity_couldnt_be_deleted : %@ no se pudo eliminar
+the_entity_does_not_exist : El %@ no existe
+the_entity_was_deleted : %@ se eliminó
+title : Título
+toggle_webcam_viewer : Mostrar/esconder visualizador
+unpublish : Despublicar
+username : Usuario
+validation_errors_were_found : Se han encontrado errores de validación
+view_in_larger_size : Ver más grande
+yes: Sí
+order: Ordenar
+collapse: Plegar
+expand: Expandir
+pick_file: Escoje un fichero
+open: Ir
