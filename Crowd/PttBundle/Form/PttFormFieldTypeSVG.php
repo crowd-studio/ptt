@@ -26,7 +26,7 @@ class PttFormFieldTypeSVG extends PttFormFieldType
 		$htmlField .= $this->attributes();
 		$htmlField .= '><div class="row image-container svg hidden col-sm-12"><img class="preview-image" src="#"/><a class="btn btn-xs btn-danger remove-image">&#x2716;</a></div></div>';
 
-		
+
 		if ($this->value != '') {
 			$html .= $this->_image();
 		}
@@ -61,7 +61,7 @@ class PttFormFieldTypeSVG extends PttFormFieldType
 		$s3 = PttUtil::pttConfiguration('s3');
 		$uploadToS3 = (isset($this->field->options['s3']) && $this->field->options['s3']) ? true : false;
 		if ($uploadToS3) {
-			return $s3['prodUrl'];
+			return $s3['prodUrl'] . $s3['dir'] . '/';
 		} else {
 			return '/uploads/';
 		}

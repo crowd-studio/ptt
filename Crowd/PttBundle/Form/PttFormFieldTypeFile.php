@@ -38,7 +38,7 @@ class PttFormFieldTypeFile extends PttFormFieldType
 
 		$htmlField .= '"><a class="fakeClick">' . $this->pttTrans->trans('pick_file') . '</a><input type="file" class="chooseFile" ';
 		$htmlField .= $this->attributes() .'>';
-		
+
 
 		if ($this->field->options['type'] == 'gallery' && $this->value == null){
 			$htmlField .= '<input type="hidden" class="gallery-input" ' . $this->attributes() .'>';
@@ -75,7 +75,7 @@ class PttFormFieldTypeFile extends PttFormFieldType
 			} else {
 				$type = '_' . $this->field->options['type'];
 			}
-			
+
 			$htmlField .= $this->{$type}();
 		}
 
@@ -148,7 +148,7 @@ class PttFormFieldTypeFile extends PttFormFieldType
 		$s3 = PttUtil::pttConfiguration('s3');
 		$uploadToS3 = (isset($this->field->options['s3']) && $this->field->options['s3']) ? true : false;
 		if ($uploadToS3) {
-			return $s3['prodUrl'];
+			return $s3['prodUrl'] . $s3['dir'] . '/';
 		} else {
 			return '/uploads/';
 		}

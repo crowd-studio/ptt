@@ -36,7 +36,7 @@ class PttMediaController extends Controller
 
                 $filename = PttUploadFile::uploadCanvas($request->get('imgBase64'), $sizes, $uploadToS3);
 
-                $url = (isset($pttInfo['force']) && $pttInfo['force']) ? $pttInfo['prodUrl'] : '/uploads/';
+                $url = (isset($pttInfo['force']) && $pttInfo['force']) ? $pttInfo['prodUrl'] . $pttInfo['dir'] . '/' : '/uploads/';
 
                 $data = array(
                     'filename' => $filename,
@@ -88,8 +88,8 @@ class PttMediaController extends Controller
             copy($_FILES['file']['tmp_name'], $name);
             return new JsonResponse(array("file" => $shortName, "path" => $name));
         }
-            
-        
+
+
     }
 
     public function autocompleteAction(Request $request)
