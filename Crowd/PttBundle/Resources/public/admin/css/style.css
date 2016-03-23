@@ -8484,7 +8484,7 @@ div.logout img {
   display: -ms-flexbox;
   display: flex;
 }
-.wrapper .container-fluid > .row > .main .alert {
+.wrapper .container-fluid > .row > .main .alert.alert-danger {
   margin-top: 90px;
   margin-bottom: -50px;
 }
