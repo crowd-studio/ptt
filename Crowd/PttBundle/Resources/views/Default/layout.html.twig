@@ -15,9 +15,9 @@
 <script src="https://maps.googleapis.com/maps/api/js?v=3.exp"></script>
 
 {% if isDebug() %}
-<script type="text/javascript" src="{{ asset('bundles/ptt/admin/scripts/require.js') }}" data-main="{{ asset('_/admin/dev/admin') }}"></script>
+<script type="text/javascript" src="{{ asset('bundles/ptt/admin/scripts/require.js') }}" data-main="{{ asset('bundles/ptt/admin/dev/admin') }}"></script>
 {% else %}
-<script type="text/javascript" src="{{ asset('bundles/ptt/admin/scripts/require.js') }}" data-main="{{ asset('_/admin/scripts/app-admin') }}"></script>
+<script type="text/javascript" src="{{ asset('bundles/ptt/admin/scripts/require.js') }}" data-main="{{ asset('bundles/ptt/admin/scripts/app-admin') }}"></script>
 {% endif %}
 {% block javascripts %}{% endblock %}
 </body>
