@@ -4,7 +4,12 @@
 	<h1>{{page.title|trans}}</h1>
 {% endif %}
 <ul class="nav nav-pills">
-	<li class="active"><a href="{{ path(entityConfigurationInfo.entityName ~ '_create') }}">{{'create'|trans}} {{entityInfo.lowercase}}</a></li>
+	<li class="active">
+		{% if csvexport %}
+			<a href="{{ path(entityConfigurationInfo.entityName ~ '_csv') }}" class="btn-cancel">Exportar</a>
+		{% endif %}
+		<a href="{{ path(entityConfigurationInfo.entityName ~ '_create') }}">{{'create'|trans}} {{entityInfo.lowercase}}</a>
+	</li>
 </ul>
 
 {% if filters|length > 0 %}

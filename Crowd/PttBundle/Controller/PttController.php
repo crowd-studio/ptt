@@ -73,7 +73,8 @@ class PttController extends Controller
             'page' => array(
                 'title' => $this->listTitle()
                 ),
-            'sortable' => $this->isSortable()
+            'sortable' => $this->isSortable(),
+            'csvexport' => $this->isCsvExport()
             ));
     }
 
@@ -242,6 +243,10 @@ class PttController extends Controller
     // Indica si la llista es pot ordenar mitjançant Drag&Drop
     protected function isSortable(){
         return method_exists($this->_initEntity(), "get_Order");
+    }
+
+    protected function isCsvExport(){
+        return method_exists($this->_initEntity(), "getCsvExport");
     }
 
     protected function listTitle()
@@ -626,5 +631,25 @@ class PttController extends Controller
             $this->repositoryName = $this->_bundle() . ':' . $this->_entityName();
         }
         return $this->repositoryName;
+    }
+
+    public function generateCSV($query, $name){
+        $em = $this->container->get('doctrine')->getManager();
+        $query = $em->createQuery($query);
+        $data = $query->getResult(); 
+
+        $filename = $name . "_".date("Y_m_d_His").".csv"; 
+        
+        $response = $this->render('PttBundle:Default:csv.html.twig', array('data' => $data)); 
+
+        $response->setStatusCode(200);
+        $response->headers->set('Content-Type', 'text/csv');
+        $response->headers->set('Content-Description', 'Submissions Export');
+        $response->headers->set('Content-Disposition', 'attachment; filename=' . $filename);
+        $response->headers->set('Content-Transfer-Encoding', 'binary');
+        $response->headers->set('Pragma', 'no-cache');
+        $response->headers->set('Expires', '0');
+        
+        return $response; 
     }
 }
