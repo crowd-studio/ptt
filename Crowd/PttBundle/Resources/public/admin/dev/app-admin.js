@@ -33,7 +33,8 @@ define([
 
             _.each($('a'), function(link) {
                 $(link).bind('click', function(event){
-                    if ($(link).attr('target') != '_blank' && typeof $(link).attr('href') != 'undefined' && $(link).attr('href') != '#' && $(link).attr('href').indexOf('language-') == -1) {
+                    if ($(link).attr('target') != '_blank' && typeof $(link).attr('href') != 'undefined' && $(link).attr('href') != '#' 
+                        && $(link).attr('href').indexOf('language-') == -1 && $(link).attr('href').indexOf('export-csv') == -1) {
                         $('.loader').addClass('visible');
                     }
                 });
