@@ -95,7 +95,7 @@ class PttRouting
 					)));
 
 					$collection->add($nameLower . '_csv', new Route($routePrefix . '/export-csv/', array(
-					    '_controller' => $bundleName . ':' . $name . ':last',
+					    '_controller' => $bundleName . ':' . $name . ':csv',
 					)));
 		    	}
 		    }
