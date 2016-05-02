@@ -21,13 +21,11 @@ class PttFormSaveSVG extends PttFormSave
             $file = (isset($files[$this->field->name])) ? $files[$this->field->name] : false;
         }
         
-        // $file = (isset($files[$this->field->name])) ? $files[$this->field->name] : false;
-        if ($file && $file->getClientMimeType() == 'image/svg+xml'){
+        if ($file){
             $value = PttUploadFile::upload($file, $this->field);
         } else {
             $value = '';
         }
-        
 
         if ($value == null) {
             $value = '';

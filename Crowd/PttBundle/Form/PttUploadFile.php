@@ -62,6 +62,10 @@ class PttUploadFile
                 break;
             case 'file':
                 return PttUploadFile::_uploadFile($file, $field);
+                break;
+            case 'svg':
+                return PttUploadFile::_uploadFile($file, $field);
+                break;
             default:
                 return '';
                 break;
