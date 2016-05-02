@@ -121,6 +121,24 @@ class PttFormFieldTypeFile extends PttFormFieldType
 		return $html;
 	}
 
+	private function _svg()
+	{
+
+		$path = $this->_urlPrefix() . $this->value;
+
+		$name = $this->field->getFormName($this->languageCode);
+		$name = substr($name, 0, strlen($name) - 1) . '-delete]';
+
+		$html = '
+		<div class="preview image col-sm-12">
+			<a title="' . $this->pttTrans->trans('view_in_larger_size') . '" href="' . $path . '" target="_blank">
+				<img src="' . $path . '">
+			</a>
+			<a class="btn btn-xs btn-danger remove-image">&#x2716;</a>
+		</div>';
+		return $html;
+	}
+
 	private function _file()
 	{
 		$extension = str_replace('.', '', PttUtil::extension($this->value));
