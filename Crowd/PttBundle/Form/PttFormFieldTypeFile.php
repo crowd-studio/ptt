@@ -17,14 +17,29 @@ class PttFormFieldTypeFile extends PttFormFieldType
 
 		if ($this->field->options['type'] == 'image' || $this->field->options['type'] == 'gallery') {
 			$sizes = array();
+			$maxW = 0;
+			$maxH = 0;
 			foreach ($this->field->options['sizes'] as $size) {
 				if ($size['w'] == 0 && $size['h'] == 0) {
 					$sizes[] = $this->pttTrans->trans('free_size');
 				} else {
 					$sizes[] = $size['w'] . 'x' . $size['h'] ;
+					if($maxW < $size['w']){
+						$maxW = $size['w'];
+					}
+					if($maxH < $size['h']){
+						$maxH = $size['h'];
+					}
 				}
 			}
-			$append = ' (' . implode(', ', $sizes) . ')';
+			// $append = ' (' . implode(', ', $sizes) . ')';
+			if($maxW == 0){
+				$maxW = '...';
+			}
+			if($maxH == 0){
+				$maxH = '...';
+			}
+			$append = ' ('.$maxW.'x'.$maxH.')';
 		} else {
 			$append = '';
 		}
