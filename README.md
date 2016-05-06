@@ -656,7 +656,7 @@ At the YML you should define the number of returned entities and the entities of
                 -
                     entity : Publication
                     label : Publicación
-``
+```
 
 ##### Type Entity
 
@@ -667,6 +667,7 @@ Set `showErrors` and `mapped` to false. Inside options fill the property `entity
 #### Aditional Notes
 
 For php 5.4 you need to specify the doctrine specific version on 2.3
+
 ```json
 "doctrine/common": "2.3"
 ```
