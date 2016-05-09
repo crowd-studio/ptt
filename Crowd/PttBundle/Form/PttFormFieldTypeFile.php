@@ -119,21 +119,27 @@ class PttFormFieldTypeFile extends PttFormFieldType
 		$fileNameArray = explode('.', $this->value);
 		$extension = end($fileNameArray);
 
-		if ($extension != 'gif') {
-			$size = $this->field->options['sizes'][0];
-			$size2 = end($this->field->options['sizes']);
-			if (isset($this->field->options['camera']) && $this->field->options['camera']) {
-				$largeName = $this->_urlPrefix() . $size2['w'] . '-' . $size2['h'] . '-' . $this->value;
-				$smallName = $this->_urlPrefix() . $size['w'] . '-' . $size['h'] . '-' . $this->value;
+		$uploadToCDN = (isset($this->field->options['cdn']) && $this->field->options['cdn']) ? true : false;
+		if($uploadToCDN){
+			$largeName = $this->_urlPrefix() . $this->value;
+			$smallName = $this->_urlPrefix() . $this->value;
+		} else {
+			if ($extension != 'gif') {
+				$size = $this->field->options['sizes'][0];
+				$size2 = end($this->field->options['sizes']);
+				if (isset($this->field->options['camera']) && $this->field->options['camera']) {
+					$largeName = $this->_urlPrefix() . $size2['w'] . '-' . $size2['h'] . '-' . $this->value;
+					$smallName = $this->_urlPrefix() . $size['w'] . '-' . $size['h'] . '-' . $this->value;
+				} else {
+					$largeName = $this->_urlPrefix() . $size2['w'] . '-' . $size2['h'] . '-' . $this->value;
+					$smallName = $this->_urlPrefix() . $size['w'] . '-' . $size['h'] . '-' . $this->value;
+				}
 			} else {
+				$size = array('w' => 0, 'h' => 0);
+				$size2 = array('w' => 0, 'h' => 0);
 				$largeName = $this->_urlPrefix() . $size2['w'] . '-' . $size2['h'] . '-' . $this->value;
 				$smallName = $this->_urlPrefix() . $size['w'] . '-' . $size['h'] . '-' . $this->value;
 			}
-		} else {
-			$size = array('w' => 0, 'h' => 0);
-			$size2 = array('w' => 0, 'h' => 0);
-			$largeName = $this->_urlPrefix() . $size2['w'] . '-' . $size2['h'] . '-' . $this->value;
-			$smallName = $this->_urlPrefix() . $size['w'] . '-' . $size['h'] . '-' . $this->value;
 		}
 
 		$name = $this->field->getFormName($this->languageCode);

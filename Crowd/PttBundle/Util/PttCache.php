@@ -66,7 +66,6 @@ class PttCache
     public function remove($key = false)
     {
         $key = ($key != false) ? $key : $this->_key;
-
         $path = $this->_fileExists($key);
         if ($path) {
             unlink($path);
