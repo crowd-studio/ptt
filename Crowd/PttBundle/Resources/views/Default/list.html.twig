@@ -38,15 +38,22 @@
 	<li class="head">
 		{%if sortable %}<span class="handle">Order</span>{% endif %}
             {% for field, title in fields %}
-            <span{% if not loop.first %} class="hidden-xs"{% endif %}>{%if sortable == false %}<a href="{{ path(entityConfigurationInfo.entityName ~ '_list', {order : field}) }}">{% endif %}{{title}}{%if sortable == false %}</a>{% endif %}</span>
+            <span{% if not loop.first %} class="hidden-xs"{% endif %}>{%if sortable == false %}<a href="{{ path(entityConfigurationInfo.entityName ~ '_list', {order : field}) }}">{% endif %}
+            {{title}}{%if sortable == false %}</a>{% endif %}</span>
             {% endfor %}
             <span class="actions">{{'actions'|trans}}</span>
 	</li>
 	{% for row in rows %}
 	        <li class="list" {%if sortable %}draggable="true" data-id="{{row.id}}"{% endif %}>
 	        	{%if sortable %}<span class="handle"></span>{% endif %}
+
 	            {% for field, title in fields %}
-	            <span{% if not loop.first %} class="hidden-xs"{% endif %}>{{ row|dynamicValue(field) }}</span>
+	            <span{% if not loop.first %} class="hidden-xs"{% endif %}>
+	            	{% if row|dynamicValue(field).timestamp is defined %}
+	            		{{ row|dynamicValue(field).date|date("d/m/Y H:m:s") }}
+	            	{% else %}
+	            		{{ row|dynamicValue(field) }}
+	            	{% endif %}</span>
 	            {% endfor %}
 	            <span class="actions">
 	                <div class="btn-group">
