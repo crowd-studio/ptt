@@ -440,7 +440,9 @@ Inside the `options` array you must add the `type` property. The available types
     - image
     - file
 
-**Storage**: Set the key `s3` inside `options` to `true` to upload the file to the S3 server previously configured.
+**Storage**: Set the key `s3` inside `options` to `true` to upload the file to the S3 server previously configured. Set the key `cdn` inside `options` to `true` to upload the file to the CDN server previously configured.
+
+**Editable** Set the key `delete` inside `options` to `false` to disable image changes by user.
 
 ###### Image
 Add the property `sizes` and make it an array with the sizes. These sizes will be used to create images. Each subarray has the keys `w` for width and `h` for height. If both are set to 0 the image size will be free.

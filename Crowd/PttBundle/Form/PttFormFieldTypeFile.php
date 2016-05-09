@@ -64,7 +64,21 @@ class PttFormFieldTypeFile extends PttFormFieldType
 			$class = 'img-input';
 		}
 		$htmlField .= '<div class="row '. $class .' image-container hidden col-sm-12">
-		<img class="preview-image" src="#"/><a class="btn btn-xs btn-danger remove-image">&#x2716;</a></div></div>';
+		<img class="preview-image" src="#"/>';
+
+		$boolRemove = false;
+		if (isset($this->field->options['delete'])){
+			if( $this->field->options['delete'] != false){
+				
+				$htmlField .= '<a class="btn btn-xs btn-danger remove-image">&#x2716;</a>';	
+				$boolRemove = true;
+			}
+		} else {
+			$htmlField .= '<a class="btn btn-xs btn-danger remove-image">&#x2716;</a>';
+			$boolRemove = true;
+		}
+
+		$htmlField .= '</div></div>';
 
 		$camera = (isset($this->field->options['camera']) && $this->field->options['camera']) ? true : false;
 		if ($camera) {
@@ -91,7 +105,7 @@ class PttFormFieldTypeFile extends PttFormFieldType
 				$type = '_' . $this->field->options['type'];
 			}
 
-			$htmlField .= $this->{$type}();
+			$htmlField .= $this->{$type}($boolRemove);
 		}
 
 		$html .= $htmlField;
@@ -100,7 +114,7 @@ class PttFormFieldTypeFile extends PttFormFieldType
 		return $html;
 	}
 
-	private function _image()
+	private function _image($boolRemove)
 	{
 		$fileNameArray = explode('.', $this->value);
 		$extension = end($fileNameArray);
@@ -125,18 +139,23 @@ class PttFormFieldTypeFile extends PttFormFieldType
 		$name = $this->field->getFormName($this->languageCode);
 		$name = substr($name, 0, strlen($name) - 1) . '-delete]';
 
+		$delete = '';
+		if($boolRemove){
+			$delete = '<a class="btn btn-xs btn-danger remove-image">&#x2716;</a>';
+		}
+
 		$html = '
 		<div class="preview image col-sm-12">
 			<a title="' . $this->pttTrans->trans('view_in_larger_size') . '" href="' . $largeName . '" target="_blank">
 				<img src="' . $smallName . '">
 			</a>
 			<input type="hidden" name="' . $name . '" value="0">
-			<a class="btn btn-xs btn-danger remove-image">&#x2716;</a>
+			'.$delete.'
 		</div>';
 		return $html;
 	}
 
-	private function _svg()
+	private function _svg($boolRemove)
 	{
 
 		$path = $this->_urlPrefix() . $this->value;
@@ -144,22 +163,32 @@ class PttFormFieldTypeFile extends PttFormFieldType
 		$name = $this->field->getFormName($this->languageCode);
 		$name = substr($name, 0, strlen($name) - 1) . '-delete]';
 
+		$delete = '';
+		if($boolRemove){
+			$delete = '<a class="btn btn-xs btn-danger remove-image">&#x2716;</a>';
+		}
+
 		$html = '
 		<div class="preview image col-sm-12">
 			<a title="' . $this->pttTrans->trans('view_in_larger_size') . '" href="' . $path . '" target="_blank">
 				<img src="' . $path . '">
 			</a>
-			<a class="btn btn-xs btn-danger remove-image">&#x2716;</a>
+			'.$delete.'
 		</div>';
 		return $html;
 	}
 
-	private function _file()
+	private function _file($boolRemove)
 	{
 		$extension = str_replace('.', '', PttUtil::extension($this->value));
 
 		$name = $this->field->getFormName($this->languageCode);
 		$name = substr($name, 0, strlen($name) - 1) . '-delete]';
+
+		$delete = '';
+		if($boolRemove){
+			$delete = '<a class="btn btn-xs btn-danger remove-image">&#x2716;</a>';
+		}
 
 		$html = '
 		<div class="preview file">
@@ -170,7 +199,7 @@ class PttFormFieldTypeFile extends PttFormFieldType
 				<a title="' . $this->pttTrans->trans('download_file') . '" href="' . $this->_urlPrefix() . $this->value . '" target="_blank">' . $this->pttTrans->trans('download_file') . '</a>
 			</div>
 			<input type="hidden" name="' . $name . '" value="0">
-			<a class="btn btn-xs btn-danger remove-image">&#x2716;</a>
+			'.$delete.'
 		</div>
 		';
 		return $html;
@@ -183,7 +212,14 @@ class PttFormFieldTypeFile extends PttFormFieldType
 		if ($uploadToS3) {
 			return $s3['prodUrl'] . $s3['dir'] . '/';
 		} else {
-			return '/uploads/';
+			$uploadToCDN = (isset($this->field->options['cdn']) && $this->field->options['cdn']) ? true : false;
+			if($uploadToCDN){
+				$cdn = PttUtil::pttConfiguration('cdn');
+				return $cdn['prodUrl'];
+			} else {
+				return '/uploads/';	
+			}
+			
 		}
 	}
 
