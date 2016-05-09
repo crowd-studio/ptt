@@ -390,7 +390,7 @@ class PttController extends Controller
         }
 
         if($limit > 0){
-            $query->setFirstResult($offset);
+            if($offset > 0){$query->setFirstResult(($offset - 1) * $limit);}
             $query->setMaxResults($limit);
         }
 
