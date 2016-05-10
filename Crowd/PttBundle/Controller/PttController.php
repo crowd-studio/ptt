@@ -118,14 +118,24 @@ class PttController extends Controller
 
                 $this->get('session')->getFlashBag()->add('success', $pttForm->getSuccessMessage());
 
-                if ($id == null && $request->get('another') != null) {
-                    return $this->redirect($this->generateUrl($this->urlPath() . '_edit'));
+                $this->self = $this->get('session')->get('self');
+                if($this->self == 1){
+                    return $this->redirect($this->generateUrl($this->urlPath() . '_edit', array('id' => $id, 'self' => 1)));
                 } else {
-                    return $this->redirect($this->generateUrl($this->urlPath() . '_list'));
+                    if ($id == null && $request->get('another') != null) {
+                        return $this->redirect($this->generateUrl($this->urlPath() . '_edit'));
+                    } else {
+                        return $this->redirect($this->generateUrl($this->urlPath() . '_list'));
+                    }
                 }
+                
             } else {
                 $this->get('session')->getFlashBag()->add('error', $pttForm->getErrorMessage());
             }
+        } else {
+            $this->self = false;
+            $this->self = $request->query->get('self');
+            $this->get('session')->set('self', $this->self);
         }
 
         $this->deleteTemp();

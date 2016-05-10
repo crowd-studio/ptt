@@ -480,7 +480,6 @@ define([
             this.$el.find('.list-eliminar').addClass('hidden');
         },
         stopSort: function(){
-            this.expand();
             this.$el.find('.handle').addClass('hidden');
             this.$el.find('.list-eliminar').removeClass('hidden');
         },
