@@ -142,6 +142,7 @@ class PttController extends Controller
         return $this->_renderTemplateForActionInfo('edit', array(
             'entityInfo' => $this->entityInfo(),
             'form' => $pttForm,
+            'cancel' => $this->self,
             'page' => array(
                 'title' => $this->editTitle($id)
                 )
