@@ -26,6 +26,7 @@ class PttController extends Controller
     private $bundle;
     private $repositoryName;
     private $fields;
+    private $self;
 
     //LIST
     public function listAction(Request $request, $page)

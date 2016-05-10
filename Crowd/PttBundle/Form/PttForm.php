@@ -189,11 +189,11 @@ class PttForm
 
 		$entityPrincipal = $this->entityInfo->getEntity();
 		
-
-		if(method_exists($entityPrincipal, 'set_Order')){
-			$entityPrincipal->set_Order($this->totalData);
+		if(!$entityPrincipal->getPttId()){
+			if(method_exists($entityPrincipal, 'set_Order')){
+				$entityPrincipal->set_Order(-1);
+			}
 		}
-
 
 		$this->em->persist($entityPrincipal);
 		$this->em->flush();
