@@ -63,7 +63,7 @@ class PttController extends Controller
         $filters = $this->_currentFilters($request);
 
         list($pagination, $offset, $limit) = $this->_paginationForPage($page, $this->_repositoryName(), $filters);
-        $entities = $this->_buildQuery($this->_repositoryName(), $filters, $order, $limit, $offset);
+        $entities = $this->_buildQuery($this->_repositoryName(), $filters, $order, $limit, $offset, $page);
 
         return $this->_renderTemplateForActionInfo('list', array(
             'entityInfo' => $this->entityInfo(),
@@ -375,7 +375,7 @@ class PttController extends Controller
         return strtolower($this->_entityName());
     }
 
-    protected function _buildQuery($repositoryName, $filters, $order, $limit, $offset)
+    protected function _buildQuery($repositoryName, $filters, $order, $limit, $offset, $page)
     {
         $em = $this->get('doctrine')->getManager();
 
@@ -402,7 +402,7 @@ class PttController extends Controller
         }
 
         if($limit > 0){
-            if($offset > 0){$query->setFirstResult(($offset - 1) * $limit);}
+            if($offset > 0){$query->setFirstResult(($page - 1) * $limit);}
             $query->setMaxResults($limit);
         }
 
