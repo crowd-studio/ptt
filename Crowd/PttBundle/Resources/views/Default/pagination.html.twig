@@ -6,12 +6,8 @@
             <li><a title="Go to the previous page" href="{{ path(entityConfigurationInfo.entityName ~ '_list', { page : pagination.currentPage - 1 }) }}">&laquo;</a></li>
         {% endif %}
 
-        {% if pagination.currentPage > 4 %}
-        <li><a href="{{ path(entityConfigurationInfo.entityName ~ '_list', { page : 1 }) }}">1
-            {% if pagination.currentPage > 5 %}
-            ...
-            {% endif %}
-            </a></li>
+        {% if pagination.currentPage > 5 %}
+            <li><a href="{{ path(entityConfigurationInfo.entityName ~ '_list', { page : 1 }) }}">1...</a></li>
         {% endif %}
 
         {% for i in 1..pagination.currentPage %}
