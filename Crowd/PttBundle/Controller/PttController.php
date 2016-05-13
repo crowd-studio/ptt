@@ -17,6 +17,7 @@ use Symfony\Component\HttpFoundation\Cookie;
 
 use Crowd\PttBundle\Form\PttForm;
 use Crowd\PttBundle\Util\PttUtil;
+use Crowd\PttBundle\Util\PttCache;
 
 class PttController extends Controller
 {
@@ -55,7 +56,7 @@ class PttController extends Controller
         $em = $this->get('doctrine')->getManager();
 
         if ($this->isSortable()) {
-            $order = array('_order', 'asc');
+            $order = array('_order', $this->orderList());
         } else {
             $order = $this->_currentOrder($request);
         }
@@ -204,10 +205,15 @@ class PttController extends Controller
             $em = $this->get('doctrine')->getManager();
             $response = array();
 
+
+            $cache = new PttCache();
+            $cache->remove($this->_entityName());
+
             try {
                 foreach($fields as $field){
                     $entity = $em->getRepository($this->_repositoryName())->find($field->id);
                     $entity->set_Order($field->_order);
+                    $cache->remove($this->_entityName().$field->id);
                 }
                 $em->flush();  
                 $response['success'] = true;
@@ -301,6 +307,11 @@ class PttController extends Controller
         return array(
             'title' => $this->get('pttTrans')->trans('title'),
             );
+    }
+
+    protected function orderList()
+    {
+        return 'asc';
     }
 
     protected function enableFilters()
@@ -480,7 +491,7 @@ class PttController extends Controller
             }
         }
         $fieldsKeys = array_keys($fields);
-        return array($fieldsKeys[0], 'asc');
+        return array($fieldsKeys[0], $this->orderList());
     }
 
     protected function _currentFilters(Request $request)
@@ -507,7 +518,7 @@ class PttController extends Controller
                 $oldValue = $cookies->get($name);
                 $value = ($oldValue == 'asc') ? 'desc' : 'asc';
             } else {
-                $value = 'asc';
+                $value = $this->orderList();
             }
 
             $url = $this->generateUrl(strtolower($this->_entityName()) . '_list');
