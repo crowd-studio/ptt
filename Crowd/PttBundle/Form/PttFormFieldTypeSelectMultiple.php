@@ -23,10 +23,16 @@ class PttFormFieldTypeSelectMultiple extends PttFormFieldType
 		$html .= $this->label();
 
 		$method = 'get' . ucfirst($this->field->name) . '_model';
+		$methodid = 'get' . ucfirst($this->field->name);
+		$methodtitle = 'get' . ucfirst($this->field->name) . '_title';
 		if ($this->languageCode){
 			$model = $this->entityInfo->getTransEntities()[$this->languageCode]->$method();
+			$id = $this->entityInfo->getTransEntities()[$this->languageCode]->$methodid();
+			$title = $this->entityInfo->getTransEntities()[$this->languageCode]->$methodtitle();
 		} else {
 			$model = $this->entityInfo->getEntity()->$method();
+			$id = $this->entityInfo->getEntity()->$methodid();
+			$title = $this->entityInfo->getEntity()->$methodtitle();
 		}
 
 		$htmlField = '<select ';
@@ -68,7 +74,27 @@ class PttFormFieldTypeSelectMultiple extends PttFormFieldType
 
 		$htmlField .= 'class="form-control select-multiple-result"';
 
-		$htmlField .= '></select>';
+		$htmlField .= '>';
+
+		if($model){
+			$dql = 'select ptt from AdminBundle:' . $model . ' ptt';
+
+	        $query = $this->em->createQuery($dql);
+	        $query->setMaxResults(10);
+	        $results = $query->getResult();
+
+	        foreach ($results as $result) {
+	        	
+	        	if($id == $result->getId()){
+	        		$selected = 'selected="selected"';
+	        	} else {
+	        		$selected = "";
+	        	}
+	        	$htmlField .= '<option '. $selected .' value="' . $result->getId() . '">' . $result->getTitle() . '</option>';	
+	        }
+		}
+		
+		$htmlField .= '</select>';
 
 		$html .= $htmlField;
 		$html .= $this->end();

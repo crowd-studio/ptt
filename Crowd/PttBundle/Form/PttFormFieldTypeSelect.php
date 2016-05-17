@@ -56,7 +56,12 @@ class PttFormFieldTypeSelect extends PttFormFieldType
 	{
 		$html = '';
 		if (isset($this->field->options['empty'])) {
-			$html .= '<option value="-1">' . $this->pttTrans->trans($this->field->options['empty']) . '</option>';
+			if(isset($this->field->validations['not_blank'])){
+				$value = "";
+			} else {
+				$value = "-1";
+			}
+			$html .= '<option value="'. $value .'">' . $this->pttTrans->trans($this->field->options['empty']) . '</option>';
 		}
 		if (isset($this->field->options)) {
 			foreach ($this->field->options['options'] as $key => $value) {
