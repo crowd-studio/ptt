@@ -207,7 +207,7 @@ class PttController extends Controller
 
 
             $cache = new PttCache();
-            $cache->remove($this->_entityName());
+            $cache->removeAll();
 
             try {
                 foreach($fields as $field){
