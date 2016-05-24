@@ -18,7 +18,8 @@ define([
     "select2-es",
     "sortable",
     "backboneView",
-    "dropzone"
+    "dropzone",
+    "wickedpicker"
 ], function($, globals, Backbone, _, Mustache, uploadFileTemplate, moment){
 
     window.app = {
@@ -122,12 +123,11 @@ define([
                 });
             });
 
-            $('form input.hourpicker').each(function(){
-                $(this).datepicker({
-                    format : 'hh:MM',
-                    language : $(this).attr('data-language'),
-                    autoclose : true
-                });
+            $('form input.timepicker').each(function(){
+                var options = {
+                    twentyFour: true
+                };
+                $(this).wickedpicker(options);
             });
 
             $('form .colorPicker').each(function(){

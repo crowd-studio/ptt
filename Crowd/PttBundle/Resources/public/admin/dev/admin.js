@@ -20,6 +20,7 @@ require.config({
         "sortable" : "vendor-static/html5sortable/jquery.sortable",
         "backboneView" : "vendor-static/backboneView/backboneView",
         "dropzone" : "vendor-static/dropzone/dropzone",
+        "wickedpicker" : "vendor-static/wickedpicker/src"
 
     },
     shim:{

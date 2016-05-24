@@ -37,11 +37,11 @@ class PttFormFieldTypeHour extends PttFormFieldType
 
 	protected function extraClassesForField()
 	{
-		return 'form-control hourpicker';
+		return 'form-control timepicker';
 	}
 
 	protected function extraClassesForFieldContainer()
 	{
-		return 'form-group hourpicker col-sm-6';
+		return 'form-group timepicker col-sm-6';
 	}
 }
