@@ -122,6 +122,14 @@ define([
                 });
             });
 
+            $('form input.hourpicker').each(function(){
+                $(this).datepicker({
+                    format : 'hh:MM',
+                    language : $(this).attr('data-language'),
+                    autoclose : true
+                });
+            });
+
             $('form .colorPicker').each(function(){
                 $(this).colorpicker();
             });
