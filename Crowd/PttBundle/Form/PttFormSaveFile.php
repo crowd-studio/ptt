@@ -17,7 +17,7 @@ class PttFormSaveFile extends PttFormSave
         $files = $this->_files();
 
         if ($this->languageCode) {
-            $file = (isset($files[$this->languageCode][$this->field->name])) ? $files[$this->languageCode][$this->field->name] : false;
+             $file = (isset($files["Trans"][$this->languageCode][$this->field->name])) ? $files["Trans"][$this->languageCode][$this->field->name] : false;
         } else {
             $file = (isset($files[$this->field->name])) ? $files[$this->field->name] : false;
         }

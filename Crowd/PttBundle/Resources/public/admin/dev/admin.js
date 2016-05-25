@@ -19,8 +19,7 @@ require.config({
         "select2-es" : "vendor/select2/select2_locale_es",
         "sortable" : "vendor-static/html5sortable/jquery.sortable",
         "backboneView" : "vendor-static/backboneView/backboneView",
-        "dropzone" : "vendor-static/dropzone/dropzone",
-        "wickedpicker" : "vendor-static/wickedpicker/src"
+        "dropzone" : "vendor-static/dropzone/dropzone"
 
     },
     shim:{
