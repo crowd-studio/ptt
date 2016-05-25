@@ -27,6 +27,6 @@ class PttFormFieldTypeTime extends PttFormFieldType
 
 	protected function extraClassesForFieldContainer()
     {
-        return 'form-group time col-sm-12';
+        return 'form-group time col-sm-6';
     }
 }
