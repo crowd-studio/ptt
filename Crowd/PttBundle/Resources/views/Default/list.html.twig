@@ -14,17 +14,17 @@
 
 {% if filters|length > 0 %}
 	<div class="well filters">
-		<form action="{{ path(entityConfigurationInfo.entityName ~ '_list') }}" method="post" name="filter-{{ entityConfigurationInfo.entityName }}" class="row">
+		<form action="{{ path(entityConfigurationInfo.entityName ~ '_list') }}" method="post" name="filter-{{ entityConfigurationInfo.entityName }}" class="row" style="margin:0;padding:0;">
 		{% for key,filter in filters %}
 			{% if filter.type == 'text' %}
-				<div class="form-group col-xs-6 col-sm-4 col-md-3">
+				<div class="form-group col-xs-12 col-sm-12 col-md-12" style="margin:0;">
 					<label for="filter-{{ entityConfigurationInfo.entityName }}-{{ key }}">{{ filter.label }}</label>
 					<input class="form-control" type="text" id="filter-{{ entityConfigurationInfo.entityName }}-{{ key }}" name="filter-{{ entityConfigurationInfo.entityName }}-{{ key }}" placeholder="{{ filter.label }}" value="{{ filter(key, entityConfigurationInfo.entityName) }}">
 				</div>
 			{% endif %}
 		{% endfor %}
-		<div class="form-group submit col-xs-12">
-			<button type="submit" class="btn btn-default">{{'filter'|trans}}</button>
+		<div class="form-group submit col-xs-12" style="margin-top:20px;text-align:end">
+			<button type="submit" class="btn btn-save">{{'filter'|trans}}</button>
 			<a href="{{ path(entityConfigurationInfo.entityName ~ '_list', {filter:'reset'}) }}" class="btn btn-cancel">{{'reset_filters'|trans}}</a>
 		</div>
 		</form>
