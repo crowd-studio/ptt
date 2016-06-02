@@ -10,7 +10,6 @@ namespace Crowd\PttBundle\Twig;
 use \Twig_Extension;
 use \Twig_Filter_Method;
 use \Twig_SimpleFunction;
-use \Twig_Function_Method;
 use \Michelf\Markdown;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpKernel\KernelInterface;
@@ -68,17 +67,17 @@ class PttTwigExtension extends Twig_Extension
     public function getFunctions()
     {
         return array(
-            'info' => new Twig_Function_Method($this, 'info'),
-            'isDebug' => new Twig_Function_Method($this, 'isDebug', array(
+            'info' => new Twig_SimpleFunction($this, 'info'),
+            'isDebug' => new Twig_SimpleFunction($this, 'isDebug', array(
                 'is_safe' => array('html')
             )),
-            'userIsRole' => new Twig_Function_Method($this, 'userIsRole'),
-            'userRole' => new Twig_Function_Method($this, 'userRole'),
-            'isAllowed' => new Twig_Function_Method($this, 'isAllowed'),
-            'filter' => new Twig_Function_Method($this, 'filter', array(
+            'userIsRole' => new Twig_SimpleFunction($this, 'userIsRole'),
+            'userRole' => new Twig_SimpleFunction($this, 'userRole'),
+            'isAllowed' => new Twig_SimpleFunction($this, 'isAllowed'),
+            'filter' => new Twig_SimpleFunction($this, 'filter', array(
                 'is_safe' => array('html')
             )),
-            'asset_exists' => new \Twig_Function_Method($this, 'asset_exists'),
+            'asset_exists' => new \Twig_SimpleFunction($this, 'asset_exists'),
         );
     }
 
