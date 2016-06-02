@@ -216,7 +216,7 @@ class PttFormFieldTypeFile extends PttFormFieldType
 		$s3 = PttUtil::pttConfiguration('s3');
 		$uploadToS3 = (isset($this->field->options['s3']) && $this->field->options['s3']) ? true : false;
 		if ($uploadToS3) {
-			return $s3['prodUrl'] . $s3['dir'] . '/';
+			return $s3['prodUrl'] . '/' . $s3['dir'] . '/';
 		} else {
 			$uploadToCDN = (isset($this->field->options['cdn']) && $this->field->options['cdn']) ? true : false;
 			if($uploadToCDN){
