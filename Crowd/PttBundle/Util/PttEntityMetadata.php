@@ -30,7 +30,7 @@ class PttEntityMetadata
             $metadata = $this->em->getClassMetadata($entity);
             return '\\' . $metadata->name;
         } else {
-            return 'App\AdminBundle\Entity\\' .$entity;
+            return 'AdminBundle\Entity\\' .$entity;
         }
     }
 

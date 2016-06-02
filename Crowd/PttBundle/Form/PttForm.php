@@ -8,7 +8,7 @@
 namespace Crowd\PttBundle\Form;
 
 use Doctrine\ORM\EntityManager;
-use Symfony\Component\Security\Core\SecurityContext;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 
@@ -31,7 +31,7 @@ class PttForm
 	private $pttTrans;
 	private $totalData = 0;
 
-	public function __construct(EntityManager $entityManager, SecurityContext $securityContext, ContainerInterface $serviceContainer)
+	public function __construct(EntityManager $entityManager, TokenStorage $securityContext, ContainerInterface $serviceContainer)
 	{
 
 		$this->em = $entityManager;

@@ -97,6 +97,7 @@ class PttUploadFile
         $token = PttUtil::token(100);
         $uploadName = $token . '.' . $extension;
         $uploadToS3 = (isset($field->options['s3']) && $field->options['s3']) ? true : false;
+        $uploadToCDN = (isset($field->options['cdn']) && $field->options['cdn']) ? true : false;
 
         if ($extension != 'gif') {
             $sizes = ($file && isset($field->options['sizes'])) ? $field->options['sizes'] : array(array('h' => 0, 'w' => 0));
@@ -124,10 +125,9 @@ class PttUploadFile
                         \WideImage\WideImage::load($file)->resize($width, $height, 'outside')->saveToFile($saveThumbPath, $level);
                         \WideImage\WideImage::load($saveThumbPath)->crop('center', 'center', $width, $height)->saveToFile($saveThumbPath);
                     }
-                    if ($uploadToS3) {
+                    if ($uploadToS3 || $uploadToCDN) {
                         PttUploadFile::_uploadToS3($saveThumbPath, $filename);
                     }
-
 
                 }
             }
@@ -150,10 +150,11 @@ class PttUploadFile
         $uploadName = $token . PttUtil::extension($file->getClientOriginalName());
 
         $uploadToS3 = (isset($field->options['s3']) && $field->options['s3']) ? true : false;
+        $uploadToCDN = (isset($field->options['cdn']) && $field->options['cdn']) ? true : false;
 
         $file->move(UPLOADS_DIR, $uploadName);
 
-        if ($uploadToS3) {
+        if ($uploadToS3 || $uploadToCDN) {
             PttUploadFile::_uploadToS3(UPLOADS_DIR . $uploadName, $uploadName);
         }
 

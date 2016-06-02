@@ -9,21 +9,21 @@ namespace Crowd\PttBundle\Util;
 use Symfony\Component\Yaml\Parser;
 use Symfony\Component\Yaml\Exception\ParseException;
 use Doctrine\ORM\EntityManager;
-use Symfony\Component\Security\Core\SecurityContext;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 class PttTrans
 {
     private $em;
-    private $securityContext;
+    private $tokenStorage;
     private $container;
     private $request;
 
-    public function __construct(EntityManager $entityManager, SecurityContext $securityContext, ContainerInterface $serviceContainer)
+    public function __construct(EntityManager $entityManager, TokenStorage $tokenStorage, ContainerInterface $serviceContainer)
     {
         $this->em = $entityManager;
-        $this->securityContext = $securityContext;
+        $this->tokenStorage = $tokenStorage;
         $this->container = $serviceContainer;
 
         $this->defaultLanguage = PttUtil::pttConfiguration('preferredLanguage');
