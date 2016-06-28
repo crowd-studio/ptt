@@ -593,6 +593,8 @@ class PttController extends Controller
             $info['entityConfigurationInfo'] = $this->entityConfigurationInfo();
         }
 
+        $info["keymap"] = PttUtil::pttConfiguration('google')["key"];
+
         return $this->render($template, $info);
     }
 
