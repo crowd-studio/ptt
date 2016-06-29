@@ -48,6 +48,7 @@ class PttFormFieldTypeGallery extends PttFormFieldType
 
         
         $htmlField = '<script type="text/template" class="template"><div class="collapse-head"><span class="handle hidden"></span><span class="title-triangle"><a class="triangle-open triangle"></a><a class="title title-open">'. $formName .' {{index}}</a></span><a class="remove list-eliminar">'.$this->pttTrans->trans('remove').'</a></div><div class="collapse-body">' . $form->createView('multi');
+        $htmlField .= '<input type="hidden" id="'. $this->field->getFormName() . '-{{index}}-_order" name="'. $this->field->getFormName() . '[{{index}}]' .'[_order]" data-required="false" class="form-control field-order" value="{{index}}">';
         $htmlField .= '<input type="hidden" id="'. $this->field->getFormName() . '-{{index}}-_model" name="'. $this->field->getFormName() . '[{{index}}]' .'[_model]" data-required="false" class="form-control" value="'. $this->pttForm->getEntityInfo()->getEntityName() .'">';
         $htmlField .= '</div></script>';
 
@@ -81,6 +82,7 @@ class PttFormFieldTypeGallery extends PttFormFieldType
                         $errors = (isset($formErrors[$key])) ? $formErrors[$key] : false;
                         $form = $pttHelper->formForEntity($pttHelper->entityWithData($entityData), $index, $errors);
                         $htmlField .= '<li class="entity" draggable="true"><div class="collapse-head"><span class="handle hidden"></span><span class="title-triangle"><a class="triangle-closed triangle"></a><a class="title title-closed">'. $formName .' '. $index .'</a></span><a class="remove list-eliminar">'.$this->pttTrans->trans('remove').'</a></div><div class="collapse-body hidden">' . $form->createView('multi');
+                        $htmlField .= '<input type="hidden" id="'. $this->field->getFormName() . '-' . $index .'-_order" name="'. $this->field->getFormName() . '[' . $index . ']' .'[_order]" data-required="false" class="form-control field-order" value="'. $index .'">';
                         $htmlField .= '<input type="hidden" id="'. $this->field->getFormName() . '-' . $index .'-_model" name="'. $this->field->getFormName() . '[' . $index . ']' .'[_model]" data-required="false" class="form-control" value="'. $this->pttForm->getEntityInfo()->getEntityName() .'">';
                         $htmlField .= '</div></li>';
                         $index++;

@@ -407,8 +407,10 @@ define([
             _.each(this.$el.find('li.entity'), function(entity){
                 var view = $(entity).backboneView();
                 if (sortButton.hasClass('btn-danger')){
+                    $(entity).attr('draggable', 'true');
                     view.startSort();
                 } else {
+                    $(entity).removeAttr('draggable');
                     view.stopSort();
                 }
 
@@ -447,7 +449,6 @@ define([
         tagName: 'li',
         className: 'entity',
         attributes: {
-            "draggable": "true",
             "data-id": 0
         },
         initialize: function(options){
@@ -481,6 +482,8 @@ define([
         },
         stopSort: function(){
             this.$el.find('.handle').addClass('hidden');
+            this.$el.find('.triangle').addClass('triangle-closed');
+            this.$el.find('.title').addClass('title-closed');
             this.$el.find('.list-eliminar').removeClass('hidden');
         },
         expand : function(e)
@@ -863,6 +866,7 @@ define([
         },
         sortupdate: function(event) {
             var orderQuery = _.map(this.$el.find('li[draggable]'), function(handle, order) {
+                $(handle).find('.field-order').val(order);
                 return {'id': $(handle).attr('data-id'), '_order':order}
             });
 

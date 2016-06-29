@@ -55,6 +55,7 @@ class PttFormFieldTypeMultipleEntity extends PttFormFieldType {
 
                 $htmlField .= '<script type="text/template" class="template" data-type="' . $value['entity'] . '"><div class="collapse-head"><span class="handle hidden"></span><span class="title-triangle"><a class="triangle-open triangle"></a><a class="title title-open">'. $value['label'] .'</a></span><a class="remove list-eliminar">'.$this->pttTrans->trans('remove').'</a></div><div class="collapse-body">' . $form->createView('multi');
                 $htmlField .= '<input type="hidden" id="'. $this->field->getFormName() . '-{{index}}-type" name="'. $this->field->getFormName() . '[{{index}}]' .'[type]" data-required="false" class="form-control" value="'. $value['entity'] .'">';
+                $htmlField .= '<input type="hidden" id="'. $this->field->getFormName() . '-{{index}}-_order" name="'. $this->field->getFormName() . '[{{index}}]' .'[_order]" data-required="false" class="form-control field-order" value="{{index}}">';
                 $htmlField .= '<input type="hidden" id="'. $this->field->getFormName() . '-{{index}}-_model" name="'. $this->field->getFormName() . '[{{index}}]' .'[_model]" data-required="false" class="form-control" value="'. $this->pttForm->getEntityInfo()->getEntityName() .'"> </div></script>';
 				$formErrors = $this->pttForm->getErrors($this->field->name);
 
@@ -120,8 +121,9 @@ class PttFormFieldTypeMultipleEntity extends PttFormFieldType {
 			            'type' => 'hidden',
 			            'options' => array()
 			        );
-                    $htmlField .= '<li class="entity" draggable="true"><div class="collapse-head"><span class="handle hidden"></span><span class="title-triangle"><a class="triangle-closed triangle"></a><a class="title title-closed">'. $formName .'</a></span><a class="remove list-eliminar">'.$this->pttTrans->trans('remove').'</a></div>';
+                    $htmlField .= '<li class="entity"><div class="collapse-head"><span class="handle hidden"></span><span class="title-triangle"><a class="triangle-closed triangle"></a><a class="title title-closed">'. $formName .'</a></span><a class="remove list-eliminar">'.$this->pttTrans->trans('remove').'</a></div>';
                     $htmlField .= '<div class="collapse-body hidden">' . $form->createView('multi') . '<input type="hidden" id="'. $this->field->getFormName() . '-' . $index .'-type" name="'. $this->field->getFormName() . '[' . $index . ']' .'[type]" data-required="false" class="form-control" value="'. $entity .'">';
+                    $htmlField .= '<input type="hidden" id="'. $this->field->getFormName() . '-' . $index .'-_order" name="'. $this->field->getFormName() . '[' . $index . ']' .'[_order]" data-required="false" class="form-control field-order" value="'. $index .'">';
                     $htmlField .= '<input type="hidden" id="'. $this->field->getFormName() . '-' . $index .'-_model" name="'. $this->field->getFormName() . '[' . $index . ']' .'[_model]" data-required="false" class="form-control" value="'. $this->pttForm->getEntityInfo()->getEntityName() .'"></div></li>';
                     
 
