@@ -6,7 +6,7 @@
     			{% if info.path is defined %}
 					{# li final #}
 					<li{% if info.class is defined %} class="{{ info.class }}"{% endif %}>
-						<a{% if path(app.request.attributes.get('_route'), app.request.attributes.get('_route_params')) == path(info.path, info.parameters|default({})) %} class="selected"{% endif %} href="{{ path(info.path, info.parameters|default({})) }}">
+						<a{% if app.request.uri|slice(app.request.getSchemeAndHttpHost()|length) == path(info.path, info.parameters|default({})) %} class="selected"{% endif %} href="{{ path(info.path, info.parameters|default({})) }}">
 							<span>{{info.label|trans}}</span>
 						</a>
 					</li>
