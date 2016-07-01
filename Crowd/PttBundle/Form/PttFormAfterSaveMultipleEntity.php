@@ -31,24 +31,15 @@ class PttFormAfterSaveMultipleEntity extends PttFormAfterSave
 
                     $entity = $pttHelper->entityForDataArray($entityData);
                     $form = $pttHelper->formForEntity($entity, $key);
-
-                    // if(isset($entityData['Trans'])) {
-                    //     $relatedId = $entityData['id'];
-                    //     $this->_deleteTransEntities($entityData['type'], $relatedId);
-                    //     foreach ($entityData['Trans'] as $key => $value) {
-                    //         $lang = $key;
-                    //         $data = $value;
-                    //         $type = $entityData['type'];
-                            
-                    //         $pttHelper->createTransEntities($data, $lang, $relatedId, $type);
-                    //     }
-                    // }
                     $form->setTotalData($index);
                     $form->save();
                     $ids[] = $entity->getPttId();
                     $index += 1;
-
-                    $model = $this->sentData[1]["_model"];
+                    $model = '';
+                    foreach ($this->sentData as $key => $module) {
+                        $model = $module['_model'];
+                        break; 
+                    }
                 }
             }
         }
