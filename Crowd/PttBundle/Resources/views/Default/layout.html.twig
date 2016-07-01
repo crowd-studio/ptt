@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<title>{% if page.title is defined %}{{page.title}} | {% endif %}{{info('admin').title}}</title>
+<title>{% if page.title is defined %}{{page.title | raw}} | {% endif %}{{info('admin').title | raw}}</title>
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 <link href="{{ asset('bundles/ptt/admin/css/style.css') }}" rel="stylesheet">
 <link href="{{ asset('bundles/ptt/admin/dev/vendor-static/dropzone/dropzone.css') }}" rel="stylesheet">

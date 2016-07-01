@@ -269,7 +269,7 @@ class PttController extends Controller
 
     protected function listTitle()
     {
-        return $this->get('pttTrans')->trans('list') . ' ' . strtolower($this->_entityInfoValue('plural'));
+        return $this->get('pttTrans')->trans('list') . ' ' . $this->_entityInfoValue('plural');
     }
 
     protected function afterSave($entity)
