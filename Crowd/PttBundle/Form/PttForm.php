@@ -191,7 +191,9 @@ class PttForm
 		
 		if(!$entityPrincipal->getPttId()){
 			if(method_exists($entityPrincipal, 'set_Order')){
-				$entityPrincipal->set_Order(-1);
+				if(!$entityPrincipal->get_Order()){
+					$entityPrincipal->set_Order(-1);
+				}
 			}
 		}
 

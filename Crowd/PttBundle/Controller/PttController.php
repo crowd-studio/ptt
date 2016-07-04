@@ -269,7 +269,7 @@ class PttController extends Controller
 
     protected function listTitle()
     {
-        return $this->get('pttTrans')->trans('list') . ' ' . strtolower($this->_entityInfoValue('plural'));
+        return $this->get('pttTrans')->trans('list') . ' ' . $this->_entityInfoValue('plural');
     }
 
     protected function afterSave($entity)
@@ -592,6 +592,8 @@ class PttController extends Controller
         if (!isset($info['entityConfigurationInfo'])) {
             $info['entityConfigurationInfo'] = $this->entityConfigurationInfo();
         }
+
+        $info["keymap"] = PttUtil::pttConfiguration('google')["key"];
 
         return $this->render($template, $info);
     }
