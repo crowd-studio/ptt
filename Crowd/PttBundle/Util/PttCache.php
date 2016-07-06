@@ -7,74 +7,57 @@
 
 namespace Crowd\PttBundle\Util;
 
+use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\Filesystem\Exception\IOException;
+
 class PttCache
 {
     private $_cachePath = 'tmp/cache/';
     private $_cacheExtension = '.pttCache';
     private $_key = false;
+    private $_absolutePath = '';
 
     public function __construct($key = false)
     {
+
         if ($key != false) {
             $this->_key = $key;
+            $this->_absolutePath = $this->_cachePath($key);
         }
     }
 
-    public function store($data, $dataTime = false, $key = false)
+    public function store($data)
     {
-        $key = ($key != false) ? $key : $this->_key;
-
-        if ($dataTime && $dataTime instanceof \DateTime) {
-            $timestamp = $dataTime->getTimestamp();
-        } else {
-            $timestamp = 0;
+        //Define your file path based on the cache one
+        $filename = $this->_absolutePath;
+        //Create your own folder in the cache directory
+        $fs = new Filesystem();
+        try {
+            $fs->dumpFile($filename, $this->_encrypt($data));
+        } catch (IOException $e) {
+            echo "An error occured while creating your directory";
         }
-
-        $storeData = array(
-            'time' => time(),
-            'data-time' => $timestamp,
-            'data' => serialize($data)
-        );
-
-        $path = $this->_cachePath($key);
-
-        file_put_contents($path, json_encode($storeData));
 
         return $data;
     }
 
-    public function retrieve($dataTime = false, $key = false)
+    public function retrieve()
     {
-        $key = ($key != false) ? $key : $this->_key;
-
-        $data = $this->_read($key);
-        if ($data) {
-            if ($dataTime && $dataTime instanceof \DateTime) {
-                if ($data['data-time'] >= $dataTime->getTimestamp()) {
-                    return $data['data'];
-                } else {
-                    return false;
-                }
-            } else {
-                return $data['data'];
-            }
-        } else {
-            return false;
-        }
+        $fs = new Filesystem();
+        $filename = $this->_cachePath($this->_key);
+        
+        return ($fs->exists($filename)) ? $this->_decrypt(file_get_contents($filename)) : false;
+        
     }
 
     public function remove($key = false)
     {
-        $key = ($key != false) ? $key : $this->_key;
-        $path = $this->_fileExists($key);
-        if ($path) {
-            unlink($path);
-        }
+        $fs->remove(array('files', BASE_DIR . $this->_cachePath, $this->_key . $this->_cacheExtension));
     }
 
-    public function removeAll()
+    public function removeAll($key = '')
     {
-        $files = glob(BASE_DIR . $this->_cachePath . '*'); // get all file names
+        $files = glob(BASE_DIR . $this->_cachePath . $key . '*.*'); // get all file names
         foreach($files as $file){ // iterate files
             if(is_file($file)) {
                 unlink($file); // delete file
@@ -90,8 +73,8 @@ class PttCache
     private function _read($key)
     {
         if ($this->_fileExists($key)) {
-            $data = file_get_contents($this->_cachePath($key));
-            $data = json_decode($data, true);
+            $data = file_get_contents($this->_absolutePath);
+            $data = $this->_decrypt($data);
             $data['data'] = unserialize($data['data']);
             return $data;
         } else {
@@ -111,6 +94,16 @@ class PttCache
 
     private function _cachePath($key)
     {
-        return BASE_DIR . $this->_cachePath . sha1($key) . $this->_cacheExtension;
+        return BASE_DIR . $this->_cachePath . $key . $this->_cacheExtension;
+    }
+
+    private  function _encrypt ($input) {
+        $output = base64_encode(mcrypt_encrypt(MCRYPT_RIJNDAEL_256, md5($this->_key), json_encode($input), MCRYPT_MODE_CBC, md5(md5($this->_key))));
+        return $output;
+    }
+ 
+    private  function _decrypt ($input) {
+        $output = rtrim(mcrypt_decrypt(MCRYPT_RIJNDAEL_256, md5($this->_key), base64_decode($input), MCRYPT_MODE_CBC, md5(md5($this->_key))), "\0");
+        return json_decode($output, true);
     }
 }
