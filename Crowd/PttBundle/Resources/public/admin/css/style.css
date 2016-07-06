@@ -7711,12 +7711,12 @@ html[dir="rtl"] .select2-container-multi .select2-search-choice-close {
   color: #2c3e50;
   margin: 21px 0 20px;
 }
-.wrapper .container-fluid > .row > .main .content > .nav.nav-pills {
+.wrapper .container-fluid > .row > .main .content .nav.nav-pills {
   position: absolute;
   top: 38px;
   right: 30px;
 }
-.wrapper .container-fluid > .row > .main .content > .nav.nav-pills a {
+.wrapper .container-fluid > .row > .main .content .nav.nav-pills a {
   color: #fff;
   line-height: 14px;
   background-color: #6EC346;
@@ -7724,7 +7724,7 @@ html[dir="rtl"] .select2-container-multi .select2-search-choice-close {
   font-size: 16px;
   text-transform: uppercase;
 }
-.wrapper .container-fluid > .row > .main .content > .nav.nav-pills a.btn-master {
+.wrapper .container-fluid > .row > .main .content .nav.nav-pills a.btn-master {
   background-color: #f0a005;
 }
 .wrapper .container-fluid > .row > .main .content form input {
