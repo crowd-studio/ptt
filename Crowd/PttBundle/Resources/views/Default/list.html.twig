@@ -3,8 +3,13 @@
 {% if page.title is defined %}
 	<h1>{{page.title|trans}}</h1>
 {% endif %}
-<ul class="nav nav-pills">
+
+{% if sortable %}<div class="sortable">{% endif %}
+		<ul class="nav nav-pills">
 	<li class="active">
+		{% if sortable %}
+			<a class="btn btn-sort-list btn-sort" data-order="{{'order'|trans}}" data-edit="'{{'edit'|trans}}">{{'order'|trans}}</a>
+		{% endif %}
 		{% if csvexport %}
 			<a href="{{ path(entityConfigurationInfo.entityName ~ '_csv') }}" class="btn-cancel">Exportar</a>
 		{% endif %}
@@ -36,7 +41,7 @@
 
 <ul {%if sortable %} id="sortable-with-handles" class="sortable" {% else %} class="table"{% endif %}>
 	<li class="head">
-		{%if sortable %}<span class="handle">Order</span>{% endif %}
+		{%if sortable %}<span class="handle hidden">Order</span>{% endif %}
             {% for field, title in fields %}
             <span{% if not loop.first %} class="hidden-xs"{% endif %}>{%if sortable == false %}<a href="{{ path(entityConfigurationInfo.entityName ~ '_list', {order : field}) }}">{% endif %}
             {{title}}{%if sortable == false %}</a>{% endif %}</span>
@@ -44,8 +49,8 @@
             <span class="actions">{{'actions'|trans}}</span>
 	</li>
 	{% for row in rows %}
-	        <li class="list" {%if sortable %}draggable="true" data-id="{{row.id}}"{% endif %}>
-	        	{%if sortable %}<span class="handle"></span>{% endif %}
+	        <li class="list" {%if sortable %}data-id="{{row.id}}"{% endif %}>
+	        	{%if sortable %}<span class="handle hidden"></span>{% endif %}
 
 	            {% for field, title in fields %}
 	            <span{% if not loop.first %} class="hidden-xs"{% endif %}>
@@ -73,5 +78,5 @@
 <p>{{'no_results_found'|trans}}</p>
 
 {% endif %}
-
+{% if sortable %}</div>{% endif %}
 {% endblock %}

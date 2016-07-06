@@ -171,6 +171,11 @@ define([
                 ;
             });
 
+            $('div.sortable-list').each(function(){
+                var sortableList = new SortableList({el:$(this),
+                                                    alert: true});
+            });
+
             $('ul.sortable').each(function(){
                 var sortableView = new SortableView({el:$(this),
                                                     alert: true});
@@ -849,6 +854,36 @@ define([
         },
         update: function(options){
 
+        }
+    });
+
+    var SortableList = Backbone.View.extend({
+        events : {
+            'click .btn-sort-list' : 'sort',
+        }, 
+        alert_flag: true,
+        sort: function(event){
+            var sortButton = this.$el.find('.btn.btn-sort');
+            if(!sortButton.hasClass('.btn-danger')){
+                // START SORT
+                $('.btn-create-list').addClass('hidden');
+                $('.btn-csv').addClass('hidden');
+                _.each(this.$el.find('li.list'), function(entity){
+                    var view = $(entity).backboneView();
+                    $('.handle').removeClass('hidden');
+                    $('.actions').addClass('hidden');
+                });
+            } else {
+                // END SORT
+                $('.btn-create-list').removeClass('hidden');
+                $('.btn-csv').removeClass('hidden');
+               _.each(this.$el.find('li.list'), function(entity){
+                    var view = $(entity).backboneView();
+                    $('.handle').addClass('hidden');
+                    $('.actions').removeClass('hidden');
+                });
+            }
+            sortButton.toggleClass('.btn-danger');
         }
     });
 
