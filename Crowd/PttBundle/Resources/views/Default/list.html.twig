@@ -3,75 +3,79 @@
 {% if page.title is defined %}
 	<h1>{{page.title|trans}}</h1>
 {% endif %}
-<ul class="nav nav-pills">
-	<li class="active">
-		{% if csvexport %}
-			<a href="{{ path(entityConfigurationInfo.entityName ~ '_csv') }}" class="btn-cancel">Exportar</a>
-		{% endif %}
-		<a href="{{ path(entityConfigurationInfo.entityName ~ '_create') }}">{{'create'|trans}} {{entityInfo.lowercase}}</a>
-	</li>
-</ul>
-
-{% if filters|length > 0 %}
-	<div class="well filters">
-		<form action="{{ path(entityConfigurationInfo.entityName ~ '_list') }}" method="post" name="filter-{{ entityConfigurationInfo.entityName }}" class="row" style="margin:0;padding:0;">
-		{% for key,filter in filters %}
-			{% if filter.type == 'text' %}
-				<div class="form-group col-xs-12 col-sm-12 col-md-12" style="margin:0;">
-					<label for="filter-{{ entityConfigurationInfo.entityName }}-{{ key }}">{{ filter.label }}</label>
-					<input class="form-control" type="text" id="filter-{{ entityConfigurationInfo.entityName }}-{{ key }}" name="filter-{{ entityConfigurationInfo.entityName }}-{{ key }}" placeholder="{{ filter.label }}" value="{{ filter(key, entityConfigurationInfo.entityName) }}">
-				</div>
+{% if sortable %}<div class="sortable">{% endif %}
+	<ul class="nav nav-pills">
+		<li class="active">
+			{% if sortable %}
+				<a class="btn btn-sort-list btn-sort" data-order="{{'order'|trans}}" data-edit="'{{'edit'|trans}}">{{'order'|trans}}</a>
 			{% endif %}
-		{% endfor %}
-		<div class="form-group submit col-xs-12" style="margin-top:20px;text-align:end">
-			<button type="submit" class="btn btn-save">{{'filter'|trans}}</button>
-			<a href="{{ path(entityConfigurationInfo.entityName ~ '_list', {filter:'reset'}) }}" class="btn btn-cancel">{{'reset_filters'|trans}}</a>
+			{% if csvexport %}
+				<a href="{{ path(entityConfigurationInfo.entityName ~ '_csv') }}" class="btn-cancel">Exportar</a>
+			{% endif %}
+			<a href="{{ path(entityConfigurationInfo.entityName ~ '_create') }}">{{'create'|trans}} {{entityInfo.lowercase}}</a>
+		</li>
+	</ul>
+
+	{% if filters|length > 0 %}
+		<div class="well filters">
+			<form action="{{ path(entityConfigurationInfo.entityName ~ '_list') }}" method="post" name="filter-{{ entityConfigurationInfo.entityName }}" class="row" style="margin:0;padding:0;">
+			{% for key,filter in filters %}
+				{% if filter.type == 'text' %}
+					<div class="form-group col-xs-12 col-sm-12 col-md-12" style="margin:0;">
+						<label for="filter-{{ entityConfigurationInfo.entityName }}-{{ key }}">{{ filter.label }}</label>
+						<input class="form-control" type="text" id="filter-{{ entityConfigurationInfo.entityName }}-{{ key }}" name="filter-{{ entityConfigurationInfo.entityName }}-{{ key }}" placeholder="{{ filter.label }}" value="{{ filter(key, entityConfigurationInfo.entityName) }}">
+					</div>
+				{% endif %}
+			{% endfor %}
+			<div class="form-group submit col-xs-12" style="margin-top:20px;text-align:end">
+				<button type="submit" class="btn btn-save">{{'filter'|trans}}</button>
+				<a href="{{ path(entityConfigurationInfo.entityName ~ '_list', {filter:'reset'}) }}" class="btn btn-cancel">{{'reset_filters'|trans}}</a>
+			</div>
+			</form>
 		</div>
-		</form>
-	</div>
-{% endif %}
+	{% endif %}
 
-{% if rows|length > 0 %}
+	{% if rows|length > 0 %}
 
 
-<ul {%if sortable %} id="sortable-with-handles" class="sortable" {% else %} class="table"{% endif %}>
-	<li class="head">
-		{%if sortable %}<span class="handle">Order</span>{% endif %}
-            {% for field, title in fields %}
-            <span{% if not loop.first %} class="hidden-xs"{% endif %}>{%if sortable == false %}<a href="{{ path(entityConfigurationInfo.entityName ~ '_list', {order : field}) }}">{% endif %}
-            {{title}}{%if sortable == false %}</a>{% endif %}</span>
-            {% endfor %}
-            <span class="actions">{{'actions'|trans}}</span>
-	</li>
-	{% for row in rows %}
-	        <li class="list" {%if sortable %}draggable="true" data-id="{{row.id}}"{% endif %}>
-	        	{%if sortable %}<span class="handle"></span>{% endif %}
-
+	<ul {%if sortable %} id="sortable-with-handles" class="sortable" {% else %} class="table"{% endif %}>
+		<li class="head">
+			{%if sortable %}<span class="handle hidden">Order</span>{% endif %}
 	            {% for field, title in fields %}
-	            <span{% if not loop.first %} class="hidden-xs"{% endif %}>
-	            	{% if row|dynamicValue(field).timestamp is defined %}
-	            		{{ row|dynamicValue(field).date|date("d/m/Y") }}
-	            	{% else %}
-	            		{{ row|dynamicValue(field) }}
-	            	{% endif %}</span>
+	            <span{% if not loop.first %} class="hidden-xs"{% endif %}>{%if sortable == false %}<a href="{{ path(entityConfigurationInfo.entityName ~ '_list', {order : field}) }}">{% endif %}
+	            {{title}}{%if sortable == false %}</a>{% endif %}</span>
 	            {% endfor %}
-	            <span class="actions">
-	                <div class="btn-group">
-	                    <a href="{{ path(entityConfigurationInfo.entityName ~ '_edit', {id : row.id}) }}" class="list-editar">{{'edit'|trans}}</a>
-	                    <a href="{{ path(entityConfigurationInfo.entityName ~ '_delete', {id : row.id}) }}" data-alert='{{ 'delete_the_entity_name'|trans([entityInfo.lowercase, row]) }}' class="list-eliminar">{{'delete'|trans}}</a>
-	                </div>
-	            </span>
-	        </li>
+	            <span class="actions">{{'actions'|trans}}</span>
+		</li>
+		{% for row in rows %}
+		        <li class="list" {%if sortable %}data-id="{{row.id}}"{% endif %}>
+	        	{% if sortable %}<span class="handle hidden"></span>{% endif %}
 
-	 {% endfor %}
- </ul>
+		            {% for field, title in fields %}
+		            <span{% if not loop.first %} class="hidden-xs"{% endif %}>
+		            	{% if row|dynamicValue(field).timestamp is defined %}
+		            		{{ row|dynamicValue(field).date|date("d/m/Y") }}
+		            	{% else %}
+		            		{{ row|dynamicValue(field) }}
+		            	{% endif %}</span>
+		            {% endfor %}
+		            <span class="actions">
+		                <div class="btn-group">
+		                    <a href="{{ path(entityConfigurationInfo.entityName ~ '_edit', {id : row.id}) }}" class="list-editar">{{'edit'|trans}}</a>
+		                    <a href="{{ path(entityConfigurationInfo.entityName ~ '_delete', {id : row.id}) }}" data-alert='{{ 'delete_the_entity_name'|trans([entityInfo.lowercase, row]) }}' class="list-eliminar">{{'delete'|trans}}</a>
+		                </div>
+		            </span>
+		        </li>
 
-{% include 'PttBundle:Default:pagination.html.twig' %}
+		 {% endfor %}
+	 </ul>
 
-{% else %}
+	{% include 'PttBundle:Default:pagination.html.twig' %}
 
-<p>{{'no_results_found'|trans}}</p>
+	{% else %}
 
-{% endif %}
+	<p>{{'no_results_found'|trans}}</p>
 
+	{% endif %}
+{% if sortable %}</div>{% endif %}
 {% endblock %}
