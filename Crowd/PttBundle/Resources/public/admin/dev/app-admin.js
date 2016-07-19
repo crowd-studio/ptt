@@ -171,7 +171,7 @@ define([
                 ;
             });
 
-             $('div.sortable-list').each(function(){
+            $('div.sortable-list').each(function(){
                 var sortableList = new SortableList({el:$(this),
                                                     alert: true});
             });
@@ -564,7 +564,8 @@ define([
                 $(e.currentTarget).parent().fadeOut(300, function(){
                     $(this).find('input[type="file"]').remove();
                 });
-                $(e.currentTarget).parent().find('input[type="hidden"]').val(1);
+                var href = $(e.currentTarget).parent().find('input[type="hidden"]').attr("data-id");
+                $(e.currentTarget).parent().find('input[type="hidden"]').val(href);
                 $(e.currentTarget).parent().parent().find('.upload-file-container ').removeClass('hidden');
             }
         }
@@ -845,12 +846,7 @@ define([
         url: 'order',
         updateDelay: false,
         save: function(options){
-            if(this.updateDelay) clearTimeout(this.updateDelay);
-
-            this.updateDelay = _.delay(function(){
-                Backbone.sync('update', this, options);
-            }.bind(this), 2500);
-
+            Backbone.sync('update', this, options);
         },
         update: function(options){
 
@@ -861,7 +857,9 @@ define([
         events : {
             'click .btn-sort-list' : 'sort',
         }, 
-        alert_flag: true,
+        initialize: function(options) {
+            this.sortables = new Sortables();
+        },
         sort: function(event){
             var sortButton = this.$el.find('.btn.btn-sort');
             if(!sortButton.hasClass('.btn-danger')){
@@ -882,13 +880,21 @@ define([
                     $('.handle').addClass('hidden');
                     $('.actions').removeClass('hidden');
                 });
+
+               var orderQuery = _.map(this.$el.find('li[draggable]'), function(handle, order) {
+                    return {'id': $(handle).attr('data-id'), '_order':order}
+                });
+
+               this.sortables.set(orderQuery);
+               this.sortables.save();
+
+               console.log(orderQuery);
             }
             sortButton.toggleClass('.btn-danger');
         }
     });
 
     var SortableView = Backbone.View.extend({
-        alert_flag: true,
         initialize : function(options) {
             this.$el.sortable({
                 handle: '.handle',
@@ -896,69 +902,11 @@ define([
             })
             .bind('sortupdate', this.sortupdate.bind(this));
             _.extend(this, _.pick(options));
-            this.sortables = new Sortables();
-            this.alert_flag = options.alert;
         },
         sortupdate: function(event) {
-            var orderQuery = _.map(this.$el.find('li[draggable]'), function(handle, order) {
+            _.map(this.$el.find('li[draggable]'), function(handle, order) {
                 $(handle).find('.field-order').val(order);
-                return {'id': $(handle).attr('data-id'), '_order':order}
             });
-
-            var alert_flag = this.alert_flag;
-            this.sortables.set(orderQuery);
-            this.sortables.save({
-                success: function(response){
-                    // ALERT VERD (S'HA GUARDAT)
-                    if (alert_flag) {
-                        var sortableAlert = new SortableAlert();
-                        $('.main').prepend(sortableAlert.render(response.success).$el);
-                        sortableAlert.close(3000);
-                    }
-                },
-                error: function(response){
-                    // ALERT VERMELL (NO S'HA GUARDAT)
-                    if (alert_flag) {
-                        var sortableAlert = new SortableAlert();
-                        $('.main').prepend(sortableAlert.render(false).$el);
-                        sortableAlert.close(3000);
-                    }
-                }
-            });
-        }
-    });
-
-    var SortableAlert = Backbone.View.extend ({
-        tagName: 'div',
-        className: 'alert',
-        template: '{{message}}<button type="button" class="close" data-dismiss="alert">×</button>',
-        render: function(success){
-            var message, type;
-            if (success){
-                message = 'The row order has been stored correctly.';
-                type = 'success';
-            } else {
-                message = 'Error storing the row order.';
-                type = 'danger';
-            }
-            var rendered = Mustache.to_html(this.template, {message: message});
-            this.$el
-                .addClass('alert-' + type)
-                .addClass('.fade')
-                .html(rendered);
-            return this;
-        },
-        close: function(time){
-             _.delay(function(){
-                this.$el.alert('close');
-                this.$el.on('closed.bs.alert', function (){
-                    this.destroy();
-                }.bind(this));
-            }.bind(this), time);
-        },
-        destroy: function(){
-            this.remove();
-            this.unbind();
         }
     });
 
@@ -1007,12 +955,15 @@ define([
             var value = model.options[model.selectedIndex].value;
             var text = model.options[model.selectedIndex].text;
 
+            var limit = model.getAttribute('limit');
+            console.log(limit);
+
             var desti = this.$el.find('.select-multiple-result');
             var empty = $('<option>').attr('value', '').text('-- Escoje un ' + text + ' --');
             desti.html(empty);
             $.ajax({
-                url: window.app.baseUrl + 'admin/' + value.toLowerCase() + '/last',
-                type : 'POST',
+                url: window.app.baseUrl + 'admin/' + value.toLowerCase() + '/last?limit=' + limit,
+                type : 'GET',
                 // data : $.param({limit : model.getAttribute('limit')}),
                 success : function(data) {
                     for(var i=0;i<data.length;i++){

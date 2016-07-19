@@ -80,7 +80,7 @@ class PttFormFieldTypeSelectMultiple extends PttFormFieldType
 			$dql = 'select ptt from AdminBundle:' . $model . ' ptt';
 
 	        $query = $this->em->createQuery($dql);
-	        $query->setMaxResults(10);
+	        $query->setMaxResults($this->field->options['limit']);
 	        $results = $query->getResult();
 
 	        foreach ($results as $result) {

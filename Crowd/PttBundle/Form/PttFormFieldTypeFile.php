@@ -155,7 +155,7 @@ class PttFormFieldTypeFile extends PttFormFieldType
 			<a title="' . $this->pttTrans->trans('view_in_larger_size') . '" href="' . $largeName . '" target="_blank">
 				<img src="' . $smallName . '">
 			</a>
-			<input type="hidden" name="' . $name . '" value="0">
+			<input type="hidden" name="' . $name . '" value="0" data-id="'. $this->value .'">
 			'.$delete.'
 		</div>';
 		return $html;
@@ -216,7 +216,7 @@ class PttFormFieldTypeFile extends PttFormFieldType
 		$s3 = PttUtil::pttConfiguration('s3');
 		$uploadToS3 = (isset($this->field->options['s3']) && $this->field->options['s3']) ? true : false;
 		if ($uploadToS3) {
-			return $s3['prodUrl'] . '/' . $s3['dir'] . '/';
+			return $s3['prodUrl'] . $s3['dir'] . '/';
 		} else {
 			$uploadToCDN = (isset($this->field->options['cdn']) && $this->field->options['cdn']) ? true : false;
 			if($uploadToCDN){

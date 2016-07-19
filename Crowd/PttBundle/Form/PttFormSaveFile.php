@@ -14,6 +14,7 @@ class PttFormSaveFile extends PttFormSave
 {
     public function value()
     {
+
         $files = $this->_files();
 
         if ($this->languageCode) {
@@ -24,17 +25,20 @@ class PttFormSaveFile extends PttFormSave
         if ($file) {
             $value = PttUploadFile::upload($file, $this->field);
         } else {
+
             $sentData = $this->request->get($this->entityInfo->getFormName());
             $value = $this->entityInfo->get($this->field->name, $this->languageCode);
             if ($this->languageCode) {
-                if (isset($sentData[$this->languageCode][$this->field->name . '-delete']) && $sentData[$this->languageCode][$this->field->name . '-delete'] == 1) {
+                if (isset($sentData[$this->languageCode][$this->field->name . '-delete']) && $sentData[$this->languageCode][$this->field->name . '-delete'] <> 0) {
+                    $this->_deleteFile($sentData[$this->languageCode][$this->field->name . '-delete']);
                     $value = '';
                 }
                 if (isset($sentData[$this->languageCode][$this->field->name . '-webcam']) && $sentData[$this->languageCode][$this->field->name . '-webcam'] != '') {
                     $value = $sentData[$this->languageCode][$this->field->name . '-webcam'];
                 }
             } else {
-                if (isset($sentData[$this->field->name . '-delete']) && $sentData[$this->field->name . '-delete'] == 1) {
+                if (isset($sentData[$this->field->name . '-delete']) && $sentData[$this->field->name . '-delete'] <> 1) {
+                    $this->_deleteFile($sentData[$this->field->name . '-delete']);
                     $value = '';
                 }
                 if (isset($sentData[$this->field->name . '-webcam']) && $sentData[$this->field->name . '-webcam'] != '') {
@@ -63,6 +67,11 @@ class PttFormSaveFile extends PttFormSave
         }
         
         return $value;
+    }
+
+    private function _deleteFile($name)
+    {
+        PttUploadFile::deleteFile($name);
     }
 
     private function _files()
