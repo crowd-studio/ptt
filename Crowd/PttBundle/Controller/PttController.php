@@ -228,8 +228,7 @@ class PttController extends Controller
 
     //LAST
     public function lastAction(Request $request){
-        // $limit = $request->get('limit');
-        $limit = 10;
+        $limit = $request->get('limit');
         $result = array(); 
         try {
             $objects = $this->_buildQueryLast($this->_repositoryName(), $limit);

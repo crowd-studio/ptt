@@ -155,7 +155,7 @@ class PttFormFieldTypeFile extends PttFormFieldType
 			<a title="' . $this->pttTrans->trans('view_in_larger_size') . '" href="' . $largeName . '" target="_blank">
 				<img src="' . $smallName . '">
 			</a>
-			<input type="hidden" name="' . $name . '" value="0">
+			<input type="hidden" name="' . $name . '" value="0" data-id="'. $this->value .'">
 			'.$delete.'
 		</div>';
 		return $html;

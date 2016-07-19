@@ -173,4 +173,27 @@ class PttUploadFile
         \S3::putObject(\S3::inputFile($filepath, false), $s3['bucket'], $s3['dir'] . '/' . $filename, \S3::ACL_PUBLIC_READ);
         unlink($filepath);
     }
+
+    public static function deleteFile($name)
+    {
+        $uploadToS3 = (isset($field->options['s3']) && $field->options['s3']) ? true : false;
+        $uploadToCDN = (isset($field->options['cdn']) && $field->options['cdn']) ? true : false;
+
+        if ($uploadToS3 || $uploadToCDN) {
+            PttUploadFile::_deleteS3($name);
+        } else {
+            PttUploadFile::_delete($name);
+        }
+    }
+
+    private static function _delete($name){
+        unlink(UPLOADS_DIR . $name);
+    }
+
+    private static function _deleteS3($name){
+        $s3 = PttUtil::pttConfiguration('s3');
+
+        \S3::setAuth($s3['accessKey'], $s3['secretKey']);
+        \S3::deleteObject($s3['bucket'], $s3['dir'] . '/' . $filename);
+    }
 }
