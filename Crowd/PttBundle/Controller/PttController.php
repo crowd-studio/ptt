@@ -425,7 +425,7 @@ class PttController extends Controller
     {
         $em = $this->get('doctrine')->getManager();
 
-        $dql = 'select ptt from ' . $this->_repositoryName() . ' ptt';
+        $dql = 'select ptt FROM ' . $this->_repositoryName() . ' ptt ORDER BY ptt.updateDate DESC';
 
         $query = $em->createQuery($dql);
         $query->setMaxResults($limit);
