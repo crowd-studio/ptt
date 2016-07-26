@@ -68,7 +68,7 @@ define([
                 load: function(query, callback) {
                     if (!query.length) return callback();
                     $.ajax({
-                        url: url: window.app.baseUrl + 'admin/exhibition/last-search' ,
+                        url: window.app.baseUrl + 'admin/exhibition/last-search' ,
                         type: 'GET',
                         dataType: 'jsonp',
                         data: {

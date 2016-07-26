@@ -15,15 +15,10 @@ class PttFormFieldTypeSelect extends PttFormFieldType
 
 	public function field()
 	{
-
 		if (isset($this->field->options['search']) && $this->field->options['search']){
-			if (array_key_exists('class', $this->field->options['attr'])) {
-			$this->field->options['attr']['class'] .= ' select-search';
-			} else {
-				$this->field->options['attr']['class'] = 'select-search';
-			}	
+			$this->field->options['attr'] = [];
+			$this->field->options['attr']['class'] = 'select-search';
 		}
-		
 
 		$this->multiple = (isset($this->field->options['multiple']));
 		$name = ($this->multiple) ? $this->field->getFormName($this->languageCode) . '[]' : false;
