@@ -52,41 +52,38 @@ define([
                 that.toggleSidebar();
             });
 
-            // $('.select-search').selectize({
-            //     valueField: 'title',
-            //     labelField: 'title',
-            //     searchField: 'title',
-            //     options: [],
-            //     create: false,
-            //     render: {
-            //         option: function(item, escape) {
-            //             return '<div>' +
-            //                     '<span class="name">' + escape(item.title) + '</span>' +
-            //             '</div>';
-            //         }
-            //     },
-            //     load: function(query, callback) {
-            //         var value = model.options[model.selectedIndex].value;
-            //         var model = event.target;
-            //         var limit = model.getAttribute('limit');
-            //         if (!query.length) return callback();
-            //         $.ajax({
-            //             url: url: window.app.baseUrl + 'admin/' + value.toLowerCase() + '/last-search' ,
-            //             type: 'GET',
-            //             dataType: 'jsonp',
-            //             data: {
-            //                 q: query,
-            //                 page_limit: limit
-            //             },
-            //             error: function() {
-            //                 callback();
-            //             },
-            //             success: function(res) {
-            //                 callback(res.movies);
-            //             }
-            //         });
-            //     }
-            // });
+            $('.select-search').selectize({
+                valueField: 'title',
+                labelField: 'title',
+                searchField: 'title',
+                options: [],
+                create: false,
+                render: {
+                    option: function(item, escape) {
+                        return '<div>' +
+                                '<span class="name">' + escape(item.title) + '</span>' +
+                        '</div>';
+                    }
+                },
+                load: function(query, callback) {
+                    if (!query.length) return callback();
+                    $.ajax({
+                        url: url: window.app.baseUrl + 'admin/exhibition/last-search' ,
+                        type: 'GET',
+                        dataType: 'jsonp',
+                        data: {
+                            q: query,
+                            page_limit: 30
+                        },
+                        error: function() {
+                            callback();
+                        },
+                        success: function(res) {
+                            callback(res.movies);
+                        }
+                    });
+                }
+            });
 
             $('[data-fieldtype="entity"]').each(function(){
                 var cloneMultipleEntitiesView = new CloneMultipleEntitiesView({el:$(this)});
