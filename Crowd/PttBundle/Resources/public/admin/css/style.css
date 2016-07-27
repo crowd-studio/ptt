@@ -8337,7 +8337,6 @@ div.multi-selector-container .selector-container {
 }
 .selectize-input,
 .selectize-control.single .selectize-input.input-active {
-  background: #fff;
   cursor: text;
   display: inline-block;
 }
@@ -8425,7 +8424,6 @@ div.multi-selector-container .selector-container {
   content: ' ';
   display: block;
   position: absolute;
-  background: #ffffff;
   height: 1px;
   bottom: 0;
   left: 0;
@@ -8495,7 +8493,7 @@ div.multi-selector-container .selector-container {
   display: block;
   position: absolute;
   top: 50%;
-  right: 20px;
+  right: 5px;
   margin-top: -3px;
   width: 0;
   height: 0;
@@ -8509,7 +8507,7 @@ div.multi-selector-container .selector-container {
   border-color: transparent transparent #2C3E50 transparent;
 }
 .selectize-control.rtl.single .selectize-input:after {
-  left: 20px;
+  left: 5px;
   right: auto;
 }
 .selectize-control.rtl .selectize-input > input {
@@ -8557,6 +8555,7 @@ div.multi-selector-container .selector-container {
 }
 .selectize-input {
   min-height: 43px;
+  background-color: #f8f8f8;
 }
 .selectize-input.dropdown-active {
   -webkit-border-radius: 4px;
