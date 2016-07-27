@@ -20,7 +20,7 @@ require.config({
         "sortable" : "vendor-static/html5sortable/jquery.sortable",
         "backboneView" : "vendor-static/backboneView/backboneView",
         "dropzone" : "vendor-static/dropzone/dropzone",
-        "selectize" : "vendor-static/selectize/src/selectize"
+        "selectize" : "vendor-static/selectize/src/selectize.jquery"
     },
     shim:{
         "bootstrap" : ["jquery"],
