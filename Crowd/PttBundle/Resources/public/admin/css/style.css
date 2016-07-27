@@ -8342,7 +8342,7 @@ div.multi-selector-container .selector-container {
   display: inline-block;
 }
 .selectize-input {
-  border: 1px solid #dce4ec;
+  border: 2px solid #dce4ec;
   padding: 10px 15px;
   display: inline-block;
   width: 100%;
