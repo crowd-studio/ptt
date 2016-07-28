@@ -69,6 +69,7 @@ define([
                     }
                 },
                 load: function(query, callback) {
+                    console.log('here');
                     if (!query.length) return callback();
                     $.ajax({
                         url: window.app.baseUrl + 'admin/exhibition/search' ,
@@ -78,13 +79,14 @@ define([
                             q: query,
                             page_limit: 30
                         },
-                        error: function() {
-                            callback();
-                        },
                         success: function(res) {
                             console.log('hello');
                             console.log(res);
                             callback(res);
+                        },
+                        error: function() {
+                            console.log('error');
+                            callback();
                         }
                     });
                 }
