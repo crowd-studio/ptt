@@ -45,6 +45,9 @@ class PttFormFieldTypeSelect extends PttFormFieldType
 
 	protected function extraAttrsForField()
 	{
+		if (isset($this->field->options['search']) && $this->field->options['search']){
+			return array('data-model' => $this->field->options['entity']);
+		}
 
 		if ($this->multiple) {
 			$label = (isset($this->field->options['empty'])) ? $this->field->options['empty'] : false;

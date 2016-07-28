@@ -53,6 +53,7 @@ define([
             });
 
             $('.select-search').each(function(){
+                var model = $(this).attr('data-model').toLowerCase();
                 el:$(this).selectize({
                 valueField: 'title',
                 labelField: 'title',
@@ -72,20 +73,17 @@ define([
                     console.log('here');
                     if (!query.length) return callback();
                     $.ajax({
-                        url: window.app.baseUrl + 'admin/exhibition/search' ,
+                        url: window.app.baseUrl + 'admin/' + model + '/search' ,
                         type: 'GET',
-                        dataType: 'jsonp',
+                        dataType: 'json',
                         data: {
                             q: query,
                             page_limit: 30
                         },
                         success: function(res) {
-                            console.log('hello');
-                            console.log(res);
                             callback(res);
                         },
                         error: function() {
-                            console.log('error');
                             callback();
                         }
                     });
