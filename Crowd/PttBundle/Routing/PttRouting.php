@@ -94,6 +94,10 @@ class PttRouting
 					    '_controller' => $bundleName . ':' . $name . ':last',
 					)));
 
+					$collection->add($nameLower . '_search', new Route($routePrefix . '/search/', array(
+					    '_controller' => $bundleName . ':' . $name . ':search',
+					)));
+
 					$collection->add($nameLower . '_csv', new Route($routePrefix . '/export-csv/', array(
 					    '_controller' => $bundleName . ':' . $name . ':csv',
 					)));

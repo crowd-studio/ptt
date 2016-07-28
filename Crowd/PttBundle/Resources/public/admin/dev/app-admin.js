@@ -69,7 +69,7 @@ define([
                 load: function(query, callback) {
                     if (!query.length) return callback();
                         $.ajax({
-                            url: window.app.baseUrl + 'admin/exhibition/last-search' ,
+                            url: window.app.baseUrl + 'admin/exhibition/search' ,
                             type: 'GET',
                             dataType: 'jsonp',
                             data: {
@@ -80,6 +80,7 @@ define([
                                 callback();
                             },
                             success: function(res) {
+                                console.log(res);
                                 callback(res.movies);
                             }
                         });
