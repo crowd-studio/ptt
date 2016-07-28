@@ -62,29 +62,32 @@ define([
                 render: {
                     option: function(item, escape) {
                         return '<div>' +
-                                '<span class="name">' + escape(item.title) + '</span>' +
+                                '<span class="title">' +
+                                    '<span class="name">' + escape(item.title) + '</span>' +
+                                '</span>' +
                         '</div>';
                     }
                 },
                 load: function(query, callback) {
                     if (!query.length) return callback();
-                        $.ajax({
-                            url: window.app.baseUrl + 'admin/exhibition/search' ,
-                            type: 'GET',
-                            dataType: 'jsonp',
-                            data: {
-                                q: query,
-                                page_limit: 30
-                            },
-                            error: function() {
-                                callback();
-                            },
-                            success: function(res) {
-                                console.log(res);
-                                callback(res.movies);
-                            }
-                        });
-                    }
+                    $.ajax({
+                        url: window.app.baseUrl + 'admin/exhibition/search' ,
+                        type: 'GET',
+                        dataType: 'jsonp',
+                        data: {
+                            q: query,
+                            page_limit: 30
+                        },
+                        error: function() {
+                            callback();
+                        },
+                        success: function(res) {
+                            console.log('hello');
+                            console.log(res);
+                            callback(res);
+                        }
+                    });
+                }
                 });
             });
                 
