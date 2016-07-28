@@ -246,7 +246,7 @@ class PttController extends Controller
         $query = $request->get('q');
         $result = array(); 
         try {
-            $objects = _buildQuery($this->_repositoryName(), ['title' => $query], ['title', 'asc'], $limit, 0, 0);
+            $objects = $this->_buildQuery($this->_repositoryName(), ['title' => $query], ['title', 'asc'], $limit, 0, 0);
             foreach ($objects as $object) {
                 $result[] = array('id' => $object->getId(), 'title' => $object->getTitle());
             }
