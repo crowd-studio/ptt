@@ -66,6 +66,7 @@ define([
                                 '<span class="title">' +
                                     '<span class="name">' + escape(item.title) + '</span>' +
                                 '</span>' +
+                                '<span class="id">' + escape(item.id) + '</span>' +
                         '</div>';
                     }
                 },
@@ -240,12 +241,50 @@ define([
             });
 
             $.each($('.select-multiple'), function(element){
-                var selectMultiple = new SelectMultiple({el:$(this)});
-            });
 
-            $.each($('.nav-tabs'), function(element){
-                var tab = new Tab({el:$(this)});
-            });
+                var selectMultiple = new SelectMultiple({el:$(this)});
+            
+            //     var xhr;
+            //     var select_state, $select_state;
+            //     var select_city, $select_city;
+
+            //     $select_state = el:$(this).selectize({
+            //         onChange: function(value) {
+            //             if (!value.length) return;
+            //             select_city.disable();
+            //             select_city.clearOptions();
+            //             select_city.load(function(callback) {
+            //                 xhr && xhr.abort();
+            //                 xhr = $.ajax({
+            //                     url: 'https://jsonp.afeld.me/?url=http://api.sba.gov/geodata/primary_city_links_for_state_of/' + value + '.json',
+            //                     success: function(results) {
+            //                         select_city.enable();
+            //                         callback(results);
+            //                     },
+            //                     error: function() {
+            //                         callback();
+            //                     }
+            //                 })
+            //             });
+            //         }
+            //     });
+
+            //     $select_city = $('.select-multiple-result').selectize({
+            //         valueField: 'name',
+            //         labelField: 'name',
+            //         searchField: ['name']
+            //     });
+
+            //     select_city  = $select_city[0].selectize;
+            //     select_state = $select_state[0].selectize;
+
+            //     select_city.disable();
+
+            // });
+
+            // $.each($('.nav-tabs'), function(element){
+            //     var tab = new Tab({el:$(this)});
+            // });
 
 
         },
