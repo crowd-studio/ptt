@@ -95,6 +95,7 @@ define([
                 }
                 });
                 that.parent().find('input').val(title);
+                that.parent().find('input').attr('value', id);
             });
                 
 
