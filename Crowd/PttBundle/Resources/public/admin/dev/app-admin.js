@@ -54,6 +54,9 @@ define([
 
             $('.select-search').each(function(){
                 var model = $(this).attr('data-model').toLowerCase();
+                var id = $(this).attr('value');
+                var title = $(this).attr('data-title');
+                var that = $(this);
                 el:$(this).selectize({
                 valueField: 'id',
                 labelField: 'title',
@@ -91,6 +94,7 @@ define([
                     });
                 }
                 });
+                that.parent().find('input').val(title);
             });
                 
 

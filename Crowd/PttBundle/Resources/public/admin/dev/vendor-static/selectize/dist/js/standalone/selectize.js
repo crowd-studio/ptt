@@ -3470,10 +3470,10 @@
 	
 				var $control = self.$control.sortable({
 					items: '[data-value]',
-					forcePlaceholderSize: true,
+					forcePlaceholderSize: false,
 					disabled: self.isLocked,
 					start: function(e, ui) {
-						ui.placeholder.css('width', ui.helper.css('width'));
+						//ui.placeholder.css('width', ui.helper.css('width'));
 						$control.css({overflow: 'visible'});
 					},
 					stop: function() {
