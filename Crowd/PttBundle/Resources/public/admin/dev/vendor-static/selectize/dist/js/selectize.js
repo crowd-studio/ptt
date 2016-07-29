@@ -1126,7 +1126,7 @@
 					}
 				});
 			} else {
-				value = $target.attr('data-value');
+				value = $target.attr('data');
 				if (typeof value !== 'undefined') {
 					self.lastQuery = null;
 					self.setTextboxValue('');
@@ -1491,7 +1491,7 @@
 			var query             = $.trim(self.$control_input.val());
 			var results           = self.search(query);
 			var $dropdown_content = self.$dropdown_content;
-			var active_before     = self.$activeOption && hash_key(self.$activeOption.attr('data-value'));
+			var active_before     = self.$activeOption && hash_key(self.$activeOption.attr('data'));
 	
 			// build markup
 			n = results.items.length;
@@ -1836,7 +1836,7 @@
 	
 			if (typeof value !== 'undefined' && value !== null) {
 				for (var i = 0, n = $els.length; i < n; i++) {
-					if ($els[i].getAttribute('data-value') === value) {
+					if ($els[i].getAttribute('data') === value) {
 						return $($els[i]);
 					}
 				}
@@ -1911,7 +1911,7 @@
 					// update menu / remove the option (if this is not one item being added as part of series)
 					if (!self.isPending) {
 						$option = self.getOption(value);
-						value_next = self.getAdjacentOption($option, 1).attr('data-value');
+						value_next = self.getAdjacentOption($option, 1).attr('data');
 						self.refreshOptions(self.isFocused && inputMode !== 'single');
 						if (value_next) {
 							self.setActiveOption(self.getOption(value_next));
@@ -1943,7 +1943,7 @@
 			var $item, i, idx;
 	
 			$item = (value instanceof $) ? value : self.getItem(value);
-			value = hash_key($item.attr('data-value'));
+			value = hash_key($item.attr('data'));
 			i = self.items.indexOf(value);
 	
 			if (i !== -1) {
@@ -2246,7 +2246,7 @@
 			selection = getSelection(self.$control_input[0]);
 	
 			if (self.$activeOption && !self.settings.hideSelected) {
-				option_select = self.getAdjacentOption(self.$activeOption, -1).attr('data-value');
+				option_select = self.getAdjacentOption(self.$activeOption, -1).attr('data');
 			}
 	
 			// determine items that will be removed
@@ -2258,7 +2258,7 @@
 				if (direction > 0) { caret++; }
 	
 				for (i = 0, n = self.$activeItems.length; i < n; i++) {
-					values.push($(self.$activeItems[i]).attr('data-value'));
+					values.push($(self.$activeItems[i]).attr('data'));
 				}
 				if (e) {
 					e.preventDefault();
@@ -2513,7 +2513,7 @@
 				html.attr('data-group', id);
 			}
 			if (templateName === 'option' || templateName === 'item') {
-				html.attr('data-value', value || '');
+				html.attr('data', value || '');
 			}
 	
 			// update cache
@@ -2833,7 +2833,7 @@
 				original.apply(this, arguments);
 	
 				var $control = self.$control.sortable({
-					items: '[data-value]',
+					items: '[data]',
 					forcePlaceholderSize: true,
 					disabled: self.isLocked,
 					start: function(e, ui) {
@@ -2844,8 +2844,8 @@
 						$control.css({overflow: 'hidden'});
 						var active = self.$activeItems ? self.$activeItems.slice() : null;
 						var values = [];
-						$control.children('[data-value]').each(function() {
-							values.push($(this).attr('data-value'));
+						$control.children('[data]').each(function() {
+							values.push($(this).attr('data'));
 						});
 						self.setValue(values);
 						self.setActiveItem(active);
