@@ -280,11 +280,12 @@ define([
 
             //     select_city.disable();
 
-            // });
+           });
 
-            // $.each($('.nav-tabs'), function(element){
-            //     var tab = new Tab({el:$(this)});
-            // });
+             $.each($('.nav-tabs'), function(element){
+                var tab = new Tab({el:$(this)});
+            
+            });
 
 
         },
