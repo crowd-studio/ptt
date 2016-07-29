@@ -66,7 +66,7 @@ define([
                                 '<span class="title">' +
                                     '<span class="name">' + escape(item.title) + '</span>' +
                                 '</span>' +
-                                '<span class="id">' + escape(item.id) + '</span>' +
+                                '<span class="id">' + item.id + '</span>' +
                         '</div>';
                     }
                 },
