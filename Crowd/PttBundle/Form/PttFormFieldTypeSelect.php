@@ -26,15 +26,16 @@ class PttFormFieldTypeSelect extends PttFormFieldType
 		$html = $this->start();
 		$html .= $this->label();
 
-		if (!isset($this->field->options['search']) || !$this->field->options['search']){
-			$htmlField = '<select ';
-			$htmlField .= $this->attributes(false, $name);
-			$htmlField .= '>';
-		}
 
-		$type = '_' . $this->field->options['type'];
-		if (method_exists($this, $type)) {
-			$htmlField .= $this->{$type}();
+		$htmlField = '<select ';
+		$htmlField .= $this->attributes(false, $name);
+		$htmlField .= '>';
+
+		if (!isset($this->field->options['search']) || !$this->field->options['search']){
+			$type = '_' . $this->field->options['type'];
+			if (method_exists($this, $type)) {
+				$htmlField .= $this->{$type}();
+			}
 		}
 
 		$htmlField .= '</select>';
