@@ -71,7 +71,6 @@ define([
                     }
                 },
                 load: function(query, callback) {
-                    console.log('here');
                     if (!query.length) return callback();
                     $.ajax({
                         url: window.app.baseUrl + 'admin/' + model + '/search' ,
@@ -82,6 +81,7 @@ define([
                             page_limit: 30
                         },
                         success: function(res) {
+                            console.log(res);
                             callback(res);
                         },
                         error: function() {
