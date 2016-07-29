@@ -55,7 +55,7 @@ define([
             $('.select-search').each(function(){
                 var model = $(this).attr('data-model').toLowerCase();
                 el:$(this).selectize({
-                valueField: 'title',
+                valueField: 'id',
                 labelField: 'title',
                 searchField: 'title',
                 options: [],
@@ -67,7 +67,7 @@ define([
                                 '<span class="title">' +
                                     '<span class="name">' + escape(item.title) + '</span>' +
                                 '</span>' +
-                                '<span class="id">' + item.id + '</span>' +
+                                '<span class="id hidden">' + item.id + '</span>' +
                         '</div>';
                     }
                 },
