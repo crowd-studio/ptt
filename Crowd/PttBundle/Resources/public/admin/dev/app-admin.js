@@ -62,6 +62,7 @@ define([
                 create: false,
                 render: {
                     option: function(item, escape) {
+                        console.log(item);
                         return '<div>' +
                                 '<span class="title">' +
                                     '<span class="name">' + escape(item.title) + '</span>' +
