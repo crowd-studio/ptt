@@ -1068,12 +1068,12 @@
 				value = placeholder;
 			}
 	
-			width = measureString(value, $input) + 4;
-			if (width !== currentWidth) {
-				currentWidth = width;
-				$input.width(width);
-				$input.triggerHandler('resize');
-			}
+			// width = measureString(value, $input) + 4;
+			// if (width !== currentWidth) {
+			// 	currentWidth = width;
+			// 	$input.width(width);
+			// 	$input.triggerHandler('resize');
+			// }
 		};
 	
 		$input.on('keydown keyup update blur', update);
