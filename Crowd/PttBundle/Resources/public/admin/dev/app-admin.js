@@ -57,7 +57,7 @@ define([
                 var id = $(this).attr('value');
                 var title = $(this).attr('data-title');
                 var that = $(this);
-                el:$(this).selectize({
+                var field = that.selectize({
                 valueField: 'id',
                 labelField: 'title',
                 searchField: 'title',
