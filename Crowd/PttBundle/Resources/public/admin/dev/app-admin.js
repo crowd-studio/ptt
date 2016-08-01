@@ -94,8 +94,18 @@ define([
                     });
                 }
                 });
+
+                var selectize = field[0].selectize;
+                selectize.addOption(title);
+                selectize.setValue(id);
+                
                 that.parent().find('input').val(title);
                 that.parent().find('input').attr('value', id);
+                
+                // Omplim el valor si ja tenia guardat a la BBDD
+                if(id > -1){
+                    $(field[0]).find('option').val(id);
+                }
             });
                 
 

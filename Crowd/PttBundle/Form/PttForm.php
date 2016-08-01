@@ -166,7 +166,7 @@ class PttForm
 
 	public function save()
 	{
-		$this->_updateSentData();
+		$this->_updateModuleSentData();
 		$this->_performFieldsLoopAndCallMethodNamed('_saveForField', true);	
 
 		if ($this->entityInfo->hasMethod('setTitle') && $this->entityInfo->hasMethod('getTitle')) {
@@ -367,6 +367,41 @@ class PttForm
 		} else {
 			$this->sentData = $this->request->get($this->entityInfo->getFormName());
 			$transEntity = array();
+		}
+	}
+
+	private function _updateModuleSentData()
+	{
+		if (strpos($this->entityInfo->getFormName(), '[') !== false) {
+			$cleanName = str_replace(']', '', $this->entityInfo->getFormName());
+
+			$cleanNameArr = explode('[', $cleanName);
+			$i = 0;
+			$sentData = array();
+
+			foreach ($cleanNameArr as $key) {
+				if ($i == 0) {
+					$sentData = $this->request->get($key);
+				} else {
+					if (isset($sentData[$key])) {
+						$sentData = $sentData[$key];
+					}
+				}
+				$i++;
+			}
+			$this->sentData = $sentData;
+
+			$transEntity = array();
+			if ($this->languages) {
+				foreach ($this->languages as $languageCode => $languageTitle) {
+					$entityTrans = $this->entityInfo->getFormName() . '[Trans]';
+					$aux = $this->request->get($entityTrans);
+					if(isset($aux)){
+						$transEntity[$languageCode] = reset($aux);
+					}
+				}
+			}
+			$this->sentDataTrans = $transEntity;
 		}
 	}
 
