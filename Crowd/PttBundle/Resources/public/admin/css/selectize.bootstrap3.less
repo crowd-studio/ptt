@@ -131,3 +131,23 @@
 	background: none;
 	.selectize-border-radius(0);
 }
+
+.selectize-control.select-search::before {
+	-moz-transition: opacity 0.2s;
+	-webkit-transition: opacity 0.2s;
+	transition: opacity 0.2s;
+	content: ' ';
+	z-index: 2;
+	position: absolute;
+	display: block;
+	top: 12px;
+	right: 34px;
+	width: 16px;
+	height: 16px;
+	background: url(http://www.freeiconspng.com/uploads/spinner-icon-0.gif);
+	background-size: 16px 16px;
+	opacity: 0;
+}
+.selectize-control.select-search.loading::before {
+	opacity: 0.4;
+}
