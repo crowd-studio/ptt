@@ -17,7 +17,7 @@ class PttFormFieldTypeSelect extends PttFormFieldType
 	public function field()
 	{
 		$this->search = (isset($this->field->options['search']) && $this->field->options['search']);
-		if ($search){
+		if ($this->search){
 			$this->field->options['attr'] = [];
 			$this->field->options['attr']['class'] = 'select-search';
 		}
@@ -51,7 +51,7 @@ class PttFormFieldTypeSelect extends PttFormFieldType
 
 		$htmlField .= '</select>';
 
-		if($search){
+		if($this->search){
 			$htmlField .= '<p class="help-block">Type whatever you want to search in database</p>';
 		}
 		
