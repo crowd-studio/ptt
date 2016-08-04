@@ -188,14 +188,20 @@ class PttUploadFile
     }
 
     private static function _delete($name){
-        unlink(UPLOADS_DIR . $name);
+        try {
+            foreach (glob(UPLOADS_DIR . "*-". $name) as $filename) {
+                unlink($filename);
+            }
+        } catch (Exception $e) {
+            
+        }
     }
 
     private static function _deleteS3($name){
-        $s3 = PttUtil::pttConfiguration('s3');
+        // $s3 = PttUtil::pttConfiguration('s3');
 
-        \S3::setAuth($s3['accessKey'], $s3['secretKey']);
-        \S3::deleteObject($s3['bucket'], $s3['dir'] . '/' . $filename);
+        // \S3::setAuth($s3['accessKey'], $s3['secretKey']);
+        // \S3::deleteObject($s3['bucket'], $s3['dir'] . '/' . $filename);
     }
 
 

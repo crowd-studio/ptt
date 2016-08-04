@@ -29,7 +29,7 @@ class PttFormSaveFile extends PttFormSave
             $sentData = $this->request->get($this->entityInfo->getFormName());
             $value = $this->entityInfo->get($this->field->name, $this->languageCode);
             if ($this->languageCode) {
-                if (isset($sentData[$this->languageCode][$this->field->name . '-delete']) && $sentData[$this->languageCode][$this->field->name . '-delete'] <> 0) {
+                if (isset($sentData[$this->languageCode][$this->field->name . '-delete']) && $sentData[$this->languageCode][$this->field->name . '-delete'] != '0') {
                     $this->_deleteFile($sentData[$this->languageCode][$this->field->name . '-delete']);
                     $value = '';
                 }
@@ -37,7 +37,7 @@ class PttFormSaveFile extends PttFormSave
                     $value = $sentData[$this->languageCode][$this->field->name . '-webcam'];
                 }
             } else {
-                if (isset($sentData[$this->field->name . '-delete']) && $sentData[$this->field->name . '-delete'] <> 1) {
+                if (isset($sentData[$this->field->name . '-delete']) && $sentData[$this->field->name . '-delete'] != '0') {
                     $this->_deleteFile($sentData[$this->field->name . '-delete']);
                     $value = '';
                 }
