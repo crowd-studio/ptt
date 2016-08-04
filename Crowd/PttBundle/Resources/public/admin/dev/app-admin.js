@@ -54,7 +54,10 @@ define([
 
             $('.select-search').each(function(){
                 var model = $(this).attr('data-model').toLowerCase();
-                el:$(this).selectize({
+                var id = $(this).attr('value');
+                var title = $(this).attr('data-title');
+                var that = $(this);
+                var field = that.selectize({
                 valueField: 'id',
                 labelField: 'title',
                 searchField: 'title',
@@ -89,6 +92,12 @@ define([
                     });
                 }
                 });
+
+                // Informem el valor guardat a la BBDD
+                if(id != "" && parseInt(id) > -1){ 
+                    that.parent().find('input').val(title);
+                    $(field[0]).find('option').val(id);
+                }
             });
             
             $('[data-fieldtype="entity"]').each(function(){

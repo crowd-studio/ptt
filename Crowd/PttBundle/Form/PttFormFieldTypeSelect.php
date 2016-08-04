@@ -12,10 +12,12 @@ use Crowd\PttBundle\Util\PttUtil;
 class PttFormFieldTypeSelect extends PttFormFieldType
 {
 	private $multiple;
+	private $search;
 
 	public function field()
 	{
-		if (isset($this->field->options['search']) && $this->field->options['search']){
+		$this->search = (isset($this->field->options['search']) && $this->field->options['search']);
+		if ($this->search){
 			$this->field->options['attr'] = [];
 			$this->field->options['attr']['class'] = 'select-search';
 		}
@@ -28,9 +30,18 @@ class PttFormFieldTypeSelect extends PttFormFieldType
 
 		$htmlField = '<select ';
 		$htmlField .= $this->attributes(false, $name);
+		if ($this->search){
+			$this->field->options['filterBy'] = ['id' => $this->value];
+			$entity = $this->_entities();
+			if ($this->value > 0) {
+				$htmlField .= ' data-title="' . $entity[0]->getTitle() . '"';
+			}
+			
+			$htmlField .= ' value="' . $this->value . '"';
+		}
 		$htmlField .= '>';
 
-		if (!isset($this->field->options['search']) || !$this->field->options['search']){
+		if (!$this->search){
 			$type = '_' . $this->field->options['type'];
 			if (method_exists($this, $type)) {
 				$htmlField .= $this->{$type}();
@@ -38,6 +49,10 @@ class PttFormFieldTypeSelect extends PttFormFieldType
 		}
 
 		$htmlField .= '</select>';
+
+		if($search){
+			$htmlField .= '<p class="help-block">Type whatever you want to search in database</p>';
+		}
 
 		$html .= $htmlField;
 		$html .= $this->end();
@@ -47,7 +62,7 @@ class PttFormFieldTypeSelect extends PttFormFieldType
 
 	protected function extraAttrsForField()
 	{
-		if (isset($this->field->options['search']) && $this->field->options['search']){
+		if ($this->search){
 			return array('data-model' => $this->field->options['entity']);
 		}
 

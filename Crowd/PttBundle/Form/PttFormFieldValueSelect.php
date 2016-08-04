@@ -22,7 +22,16 @@ class PttFormFieldValueSelect extends PttFormFieldValue
             }
         } else {
             if ($this->field->mapped) {
-                return $this->entityInfo->get($this->field->name, $this->languageCode);
+                if(isset($this->field->options['search']) && $this->field->options['search']){
+                    if($this->entityInfo->get($this->field->name, $this->languageCode) != ''){
+                        return $this->entityInfo->get($this->field->name, $this->languageCode);
+                    } else {
+                        return null;
+                    }
+                } else {
+                    return $this->entityInfo->get($this->field->name, $this->languageCode);    
+                }
+
             } else {
                 return null;
             }
