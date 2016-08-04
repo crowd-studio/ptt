@@ -19,8 +19,8 @@ require.config({
         "select2-es" : "vendor/select2/select2_locale_es",
         "sortable" : "vendor-static/html5sortable/jquery.sortable",
         "backboneView" : "vendor-static/backboneView/backboneView",
-        "dropzone" : "vendor-static/dropzone/dropzone"
-
+        "dropzone" : "vendor-static/dropzone/dropzone",
+        "selectize" : "vendor-static/selectize/src/selectize.jquery"
     },
     shim:{
         "bootstrap" : ["jquery"],

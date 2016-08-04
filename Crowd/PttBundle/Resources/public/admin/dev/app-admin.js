@@ -18,7 +18,8 @@ define([
     "select2-es",
     "sortable",
     "backboneView",
-    "dropzone"
+    "dropzone",
+    "selectize"
 ], function($, globals, Backbone, _, Mustache, uploadFileTemplate, moment){
 
     window.app = {
@@ -51,6 +52,45 @@ define([
                 that.toggleSidebar();
             });
 
+            $('.select-search').each(function(){
+                var model = $(this).attr('data-model').toLowerCase();
+                el:$(this).selectize({
+                valueField: 'id',
+                labelField: 'title',
+                searchField: 'title',
+                options: [],
+                create: false,
+                render: {
+                    option: function(item, escape) {
+                        return '<div>' +
+                                '<span class="title">' +
+                                    '<span class="name">' + escape(item.title) + '</span>' +
+                                '</span>' +
+                                '<span class="id hidden">' + item.id + '</span>' +
+                        '</div>';
+                    }
+                },
+                load: function(query, callback) {
+                    if (!query.length) return callback();
+                    $.ajax({
+                        url: window.app.baseUrl + 'admin/' + model + '/search' ,
+                        type: 'GET',
+                        dataType: 'json',
+                        data: {
+                            q: query,
+                            page_limit: 30
+                        },
+                        success: function(res) {
+                            callback(res);
+                        },
+                        error: function() {
+                            callback();
+                        }
+                    });
+                }
+                });
+            });
+            
             $('[data-fieldtype="entity"]').each(function(){
                 var cloneMultipleEntitiesView = new CloneMultipleEntitiesView({el:$(this)});
             });

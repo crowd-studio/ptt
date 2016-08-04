@@ -15,6 +15,10 @@ class PttFormFieldTypeSelect extends PttFormFieldType
 
 	public function field()
 	{
+		if (isset($this->field->options['search']) && $this->field->options['search']){
+			$this->field->options['attr'] = [];
+			$this->field->options['attr']['class'] = 'select-search';
+		}
 
 		$this->multiple = (isset($this->field->options['multiple']));
 		$name = ($this->multiple) ? $this->field->getFormName($this->languageCode) . '[]' : false;
@@ -26,9 +30,11 @@ class PttFormFieldTypeSelect extends PttFormFieldType
 		$htmlField .= $this->attributes(false, $name);
 		$htmlField .= '>';
 
-		$type = '_' . $this->field->options['type'];
-		if (method_exists($this, $type)) {
-			$htmlField .= $this->{$type}();
+		if (!isset($this->field->options['search']) || !$this->field->options['search']){
+			$type = '_' . $this->field->options['type'];
+			if (method_exists($this, $type)) {
+				$htmlField .= $this->{$type}();
+			}
 		}
 
 		$htmlField .= '</select>';
@@ -41,6 +47,10 @@ class PttFormFieldTypeSelect extends PttFormFieldType
 
 	protected function extraAttrsForField()
 	{
+		if (isset($this->field->options['search']) && $this->field->options['search']){
+			return array('data-model' => $this->field->options['entity']);
+		}
+
 		if ($this->multiple) {
 			$label = (isset($this->field->options['empty'])) ? $this->field->options['empty'] : false;
 			if ($label) {
