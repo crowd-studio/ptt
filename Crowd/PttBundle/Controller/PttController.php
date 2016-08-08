@@ -195,6 +195,7 @@ class PttController extends Controller
 
     }
 
+    //COPY
     public function copyAction(Request $request, $id){
         $em = $this->get('doctrine')->getManager();
         $entity = $em->getRepository($this->_repositoryName())->find($id);

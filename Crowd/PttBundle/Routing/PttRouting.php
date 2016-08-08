@@ -102,7 +102,7 @@ class PttRouting
 					    '_controller' => $bundleName . ':' . $name . ':csv',
 					)));
 
-					$collection->add($nameLower . '_copy', new Route($routePrefix . '/copy/', array(
+					$collection->add($nameLower . '_copy', new Route($routePrefix . '/copy/{id}', array(
 					    '_controller' => $bundleName . ':' . $name . ':copy',
 					)));
 		    	}
