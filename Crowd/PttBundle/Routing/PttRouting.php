@@ -86,6 +86,10 @@ class PttRouting
 					    '_controller' => $bundleName . ':' . $name . ':delete',
 					)));
 
+					$collection->add($nameLower . '_copy', new Route($routePrefix . '/copy/{id}', array(
+					    '_controller' => $bundleName . ':' . $name . ':copy',
+					)));
+
 					$collection->add($nameLower . '_order', new Route($routePrefix . '/order/', array(
 					    '_controller' => $bundleName . ':' . $name . ':order',
 					)));

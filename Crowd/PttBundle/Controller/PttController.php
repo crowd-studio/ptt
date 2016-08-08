@@ -75,7 +75,8 @@ class PttController extends Controller
                 'title' => $this->listTitle()
                 ),
             'sortable' => $this->isSortable(),
-            'csvexport' => $this->isCsvExport()
+            'csvexport' => $this->isCsvExport(),
+            'copy' => $this->isCopy()
             ));
     }
 
@@ -194,6 +195,18 @@ class PttController extends Controller
 
     }
 
+    //COPY
+    public function copyAction(Request $request, $id){
+        $em = $this->get('doctrine')->getManager();
+        $entity = $em->getRepository($this->_repositoryName())->find($id);
+        if ($entity == null) {
+            throw $this->createNotFoundException('The ' . $this->_entityInfoValue('lowercase') . ' does not exist');
+
+        $entityB = copy $entity;
+        $em->persist($entityB);
+        $em->flush();
+    }
+
     //ORDER
     public function orderAction(Request $request){
         if ($request->getMethod() == 'PUT') {
@@ -277,6 +290,10 @@ class PttController extends Controller
 
     protected function isCsvExport(){
         return method_exists($this->_initEntity(), "getCsvExport");
+    }
+
+    protected function isCopy(){
+        return method_exists($this->_initEntity(), "getCopy");
     }
 
     protected function listTitle(){
