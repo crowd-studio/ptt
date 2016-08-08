@@ -101,6 +101,10 @@ class PttRouting
 					$collection->add($nameLower . '_csv', new Route($routePrefix . '/export-csv/', array(
 					    '_controller' => $bundleName . ':' . $name . ':csv',
 					)));
+
+					$collection->add($nameLower . '_copy', new Route($routePrefix . '/copy/', array(
+					    '_controller' => $bundleName . ':' . $name . ':copy',
+					)));
 		    	}
 		    }
 		}
