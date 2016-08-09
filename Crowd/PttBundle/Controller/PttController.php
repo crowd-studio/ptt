@@ -196,15 +196,22 @@ class PttController extends Controller
     }
 
     //COPY
-    public function copyAction(Request $request, $id){
+    public function copyAction(Request $request){
+        $title = $request->get('title');
+        $id = $request->get('id');
+
         $em = $this->get('doctrine')->getManager();
         $entity = $em->getRepository($this->_repositoryName())->find($id);
         if ($entity == null) {
             throw $this->createNotFoundException('The ' . $this->_entityInfoValue('lowercase') . ' does not exist');
+        }
+        $entityB = clone $entity;
 
-        $entityB = copy $entity;
+        $entityB->setTitle($title);
         $em->persist($entityB);
         $em->flush();
+
+        return $this->redirect($this->generateUrl($this->urlPath() . '_list'));
     }
 
     //ORDER

@@ -101,7 +101,10 @@ define([
                     $(field[0]).find('option').val(id);
                 }
             });
-                
+
+            $('a.list-copiar').each(function(){
+                var copiarActionView = new CopiarActionView({el:$(this)});
+            });
 
             $('[data-fieldtype="entity"]').each(function(){
                 var cloneMultipleEntitiesView = new CloneMultipleEntitiesView({el:$(this)});
@@ -320,6 +323,19 @@ define([
             }
         }
     };
+
+    var CopiarActionView = Backbone.View.extend({
+        events : {
+            'click' : 'copy'
+        },
+        copy : function(e){
+            var id = this.$el[0].attributes["data-id"]["value"];
+            console.log(id);
+
+            var modal = $(".modal-body #id");
+            modal[0].value = id;
+        }
+    });
 
     var MarkdownView = Backbone.View.extend({
         events : {
