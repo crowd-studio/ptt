@@ -214,11 +214,34 @@ class PttController extends Controller
                 $entityB->set_Order(-1);
             }
 
-            var_dump($entityB->getPttId());
+
             $em->persist($entityB);
+            $em->flush(); // Fem flush per obtenir el nou id
 
-            var_dump($entityB->getPttId());
+            if(method_exists($entityB, "getCopy")){
+                foreach ($entity->getCopy() as $label => $type) {
+                    switch ($type) {
+                        case 'file':
+                            # code...
+                            break;
+                        
+                        default:
+                            $findBy = 'findBy' . ucfirst($type);
+                            $set = 'set' . ucfirst($type);
+                            $related = $em->getRepository($this->_bundle() . ':' . $label)->$findBy($id);
+                            foreach ($related as $key => $value) {
+                                $relatedEntity = clone $value;
+                                $relatedEntity->$set($entityB->getPttId());
+                                $em->persist($relatedEntity);
+                            }
+                            break;
+                    }
+                }
+            }
 
+            $em->flush();
+
+            // Copiem les entitats traduibles FALTA PROVAR!
             $transClassName = $this->_className() . 'Trans';
             if (class_exists($transClassName)) {
                 $trans = $em->getRepository($this->_bundle() . ':' . $transClassName)->findByRelatedId($id);
@@ -229,7 +252,6 @@ class PttController extends Controller
                 }
             }
 
-            
             $em->flush();
         } else {
             $this->get('session')->getFlashBag()->add('error', 'Title must be fill');
