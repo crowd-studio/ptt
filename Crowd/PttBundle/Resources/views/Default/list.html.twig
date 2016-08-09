@@ -39,7 +39,7 @@
 {% if rows|length > 0 %}
 
 
-<ul {%if sortable %} id="sortable-with-handles" class="sortable" {% else %} class="table"{% endif %}>
+<ul {% if sortable %} id="sortable-with-handles" class="sortable" {% else %} class="table"{% endif %}>
 	<li class="head">
 		{%if sortable %}<span class="handle hidden">Order</span>{% endif %}
             {% for field, title in fields %}
@@ -62,8 +62,7 @@
 	            {% endfor %}
 	            <span class="actions">
 	                <div class="btn-group">
-	                	<!-- <a href="{{ path(entityConfigurationInfo.entityName ~ '_copy', {id : row.id}) }}" class="list-editar">{{'copy'|trans}}</a> -->
-	                	<a href="#" data-toggle="modal"  class="list-copiar list-editar" data-id="{{row.id}}" data-target="#myModal">{{'copy'|trans}}</a>
+	                	{% if copy %}<a href="#" data-toggle="modal"  class="list-copiar list-editar" data-id="{{row.id}}" data-target="#myModal">{{'copy'|trans}}</a>{% endif %}
 	                    <a href="{{ path(entityConfigurationInfo.entityName ~ '_edit', {id : row.id}) }}" class="list-editar">{{'edit'|trans}}</a>
 	                    <a href="{{ path(entityConfigurationInfo.entityName ~ '_delete', {id : row.id}) }}" data-alert='{{ 'delete_the_entity_name'|trans([entityInfo.lowercase, row]) }}' class="list-eliminar">{{'delete'|trans}}</a>
 	                </div>
