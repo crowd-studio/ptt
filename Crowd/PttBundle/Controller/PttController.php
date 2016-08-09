@@ -200,16 +200,40 @@ class PttController extends Controller
         $title = $request->get('title');
         $id = $request->get('id');
 
-        $em = $this->get('doctrine')->getManager();
-        $entity = $em->getRepository($this->_repositoryName())->find($id);
-        if ($entity == null) {
-            throw $this->createNotFoundException('The ' . $this->_entityInfoValue('lowercase') . ' does not exist');
-        }
-        $entityB = clone $entity;
+        if ($title != '') {
+            $em = $this->get('doctrine')->getManager();
+            $entity = $em->getRepository($this->_repositoryName())->find($id);
+            if ($entity == null) {
+                throw $this->createNotFoundException('The ' . $this->_entityInfoValue('lowercase') . ' does not exist');
+            }
+            $entityB = clone $entity;
 
-        $entityB->setTitle($title);
-        $em->persist($entityB);
-        $em->flush();
+            $entityB->setTitle($title);
+
+            if(method_exists($entityB, "set_Order")){
+                $entityB->set_Order(-1);
+            }
+
+            var_dump($entityB->getPttId());
+            $em->persist($entityB);
+
+            var_dump($entityB->getPttId());
+
+            $transClassName = $this->_className() . 'Trans';
+            if (class_exists($transClassName)) {
+                $trans = $em->getRepository($this->_bundle() . ':' . $transClassName)->findByRelatedId($id);
+                foreach ($trans as $key => $value) {
+                    $transEntity = clone $value;
+                    $transEntity->setRelatedId($entityB->getPttId());
+                    $em->persist($transEntity);
+                }
+            }
+
+            
+            $em->flush();
+        } else {
+            $this->get('session')->getFlashBag()->add('error', 'Title must be fill');
+        }
 
         return $this->redirect($this->generateUrl($this->urlPath() . '_list'));
     }
