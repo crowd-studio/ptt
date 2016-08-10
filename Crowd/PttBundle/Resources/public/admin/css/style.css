@@ -8071,6 +8071,12 @@ html[dir="rtl"] .select2-container-multi .select2-search-choice-close {
   border-right: 1px solid #dadada;
   border-bottom: 1px solid #dadada;
 }
+.wrapper ul.sortable li.entity a.list-copy,
+.wrapper ul.table li.entity a.list-copy,
+.wrapper ul.multi-sortable li.entity a.list-copy,
+.wrapper ul.sortable li.list a.list-copy,
+.wrapper ul.table li.list a.list-copy,
+.wrapper ul.multi-sortable li.list a.list-copy,
 .wrapper ul.sortable li.entity a.list-editar,
 .wrapper ul.table li.entity a.list-editar,
 .wrapper ul.multi-sortable li.entity a.list-editar,
