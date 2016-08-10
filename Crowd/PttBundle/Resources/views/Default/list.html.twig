@@ -62,7 +62,7 @@
 	            {% endfor %}
 	            <span class="actions">
 	                <div class="btn-group">
-	                	{% if copy %}<a href="#" data-toggle="modal"  class="list-copiar list-editar" data-id="{{row.id}}" data-target="#myModal">{{'copy'|trans}}</a>{% endif %}
+	                	{% if copy %}<a href="#" data-toggle="modal"  class="list-copy" data-id="{{row.id}}" data-target="#myModal">{{'copy'|trans}}</a>{% endif %}
 	                    <a href="{{ path(entityConfigurationInfo.entityName ~ '_edit', {id : row.id}) }}" class="list-editar">{{'edit'|trans}}</a>
 	                    <a href="{{ path(entityConfigurationInfo.entityName ~ '_delete', {id : row.id}) }}" data-alert='{{ 'delete_the_entity_name'|trans([entityInfo.lowercase, row]) }}' class="list-eliminar">{{'delete'|trans}}</a>
 	                </div>

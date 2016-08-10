@@ -102,7 +102,7 @@ define([
                 }
             });
 
-            $('a.list-copiar').each(function(){
+            $('a.list-copy').each(function(){
                 var copiarActionView = new CopiarActionView({el:$(this)});
             });
 
