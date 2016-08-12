@@ -7897,10 +7897,10 @@ html[dir="rtl"] .select2-container-multi .select2-search-choice-close {
   margin-top: 50px !important;
 }
 .wrapper ul.table li.head span.actions:not(.actions-copy) {
-  width: 220px;
+  width: 175px;
 }
 .wrapper ul.table li.head span.actions.actions-copy {
-  width: 305px;
+  width: 245px;
 }
 .wrapper ul.table li.head span.info {
   flex: none !important;
