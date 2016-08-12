@@ -7896,8 +7896,16 @@ html[dir="rtl"] .select2-container-multi .select2-search-choice-close {
 .wrapper ul.table {
   margin-top: 50px !important;
 }
-.wrapper ul.table li.head span.actions {
+.wrapper ul.table li.head span.actions:not(.actions-copy) {
   width: 220px;
+}
+.wrapper ul.table li.head span.actions.actions-copy {
+  width: 305px;
+}
+.wrapper ul.table li.head span.info {
+  flex: none;
+  width: 60px;
+  margin: 0;
 }
 .wrapper ul.sortable,
 .wrapper ul.table,
@@ -8094,6 +8102,16 @@ html[dir="rtl"] .select2-container-multi .select2-search-choice-close {
   color: #949494;
   width: 140px;
   text-transform: uppercase;
+}
+.wrapper ul.sortable li.entity span.info,
+.wrapper ul.table li.entity span.info,
+.wrapper ul.multi-sortable li.entity span.info,
+.wrapper ul.sortable li.list span.info,
+.wrapper ul.table li.list span.info,
+.wrapper ul.multi-sortable li.list span.info {
+  flex: none;
+  width: 60px;
+  margin: 0;
 }
 .wrapper ul.sortable li.entity a.list-copy,
 .wrapper ul.table li.entity a.list-copy,

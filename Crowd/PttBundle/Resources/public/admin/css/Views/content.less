@@ -259,8 +259,18 @@
 		margin-top: 50px !important;
 	}
 
-	ul.table li.head span.actions {
+	ul.table li.head span.actions:not(.actions-copy) {
 		width: 220px;
+	}
+
+	ul.table li.head span.actions.actions-copy {
+		width: 305px;
+	}
+
+	ul.table li.head span.info {
+		flex: none;
+	    width: 60px;
+	    margin: 0;
 	}
 
 	ul.sortable, ul.table, ul.multi-sortable {
@@ -360,6 +370,12 @@
 				width: 140px;
 
 				text-transform: uppercase;
+			}
+
+			span.info {
+				flex: none;
+			    width: 60px;
+			    margin: 0;
 			}
 
 			a.list-copy {

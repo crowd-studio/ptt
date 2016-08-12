@@ -46,7 +46,7 @@
             <span{% if not loop.first %} class="hidden-xs"{% endif %}>{%if sortable == false %}<a href="{{ path(entityConfigurationInfo.entityName ~ '_list', {order : field}) }}">{% endif %}
             {{title}}{%if sortable == false %}</a>{% endif %}</span>
             {% endfor %}
-            <span class="actions">{{'actions'|trans}}</span>
+            <span {% if copy %}class="actions actions-copy"{% else %}class="actions"{% endif %}>{{'actions'|trans}}</span>
 	</li>
 	{% for row in rows %}
 	        <li class="list" {%if sortable %}data-id="{{row.id}}"{% endif %}>
