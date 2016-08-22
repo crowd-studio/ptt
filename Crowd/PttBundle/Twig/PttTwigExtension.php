@@ -67,17 +67,31 @@ class PttTwigExtension extends Twig_Extension
     public function getFunctions()
     {
         return array(
-            'info' => new Twig_SimpleFunction($this, 'info'),
-            'isDebug' => new Twig_SimpleFunction($this, 'isDebug', array(
+            'info' => new Twig_SimpleFunction('info', function($key, $key2 = null){
+                return $this->info($key, $key2);
+            }),
+            'isDebug' => new Twig_SimpleFunction('isDebug', function(){
+                    return $this->isDebug();
+                }, array(
                 'is_safe' => array('html')
             )),
-            'userIsRole' => new Twig_SimpleFunction($this, 'userIsRole'),
-            'userRole' => new Twig_SimpleFunction($this, 'userRole'),
-            'isAllowed' => new Twig_SimpleFunction($this, 'isAllowed'),
-            'filter' => new Twig_SimpleFunction($this, 'filter', array(
+            'userIsRole' => new Twig_SimpleFunction('userIsRole', function($role){
+                return $this->userIsRole($role);
+            }),
+            'userRole' => new Twig_SimpleFunction('userRole', function(){
+                return $this->userRole();
+            }),
+            'isAllowed' => new Twig_SimpleFunction('isAllowed', function($info){
+                return $this->isAllowed($info);
+            }),
+            'filter' => new Twig_SimpleFunction('filter', function($key, $entityName){
+                return $this->filter($key, $entityName);
+            }, array(
                 'is_safe' => array('html')
             )),
-            'asset_exists' => new \Twig_SimpleFunction($this, 'asset_exists'),
+            'asset_exists' => new \Twig_SimpleFunction('asset_exists', function($path){
+                return $this->asset_exists($path);
+            }),
         );
     }
 
