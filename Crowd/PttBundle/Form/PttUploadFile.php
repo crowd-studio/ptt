@@ -16,9 +16,9 @@ class PttUploadFile
     public static function uploadCanvas($fileData, $sizes, $uploadToS3 = false)
     {
         $fileData = base64_decode(str_replace('data:image/png;base64,', '', $fileData));
-
+        $uploadsUrl = PttUtil::pttConfiguration('images');
         $uploadName = 'webcam-' . PttUtil::token(100) . '.jpg';
-        $tmpSaveThumbPath = UPLOADS_DIR . $uploadName;
+        $tmpSaveThumbPath = WEB_DIR . $uploadsUrl . $uploadName;
 
         file_put_contents($tmpSaveThumbPath, $fileData);
 
@@ -27,7 +27,7 @@ class PttUploadFile
                 $height = $size['h'];
                 $width = $size['w'];
                 $filename = $width . '-' . $height . '-' . $uploadName;
-                $saveThumbPath = UPLOADS_DIR . $filename;
+                $saveThumbPath = WEB_DIR . $uploadsUrl . $filename;
 
                 if ($width != 0 && $height != 0) {
                     \WideImage\WideImage::load($tmpSaveThumbPath)->resize($width, $height, 'outside')->saveToFile($saveThumbPath, 100);
@@ -97,6 +97,7 @@ class PttUploadFile
         $token = PttUtil::token(100);
         $uploadName = $token . '.' . $extension;
         $uploadToS3 = (isset($field->options['s3']) && $field->options['s3']) ? true : false;
+        $uploadsUrl = PttUtil::pttConfiguration('images');
 
         if ($extension != 'gif') {
             $sizes = ($file && isset($field->options['sizes'])) ? $field->options['sizes'] : array(array('h' => 0, 'w' => 0));
@@ -116,7 +117,7 @@ class PttUploadFile
                     }
 
                     $filename = $size['w'] . '-' . $size['h'] . '-' . $uploadName;
-                    $saveThumbPath = UPLOADS_DIR . $filename;
+                    $saveThumbPath = WEB_DIR . $uploadsUrl . $filename;
 
                     if ($width == 0 && $height == 0) {
                         \WideImage\WideImage::load($file)->saveToFile($saveThumbPath);
@@ -133,7 +134,7 @@ class PttUploadFile
             }
         } else {
             $filename = '0-0-' . $uploadName;
-            $saveThumbPath = UPLOADS_DIR . $filename;
+            $saveThumbPath = WEB_DIR . $uploadsUrl . $filename;
             if (move_uploaded_file($file, $saveThumbPath)) {
                 if ($uploadToS3) {
                     PttUploadFile::_uploadToS3($saveThumbPath, $filename);
@@ -147,14 +148,15 @@ class PttUploadFile
     {
         $filename = $file->getPathName();
         $token = PttUtil::token(100);
+        $uploadsUrl = PttUtil::pttConfiguration('images');
         $uploadName = $token . PttUtil::extension($file->getClientOriginalName());
 
         $uploadToS3 = (isset($field->options['s3']) && $field->options['s3']) ? true : false;
 
-        $file->move(UPLOADS_DIR, $uploadName);
+        $file->move(WEB_DIR . $uploadsUrl, $uploadName);
 
         if ($uploadToS3) {
-            PttUploadFile::_uploadToS3(UPLOADS_DIR . $uploadName, $uploadName);
+            PttUploadFile::_uploadToS3(WEB_DIR . $uploadsUrl . $uploadName, $uploadName);
         }
 
         return $uploadName;
@@ -188,7 +190,8 @@ class PttUploadFile
 
     private static function _delete($name){
         try {
-            foreach (glob(UPLOADS_DIR . "*-". $name) as $filename) {
+            $uploadsUrl = PttUtil::pttConfiguration('images');
+            foreach (glob(WEB_DIR . "*-". $name) as $filename) {
                 unlink($filename);
             }
         } catch (Exception $e) {

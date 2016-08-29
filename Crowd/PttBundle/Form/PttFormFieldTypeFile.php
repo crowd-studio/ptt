@@ -213,6 +213,7 @@ class PttFormFieldTypeFile extends PttFormFieldType
 
 	private function _urlPrefix()
 	{
+		$imagesUrl = PttUtil::pttConfiguration('images');
 		$s3 = PttUtil::pttConfiguration('s3');
 		$uploadToS3 = (isset($this->field->options['s3']) && $this->field->options['s3']) ? true : false;
 		if ($uploadToS3) {
@@ -223,7 +224,7 @@ class PttFormFieldTypeFile extends PttFormFieldType
 				$cdn = PttUtil::pttConfiguration('cdn');
 				return $cdn['prodUrl'];
 			} else {
-				return '/uploads/';	
+				return $imagesUrl;	
 			}
 			
 		}
