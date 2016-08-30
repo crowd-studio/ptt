@@ -24,6 +24,7 @@ class PttMediaController extends Controller
     public function uploadAction(Request $request)
     {
         if($request->files->get('files') !== null) {
+            $uploadUrl = PttUtil::pttConfiguration('images');
             $pttInfo = PttUtil::pttConfiguration('s3');
             $uploadToS3 = (isset($pttInfo['force']) && $pttInfo['force']) ? true : false;
 
@@ -36,7 +37,7 @@ class PttMediaController extends Controller
 
                 $filename = PttUploadFile::uploadCanvas($request->get('imgBase64'), $sizes, $uploadToS3);
 
-                $url = (isset($pttInfo['force']) && $pttInfo['force']) ? $pttInfo['prodUrl'] . $pttInfo['dir'] . '/' : '/uploads/';
+                $url = (isset($pttInfo['force']) && $pttInfo['force']) ? $pttInfo['prodUrl'] . $pttInfo['dir'] . '/' : $uploadUrl;
 
                 $data = array(
                     'filename' => $filename,
@@ -72,7 +73,7 @@ class PttMediaController extends Controller
 
                 $file = $files[0];
                 $filename = PttUploadFile::upload($file, $field);
-                $url = (isset($pttInfo['force']) && $pttInfo['force']) ? $pttInfo['prodUrl'] : '/uploads/';
+                $url = (isset($pttInfo['force']) && $pttInfo['force']) ? $pttInfo['prodUrl'] : $uploadUrl;
 
                 $data = array(
                     'filename' => $filename,
