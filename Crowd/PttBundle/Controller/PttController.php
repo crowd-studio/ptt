@@ -203,7 +203,7 @@ class PttController extends Controller
             throw $this->createNotFoundException('The ' . $this->_entityInfoValue('lowercase') . ' does not exist');
         }
 
-        $entityB = copy $entity;
+        $entityB = clone $entity;
         $em->persist($entityB);
         $em->flush();
         return $this->redirect($this->generateUrl($this->urlPath() . '_list'));
