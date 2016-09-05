@@ -19,7 +19,7 @@ class PttFormFieldTypeText extends PttFormFieldType
 			$htmlField .= 'maxlength="'.$this->field->options['maxLength'].'" ';
 		}
 		$htmlField .= $this->attributes();
-		$htmlField .= 'value="' . $this->value . '"';
+		$htmlField .= 'value=\'' . str_replace('\'', '&#039;', $this->value) . '\'';
 		$htmlField .= '>';
 
 		$html .= $htmlField;
