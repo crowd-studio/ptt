@@ -43,7 +43,7 @@ define([
 
             $('div.alert:not(.persist)').delay(3000).fadeOut(200);
 
-            $("select[multiple]").asmSelect();
+            $('select[multiple]').asmSelect();
 
             $(window).bind('resize', _.bind(this.resize, this));
 
@@ -99,7 +99,11 @@ define([
                     $(field[0]).find('option').val(id);
                 }
             });
-            
+
+            $('a.list-copy').each(function(){
+                var copiarActionView = new CopiarActionView({el:$(this)});
+            });
+
             $('[data-fieldtype="entity"]').each(function(){
                 var cloneMultipleEntitiesView = new CloneMultipleEntitiesView({el:$(this)});
             });
@@ -248,11 +252,50 @@ define([
             });
 
             $.each($('.select-multiple'), function(element){
-                var selectMultiple = new SelectMultiple({el:$(this)});
-            });
 
-            $.each($('.nav-tabs'), function(element){
+                var selectMultiple = new SelectMultiple({el:$(this)});
+            
+            //     var xhr;
+            //     var select_state, $select_state;
+            //     var select_city, $select_city;
+
+            //     $select_state = el:$(this).selectize({
+            //         onChange: function(value) {
+            //             if (!value.length) return;
+            //             select_city.disable();
+            //             select_city.clearOptions();
+            //             select_city.load(function(callback) {
+            //                 xhr && xhr.abort();
+            //                 xhr = $.ajax({
+            //                     url: 'https://jsonp.afeld.me/?url=http://api.sba.gov/geodata/primary_city_links_for_state_of/' + value + '.json',
+            //                     success: function(results) {
+            //                         select_city.enable();
+            //                         callback(results);
+            //                     },
+            //                     error: function() {
+            //                         callback();
+            //                     }
+            //                 })
+            //             });
+            //         }
+            //     });
+
+            //     $select_city = $('.select-multiple-result').selectize({
+            //         valueField: 'name',
+            //         labelField: 'name',
+            //         searchField: ['name']
+            //     });
+
+            //     select_city  = $select_city[0].selectize;
+            //     select_state = $select_state[0].selectize;
+
+            //     select_city.disable();
+
+           });
+
+             $.each($('.nav-tabs'), function(element){
                 var tab = new Tab({el:$(this)});
+            
             });
 
 
@@ -278,6 +321,19 @@ define([
             }
         }
     };
+
+    var CopiarActionView = Backbone.View.extend({
+        events : {
+            'click' : 'copy'
+        },
+        copy : function(e){
+            var id = this.$el[0].attributes["data-id"]["value"];
+            console.log(id);
+
+            var modal = $(".modal-body #id");
+            modal[0].value = id;
+        }
+    });
 
     var MarkdownView = Backbone.View.extend({
         events : {
@@ -576,6 +632,7 @@ define([
                 this.initMarkdown();
                 this.initPreview();
                 this.initLanguageTabs();
+                this.initSelectMultiple();
             }.bind(this), 300);
         },
         initMarkdown: function() {
@@ -591,6 +648,11 @@ define([
         initLanguageTabs: function() {
             this.$el.find('.nav-tabs').each(function(element){
                 var tab = new Tab({el:$(this)});
+            });
+        },
+        initSelectMultiple: function() {
+            this.$el.find('select[multiple]').each(function(element){
+                $(this).asmSelect();
             });
         },
     });
@@ -1005,7 +1067,6 @@ define([
             var text = model.options[model.selectedIndex].text;
 
             var limit = model.getAttribute('limit');
-            console.log(limit);
 
             var desti = this.$el.find('.select-multiple-result');
             var empty = $('<option>').attr('value', '').text('-- Escoje un ' + text + ' --');
