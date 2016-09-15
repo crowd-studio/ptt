@@ -65,7 +65,6 @@ define([
                 create: false,
                 render: {
                     option: function(item, escape) {
-                        console.log(item);
                         return '<div>' +
                                 '<span class="title">' +
                                     '<span class="name">' + escape(item.title) + '</span>' +
@@ -85,7 +84,6 @@ define([
                             page_limit: 30
                         },
                         success: function(res) {
-                            console.log(res);
                             callback(res);
                         },
                         error: function() {
@@ -634,6 +632,7 @@ define([
                 this.initMarkdown();
                 this.initPreview();
                 this.initLanguageTabs();
+                this.initSelectMultiple();
             }.bind(this), 300);
         },
         initMarkdown: function() {
@@ -649,6 +648,11 @@ define([
         initLanguageTabs: function() {
             this.$el.find('.nav-tabs').each(function(element){
                 var tab = new Tab({el:$(this)});
+            });
+        },
+        initSelectMultiple: function() {
+            this.$el.find('select[multiple]').each(function(element){
+                $(this).asmSelect();
             });
         },
     });
