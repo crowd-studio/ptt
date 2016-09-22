@@ -104,6 +104,14 @@ define([
                 var copiarActionView = new CopiarActionView({el:$(this)});
             });
 
+            $('a.list-embed').each(function(){
+                var openEmbedActionView = new OpenEmbedActionView({el:$(this)});
+            });
+
+            $('a.btn-save.copy').each(function(){
+                var embedActionView = new EmbedActionView({el:$(this)});
+            });
+
             $('[data-fieldtype="entity"]').each(function(){
                 var cloneMultipleEntitiesView = new CloneMultipleEntitiesView({el:$(this)});
             });
@@ -328,12 +336,44 @@ define([
         },
         copy : function(e){
             var id = this.$el[0].attributes["data-id"]["value"];
-            console.log(id);
-
             var modal = $(".modal-body #id");
             modal[0].value = id;
         }
     });
+
+    var OpenEmbedActionView = Backbone.View.extend({
+        events : {
+            'click' : 'copy'
+        },
+        copy : function(e){
+            var id = this.$el[0].attributes["data-id"]["value"];
+            var modal = $("#embedCode .modal-dialog .modal-content .modal-body textarea");
+            modal[0].value = modal[0].value.replace(/id=\d/g, 'id=' + id);
+        }
+    });
+
+    var EmbedActionView = Backbone.View.extend({
+        events : {
+            'click' : 'copy'
+        },
+        copy : function(e){
+
+            var aux = document.createElement("input");
+            var html = $(this.$el[0]).parent().parent().find('textarea')[0].innerHTML;
+
+            aux.setAttribute("value", $('<textarea />').html(html).text());
+
+            document.body.appendChild(aux);
+
+            aux.select();
+            document.execCommand("RemoveFormat");
+            document.execCommand("copy");
+
+            document.body.removeChild(aux);
+        }
+    });
+
+                
 
     var MarkdownView = Backbone.View.extend({
         events : {
