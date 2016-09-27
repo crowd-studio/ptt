@@ -11,7 +11,7 @@ use Crowd\PttBundle\Util\PttUtil;
 
 class PttFormFieldTypeGallery extends PttFormFieldType
 {
-	protected $pttForm;
+    protected $pttForm;
 
     public function __construct(PttForm $pttForm, PttField $field, $languageCode = false)
     {
@@ -19,12 +19,13 @@ class PttFormFieldTypeGallery extends PttFormFieldType
         $this->pttForm = $pttForm;
     }
 
-	public function field()
-	{
-		$html = $this->start();
-		$html .= $this->label();
+    public function field()
+    {
+        $html = $this->start();
+        $html .= $this->label();
 
-		$htmlField = '<div class="gallery-header"><div class="dropzone col-sm-12"></div><div class="col-sm-12 mg-btm-20 nopadding"><a class="btn btn-md btn-primary btn-collapse btn-danger" data-expand="'. $this->pttTrans->trans('expand') .'" data-collapse="'. $this->pttTrans->trans('collapse') .'">' . $this->pttTrans->trans('expand') . '</a>';
+
+        $htmlField = '<div class="gallery-header"><div class="dropzone col-sm-12"></div><div class="col-sm-12 mg-btm-20 nopadding"><a class="btn btn-md btn-primary btn-collapse btn-danger" data-expand="'. $this->pttTrans->trans('expand') .'" data-collapse="'. $this->pttTrans->trans('collapse') .'">' . $this->pttTrans->trans('expand') . '</a>';
         $htmlField .= '<a class="btn btn-md btn-primary btn-sort" data-order="' . $this->pttTrans->trans('order') . '" data-edit="' . $this->pttTrans->trans('edit') . '">' . $this->pttTrans->trans('order') . '</a>';
         $htmlField .= '</div></div><div class="related-multiple-entities">';
 
@@ -33,13 +34,13 @@ class PttFormFieldTypeGallery extends PttFormFieldType
         $htmlField .= $this->_fillData();
         $htmlField  .= '</ul></div>';
 
-		$html .= $htmlField;
-		$html .= $this->end();
+        $html .= $htmlField;
+        $html .= $this->end();
 
-		return $html;
-	}
+        return $html;
+    }
 
-	private function _hiddenDiv() {
+    private function _hiddenDiv() {
 
         $pttHelper = new PttHelperFormFieldTypeGallery($this->entityInfo, $this->field, $this->container, $this->em);
         $form = $pttHelper->formForEntity($pttHelper->cleanRelatedEntity());
@@ -93,8 +94,14 @@ class PttFormFieldTypeGallery extends PttFormFieldType
         return $htmlField;
     }
 
-	protected function extraClassesForFieldContainer()
+    protected function extraClassesForFieldContainer()
     {
         return 'form-group entity col-sm-12';
+    }
+
+    protected function extraAttrsForContainer()
+    {
+        $attrs = ['data-prefix' => PttUtil::pttConfiguration('prefix')];
+        return $attrs;
     }
 }

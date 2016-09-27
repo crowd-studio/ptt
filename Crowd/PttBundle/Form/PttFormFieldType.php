@@ -48,7 +48,7 @@ class PttFormFieldType
 		$errorClass = ($this->errors && $this->field->showErrors) ? ' has-error': '';
 
 		$html = '
-		<div class="' . $this->extraClassesForFieldContainer() . $errorClass . '" data-fieldName="' . $this->field->getFormName($this->languageCode) . '" data-fieldType="' . $this->field->type . '">
+		<div class="' . $this->extraClassesForFieldContainer() . $errorClass . '" data-fieldName="' . $this->field->getFormName($this->languageCode) . '" data-fieldType="' . $this->field->type . '" '. $this->_addExtraAttrsToContainer().'>
 		';
 
 		return $html;
@@ -134,6 +134,11 @@ class PttFormFieldType
 		return false;
 	}
 
+	protected function extraAttrsForContainer()
+	{
+		return false;
+	}
+
 	private function _prepare()
 	{
 		$className = $this->_formValueClassName($this->field->type);
@@ -155,12 +160,26 @@ class PttFormFieldType
 		if (!isset($this->field->options['attr']) || !is_array($this->field->options['attr'])) {
 			$this->field->options['attr'] = array();
 		}
+
 		$extraAttrs = $this->extraAttrsForField();
+
 		if ($extraAttrs) {
 			foreach ($extraAttrs as $extraAttrKey => $extraAttrValue) {
 				$this->field->options['attr'][$extraAttrKey] = $extraAttrValue;
 			}
 		}
+	}
+
+	private function _addExtraAttrsToContainer()
+	{
+		$extraAttrs = $this->extraAttrsForContainer();
+		$attrs = '';
+		if ($extraAttrs) {
+			foreach ($extraAttrs as $extraAttrKey => $extraAttrValue) {
+				$attrs .= ' ' . $extraAttrKey . '="' . $extraAttrValue . '"';
+			}
+		}
+		return $attrs;
 	}
 
 	private function _optionsValue($value, $default = null)
