@@ -70,7 +70,7 @@ class PttFormAfterSaveMultipleEntity extends PttFormAfterSave
             delete
                 ' . $entityRepository . ' e
             where
-                e.relatedId = :id';
+                e.relatedId = :id and e._model = :model';
             if (count($ids)) {
                 $dql .= '
                 and
@@ -83,6 +83,7 @@ class PttFormAfterSaveMultipleEntity extends PttFormAfterSave
 
             $query = $em->createQuery($dql);
             $query->setParameter('id', $this->entityInfo->get('pttId'));
+            $query->setParameter('model', $this->entityInfo->getEntityName());
             $query->execute();
         }
 
