@@ -14,7 +14,7 @@ use Symfony\Component\Security\Core\Util\SecureRandom;
 use Symfony\Component\Security\Core\Encoder\EncoderFactory;
 use Symfony\Component\Security\Core\Encoder\MessageDigestPasswordEncoder;
 
-class ColectaniaServices
+class PttServices
 {
     protected $em;
     protected $request;
