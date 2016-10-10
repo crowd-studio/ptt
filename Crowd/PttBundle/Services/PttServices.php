@@ -1,6 +1,6 @@
 <?php
 
-namespace App\FrontendBundle\Services;
+namespace Crowd\PttBundle\Services;
 
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpKernel\KernelInterface;
