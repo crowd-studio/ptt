@@ -57,7 +57,7 @@ class PttServices
 
         if(isset($params['order'])){
             $sql .= 'ORDER BY ';
-            foreach ($params['order']) as $key => $order) {
+            foreach ($params['order'] as $key => $order) {
                  $sql .= $order['order'].' '. $order['orderDir'].', ';
              } 
 
