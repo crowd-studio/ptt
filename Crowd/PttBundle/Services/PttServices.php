@@ -16,29 +16,27 @@ use Symfony\Component\Security\Core\Encoder\MessageDigestPasswordEncoder;
 
 class PttServices
 {
-    protected $em;
-    protected $request;
-    protected $kernel;
-    protected $limit = 6;
-    protected $uploadsUrl = '/uploads/';
-    protected $model = '';
+    private $em;
+    private $request;
+    private $kernel;
+    private $limit = 6;
+    private $uploadsUrl;
+    private $model = '';
 
     public function __construct(\Doctrine\ORM\EntityManager $em, KernelInterface $kernel) {
         $this->em = $em;
         $this->kernel = $kernel;
-
+        
         try {
             $yaml = new Parser();
             $ptt = $yaml->parse(file_get_contents(BASE_DIR . 'app/config/ptt.yml'));
-            $this->uploadsUrl = '/uploads/'; //$ptt['s3']['prodUrl'] . $ptt['s3']['dir'] . '/';
+            $this->uploadsUrl = (isset($ptt['s3']['force']) && $ptt['s3']['force']) ? $ptt['s3']['prodUrl'] . $ptt['s3']['dir'] . '/' : '/uploads/';
         } catch (ParseException $e) {
             printf("Unable to parse the YAML string: %s", $e->getMessage());
         }
-
     }
 
-    public function setRequest(RequestStack $request_stack)
-    {
+    public function setRequest(RequestStack $request_stack){
         $this->request = $request_stack->getCurrentRequest();
     }
 
@@ -54,32 +52,55 @@ class PttServices
         }
 
         if(isset($params['where'])){
-            foreach ($params['where'] as $whereLine) {
-               if ($whereLine['column'] == 'direct-sql-injection'){
-                    $sql .= 'AND ' . $whereLine['value'] . ' ';
-                } else {
-                    $sql .= 'AND t.'.$whereLine['column'].' '.$whereLine['operator'].' ';
-                    if($whereLine['operator'] == 'in'){
-                        $sql .= '('.$whereLine['value'].') ';
-                    }else{
-                        $sql .= '"'.$whereLine['value'].'" ';
+            $sql .= $this->_where($params['where']);    
+        }
+
+        if(isset($params['order'])){
+            $sql .= 'ORDER BY ';
+            foreach ($params['order']) as $key => $order) {
+                 $sql .= $order['order'].' '. $order['orderDir'].', ';
+             } 
+
+             $sql = trim($sql, ', ');
+        }
+
+        if(isset($params['page'])){
+            $limit = (isset($params['limit'])) ? $params['limit'] : $this->limit;
+            $offset = $page * $limit;
+            $sql .= 'LIMIT '. $limit .' OFFSET ' . $offset;
+        }
+
+        return $sql;
+    }
+
+    private function _where($where, $sql = ''){
+        foreach ($where  as $line) {
+            foreach ($line as $key => $lines) {
+                $key = strtoupper($key);
+                if($key == 'AND'){ $sql .= 'AND (1=1 '; }
+                foreach($lines as $whereLine){
+                    if(is_array($whereLine['column'])){
+                        if($key == 'OR'){ $sql .= 'OR (1=1 '; }
+                        $sql = $this->_where($whereLine['column'], $sql);
+                        if($key == 'OR'){ $sql .= ')'; }
+                    } else {
+                        if ($whereLine['column'] == 'direct-sql-injection'){
+                            $sql .= $key . ' ' . $whereLine['value'] . ' ';
+                        } else {
+                            $sql .= $key . ' t.'.$whereLine['column'].' '.$whereLine['operator'].' ';
+                            $sql .= ($whereLine['operator'] == 'in') ?  '('.$whereLine['value'].') ' : '"'.$whereLine['value'].'" ';
+                        }
                     }
                 }
+                if($key == 'AND'){ $sql .= ') '; }
             }
         }
 
         return $sql;
     }
 
-
-
-    public function _getAll($table, $lang, $params = array())
-    {
+    public function _get($table, $lang, $params = []){
         $sql = $this->_sql($table, $lang, $params);
-
-        if(isset($params['order'])){
-            $sql .= 'ORDER BY t.'.$params['order'].' '.$params['orderDir'].' ';
-        }
 
         $stmt = $this->em->getConnection()->prepare($sql);
         if($lang){
@@ -89,145 +110,91 @@ class PttServices
         $stmt->execute();
         $data = $stmt->fetchAll();
 
-        for($i=0; $i < count($data); $i++)
-        {
-            $data[$i]['model'] = $table;
-            if(isset($params ['sizes'])){
-                $data[$i] = $this->getExtrasGrid($lang, $data[$i],$params['sizes']);
-            }else{
-                $data[$i] = $this->getExtrasGrid($lang, $data[$i]);
-            }
+        $data = $this->prepareObjects($lang, $data, $table, $parameters);
 
+        if($params['one'] && $params['one']){
+            $data = (isset($data[0])) ? $data[0] : null;
         }
-
         return $data;
     }
 
-    public function _getAllByPag($table, $page, $lang, $params = array())
-    {
+    public function _getOne($table, $lang, $id, $params){
+        $params['where'] = [
+            [
+                'and' => [
+                    ['column' => ($lang) ? 'relatedId' : 'id', 'operator' => '=', 'value' = $id ]
+                ]
+            ]
+        ];
+        $params['one'] = true;
+        return $this->_get($table, $lang, $params);
+    }
+
+    public function _getByPag($table, $lang, $params = []){
         $sql = $this->_sql($table, $lang, $params);
+
         $sqlLimit = $sql;
 
-        if(isset($params['order'])){
-            $sqlLimit .= 'ORDER BY t.'.$params['order'].' '.$params['orderDir'].' ';
-        }
+        $sql = ', (SELECT COUNT(t.*) FROM' . explode('FROM', $sql, 2)[1] . ') _totalPagCount FROM';
 
-        if(!is_bool($page)){
-            $offset = $page * $this->limit;
-            $sqlLimit .= 'LIMIT '. $this->limit .' OFFSET ' . $offset;
-        }
+        $sqlArr = explode('FROM', $sqlLimit, 2);
+        $sqlLimit = $sqlArr[0] . $sql . $sqlArr[1];
 
         $stmt = $this->em->getConnection()->prepare($sqlLimit);
         if($lang){
             $stmt->bindValue('lang', $lang);
         }
+
         $stmt->execute();
         $data = $stmt->fetchAll();
 
-        for($i=0; $i < count($data); $i++)
-        {
-            $data[$i]['model'] = $table;
-            if(isset($params ['sizes'])){
-                $data[$i] = $this->getExtrasGrid($lang, $data[$i],$params['sizes']);
-            }else{
-                $data[$i] = $this->getExtrasGrid($lang, $data[$i]);
+        $total = (isset($data[0])) ? $data[0]["_totalPagCount"] : 0;
+        $data = $this->prepareObjects($lang, $data, $table, $parameters);
+
+        $hasNewPages = sizeOf( $total ) / $limit - $page > 1;
+
+        return array('content' => $data, 'hasNewPages' => $hasNewPages, 'size' =>  $limit);
+    }
+
+    private function prepareObjects($lang, $element, $table, $parameters = []){
+        foreach ($element as $k => $el) {
+            //Pdf
+            if(isset($el['pdf']) && $el['pdf'] != ''){
+                $element[$k]['pdf'] = $this->uploadsUrl . $el['pdf'];
             }
-        }
 
-        $stmt = $this->em->getConnection()->prepare($sql);
-        if($lang){
-            $stmt->bindValue('lang', $lang);
-        }
-        $stmt->execute();
-        $total = $stmt->fetchAll();
+            //Clean
+            if(isset($parameters['clean'])){
+                $keys = $parameters['clean']);
+            } else {
+                $keys = array_keys($el);
+                unset($keys[array_search('_totalPagCount', $keys)]);
+            }
 
-        $hasNewPages = sizeOf( $total ) / $this->limit - $page > 1;
+            $element[$k] = $this->CleanObject($el, $keys);
 
-        return array('content' => $data, 'hasNewPages' => $hasNewPages, 'size' =>  $this->limit);
-    }
-
-    public function _getOneByLang($table, $id, $lang, $sizes = false)
-    {
-        $sql = '
-        SELECT t.*, tm.* FROM ' .$table.' t LEFT JOIN ' .$table.'Trans tm
-        ON t.id = tm.relatedId WHERE tm.language = :lang AND t.id = :id';
-
-        $stmt = $this->em->getConnection()->prepare($sql);
-        $stmt->bindValue('lang', $lang);
-        $stmt->bindValue('id', $id);
-        $stmt->execute();
-        $data = $stmt->fetchAll();
-
-        if(isset($data[0])){
-            $data[0]['model'] = $table;
-            $data[0] = $this->getExtrasGrid($lang, $data[0], $sizes);
-            return $data[0];
-        } else {
-            return null;
-        }
-    }
-
-    public function _getOneById($table, $id, $sizes = false)
-    {
-        $sql = '
-        SELECT t.* FROM ' .$table.' t WHERE t.id = :id';
-
-        $stmt = $this->em->getConnection()->prepare($sql);
-        $stmt->bindValue('id', $id);
-        $stmt->execute();
-        $data = $stmt->fetchAll();
-
-        if(isset($data[0])){
-            $data[0]['model'] = $table;
-            $data[0] = $this->getExtrasGrid(false, $data[0], $sizes);
-            return $data[0];
-        } else {
-            return null;
-        }
-    }
-
-    private function getExtrasGrid($lang, $element, $sizes = false){
-        //Pdf
-        if(isset($element['pdf']) && $element['pdf'] != ''){
-            $element['pdf'] = $this->uploadsUrl . $element['pdf'];
-        }
-
-        //Images
-        if($sizes){
-            foreach ($sizes as $key => $value) {
-                if(isset($element[$key]) && $element[$key] != '' ){
-                    $element[$key] = $this->uploadsUrl . $value . $element[$key];
+            if(isset($parameters['sizes'])){
+                foreach ($parameters['sizes'] as $key => $value) {
+                    if(isset($el[$key]) && $el[$key] != '' ){
+                        $element[$k][$key] = $this->uploadsUrl . $value . $el[$key];
+                    }
                 }
             }
+
+            $element[$k]['_model'] = $table;
         }
-        
 
         return $element;
     }
 
-    public function CleanArray($data, $columns)
-    {
+    private function CleanObject($data, $columns){
         if(count($data) > 0){
-            foreach ($data as $key => $element) {
-                $data[$key] = $this->CleanObject($element, $columns);
-            }
-        }
-
-        return $data;
-    }
-
-    public function CleanObject($data, $columns)
-    {
-
-        if(count($data) > 0){
-
-            $col = array();
+            $col = [];
             foreach ($columns as $column) {
                 if (isset($data[$column])){
                     $col[$column] = $data[$column];
                 }
             }
-
             return $col;
         } else {
             return $data;
