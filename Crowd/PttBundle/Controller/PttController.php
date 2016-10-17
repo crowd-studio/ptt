@@ -29,18 +29,12 @@ class PttController extends Controller
     private $fields;
     private $self;
 
-    //LIST
-    public function listAction(Request $request, $page){
+    /**
+     * @Route("/{entity}/list/{$page}", name="list");
+     * @Template()
+     */
+    public function listAction(Request $request, $entity, $page = null){
         $this->deleteTemp();
-        list($allowed, $message) = $this->allowAccess('listAction');
-        if (!$allowed) {
-            $this->get('session')->getFlashBag()->add('error_persist', $message);
-            return $this->_renderTemplateForActionInfo('error', array(
-                'page' => array(
-                    'title' => $this->get('pttTrans')->trans('error')
-                    )
-                ));
-        }
 
         $response = $this->_order($request);
         if ($response) {
@@ -80,8 +74,11 @@ class PttController extends Controller
             ));
     }
 
-    //EDIT
-    public function editAction(Request $request, $id){
+    /**
+     * @Route("/{entity}/edit/{id}", name="edit");
+     * @Template()
+     */
+    public function editAction(Request $request, $entity, $id = null){
         if ($id == null) {
             $entity = $this->_initEntity();
         } else {
@@ -90,16 +87,6 @@ class PttController extends Controller
             if ($entity == null) {
                 throw $this->createNotFoundException($this->get('pttTrans')->trans('the_entity_does_not_exist', $this->_entityInfoValue('lowercase')));
             }
-        }
-
-        list($allowed, $message) = $this->allowAccess('editAction', $entity);
-        if (!$allowed) {
-            $this->get('session')->getFlashBag()->add('error_persist', $message);
-            return $this->_renderTemplateForActionInfo('error', array(
-                        'page' => array(
-                            'title' => $this->get('pttTrans')->trans('error')
-                            )
-                        ));
         }
 
         $pttForm = $this->get('pttForm');
@@ -121,12 +108,12 @@ class PttController extends Controller
 
                 $this->self = $this->get('session')->get('self');
                 if($this->self == 1){
-                    return $this->redirect($this->generateUrl($this->urlPath() . '_edit', array('id' => $id, 'self' => 1)));
+                    return $this->redirect($this->generateUrl('edit', ['entity' => $entity, 'id' => $id, 'self' => 1]));
                 } else {
                     if ($id == null && $request->get('another') != null) {
-                        return $this->redirect($this->generateUrl($this->urlPath() . '_edit'));
+                        return $this->redirect($this->generateUrl('edit', ['entity' => $entity, 'id' => $id]));
                     } else {
-                        return $this->redirect($this->generateUrl($this->urlPath() . '_list'));
+                        return $this->redirect($this->generateUrl('list', ['entity' => $entity]));
                     }
                 }
                 
@@ -150,22 +137,15 @@ class PttController extends Controller
             ));
     }
 
-    //DELETE
-    public function deleteAction(Request $request, $id){
+    /**
+     * @Route("/{entity}/delete/{id}", name="delete");
+     * @Template()
+     */
+    public function deleteAction(Request $request, $entity, $id){
         $em = $this->get('doctrine')->getManager();
         $entity = $em->getRepository($this->_repositoryName())->find($id);
         if ($entity == null) {
             throw $this->createNotFoundException('The ' . $this->_entityInfoValue('lowercase') . ' does not exist');
-        }
-
-        list($allowed, $message) = $this->allowAccess('deleteAction', $entity);
-        if (!$allowed) {
-            $this->get('session')->getFlashBag()->add('error_persist', $message);
-            return $this->_renderTemplateForActionInfo('error', array(
-                        'page' => array(
-                            'title' => $this->get('pttTrans')->trans('error')
-                            )
-                        ));
         }
 
         list($valid, $message) = $this->continueWithDeletion($entity);
@@ -195,8 +175,11 @@ class PttController extends Controller
 
     }
 
-    //COPY
-    public function copyAction(Request $request, $id){
+    /**
+     * @Route("/{entity}/copy/{id}", name="copy");
+     * @Template()
+     */
+    public function copyAction(Request $request, $entity, $id){
         $em = $this->get('doctrine')->getManager();
         $entity = $em->getRepository($this->_repositoryName())->find($id);
         if ($entity == null) {
@@ -206,11 +189,14 @@ class PttController extends Controller
         $entityB = clone $entity;
         $em->persist($entityB);
         $em->flush();
-        return $this->redirect($this->generateUrl($this->urlPath() . '_list'));
+        return $this->redirect($this->generateUrl('list', ['entity' => $entity]));
     }
 
-    //ORDER
-    public function orderAction(Request $request){
+    /**
+     * @Route("/{entity}/order/", name="order");
+     * @Template()
+     */
+    public function orderAction(Request $request, $entity){
         if ($request->getMethod() == 'PUT') {
             $fields = JSON_decode($request->getContent());
             $em = $this->get('doctrine')->getManager();
@@ -233,12 +219,15 @@ class PttController extends Controller
              }
             return new JsonResponse($response);
         } else {
-            return $this->redirect($this->generateUrl($this->urlPath() . '_list'));
+            return $this->redirect($this->generateUrl('list', ['entity' => $entity]));
         }
     }
 
-    //LAST
-    public function lastAction(Request $request){
+    /**
+     * @Route("/{entity}/last", name="last");
+     * @Template()
+     */
+    public function lastAction(Request $request, $entity){
         $limit = $request->get('limit');
         $result = array(); 
         try {
@@ -251,12 +240,14 @@ class PttController extends Controller
             $result = array('results' => 'Fail ' . $e);
         }
         
-        // return new JsonResponse();
         return new JsonResponse($result);
     }
 
-    //SEARCH
-    public function searchAction(Request $request){
+    /**
+     * @Route("/{entity}/search", name="search");
+     * @Template()
+     */
+    public function searchAction(Request $request, $entity){
         $limit = $request->get('page_limit');
         $query = $request->get('q');
         $result = array(); 
@@ -270,9 +261,28 @@ class PttController extends Controller
             $result = array('results' => 'Fail ' . $e);
         }
         
-        // return new JsonResponse();
         return new JsonResponse($result);
     }
+
+    // public function generateCSV($query, $name){
+    //     $em = $this->container->get('doctrine')->getManager();
+    //     $query = $em->createQuery($query);
+    //     $data = $query->getResult(); 
+
+    //     $filename = $name . "_".date("Y_m_d_His").".csv"; 
+        
+    //     $response = $this->render('PttBundle:Default:csv.html.twig', array('data' => $data)); 
+
+    //     $response->setStatusCode(200);
+    //     $response->headers->set('Content-Type', 'text/csv');
+    //     $response->headers->set('Content-Description', 'Submissions Export');
+    //     $response->headers->set('Content-Disposition', 'attachment; filename=' . $filename);
+    //     $response->headers->set('Content-Transfer-Encoding', 'binary');
+    //     $response->headers->set('Pragma', 'no-cache');
+    //     $response->headers->set('Expires', '0');
+        
+    //     return $response; 
+    // }
 
     //SHOULD CREATE DEFAULT METHODS
     //list, create, edit, delete
@@ -651,25 +661,5 @@ class PttController extends Controller
             $this->repositoryName = $this->_bundle() . ':' . $this->_entityName();
         }
         return $this->repositoryName;
-    }
-
-    public function generateCSV($query, $name){
-        $em = $this->container->get('doctrine')->getManager();
-        $query = $em->createQuery($query);
-        $data = $query->getResult(); 
-
-        $filename = $name . "_".date("Y_m_d_His").".csv"; 
-        
-        $response = $this->render('PttBundle:Default:csv.html.twig', array('data' => $data)); 
-
-        $response->setStatusCode(200);
-        $response->headers->set('Content-Type', 'text/csv');
-        $response->headers->set('Content-Description', 'Submissions Export');
-        $response->headers->set('Content-Disposition', 'attachment; filename=' . $filename);
-        $response->headers->set('Content-Transfer-Encoding', 'binary');
-        $response->headers->set('Pragma', 'no-cache');
-        $response->headers->set('Expires', '0');
-        
-        return $response; 
     }
 }

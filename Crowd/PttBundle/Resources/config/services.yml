@@ -1,6 +1,4 @@
 services:
-    pttRouting:
-        class: Crowd\PttBundle\Routing\PttRouting
     pttEntityMetadata:
         class: Crowd\PttBundle\Util\PttEntityMetadata
         arguments: ["@doctrine.orm.entity_manager"]

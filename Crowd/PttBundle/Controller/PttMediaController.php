@@ -21,6 +21,10 @@ use Crowd\PttBundle\Form\PttField;
 
 class PttMediaController extends Controller
 {
+    /**
+     * @Route("/ptt/media/upload/", name="upload");
+     * @Template()
+     */
     public function uploadAction(Request $request)
     {
         if($request->files->get('files') !== null) {
@@ -93,6 +97,10 @@ class PttMediaController extends Controller
 
     }
 
+    /**
+     * @Route("/ptt/media/autocomplete/", name="autocomplete");
+     * @Template()
+     */
     public function autocompleteAction(Request $request)
     {
         $field = $request->get('field');
