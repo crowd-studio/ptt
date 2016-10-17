@@ -15,6 +15,9 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Cookie;
 
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+
 use Crowd\PttBundle\Util\PttUtil;
 use Crowd\PttBundle\Form\PttUploadFile;
 use Crowd\PttBundle\Form\PttField;
