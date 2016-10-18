@@ -19,31 +19,29 @@ class PttFormAfterSaveMultipleEntity extends PttFormAfterSave
 
     private function _saveRelatedEntities()
     {
-        $ids = array();
-        $model = false;
+        $entityRemains = [];
+        $em = $this->entityInfo->getEntityManager();
 
         if (is_array($this->sentData) && count($this->sentData)) {
             $index = 0;
             foreach ($this->sentData as $key => $entityData) {
                 if ($key != -1) {
-                    $em = $this->entityInfo->getEntityManager();
-                    $pttHelper = new PttHelperFormFieldTypeMultipleEntity($this->entityInfo, $this->field, $this->container, $em, $entityData["type"]);
-
+                    $type = $entityData["type"];
+                    $pttHelper = new PttHelperFormFieldTypeMultipleEntity($this->entityInfo, $this->field, $this->container, $em, $type);
                     $entity = $pttHelper->entityForDataArray($entityData);
                     $form = $pttHelper->formForEntity($entity, $key);
                     $form->setTotalData($index);
                     $form->save();
-                    $ids[] = $entity->getPttId();
                     $index += 1;
-                    $model = '';
-                    foreach ($this->sentData as $key => $module) {
-                        $model = $module['_model'];
-                        break; 
+                    if (isset($entityRemains[$type])){
+                        $entityRemains[$type] = $entityRemains[$type] . ',' . $entity->getPttId();
+                    } else {
+                        $entityRemains[$type] = $entity->getPttId();    
                     }
                 }
             }
         }
-        $this->_deleteUnnecessaryRelations($ids, $model);
+        $this->_deleteUnnecessaryRelations($entityRemains, $em);
     }
 
     private function _deleteTransEntities($module, $id){
@@ -57,29 +55,21 @@ class PttFormAfterSaveMultipleEntity extends PttFormAfterSave
         $query->execute();
     }
 
-    private function _deleteUnnecessaryRelations($ids, $model)
+    private function _deleteUnnecessaryRelations($entityRemains, $em)
     {
-
-        $em = $this->entityInfo->getEntityManager();
-
         foreach ($this->field->options['modules'] as $key => $value)
         {
             $entityRepository = $this->entityInfo->getBundle() . ':' . $value['entity'];
 
             $dql = '
-            delete
-                ' . $entityRepository . ' e
-            where
-                e.relatedId = :id and e._model = :model';
-            if (count($ids)) {
+            delete ' . $entityRepository . ' e
+            where e.relatedId = :id and e._model = :model';
+            if (isset($entityRemains[$value['entity']]) && count($entityRemains[$value['entity']])) {
                 $dql .= '
-                and
-                    e.id not in (' . implode(', ', $ids) . ')';
+                and e.id not in (' . $entityRemains[$value['entity']] . ')';
             }
 
-            if ($model){
-                $dql .= " and e._model = '" . $model . "'";
-            }
+            var_dump($dql);var_dump($this->entityInfo->get('pttId'));var_dump($this->entityInfo->getEntityName());
 
             $query = $em->createQuery($dql);
             $query->setParameter('id', $this->entityInfo->get('pttId'));
