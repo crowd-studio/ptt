@@ -69,8 +69,6 @@ class PttFormAfterSaveMultipleEntity extends PttFormAfterSave
                 and e.id not in (' . $entityRemains[$value['entity']] . ')';
             }
 
-            var_dump($dql);var_dump($this->entityInfo->get('pttId'));var_dump($this->entityInfo->getEntityName());
-
             $query = $em->createQuery($dql);
             $query->setParameter('id', $this->entityInfo->get('pttId'));
             $query->setParameter('model', $this->entityInfo->getEntityName());
