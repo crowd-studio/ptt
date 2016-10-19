@@ -13,9 +13,9 @@ class PttFormSaveHour extends PttFormSave
 {
     public function value()
     {
-        $sentData = $this->request->get($this->entityInfo->getFormName());
         $value = $this->entityInfo->get($this->field->name, $this->languageCode);
         $date = null;
+        
         if (is_string($value)) {
             try{
                 $date = str_replace('/', ':', $value);

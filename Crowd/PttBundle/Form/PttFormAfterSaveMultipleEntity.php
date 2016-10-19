@@ -29,9 +29,13 @@ class PttFormAfterSaveMultipleEntity extends PttFormAfterSave
                     $type = $entityData["type"];
                     $pttHelper = new PttHelperFormFieldTypeMultipleEntity($this->entityInfo, $this->field, $this->container, $em, $type);
                     $entity = $pttHelper->entityForDataArray($entityData);
+
                     $form = $pttHelper->formForEntity($entity, $key);
                     $form->setTotalData($index);
-                    $form->save();
+
+                    $form->isValid();
+                    $form->save(true);
+                        
                     $index += 1;
                     if (isset($entityRemains[$type])){
                         $entityRemains[$type] = $entityRemains[$type] . ',' . $entity->getPttId();

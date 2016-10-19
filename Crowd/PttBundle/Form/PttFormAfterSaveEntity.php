@@ -32,6 +32,7 @@ class PttFormAfterSaveEntity extends PttFormAfterSave
                     $form = $pttHelper->formForEntity($entity, $key);
 
                     $form->setTotalData($index);
+                    $form->isValid();
                     $form->save();
 
                     $ids[] = $entity->getPttId();
