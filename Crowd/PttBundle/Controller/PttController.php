@@ -16,6 +16,7 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Cookie;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Doctrine\Common\Annotations\AnnotationReader;
 
 use Crowd\PttBundle\Form\PttForm;
 use Crowd\PttBundle\Util\PttUtil;
@@ -344,10 +345,15 @@ class PttController extends Controller
     }
 
     protected function fieldsToList(){
-        var_dump('here');die();
-        return array(
-            'title' => $this->get('pttTrans')->trans('title'),
-            );
+        $fields = $this->_getAnnotation('defaultField');
+        if ($fields){
+            $chunks = array_chunk(preg_split('/(=|,)/', $input), 2);
+            $result = array_combine(array_column($chunks, 0), array_column($chunks, 1));
+            return $result;
+        } else {
+            return ['title' => $this->get('pttTrans')->trans('title')];
+        }
+        
     }
 
     protected function orderList(){
@@ -652,5 +658,22 @@ class PttController extends Controller
             $this->repositoryName = $this->_bundle() . ':' . $this->entityName;
         }
         return $this->repositoryName;
+    }
+
+    private function _getAnnotation($field = false){
+        $reader = new AnnotationReader();
+        $class = $this->_className();
+
+        $pttAnnotation = $reader->getClassAnnotation(new \ReflectionClass(new $class), 'Crowd\PttBundle\Annotations\PttAnnotation');
+        var_dump($pttAnnotation);die();
+        if(!$pttAnnotation) {
+            return false;
+        }
+
+        if ($field){
+            return strtolower($pttAnnotation->$field);
+        } else {
+            return $pttAnnotation;
+        }
     }
 }
