@@ -21,6 +21,7 @@ use Doctrine\Common\Annotations\AnnotationReader;
 use Crowd\PttBundle\Form\PttForm;
 use Crowd\PttBundle\Util\PttUtil;
 use Crowd\PttBundle\Util\PttCache;
+use Crowd\PttBundle\Annotations\PttAnnotation;
 
 class PttController extends Controller
 {
@@ -347,7 +348,7 @@ class PttController extends Controller
     protected function fieldsToList(){
         $fields = $this->_getAnnotation('defaultField');
         if ($fields){
-            $chunks = array_chunk(preg_split('/(=|,)/', $input), 2);
+            $chunks = array_chunk(preg_split('/(=|,)/', $fields), 2);
             $result = array_combine(array_column($chunks, 0), array_column($chunks, 1));
             return $result;
         } else {
@@ -664,14 +665,13 @@ class PttController extends Controller
         $reader = new AnnotationReader();
         $class = $this->_className();
 
-        $pttAnnotation = $reader->getClassAnnotation(new \ReflectionClass(new $class), 'Crowd\PttBundle\Annotations\PttAnnotation');
-        var_dump($pttAnnotation);die();
+        $pttAnnotation = $reader->getClassAnnotation(new \ReflectionClass(new $class), PttAnnotation::class);
         if(!$pttAnnotation) {
             return false;
         }
 
         if ($field){
-            return strtolower($pttAnnotation->$field);
+            return $pttAnnotation->$field;
         } else {
             return $pttAnnotation;
         }
