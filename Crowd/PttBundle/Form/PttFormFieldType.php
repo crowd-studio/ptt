@@ -48,7 +48,7 @@ class PttFormFieldType
 		$errorClass = ($this->errors && $this->field->showErrors) ? ' has-error': '';
 
 		$html = '
-		<div class="' . $this->extraClassesForFieldContainer() . $errorClass . '" data-fieldName="' . $this->field->getFormName($this->languageCode) . '" data-fieldType="' . $this->field->type . '">
+		<div class="' . $this->extraClassesForFieldContainer() . $errorClass . '" data-fieldName="' . $this->field->getFormName($this->languageCode) . '" data-fieldType="' . $this->field->type . '" '. $this->_addExtraAttrsToContainer().'>
 		';
 
 		return $html;
@@ -130,6 +130,11 @@ class PttFormFieldType
 	}
 
 	protected function extraAttrsForField()
+	{
+		return false;
+	}
+
+	protected function extraAttrsForContainer()
 	{
 		return false;
 	}

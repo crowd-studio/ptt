@@ -97,4 +97,11 @@ class PttFormFieldTypeGallery extends PttFormFieldType
     {
         return 'form-group entity col-sm-12';
     }
+
+    protected function extraAttrsForContainer()
+    {
+        $attrs = ['data-prefix' => PttUtil::pttConfiguration('prefix')];
+        return $attrs;
+    }
+
 }

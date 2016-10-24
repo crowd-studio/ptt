@@ -21,7 +21,11 @@ class PttFormFieldTypeDate extends PttFormFieldType
 		}
 
 		if ($this->value instanceof \DateTime) {
-			$this->value = $this->value->format('d/m/Y');
+			if($this->value->format('Y') > -1){
+				$this->value = $this->value->format('d/m/Y');
+			} else {
+				$this->value = null;
+			}
 		}
 
 		$htmlField = '<input type="text" data-language="' . $language . '" ';

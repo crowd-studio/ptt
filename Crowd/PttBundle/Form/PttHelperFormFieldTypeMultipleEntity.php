@@ -66,8 +66,6 @@ class PttHelperFormFieldTypeMultipleEntity
     }
 
     public function createTransEntities($data, $lang, $relatedId, $type){
-        $em = $this->entityInfo->getEntityManager();
-
         $classNameArr = explode('\\', $this->entityInfo->getClassName());
         array_pop($classNameArr);
         $type = implode('\\', $classNameArr) . '\\' . $type . 'Trans';
@@ -93,7 +91,7 @@ class PttHelperFormFieldTypeMultipleEntity
 
         
 
-        $em->persist($entity);
+        $this->em->persist($entity);
         // var_dump($entity->getSlug());die();
     }
 
@@ -120,6 +118,7 @@ class PttHelperFormFieldTypeMultipleEntity
         $pttForm = $this->container->get('pttForm');
 
         $pttForm->setEntity($entity);
+        $pttForm->setTotalData($this->_totalEntities());
 
         if ($errors != false) {
             $pttForm->setErrors($errors);
@@ -132,5 +131,15 @@ class PttHelperFormFieldTypeMultipleEntity
         $pttForm->setFormName($this->field->getFormName() . '[' . $key . ']');
 
         return $pttForm;
+    }
+
+    private function _totalEntities(){
+        $repositoryName = $this->repositoryName = $this->entityInfo->getBundle() . ':' . $this->entity;
+        $query = $this->em->createQueryBuilder()
+                      ->select('count(p.id)')
+                      ->from($repositoryName, 'p');
+
+        $total = $query->getQuery()->getSingleScalarResult();
+        return $total;
     }
 }

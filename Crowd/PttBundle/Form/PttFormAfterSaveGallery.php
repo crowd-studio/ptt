@@ -11,6 +11,7 @@ use Crowd\PttBundle\Form\PttFormAfterSave;
 
 class PttFormAfterSaveGallery extends PttFormAfterSave
 {
+    private $em;
     public function perform()
     {
         $this->_saveRelatedEntities();
@@ -19,7 +20,7 @@ class PttFormAfterSaveGallery extends PttFormAfterSave
     private function _saveRelatedEntities()
     {
 
-        $em = $this->entityInfo->getEntityManager();
+        $this->em = $this->entityInfo->getEntityManager();
 
         $pttHelper = new PttHelperFormFieldTypeGallery($this->entityInfo, $this->field, $this->container, $this->entityInfo->getEntityManager());
 
@@ -34,6 +35,7 @@ class PttFormAfterSaveGallery extends PttFormAfterSave
                     $form = $pttHelper->formForEntity($entity, $key);
 
                     $form->setTotalData($index);
+                    $form->isValid();
                     $form->save();
 
                     $ids[] = $entity->getPttId();
@@ -47,35 +49,33 @@ class PttFormAfterSaveGallery extends PttFormAfterSave
     }
 
     private function _deleteTransEntities($module, $id){
-        $em = $this->entityInfo->getEntityManager();
         $entityRepository = $this->entityInfo->getBundle() . ':' . $module . 'Trans';
 
         $dql = '
             DELETE ' . $entityRepository . ' e WHERE e.relatedId = :id';
 
-        $query = $em->createQuery($dql);
+        $query = $this->em->createQuery($dql);
         $query->setParameter('id', $id);
         $query->execute();
     }
 
     private function _deleteUnnecessaryRelations($ids)
     {
-        $em = $this->entityInfo->getEntityManager();
-
         $entityRepository = $this->entityInfo->getBundle() . ':' . $this->field->options['entity'];
 
         $dql = '
         delete
             ' . $entityRepository . ' e
         where
-            e.relatedId = :id';
+            e.relatedId = :id and e._model = :model';
         if (count($ids)) {
             $dql .= '
             and
                 e.id not in (' . implode(', ', $ids) . ')';
         }
-        $query = $em->createQuery($dql);
+        $query = $this->em->createQuery($dql);
         $query->setParameter('id', $this->entityInfo->get('pttId'));
+        $query->setParameter('model', $this->entityInfo->getEntityName());
         $query->execute();
     }
 }

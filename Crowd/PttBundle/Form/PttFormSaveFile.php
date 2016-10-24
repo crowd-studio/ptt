@@ -26,28 +26,28 @@ class PttFormSaveFile extends PttFormSave
             $value = PttUploadFile::upload($file, $this->field);
         } else {
 
-            $sentData = $this->request->get($this->entityInfo->getFormName());
+            // $sentData = $this->request->get($this->entityInfo->getFormName());
             $value = $this->entityInfo->get($this->field->name, $this->languageCode);
             if ($this->languageCode) {
-                if (isset($sentData[$this->languageCode][$this->field->name . '-delete']) && $sentData[$this->languageCode][$this->field->name . '-delete'] != '0') {
-                    $this->_deleteFile($sentData[$this->languageCode][$this->field->name . '-delete']);
+                if (isset($this->sentData[$this->languageCode][$this->field->name . '-delete']) && $this->sentData[$this->languageCode][$this->field->name . '-delete'] != '0') {
+                    $this->_deleteFile($this->sentData[$this->languageCode][$this->field->name . '-delete']);
                     $value = '';
                 }
-                if (isset($sentData[$this->languageCode][$this->field->name . '-webcam']) && $sentData[$this->languageCode][$this->field->name . '-webcam'] != '') {
-                    $value = $sentData[$this->languageCode][$this->field->name . '-webcam'];
+                if (isset($this->sentData[$this->languageCode][$this->field->name . '-webcam']) && $this->sentData[$this->languageCode][$this->field->name . '-webcam'] != '') {
+                    $value = $this->sentData[$this->languageCode][$this->field->name . '-webcam'];
                 }
             } else {
-                if (isset($sentData[$this->field->name . '-delete']) && $sentData[$this->field->name . '-delete'] != '0') {
-                    $this->_deleteFile($sentData[$this->field->name . '-delete']);
+                if (isset($this->sentData[$this->field->name . '-delete']) && $this->sentData[$this->field->name . '-delete'] != '0') {
+                    $this->_deleteFile($this->sentData[$this->field->name . '-delete']);
                     $value = '';
                 }
-                if (isset($sentData[$this->field->name . '-webcam']) && $sentData[$this->field->name . '-webcam'] != '') {
-                    $value = $sentData[$this->field->name . '-webcam'];
+                if (isset($this->sentData[$this->field->name . '-webcam']) && $this->sentData[$this->field->name . '-webcam'] != '') {
+                    $value = $this->sentData[$this->field->name . '-webcam'];
                 }
             }
         }
         
-        if ($this->field->options['type'] == 'gallery') {
+        if ($value != '' && $this->field->options['type'] == 'gallery') {
             if ($this->languageCode) {
                 $path = (isset($this->sentData[$this->languageCode][$this->field->name])) ? $this->sentData[$this->languageCode][$this->field->name] : false;
             } else {
