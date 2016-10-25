@@ -168,6 +168,18 @@ class PttFormFieldType
 		}
 	}
 
+	private function _addExtraAttrsToContainer()
+	{
+		$extraAttrs = $this->extraAttrsForContainer();
+		$attrs = '';
+		if ($extraAttrs) {
+			foreach ($extraAttrs as $extraAttrKey => $extraAttrValue) {
+				$attrs .= ' ' . $extraAttrKey . '="' . $extraAttrValue . '"';
+			}
+		}
+		return $attrs;
+	}
+
 	private function _optionsValue($value, $default = null)
 	{
 		if (isset($this->field->options[$value])) {
