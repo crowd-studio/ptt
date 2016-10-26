@@ -45,7 +45,7 @@ class PttServices
 
         if($lang){
             $sql = '
-                SELECT t.*, tm.* FROM ' .$table.' t LEFT JOIN ' .$table.'Trans tm ON t.id = tm.relatedId WHERE tm.language = :lang ';
+                SELECT t.*, tm.* FROM ' .$table.' t LEFT JOIN ' .$table.'_trans tm ON t.id = tm.relatedId WHERE tm.language = :lang ';
         } else {
             $sql = '
                 SELECT t.* FROM ' .$table.' t WHERE 1=1 ';
@@ -66,8 +66,8 @@ class PttServices
 
         if(isset($params['page'])){
             $limit = (isset($params['limit'])) ? $params['limit'] : $this->limit;
-            $offset = $page * $limit;
-            $sql .= 'LIMIT '. $limit .' OFFSET ' . $offset;
+            $offset = $params['page'] * $limit;
+            $sql .= ' LIMIT '. $limit .' OFFSET ' . $offset;
         }
 
         return $sql;
@@ -88,7 +88,7 @@ class PttServices
                             $sql .= $key . ' ' . $whereLine['value'] . ' ';
                         } else {
                             $sql .= $key . ' t.'.$whereLine['column'].' '.$whereLine['operator'].' ';
-                            $sql .= ($whereLine['operator'] == 'in') ?  '('.$whereLine['value'].') ' : '"'.$whereLine['value'].'" ';
+                            $sql .= (strtolower($whereLine['operator']) == 'in') ?  '('.$whereLine['value'].') ' : '"'.$whereLine['value'].'" ';
                         }
                     }
                 }
@@ -99,7 +99,7 @@ class PttServices
         return $sql;
     }
 
-    public function _get($table, $lang, $params = []){
+    public function get($table, $lang, $params = []){
         $sql = $this->_sql($table, $lang, $params);
 
         $stmt = $this->em->getConnection()->prepare($sql);
@@ -110,32 +110,32 @@ class PttServices
         $stmt->execute();
         $data = $stmt->fetchAll();
 
-        $data = $this->prepareObjects($lang, $data, $table, $parameters);
+        $data = $this->_prepareObjects($data, $table, $params);
 
-        if($params['one'] && $params['one']){
+        if(isset($params['one']) && $params['one']){
             $data = (isset($data[0])) ? $data[0] : null;
         }
         return $data;
     }
 
-    public function _getOne($table, $lang, $id, $params){
+    public function getOne($table, $lang, $id, $params = []){
         $params['where'] = [
             [
                 'and' => [
-                    ['column' => ($lang) ? 'relatedId' : 'id', 'operator' => '=', 'value' = $id ]
+                    ['column' => 'id', 'operator' => '=', 'value' => $id ]
                 ]
             ]
         ];
         $params['one'] = true;
-        return $this->_get($table, $lang, $params);
+        return $this->get($table, $lang, $params);
     }
 
-    public function _getByPag($table, $lang, $params = []){
+    public function getByPag($table, $lang, $params = []){
         $sql = $this->_sql($table, $lang, $params);
 
         $sqlLimit = $sql;
 
-        $sql = ', (SELECT COUNT(t.*) FROM' . explode('FROM', $sql, 2)[1] . ') _totalPagCount FROM';
+        $sql = ', (SELECT COUNT(t.id) FROM' . explode('FROM', explode('ORDER BY', $sql)[0], 2)[1] . ') _totalPagCount FROM';
 
         $sqlArr = explode('FROM', $sqlLimit, 2);
         $sqlLimit = $sqlArr[0] . $sql . $sqlArr[1];
@@ -149,45 +149,112 @@ class PttServices
         $data = $stmt->fetchAll();
 
         $total = (isset($data[0])) ? $data[0]["_totalPagCount"] : 0;
-        $data = $this->prepareObjects($lang, $data, $table, $parameters);
-
-        $hasNewPages = sizeOf( $total ) / $limit - $page > 1;
+        $data = $this->_prepareObjects($data, $table, $params);
+        $limit = (isset($params['limit'])) ? $params['limit'] : $this->limit;
+        $hasNewPages = sizeOf( $total ) / $limit - $params['page'] > 1;
 
         return array('content' => $data, 'hasNewPages' => $hasNewPages, 'size' =>  $limit);
     }
 
-    private function prepareObjects($lang, $element, $table, $parameters = []){
-        foreach ($element as $k => $el) {
-            //Pdf
-            if(isset($el['pdf']) && $el['pdf'] != ''){
-                $element[$k]['pdf'] = $this->uploadsUrl . $el['pdf'];
-            }
-
-            //Clean
-            if(isset($parameters['clean'])){
-                $keys = $parameters['clean']);
-            } else {
-                $keys = array_keys($el);
-                unset($keys[array_search('_totalPagCount', $keys)]);
-            }
-
-            $element[$k] = $this->CleanObject($el, $keys);
-
-            if(isset($parameters['sizes'])){
-                foreach ($parameters['sizes'] as $key => $value) {
-                    if(isset($el[$key]) && $el[$key] != '' ){
-                        $element[$k][$key] = $this->uploadsUrl . $value . $el[$key];
-                    }
-                }
-            }
-
-            $element[$k]['_model'] = $table;
+    public function getModules($id, $model, $lang, $params = []){
+        $moduleSQL = [];
+        foreach ($params as $module => $mod) {
+            $moduleSQL[] = 'SELECT id, "' . $module . '" as type, _order FROM ' . $module . ' WHERE related_id = :relid AND _model = :model';
         }
 
-        return $element;
+        $sql = implode(' UNION ALL ', $moduleSQL);
+
+        $stmt = $this->em->getConnection()->prepare($sql);
+        $stmt->bindValue('relid', $id);
+        $stmt->bindValue('model', $model);
+        $stmt->execute();
+        $array = $stmt->fetchAll();
+        $size = count($array);
+        
+        $modules = [];
+        if($size){
+            foreach ($array as $key => $row)
+            {
+                $order[$key] = $row['_order'];
+            }
+
+            array_multisort($order, SORT_ASC, $array);   
+
+            for($i=0; $i<$size; $i++)
+            {
+                if(class_exists('AdminBundle:' . $array[$i]['type'] . 'Trans')){
+                    $sql = '
+                    SELECT a.*, at.*, "'.$array[$i]['type'].'" as type
+                    FROM '. $array[$i]['type'] .' a LEFT JOIN '.$array[$i]['type'].'_trans at ON a.id = at.relatedId
+                    WHERE a.ID = :id AND at.language = :lang';
+
+                    $stmt = $this->em->getConnection()->prepare($sql);
+                    $stmt->bindValue('id', $array[$i]['id']);
+                    $stmt->bindValue('lang', $lang);
+                
+                } else {
+                    $sql = '
+                    SELECT a.*, "'.$array[$i]['type'].'" as type
+                    FROM '. $array[$i]['type'] .' a 
+                    WHERE a.ID = :id ';
+
+                    $stmt = $this->em->getConnection()->prepare($sql);
+                    $stmt->bindValue('id', $array[$i]['id']);
+                }
+                
+
+                $stmt->execute();
+                $aux = $stmt->fetchAll();
+
+                foreach ($aux as $key => $module) {
+                    $modules[] = $this->_prepareObject($module, $module['type'], $params[$module['type']]);
+                }
+                
+            }
+        }
+
+        return $modules;
     }
 
-    private function CleanObject($data, $columns){
+    private function _prepareObjects($elements, $table, $parameters = []){
+        foreach ($elements as $k => $el) {
+            $elements[$k] = $this->_prepareObject($el, $table, $parameters);
+        }
+
+        return $elements;
+    }
+
+    private function _prepareObject($el, $table, $parameters){
+        //Pdf
+        if(isset($el['pdf']) && $el['pdf'] != ''){
+            $el['pdf'] = $this->uploadsUrl . $el['pdf'];
+        }
+
+        //Clean
+        if(isset($parameters['clean'])){
+            $keys = $parameters['clean'];
+        } else {
+            $keys = array_keys($el);
+            unset($keys[array_search('_totalPagCount', $keys)]);
+        }
+
+        $el = $this->_cleanObject($el, $keys);
+
+        // Images
+        if(isset($parameters['sizes'])){
+            foreach ($parameters['sizes'] as $key => $value) {
+                if(isset($el[$key]) && $el[$key] != '' ){
+                    $el[$key] = $this->uploadsUrl . $value . $el[$key];
+                }
+            }
+        }
+        
+        // Model
+        $el['_model'] = $table;
+        return $el;
+    }
+
+    private function _cleanObject($data, $columns){
         if(count($data) > 0){
             $col = [];
             foreach ($columns as $column) {
