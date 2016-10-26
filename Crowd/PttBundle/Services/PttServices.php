@@ -182,7 +182,7 @@ class PttServices
 
             for($i=0; $i<$size; $i++)
             {
-                if(class_exists('AdminBundle:' . $array[$i]['type'] . 'Trans')){
+                if($params[$array[$i]['type']]['trans']){
                     $sql = '
                     SELECT a.*, at.*, "'.$array[$i]['type'].'" as type
                     FROM '. $array[$i]['type'] .' a LEFT JOIN '.$array[$i]['type'].'_trans at ON a.id = at.relatedId
