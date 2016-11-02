@@ -165,7 +165,7 @@ class PttUploadFile
 
     private static function _uploadToS3($filepath, $filename)
     {
-        $s3ClassPath = BASE_DIR . 'vendor/tpyo/amazon-s3-php-class/S3.php';
+        $s3ClassPath = __DIR__ . '/../../../../../../vendor/tpyo/amazon-s3-php-class/S3.php';
         if (!file_exists($s3ClassPath) || !is_file($s3ClassPath)) {
             throw new \Exception('The class S3.php was not found at path ' . $s3ClassPath);
         }
@@ -206,41 +206,4 @@ class PttUploadFile
         // \S3::setAuth($s3['accessKey'], $s3['secretKey']);
         // \S3::deleteObject($s3['bucket'], $s3['dir'] . '/' . $filename);
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    
 }

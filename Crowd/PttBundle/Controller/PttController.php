@@ -307,7 +307,7 @@ class PttController extends Controller
     protected function flushCache($entity){}
 
     protected function deleteTemp(){
-        $dir = BASE_DIR . "web/tmp/"; 
+        $dir = __DIR__ . "/../../../../../../web/tmp/"; 
         $handle = opendir($dir); 
 
         while ($file = readdir($handle))  {   

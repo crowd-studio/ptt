@@ -38,7 +38,7 @@ class PttRouting
 			throw new \Exception('The controller class prefix must be defined');
 		} else {
 			$controllerClassPrefix = $info['controllerClassPrefix'];
-			$controllersPath = BASE_DIR . 'src/' . str_replace('\\', '/', $controllerClassPrefix);
+			$controllersPath = __DIR__ . '/../../../../../../src/' . str_replace('\\', '/', $controllerClassPrefix);
 		}
 
 		$finder = new Finder();

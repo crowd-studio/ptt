@@ -29,7 +29,7 @@ class PttServices
         
         try {
             $yaml = new Parser();
-            $ptt = $yaml->parse(file_get_contents(BASE_DIR . 'app/config/ptt.yml'));
+            $ptt = $yaml->parse(file_get_contents(__DIR__ . '/../../../../../../app/config/ptt.yml'));
             $this->uploadsUrl = (isset($ptt['s3']['force']) && $ptt['s3']['force']) ? $ptt['s3']['prodUrl'] . $ptt['s3']['dir'] . '/' : '/uploads/';
         } catch (ParseException $e) {
             printf("Unable to parse the YAML string: %s", $e->getMessage());

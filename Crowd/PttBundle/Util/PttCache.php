@@ -52,12 +52,12 @@ class PttCache
 
     public function remove($key = false)
     {
-        $fs->remove(array('files', BASE_DIR . $this->_cachePath, $this->_key . $this->_cacheExtension));
+        $fs->remove(array('files', __DIR__ . "/../../../../../../" . $this->_cachePath, $this->_key . $this->_cacheExtension));
     }
 
     public function removeAll($key = '')
     {
-        $files = glob(BASE_DIR . $this->_cachePath . $key . '*.*'); // get all file names
+        $files = glob(__DIR__ . "/../../../../../../" . $this->_cachePath . $key . '*.*'); // get all file names
         foreach($files as $file){ // iterate files
             if(is_file($file)) {
                 unlink($file); // delete file
@@ -94,7 +94,7 @@ class PttCache
 
     private function _cachePath($key)
     {
-        return BASE_DIR . $this->_cachePath . $key . $this->_cacheExtension;
+        return __DIR__ . "/../../../../../../" . $this->_cachePath . $key . $this->_cacheExtension;
     }
 
     private  function _encrypt ($input) {

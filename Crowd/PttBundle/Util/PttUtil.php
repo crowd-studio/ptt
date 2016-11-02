@@ -17,7 +17,7 @@ class PttUtil
     {
         $yaml = new Parser();
 
-        $filePath = BASE_DIR . 'app/config/ptt.yml';
+        $filePath = __DIR__ . "/../../../../../../app/config/ptt.yml";
 
         if (!file_exists($filePath) || !is_file($filePath)) {
             throw new \Exception('The file app/config/ptt.yml was not found');
@@ -150,7 +150,7 @@ class PttUtil
             $filePath = __DIR__ . '/../Resources/translations/' . $language . '.yml';
             $transStrings = $yaml->parse(file_get_contents($filePath));
 
-            $extendedFilePath = BASE_DIR . 'app/config/ptt/translations/' . $language . '.yml';
+            $extendedFilePath = __DIR__ . "/../../../../../../app/config/ptt/translations/" . $language . '.yml';
             if (file_exists($extendedFilePath) && is_file($extendedFilePath)) {
                 try {
                     $extendedTransStrings = $yaml->parse(file_get_contents($extendedFilePath));
