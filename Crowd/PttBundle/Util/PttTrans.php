@@ -36,7 +36,7 @@ class PttTrans
                 $filePath = __DIR__ . '/../Resources/translations/' . $language . '.yml';
                 $transStrings = $yaml->parse(file_get_contents($filePath));
 
-                $extendedFilePath = BASE_DIR . 'app/config/ptt/translations/' . $language . '.yml';
+                $extendedFilePath = __DIR__ . "/../../../../../../app/config/ptt/translations/" . $language . '.yml';
                 if (file_exists($extendedFilePath) && is_file($extendedFilePath)) {
                     try {
                         $extendedTransStrings = $yaml->parse(file_get_contents($extendedFilePath));

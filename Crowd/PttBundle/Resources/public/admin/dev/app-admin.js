@@ -116,7 +116,7 @@ define([
                 var cloneMultipleEntitiesView = new CloneMultipleEntitiesView({el:$(this)});
                 var myDropzone = new Dropzone(".dropzone", {
                     acceptedFiles: "image/*",
-                    url: window.app.baseUrl + "ptt/media/upload/",
+                    url: this.getAttribute('data-prefix') + window.app.baseUrl + "ptt/media/upload/",
                     success: function(file, response) {
                         cloneMultipleEntitiesView.add_gallery(response["file"], response["path"]);
                         if (file.previewElement) {

@@ -90,9 +90,11 @@ class PttMediaController extends Controller
         } else {
             $originalNameArray = explode('.', $_FILES['file']['name']);
             $extension = end($originalNameArray);
+            $prefix = (PttUtil::pttConfiguration('prefix') != '') ? PttUtil::pttConfiguration('prefix') : '';
             $shortName = '/tmp/' . PttUtil::token(100) . '.' . $extension;
-            $name = substr(BASE_DIR, 0, -4) . $shortName;
+            $name = substr(__DIR__ . '/../../../../../../', 0, -4) . $shortName;
             copy($_FILES['file']['tmp_name'], $name);
+            $shortName = $prefix . $shortName;
             return new JsonResponse(array("file" => $shortName, "path" => $name));
         }
 

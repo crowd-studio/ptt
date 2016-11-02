@@ -10,7 +10,6 @@ namespace Crowd\PttBundle\Twig;
 use \Twig_Extension;
 use \Twig_Filter_Method;
 use \Twig_SimpleFunction;
-use \Michelf\Markdown;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpKernel\KernelInterface;
 use Crowd\PttBundle\Util\PttUtil;
@@ -18,7 +17,6 @@ use Crowd\PttBundle\Util\PttTrans;
 
 class PttTwigExtension extends Twig_Extension
 {
-
     private $em;
     private $securityContext;
     private $request;
@@ -29,6 +27,8 @@ class PttTwigExtension extends Twig_Extension
         $this->em = $em;
         $this->securityContext = $securityContext;
         $this->kernel = $kernel;
+        $this->parsedown = new \Parsedown();
+        $this->parsedown->setBreaksEnabled(true);
     }
 
     public function setRequest(RequestStack $request_stack)
@@ -97,7 +97,7 @@ class PttTwigExtension extends Twig_Extension
 
     public function md2html($text)
     {
-        return \Michelf\Markdown::defaultTransform($text);
+        return $this->parsedown->text($text);
     }
 
     public function dynamicValue($entity, $key)
