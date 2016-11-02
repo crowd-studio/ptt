@@ -31,18 +31,19 @@
 	<ul class="options">
 		<li class="user">
 			{% if info('admin', 'noLinkToUser') == true %}
+				<a href="{{ path('user_edit', {id:app.user.id}) }}">
+			{% endif %}
 				<div class="info">
 					<div class="img">
-						<div class="img-container" style="background-image:url('{{ asset('uploads/60-60-' ~ app.user.image) }}');"></div>
+						{% if app.user.image is defined and app.user.image != '' %}
+							<div class="img-container" style="background-image:url('{{ asset('uploads/60-60-' ~ app.user.image) }}');"></div>
+						{% else %}
+							<div class="img-container"></div>
+						{% endif %}
 					</div>
 					<span>{{app.user}}</span>
 				</div>
-			{% else %}
-				<a href="{{ path('user_edit', {id:app.user.id}) }}">
-					<div class="img">
-						<div class="img-container" style="background-image:url('{{ asset('uploads/60-60-' ~ app.user.image) }}');"></div>
-					</div>
-					<span>{{app.user}}</span>
+			{% if info('admin', 'noLinkToUser') == true %}
 				</a>
 			{% endif %}
 		</li>
