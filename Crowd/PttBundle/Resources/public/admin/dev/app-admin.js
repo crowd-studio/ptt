@@ -390,11 +390,13 @@ define([
 
             var that = this;
             this.$el.markdown({
-                autofocus : false,
-                savable : false,
+                disabledButtons: 'cmdPreview',
                 height : height,
                 fullscreen : {
                     enable : false
+                },
+                onShow: function (e) {
+                    e.hideButtons("cmdPreview");
                 },
                 additionalButtons: [
                     [{

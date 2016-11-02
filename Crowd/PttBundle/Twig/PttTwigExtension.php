@@ -11,7 +11,6 @@ use \Twig_Extension;
 use \Twig_Filter_Method;
 use \Twig_SimpleFunction;
 use \Twig_Function_Method;
-use \Michelf\Markdown;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpKernel\KernelInterface;
 use Crowd\PttBundle\Util\PttUtil;
@@ -25,11 +24,14 @@ class PttTwigExtension extends Twig_Extension
     private $request;
     private $kernel;
     private $pttTrans;
+    private $parsedown;
 
     public function __construct(\Doctrine\ORM\EntityManager $em, $securityContext, KernelInterface $kernel) {
         $this->em = $em;
         $this->securityContext = $securityContext;
         $this->kernel = $kernel;
+        $this->parsedown = new \Parsedown();
+        $this->parsedown->setBreaksEnabled(true);
     }
 
     public function setRequest(RequestStack $request_stack)
@@ -84,7 +86,7 @@ class PttTwigExtension extends Twig_Extension
 
     public function md2html($text)
     {
-        return \Michelf\Markdown::defaultTransform($text);
+        return $this->parsedown->text($text);
     }
 
     public function dynamicValue($entity, $key)
