@@ -43,86 +43,50 @@ class PttServices
     }
 
     private function _sql($table, $lang, $params){
+
         $qb = $this->em->createQueryBuilder();
-        $tableBundle = $this->bundle . ':' . $table;
+        $tableBundle = $this->bundle . ':' . ucfirst($table);
 
         $sql = '';
-
-        if($lang){
-            $qb->select(['t', 'tm'])
-                ->from($tableBundle, 't')
-                ->leftJoin($tableBundle . '_trans', 'tm', 'WITH', 't.id = tm.relatedId')
-                ->where('tm.language = :lang')
-                ->setParameter('lang', $lang);
-            // $sql = '
-            //     SELECT t.*, tm.* FROM ' .$table.' t LEFT JOIN ' .$table.'_trans tm ON t.id = tm.relatedId WHERE tm.language = :lang ';
+        $orderCol = [];
+        if(isset($params['order'])){
+            foreach ($params['order'] as $key => $order) {
+                $qb->orderBy('t.' . $order['order'], $order['orderDir']);
+                $orderCol[] = 't.' . $order['order'];
+             } 
         } else {
-            $qb->select(['t'])
-                ->from($tableBundle, 't');
-            // $sql = '
-            //     SELECT t.* FROM ' .$table.' t WHERE 1=1 ';
+            $col = $this->em->getClassMetadata($tableBundle)->getFieldNames();
+            if(array_search('_order', $col)){
+                $qb->orderBy('t._order');
+
+                $orderCol[] ='t._order';
+            }
         }
 
-        if(isset($params['where'])){
-            // $sql .= $this->_where($params['where']);    
+        if($lang){
+            $qb->select(array_merge(['t', 'tm'], $orderCol))->from($tableBundle, 't')
+                ->leftJoin($tableBundle . 'Trans', 'tm', 'WITH', 't.id = tm.relatedId')
+                ->andWhere("tm.language = '" . $lang . "'");
+        } else {
+            $qb->select(array_merge(['t'], $orderCol))->from($tableBundle, 't');
+        }
+
+        if(isset($params['where'])){ 
             $qb = $this->_where($params['where'], $qb);
         }
 
-        if(isset($params['order'])){
-            // $sql .= 'ORDER BY ';
-            foreach ($params['order'] as $key => $order) {
-                $qb->orderBy($order['order'], $order['orderDir']);
-                 // $sql .= $order['order'].' '. $order['orderDir'].', ';
-             } 
-
-             // $sql = trim($sql, ', ');
-        } else {
-            $col = $this->em->getClassMetadata($this->bundle . ':' . ucfirst($table))->getFieldNames();
-            if(array_search('_order', $col)){
-                $qb->orderBy('t._order', 'ASC');
-                // $sql .= 'ORDER BY _order ASC ';
-            }
-
-        }
+        
 
         if(isset($params['page'])){
             $limit = (isset($params['limit'])) ? $params['limit'] : $this->limit;
             $offset = $params['page'] * $limit;
-            // $sql .= ' LIMIT '. $limit .' OFFSET ' . $offset;
             
             $qb->setMaxResults($limit);
             $qb->setFirstResult($offset);
         }
 
-        // return $sql;
         return $qb;
     }
-
-    // private function _where($where, $sql = ''){
-    //     foreach ($where  as $line) {
-    //         foreach ($line as $key => $lines) {
-    //             $key = strtoupper($key);
-    //             if($key == 'AND'){ $sql .= 'AND (1=1 '; }
-    //             foreach($lines as $whereLine){
-    //                 if(is_array($whereLine['column'])){
-    //                     if($key == 'OR'){ $sql .= 'OR (1=1 '; }
-    //                     $sql = $this->_where($whereLine['column'], $sql);
-    //                     if($key == 'OR'){ $sql .= ')'; }
-    //                 } else {
-    //                     if ($whereLine['column'] == 'direct-sql-injection'){
-    //                         $sql .= $key . ' ' . $whereLine['value'] . ' ';
-    //                     } else {
-    //                         $sql .= $key . ' t.'.$whereLine['column'].' '.$whereLine['operator'].' ';
-    //                         $sql .= (strtolower($whereLine['operator']) == 'in') ?  '('.$whereLine['value'].') ' : '"'.$whereLine['value'].'" ';
-    //                     }
-    //                 }
-    //             }
-    //             if($key == 'AND'){ $sql .= ') '; }
-    //         }
-    //     }
-
-    //     return $sql;
-    // }
 
     private function _where($where, $qb){
         foreach ($where as $line) {
@@ -133,7 +97,8 @@ class PttServices
                     if ($whereLine['column'] == 'direct-sql-injection'){
                         $columns[] = $whereLine['value'];
                     } else {
-                        $columns[] .= 't.'.$whereLine['column'].' '.$whereLine['operator'].' '. (strtolower($whereLine['operator']) == 'in') ?  '('.$whereLine['value'].') ' : '"'.$whereLine['value'].'" ';
+                        $value = (strtolower($whereLine['operator']) == 'in') ?  '('.$whereLine['value'].') ' : "'".$whereLine['value']."'";
+                        $columns[] = 't.'.$whereLine['column'].' '.$whereLine['operator'].' '. $value;
                     }
                     $qb->andWhere(implode(' ' . $key . ' ', $columns));
                 }
@@ -147,12 +112,15 @@ class PttServices
         $qb = $this->_sql($table, $lang, $params);
         $query = $qb->getQuery();
         
-        if(isset($params['one']) && $params['one']){
-            $data = $query->getSingleResult;
-            $data = ($data) ? $this->_prepareObjects([$data], $table, $params)[0] : null;
+        $data = $query->getArrayResult();
+        if(isset($params['one']) && $params['one']){    
+            if(!$lang){
+                $data = isset($data[0]) ? $data[0] : $data;
+            }
+
+            $data = $this->_prepareObject($data, $table, $lang, $params);
         } else {
-            $data = $query->getResult();
-            $data = $this->_prepareObjects($data, $table, $params);
+            $data = $this->_prepareObjects($data, $table, $lang, $params);
         }
         
         return $data;
@@ -171,29 +139,20 @@ class PttServices
     }
 
     public function getByPag($table, $lang, $params = []){
-        $sql = $this->_sql($table, $lang, $params);
-
-        $sqlLimit = $sql;
-
-        $sql = ', (SELECT COUNT(t.id) FROM' . explode('FROM', explode('ORDER BY', $sql)[0], 2)[1] . ') _totalPagCount FROM';
-
-        $sqlArr = explode('FROM', $sqlLimit, 2);
-        $sqlLimit = $sqlArr[0] . $sql . $sqlArr[1];
-
-        $stmt = $this->em->getConnection()->prepare($sqlLimit);
-        if($lang){
-            $stmt->bindValue('lang', $lang);
-        }
-
-        $stmt->execute();
-        $data = $stmt->fetchAll();
-
-        $total = (isset($data[0])) ? $data[0]["_totalPagCount"] : 0;
-        $data = $this->_prepareObjects($data, $table, $params);
+        $page = (isset($params['page'])) ? $params['page'] : 0;
         $limit = (isset($params['limit'])) ? $params['limit'] : $this->limit;
-        $hasNewPages = sizeOf( $total ) / $limit - $params['page'] > 1;
 
-        return array('content' => $data, 'hasNewPages' => $hasNewPages, 'size' =>  $limit);
+        unset($params['page']); unset($params['limit']);
+
+        $total = $this->get($table, $lang, $params);
+
+        $params['page'] = $page;
+        $params['limit'] = $limit;
+        $data = $this->get($table, $lang, $params);
+        
+        $hasNewPages = count($total) / $limit - $page > 1;
+
+        return ['content' => $data, 'hasNewPages' => $hasNewPages, 'size' =>  $limit];
     }
 
     public function getModules($id, $model, $lang, $params = []){
@@ -256,26 +215,32 @@ class PttServices
         return $modules;
     }
 
-    private function _prepareObjects($elements, $table, $parameters = []){
+    private function _prepareObjects($elements, $table, $lang, $parameters = []){
+        if($lang){
+            $elements = $this->_mergeArray($elements);
+        }
+
         foreach ($elements as $k => $el) {
-            $elements[$k] = $this->_prepareObject($el, $table, $parameters);
+            $elements[$k] = $this->_prepareObject($el, $table, false, $parameters);
         }
 
         return $elements;
     }
 
-    private function _prepareObject($el, $table, $parameters){
+    private function _prepareObject($el, $table, $lang, $parameters){
+        if($lang){
+            $el = $this->_mergeArray($el)[0];
+        }
+
         //Pdf
         if(isset($el['pdf']) && $el['pdf'] != ''){
             $el['pdf'] = $this->uploadsUrl . $el['pdf'];
         }
-
         //Clean
         if(isset($parameters['clean'])){
             $keys = $parameters['clean'];
         } else {
             $keys = array_keys($el);
-            unset($keys[array_search('_totalPagCount', $keys)]);
         }
 
         $el = $this->_cleanObject($el, $keys);
@@ -291,7 +256,25 @@ class PttServices
         
         // Model
         $el['_model'] = $table;
+
         return $el;
+    }
+
+    private function _mergeArray($elements){
+        $final = [];
+        for ($i=0; $i < count($elements); $i++) { 
+            $base = $elements[$i];
+            $i++;
+            $trans = $elements[$i];
+
+            if(isset($base['title'])) { unset($base['title']);}
+            if(isset($base['slug'])) { unset($base['slug']);}
+            unset($trans['relatedId']);
+            unset($trans['id']);
+            $final[] = array_merge($base, $trans);
+        }
+
+        return $final;
     }
 
     private function _cleanObject($data, $columns){
