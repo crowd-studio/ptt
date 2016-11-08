@@ -22,6 +22,7 @@ class PttServices
     private $limit = 6;
     private $uploadsUrl;
     private $model = '';
+    private $bundle;
 
     public function __construct(\Doctrine\ORM\EntityManager $em, KernelInterface $kernel) {
         $this->em = $em;
@@ -31,6 +32,7 @@ class PttServices
             $yaml = new Parser();
             $ptt = $yaml->parse(file_get_contents(__DIR__ . '/../../../../../../app/config/ptt.yml'));
             $this->uploadsUrl = (isset($ptt['s3']['force']) && $ptt['s3']['force']) ? $ptt['s3']['prodUrl'] . $ptt['s3']['dir'] . '/' : '/uploads/';
+            $this->bundle = $ptt['bundles'][0]['bundle'];
         } catch (ParseException $e) {
             printf("Unable to parse the YAML string: %s", $e->getMessage());
         }
@@ -41,32 +43,44 @@ class PttServices
     }
 
     private function _sql($table, $lang, $params){
+        $qb = $this->em->createQueryBuilder();
+        $tableBundle = $this->bundle . ':' . $table;
+
         $sql = '';
 
         if($lang){
-            $sql = '
-                SELECT t.*, tm.* FROM ' .$table.' t LEFT JOIN ' .$table.'_trans tm ON t.id = tm.relatedId WHERE tm.language = :lang ';
+            $qb->select(['t', 'tm'])
+                ->from($tableBundle, 't')
+                ->leftJoin($tableBundle . '_trans', 'tm', 'WITH', 't.id = tm.relatedId')
+                ->where('tm.language = :lang')
+                ->setParameter('lang', $lang);
+            // $sql = '
+            //     SELECT t.*, tm.* FROM ' .$table.' t LEFT JOIN ' .$table.'_trans tm ON t.id = tm.relatedId WHERE tm.language = :lang ';
         } else {
-            $sql = '
-                SELECT t.* FROM ' .$table.' t WHERE 1=1 ';
+            $qb->select(['t'])
+                ->from($tableBundle, 't');
+            // $sql = '
+            //     SELECT t.* FROM ' .$table.' t WHERE 1=1 ';
         }
 
         if(isset($params['where'])){
-            $sql .= $this->_where($params['where']);    
+            // $sql .= $this->_where($params['where']);    
+            $qb = $this->_where($params['where'], $qb);
         }
 
         if(isset($params['order'])){
-            $sql .= 'ORDER BY ';
+            // $sql .= 'ORDER BY ';
             foreach ($params['order'] as $key => $order) {
-                 $sql .= $order['order'].' '. $order['orderDir'].', ';
+                $qb->orderBy($order['order'], $order['orderDir']);
+                 // $sql .= $order['order'].' '. $order['orderDir'].', ';
              } 
 
-             $sql = trim($sql, ', ');
+             // $sql = trim($sql, ', ');
         } else {
-            $col = $this->em->getClassMetadata(PttUtil::pttConfiguration('bundles')[0]['bundle'] . ':' . ucfirst($table))->getFieldNames();
-            $is_order = array_search('_order', $col);
-            if($is_order){
-                $sql .= 'ORDER BY _order ASC ';
+            $col = $this->em->getClassMetadata($this->bundle . ':' . ucfirst($table))->getFieldNames();
+            if(array_search('_order', $col)){
+                $qb->orderBy('t._order', 'ASC');
+                // $sql .= 'ORDER BY _order ASC ';
             }
 
         }
@@ -74,54 +88,73 @@ class PttServices
         if(isset($params['page'])){
             $limit = (isset($params['limit'])) ? $params['limit'] : $this->limit;
             $offset = $params['page'] * $limit;
-            $sql .= ' LIMIT '. $limit .' OFFSET ' . $offset;
+            // $sql .= ' LIMIT '. $limit .' OFFSET ' . $offset;
+            
+            $qb->setMaxResults($limit);
+            $qb->setFirstResult($offset);
         }
 
-        return $sql;
+        // return $sql;
+        return $qb;
     }
 
-    private function _where($where, $sql = ''){
-        foreach ($where  as $line) {
+    // private function _where($where, $sql = ''){
+    //     foreach ($where  as $line) {
+    //         foreach ($line as $key => $lines) {
+    //             $key = strtoupper($key);
+    //             if($key == 'AND'){ $sql .= 'AND (1=1 '; }
+    //             foreach($lines as $whereLine){
+    //                 if(is_array($whereLine['column'])){
+    //                     if($key == 'OR'){ $sql .= 'OR (1=1 '; }
+    //                     $sql = $this->_where($whereLine['column'], $sql);
+    //                     if($key == 'OR'){ $sql .= ')'; }
+    //                 } else {
+    //                     if ($whereLine['column'] == 'direct-sql-injection'){
+    //                         $sql .= $key . ' ' . $whereLine['value'] . ' ';
+    //                     } else {
+    //                         $sql .= $key . ' t.'.$whereLine['column'].' '.$whereLine['operator'].' ';
+    //                         $sql .= (strtolower($whereLine['operator']) == 'in') ?  '('.$whereLine['value'].') ' : '"'.$whereLine['value'].'" ';
+    //                     }
+    //                 }
+    //             }
+    //             if($key == 'AND'){ $sql .= ') '; }
+    //         }
+    //     }
+
+    //     return $sql;
+    // }
+
+    private function _where($where, $qb){
+        foreach ($where as $line) {
             foreach ($line as $key => $lines) {
                 $key = strtoupper($key);
-                if($key == 'AND'){ $sql .= 'AND (1=1 '; }
-                foreach($lines as $whereLine){
-                    if(is_array($whereLine['column'])){
-                        if($key == 'OR'){ $sql .= 'OR (1=1 '; }
-                        $sql = $this->_where($whereLine['column'], $sql);
-                        if($key == 'OR'){ $sql .= ')'; }
+                $columns = [];
+                foreach ($lines as $whereLine) {
+                    if ($whereLine['column'] == 'direct-sql-injection'){
+                        $columns[] = $whereLine['value'];
                     } else {
-                        if ($whereLine['column'] == 'direct-sql-injection'){
-                            $sql .= $key . ' ' . $whereLine['value'] . ' ';
-                        } else {
-                            $sql .= $key . ' t.'.$whereLine['column'].' '.$whereLine['operator'].' ';
-                            $sql .= (strtolower($whereLine['operator']) == 'in') ?  '('.$whereLine['value'].') ' : '"'.$whereLine['value'].'" ';
-                        }
+                        $columns[] .= 't.'.$whereLine['column'].' '.$whereLine['operator'].' '. (strtolower($whereLine['operator']) == 'in') ?  '('.$whereLine['value'].') ' : '"'.$whereLine['value'].'" ';
                     }
+                    $qb->andWhere(implode(' ' . $key . ' ', $columns));
                 }
-                if($key == 'AND'){ $sql .= ') '; }
             }
         }
 
-        return $sql;
+        return $qb;
     }
 
     public function get($table, $lang, $params = []){
-        $sql = $this->_sql($table, $lang, $params);
-
-        $stmt = $this->em->getConnection()->prepare($sql);
-        if($lang){
-            $stmt->bindValue('lang', $lang);
-        }
-
-        $stmt->execute();
-        $data = $stmt->fetchAll();
-
-        $data = $this->_prepareObjects($data, $table, $params);
-
+        $qb = $this->_sql($table, $lang, $params);
+        $query = $qb->getQuery();
+        
         if(isset($params['one']) && $params['one']){
-            $data = (isset($data[0])) ? $data[0] : null;
+            $data = $query->getSingleResult;
+            $data = ($data) ? $this->_prepareObjects([$data], $table, $params)[0] : null;
+        } else {
+            $data = $query->getResult();
+            $data = $this->_prepareObjects($data, $table, $params);
         }
+        
         return $data;
     }
 
