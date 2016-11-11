@@ -39,6 +39,7 @@ class PttFormFieldTypeSelectMultiple extends PttFormFieldType
 
 		$formFieldId = $this->field->getFormId($this->languageCode);
 
+
 		$htmlField .= 'id="' . $formFieldId . '_model" ';
 		$htmlField .= 'name="' . trim($this->field->getFormName($this->languageCode), ']') . '_model]" ';
 
@@ -55,9 +56,13 @@ class PttFormFieldTypeSelectMultiple extends PttFormFieldType
 
 		$htmlField .= 'limit="' . $this->pttTrans->trans($this->field->options['limit']) . '" ';
 
-		$htmlField .= 'class="form-control select-multiple-model"';
+		$htmlField .= 'class="form-control select-multiple-model';
 
-		$htmlField .= '>';
+		if(count($this->field->options['entities']) == 1){
+			$htmlField .= ' hidden';
+		}
+
+		$htmlField .= '">';
 
 		$htmlField .= $this->_static($model);
 		$htmlField .= '</select>';
@@ -75,6 +80,12 @@ class PttFormFieldTypeSelectMultiple extends PttFormFieldType
 		$htmlField .= 'class="form-control select-multiple-result"';
 
 		$htmlField .= '>';
+
+		$htmlField .= '<option value="-1">' . $this->field->options['empty'] . '</option>';
+
+		if(count($this->field->options['entities']) == 1){
+			$model = $this->field->options['entities'][0]['entity'];
+		}
 
 		if($model){
 			$dql = 'select ptt from AdminBundle:' . $model . ' ptt';
@@ -122,10 +133,15 @@ class PttFormFieldTypeSelectMultiple extends PttFormFieldType
 			$html .= '<option value="-1">' . $this->pttTrans->trans($this->field->options['empty']) . '</option>';
 		}
 		if (isset($this->field->options)) {
-			foreach ($this->field->options['entities'] as $option) {
-				$selected = ($option['entity'] == $model) ? ' selected="selected"' : '';
-				$html .= '<option' . $selected . ' value="' . $option['entity'] . '">' . $option['label'] . '</option>';
+			if(count($this->field->options['entities']) == 1){
+				$html .= '<option selected="selected value="' . $this->field->options['entities'][0]['entity'] . '">' . $this->field->options['entities'][0]['label'] . '</option>';
+			} else {
+				foreach ($this->field->options['entities'] as $option) {
+					$selected = ($option['entity'] == $model) ? ' selected="selected"' : '';
+					$html .= '<option' . $selected . ' value="' . $option['entity'] . '">' . $option['label'] . '</option>';
+				}
 			}
+			
 		}
 		return $html;
 	}

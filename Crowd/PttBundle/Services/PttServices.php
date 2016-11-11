@@ -62,6 +62,13 @@ class PttServices
              } 
 
              $sql = trim($sql, ', ');
+        } else {
+            $col = $this->em->getClassMetadata(PttUtil::pttConfiguration('bundles')[0]['bundle'] . ':' . ucfirst($table))->getFieldNames();
+            $is_order = array_search('_order', $col);
+            if($is_order){
+                $sql .= 'ORDER BY _order ASC ';
+            }
+
         }
 
         if(isset($params['page'])){
