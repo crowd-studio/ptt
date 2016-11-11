@@ -47,7 +47,6 @@ class PttServices
         $qb = $this->em->createQueryBuilder();
         $tableBundle = $this->bundle . ':' . ucfirst($table);
 
-        $sql = '';
         $orderCol = [];
         if(isset($params['order'])){
             foreach ($params['order'] as $key => $order) {
@@ -58,7 +57,6 @@ class PttServices
             $col = $this->em->getClassMetadata($tableBundle)->getFieldNames();
             if(array_search('_order', $col)){
                 $qb->orderBy('t._order');
-
                 $orderCol[] ='t._order';
             }
         }
