@@ -81,6 +81,7 @@ class PttController extends Controller
 
     /**
      * @Route("/gestordecontenidos/{entity}/edit/{id}", name="edit");
+     * @Route("/gestordecontenidos/{entity}/create", name="create");
      * @Template()
      */
     public function editAction(Request $request, $entity, $id = null){

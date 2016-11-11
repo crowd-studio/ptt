@@ -118,11 +118,7 @@ class PttTwigExtension extends Twig_Extension
             }
             return $value;
         } else {
-            if (isset($entity[$key])) {
-                return $entity[$key];
-            } else {
-                return '';
-            }
+            return ($entity->$method()) ? $entity->$method() : '';
         }
     }
 
