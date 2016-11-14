@@ -54,7 +54,10 @@ class PttController extends Controller
         $em = $this->get('doctrine')->getManager();
 
         if ($this->isSortable()) {
-            $order = array('_order', $this->orderList());
+            $order = [
+                '_order', 
+                $this->orderList()
+            ];
         } else {
             $order = $this->_currentOrder($request);
         }
@@ -64,19 +67,19 @@ class PttController extends Controller
         list($pagination, $offset, $limit) = $this->_paginationForPage($page, $this->_repositoryName(), $filters);
         $entities = $this->_buildQuery($this->_repositoryName(), $filters, $order, $limit, $offset, $page);
 
-        return $this->_renderTemplateForActionInfo('list', array(
-            'entityInfo' => $this->entityInfo(),
-            'fields' => $this->fieldsToList(),
-            'rows' => $entities,
-            'pagination' => $pagination,
-            'filters' => $this->fieldsToFilter(),
-            'page' => array(
-                'title' => $this->listTitle()
-                ),
-            'sortable' => $this->isSortable(),
-            'csvexport' => $this->isCsvExport(),
-            'copy' => $this->isCopy()
-            ));
+        return $this->_renderTemplateForActionInfo('list', [
+                'entityInfo' => $this->entityInfo(),
+                'fields' => $this->fieldsToList(),
+                'rows' => $entities,
+                'pagination' => $pagination,
+                'filters' => $this->fieldsToFilter(),
+                'page' => [
+                    'title' => $this->listTitle()
+                ],
+                'sortable' => $this->isSortable(),
+                'csvexport' => $this->isCsvExport(),
+                'copy' => $this->isCopy()
+            ]);
     }
 
     /**
@@ -89,18 +92,18 @@ class PttController extends Controller
 
         $this->entityName = ucfirst($entity);
         if ($id == null) {
-            $entity = $this->_initEntity();
+            $saveEntity = $this->_initEntity();
         } else {
             $em = $this->get('doctrine')->getManager();
-            $entity = $em->getRepository($this->_repositoryName())->find($id);
-            if ($entity == null) {
+            $saveEntity = $em->getRepository($this->_repositoryName())->find($id);
+            if ($saveEntity == null) {
                 throw $this->createNotFoundException($this->get('pttTrans')->trans('the_entity_does_not_exist', $this->_entityInfoValue('lowercase')));
             }
         }
 
         $pttForm = $this->get('pttForm');
         
-        $pttForm->setEntity($entity); // on es crea el ppttEntityInfo
+        $pttForm->setEntity($saveEntity); // on es crea el ppttEntityInfo
         $pttForm->setTotalData($this->_totalEntities($this->_repositoryName()));
 
 
@@ -110,8 +113,8 @@ class PttController extends Controller
                 
                 $pttForm->save();
 
-                $this->afterSave($entity);
-                $this->flushCache($entity);
+                $this->afterSave($saveEntity);
+                $this->flushCache($saveEntity);
 
                 $this->get('session')->getFlashBag()->add('success', $pttForm->getSuccessMessage());
 
@@ -136,14 +139,14 @@ class PttController extends Controller
         }
 
         $this->deleteTemp();
-        return $this->_renderTemplateForActionInfo('edit', array(
-            'entityInfo' => $this->entityInfo(),
-            'form' => $pttForm,
-            'cancel' => $this->self,
-            'page' => array(
-                'title' => $this->editTitle($id)
-                )
-            ));
+        return $this->_renderTemplateForActionInfo('edit', [
+                'entityInfo' => $this->entityInfo(),
+                'form' => $pttForm,
+                'cancel' => $this->self,
+                'page' => [
+                    'title' => $this->editTitle($id)
+                    ]
+            ]);
     }
 
     /**
@@ -151,29 +154,29 @@ class PttController extends Controller
      * @Template()
      */
     public function deleteAction(Request $request, $entity, $id){
-        $this->entityName = $entity;
+        $this->entityName = ucfirst($entity);
         $em = $this->get('doctrine')->getManager();
-        $entity = $em->getRepository($this->_repositoryName())->find($id);
-        if ($entity == null) {
+        $deleteEntity = $em->getRepository($this->_repositoryName())->find($id);
+        if ($deleteEntity == null) {
             throw $this->createNotFoundException('The ' . $this->_entityInfoValue('lowercase') . ' does not exist');
         }
 
-        list($valid, $message) = $this->continueWithDeletion($entity);
+        list($valid, $message) = $this->continueWithDeletion($deleteEntity);
         if ($valid) {
 
-            $this->beforeDeletion($entity);
+            $this->beforeDeletion($deleteEntity);
 
             $transClassName = $this->_className() . 'Trans';
             if (class_exists($transClassName)) {
-                $transEntities = $em->getRepository($this->_repositoryName() . 'Trans')->findBy(array('relatedId' => $entity->getPttId()));
+                $transEntities = $em->getRepository($this->_repositoryName() . 'Trans')->findBy(['relatedId' => $deleteEntity->getPttId()]);
                 foreach ($transEntities as $transEntity) {
                     $em->remove($transEntity);
                 }
             }
 
-            $this->flushCache($entity);
+            $this->flushCache($deleteEntity);
 
-            $em->remove($entity);
+            $em->remove($deleteEntity);
             $em->flush();
 
             $this->get('session')->getFlashBag()->add('success', $this->get('pttTrans')->trans('the_entity_was_deleted', $this->_entityInfoValue('lowercase')));
@@ -181,7 +184,7 @@ class PttController extends Controller
             $this->get('session')->getFlashBag()->add('error', $message);
         }
 
-        return $this->redirect($this->generateUrl($this->urlPath() . '_list'));
+        return $this->redirect($this->generateUrl('list', ['entity' => $entity]));
 
     }
 
@@ -190,7 +193,7 @@ class PttController extends Controller
      * @Template()
      */
     public function copyAction(Request $request, $entity, $id){
-        $this->entityName = $entity;
+        $this->entityName = ucfirst($entity);
         $em = $this->get('doctrine')->getManager();
         $entity = $em->getRepository($this->_repositoryName())->find($id);
         if ($entity == null) {
@@ -208,11 +211,11 @@ class PttController extends Controller
      * @Template()
      */
     public function orderAction(Request $request, $entity){
-        $this->entityName = $entity;
+        $this->entityName = ucfirst($entity);
         if ($request->getMethod() == 'PUT') {
             $fields = JSON_decode($request->getContent());
             $em = $this->get('doctrine')->getManager();
-            $response = array();
+            $response = [];
 
 
             $cache = new PttCache();
@@ -240,17 +243,20 @@ class PttController extends Controller
      * @Template()
      */
     public function lastAction(Request $request, $entity){
-        $this->entityName = $entity;
+        $this->entityName = ucfirst($entity);
         $limit = $request->get('limit');
-        $result = array(); 
+        $result = []; 
         try {
             $objects = $this->_buildQueryLast($this->_repositoryName(), $limit);
             foreach ($objects as $object) {
-                $result[] = array('id' => $object->getId(), 'title' => $object->getTitle());
+                $result[] = [
+                    'id' => $object->getId(), 
+                    'title' => $object->getTitle()
+                ];
             }
 
         } catch(Exception $e){
-            $result = array('results' => 'Fail ' . $e);
+            $result = ['results' => 'Fail ' . $e];
         }
         
         return new JsonResponse($result);
@@ -261,18 +267,21 @@ class PttController extends Controller
      * @Template()
      */
     public function searchAction(Request $request, $entity){
-        $this->entityName = $entity;
+        $this->entityName = ucfirst($entity);
         $limit = $request->get('page_limit');
         $query = $request->get('q');
-        $result = array(); 
+        $result = []; 
         try {
             $objects = $this->_buildQuery($this->_repositoryName(), ['title' => $query], ['title', 'asc'], $limit, 0, 0);
             foreach ($objects as $object) {
-                $result[] = array('id' => $object->getId(), 'title' => $object->getTitle());
+                $result[] = [
+                    'id' => $object->getId(), 
+                    'title' => $object->getTitle()
+                ];
             }
 
         } catch(Exception $e){
-            $result = array('results' => 'Fail ' . $e);
+            $result = ['results' => 'Fail ' . $e];
         }
         
         return new JsonResponse($result);
@@ -370,22 +379,21 @@ class PttController extends Controller
 
     protected function fieldsToFilter(){
         if (!$this->enableFilters()) {
-            return array();
+            return [];
         }
 
         return array(
-            'title' => array(
-                        'label' => $this->get('pttTrans')->trans('title'),
-                        'type' => 'text'
-                        ),
-            );
+            'title' => [ 
+                'label' => $this->get('pttTrans')->trans('title'),
+                'type' => 'text'
+            ]);
     }
 
     protected function continueWithDeletion($entity){
-        return array(
+        return [
             true,
             $this->get('pttTrans')->trans('the_entity_couldnt_be_deleted', $this->_entityInfoValue('lowercase'))
-            );
+        ];
     }
 
     protected function beforeDeletion($entity){
@@ -393,15 +401,17 @@ class PttController extends Controller
     }
 
     protected function entityInfo(){
-        return array(
+        return [
             'simple' => $this->entityName,
             'lowercase' => strtolower($this->entityName),
             'plural' => $this->entityName . 's'
-            );
+        ];
     }
 
     protected function entityConfigurationInfo(){
-        return ['entityName' => strtolower($this->entityName)];
+        return [
+            'entityName' => strtolower($this->entityName)
+        ];
     }
 
     protected function userIsRole($role){
@@ -413,7 +423,10 @@ class PttController extends Controller
     }
 
     protected function allowAccess($methodName, $entity = false){
-        return array(true, $this->get('pttTrans')->trans('the_current_user_cant_access'));
+        return [
+            true, 
+            $this->get('pttTrans')->trans('the_current_user_cant_access')
+        ];
     }
 
     protected function urlPath(){
@@ -429,7 +442,7 @@ class PttController extends Controller
             $dql .= ' where ';
         }
 
-        $filterDql = array();
+        $filterDql = [];
 
         foreach ($filters as $key => $value) {
             $filterDql[] = 'ptt.' . $key . ' like :' . $key;
@@ -479,20 +492,24 @@ class PttController extends Controller
             $limit = $fields['admin']['numberOfResultsPerPage'];
         }
 
-        $pagination = array(
+        $pagination = [
             'currentPage' => $page,
             'numberOfPages' => $offset
-            );
+        ];
 
-        return array($pagination, ($page - 1) * $offset, $limit);
+        return [
+            $pagination, 
+            ($page - 1) * $offset, 
+            $limit
+        ];
     }
 
     protected function _totalEntities($repositoryName, $filters = null){
         $em = $this->get('doctrine')->getManager();
 
         $query = $em->createQueryBuilder()
-                      ->select('count(p.id)')
-                      ->from($repositoryName, 'p');
+              ->select('count(p.id)')
+              ->from($repositoryName, 'p');
 
         if ($filters){
             foreach ($filters as $key => $value) {
@@ -526,7 +543,7 @@ class PttController extends Controller
     protected function _currentFilters(Request $request){
         $cookies = $request->cookies;
         $fields = $this->fieldsToFilter();
-        $filters = array();
+        $filters = [];
         foreach ($fields as $key => $field) {
             $name = 'filter-' . strtolower($this->entityName) . '-' . $key;
             if ($cookies->has($name) && trim($cookies->get($name, '')) != '') {
@@ -568,7 +585,6 @@ class PttController extends Controller
     protected function _filter(Request $request, $entity){
         $filters = $this->fieldsToFilter();
 
-
         $url = $this->generateUrl('list', ['entity' => $entity]);
         $response = new RedirectResponse($url);
 
@@ -597,7 +613,7 @@ class PttController extends Controller
         }
     }
 
-    protected function _renderTemplateForActionInfo($action, $info = array()){
+    protected function _renderTemplateForActionInfo($action, $info = []){
         $filename = $action . '.html.twig';
 
         try {
