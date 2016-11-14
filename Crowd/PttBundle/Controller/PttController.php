@@ -33,6 +33,8 @@ class PttController extends Controller
     private $fields;
     private $self;
 
+    
+
     /**
      * @Route("{entity}/list/{page}", name="list");
      * @Template()
@@ -286,6 +288,40 @@ class PttController extends Controller
         
         return new JsonResponse($result);
     }
+
+    /**
+     * @Route("/login/", name="admin_login")
+     * @Template()
+     */
+    public function loginAction(Request $request)
+    {   
+        $helper = $this->get('security.authentication_utils');
+
+        return $this->render('AdminBundle:Login:login.html.twig', [
+            'last_username' => $helper->getLastUsername(),
+            'error'         => $helper->getLastAuthenticationError(),
+            'keymap'        => ''
+        ]);
+    }
+
+    /**
+     * @Route("/", name="admin_router")
+     */
+    public function routerAction(Request $request)
+    {
+        $securityContext = $this->container->get('security.authorization_checker');
+        if ($securityContext->isGranted('IS_AUTHENTICATED_REMEMBERED')){
+            $user = $this->get('security.token_storage')->getToken()->getUser();
+            $configuration = PttUtil::pttConfiguration();
+            if (isset($configuration['admin']) && isset($configuration['admin']['sidebar'])) {
+                return $this->redirect($this->generateUrl($configuration['admin']['default_url'], ['entity' => $configuration['admin']['default_entity']]));    
+            } else {
+                return $this->redirect($this->generateUrl('list', ['entity' => 'user']));
+            }
+        } else {
+            return $this->redirect($this->generateUrl('admin_login'));
+        }
+    }  
 
     // public function generateCSV($query, $name){
     //     $em = $this->container->get('doctrine')->getManager();
