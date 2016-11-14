@@ -1,7 +1,7 @@
 {% extends 'PttBundle:Default:base.html.twig' %}
 {% block content %}
 
-<form action="{{ path(entityConfigurationInfo.entityName ~ '_edit', {id : app.request.get('id')}) }}" class="edit" method="post" enctype="multipart/form-data">
+<form action="{{ path('edit', {entity : entityConfigurationInfo.entityName, id : app.request.get('id')}) }}" class="edit" method="post" enctype="multipart/form-data">
     <div class="form-actions">
         <div class="col-lg-9 col-md-9 col-sm-9">
             {% if page.title is defined %}
@@ -13,9 +13,9 @@
                     <input type="submit" class="btn btn-save btn-save-another" name="another" value="{{'save_and_create_another'|trans}}" />
                 {% endif %}
                 {% if cancel == 1 %}
-                    <a href="{{ path(entityConfigurationInfo.entityName ~ '_edit', {'id': app.request.get('id'), 'self': 1}) }}" class="btn btn-cancel">{{'cancel'|trans}}</a>
+                    <a href="{{ path('edit', {entity : entityConfigurationInfo.entityName, 'id': app.request.get('id'), 'self': 1}) }}" class="btn btn-cancel">{{'cancel'|trans}}</a>
                 {% else %}
-                    <a href="{{ path(entityConfigurationInfo.entityName ~ '_list') }}" class="btn btn-cancel">{{'cancel'|trans}}</a>
+                    <a href="{{ path('list', {entity : entityConfigurationInfo.entityName}) }}" class="btn btn-cancel">{{'cancel'|trans}}</a>
                 {% endif %}
                 
             </div>

@@ -34,7 +34,7 @@ class PttController extends Controller
     private $self;
 
     /**
-     * @Route("gestordecontenidos/{entity}/list/{page}", name="list");
+     * @Route("{entity}/list/{page}", name="list");
      * @Template()
      */
     public function listAction(Request $request, $entity, $page = null){
@@ -80,12 +80,14 @@ class PttController extends Controller
     }
 
     /**
-     * @Route("/gestordecontenidos/{entity}/edit/{id}", name="edit");
-     * @Route("/gestordecontenidos/{entity}/create", name="create");
+     * @Route("/{entity}/edit/{id}", name="edit");
+     * @Route("/{entity}/create", name="create");
      * @Template()
      */
     public function editAction(Request $request, $entity, $id = null){
-        $this->entityName = $entity;
+
+
+        $this->entityName = ucfirst($entity);
         if ($id == null) {
             $entity = $this->_initEntity();
         } else {
@@ -145,7 +147,7 @@ class PttController extends Controller
     }
 
     /**
-     * @Route("/gestordecontenidos/{entity}/delete/{id}", name="delete");
+     * @Route("/{entity}/delete/{id}", name="delete");
      * @Template()
      */
     public function deleteAction(Request $request, $entity, $id){
@@ -184,7 +186,7 @@ class PttController extends Controller
     }
 
     /**
-     * @Route("/gestordecontenidos/{entity}/copy/{id}", name="copy");
+     * @Route("/{entity}/copy/{id}", name="copy");
      * @Template()
      */
     public function copyAction(Request $request, $entity, $id){
@@ -202,7 +204,7 @@ class PttController extends Controller
     }
 
     /**
-     * @Route("/gestordecontenidos/{entity}/order/", name="order");
+     * @Route("/{entity}/order/", name="order");
      * @Template()
      */
     public function orderAction(Request $request, $entity){
@@ -234,7 +236,7 @@ class PttController extends Controller
     }
 
     /**
-     * @Route("/gestordecontenidos/{entity}/last", name="last");
+     * @Route("/{entity}/last", name="last");
      * @Template()
      */
     public function lastAction(Request $request, $entity){
@@ -255,7 +257,7 @@ class PttController extends Controller
     }
 
     /**
-     * @Route("/gestordecontenidos/{entity}/search", name="search");
+     * @Route("/{entity}/search", name="search");
      * @Template()
      */
     public function searchAction(Request $request, $entity){
