@@ -62,18 +62,18 @@ class PttServices
         }
 
         if($lang){
-            $qb->select(array_merge(['t', 'tm'], $orderCol))->from($tableBundle, 't')
-                ->leftJoin($tableBundle . 'Trans', 'tm', 'WITH', 't.id = tm.relatedId')
+            $arrayTable = ['t', 'tm'];
+            $qb->leftJoin($tableBundle . 'Trans', 'tm', 'WITH', 't.id = tm.relatedId')
                 ->andWhere("tm.language = '" . $lang . "'");
         } else {
-            $qb->select(array_merge(['t'], $orderCol))->from($tableBundle, 't');
+            $arrayTable = ['t'];
         }
+
+        $qb->select(array_merge($arrayTable, $orderCol))->from($tableBundle, 't');
 
         if(isset($params['where'])){ 
             $qb = $this->_where($params['where'], $qb);
         }
-
-        
 
         if(isset($params['page'])){
             $limit = (isset($params['limit'])) ? $params['limit'] : $this->limit;
