@@ -46,7 +46,6 @@ class PttServices
 
         $qb = $this->em->createQueryBuilder();
         $tableBundle = $this->bundle . ':' . ucfirst($table);
-
         $orderCol = [];
         if(isset($params['order'])){
             foreach ($params['order'] as $key => $order) {
@@ -125,15 +124,11 @@ class PttServices
     }
 
     public function getOne($table, $lang, $id, $params = []){
-        $params['where'] = [
-            [
-                'and' => [
-                    ['column' => 'id', 'operator' => '=', 'value' => $id ]
-                ]
-            ]
-        ];
-        $params['one'] = true;
-        return $this->get($table, $lang, $params);
+        $tableBundle = $this->bundle . ':' . ucfirst($table);
+        $obj = $this->em->getRepository($tableBundle)
+        ->find($id);
+        return $obj;
+        
     }
 
     public function getByPag($table, $lang, $params = []){

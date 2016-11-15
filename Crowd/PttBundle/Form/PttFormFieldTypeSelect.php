@@ -130,6 +130,8 @@ class PttFormFieldTypeSelect extends PttFormFieldType
 	{
 		if ($this->multiple) {
 			return (in_array($id, $this->value)) ? ' selected="selected"' : '';
+		} elseif ($this->field->options['type'] == 'entity') {
+			return ($id == $this->value->getPttId()) ? ' selected="selected"' : '';
 		} else {
 			return ($id == $this->value) ? ' selected="selected"' : '';
 		}
