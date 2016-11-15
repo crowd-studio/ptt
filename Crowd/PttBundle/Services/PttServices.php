@@ -128,7 +128,7 @@ class PttServices
         $obj = $this->em->getRepository($tableBundle)
         ->find($id);
         return $obj;
-        
+
     }
 
     public function getByPag($table, $lang, $params = []){
@@ -221,34 +221,24 @@ class PttServices
     }
 
     private function _prepareObject($el, $table, $lang, $parameters){
-        if($lang){
-            $el = $this->_mergeArray($el)[0];
-        }
-
         //Pdf
-        if(isset($el['pdf']) && $el['pdf'] != ''){
-            $el['pdf'] = $this->uploadsUrl . $el['pdf'];
+        if(method_exists($el, 'getPdf') && $el->getPdf() != ''){
+            $el->setPdf($this->uploadsUrl . $el->getPdf());
         }
-        //Clean
-        if(isset($parameters['clean'])){
-            $keys = $parameters['clean'];
-        } else {
-            $keys = array_keys($el);
-        }
-
-        $el = $this->_cleanObject($el, $keys);
 
         // Images
         if(isset($parameters['sizes'])){
             foreach ($parameters['sizes'] as $key => $value) {
-                if(isset($el[$key]) && $el[$key] != '' ){
-                    $el[$key] = $this->uploadsUrl . $value . $el[$key];
+                $getMethod = 'get' . ucfirst($key);
+                $setMethod = 'set' . ucfirst($key);
+                if(method_exists($el, $setMethod) && $el->$getMethod() != '' ){
+                    $el->$setMethod($this->uploadsUrl . $value . $el->$getMethod());
                 }
             }
         }
         
         // Model
-        $el['_model'] = $table;
+        $el->_model = $table;
 
         return $el;
     }
@@ -268,20 +258,5 @@ class PttServices
         }
 
         return $final;
-    }
-
-    private function _cleanObject($data, $columns){
-        if(count($data) > 0){
-            $col = [];
-            foreach ($columns as $column) {
-                if (isset($data[$column])){
-                    $col[$column] = $data[$column];
-                }
-            }
-            return $col;
-        } else {
-            return $data;
-        }
-
     }
 }

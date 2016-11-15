@@ -189,4 +189,8 @@ class PttEntity
         $this->updateDate = $dateTime;
         $this->updateUserId = $userId;
     }
+
+    public function getClassName(){
+        return (new \ReflectionClass($this))->getShortName();
+    }
 }
