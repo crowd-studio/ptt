@@ -45,7 +45,7 @@ class PttServices
     private function _sql($table, $lang, $params){
 
         $qb = $this->em->createQueryBuilder();
-        $tableBundle = $this->bundle . ':' . ucfirst($table);
+        $tableBundle = $this->_getTableBundle($table);
         $orderCol = [];
         if(isset($params['order'])){
             foreach ($params['order'] as $key => $order) {
@@ -60,15 +60,7 @@ class PttServices
             }
         }
 
-        if($lang){
-            $arrayTable = ['t', 'tm'];
-            $qb->leftJoin($tableBundle . 'Trans', 'tm', 'WITH', 't.id = tm.relatedId')
-                ->andWhere("tm.language = '" . $lang . "'");
-        } else {
-            $arrayTable = ['t'];
-        }
-
-        $qb->select(array_merge($arrayTable, $orderCol))->from($tableBundle, 't');
+        $qb->select(array_merge(['t'], $orderCol))->from($tableBundle, 't');
 
         if(isset($params['where'])){ 
             $qb = $this->_where($params['where'], $qb);
@@ -109,24 +101,37 @@ class PttServices
         $qb = $this->_sql($table, $lang, $params);
         $query = $qb->getQuery();
         
-        $data = $query->getArrayResult();
         if(isset($params['one']) && $params['one']){    
-            if(!$lang){
-                $data = isset($data[0]) ? $data[0] : $data;
-            }
-
-            $data = $this->_prepareObject($data, $table, $lang, $params);
+            $data = $query->getSingleResult();
+            $data = $this->_prepareObject($data, $params);
         } else {
-            $data = $this->_prepareObjects($data, $table, $lang, $params);
+            $data = $query->getResult();
+            $data = $this->_prepareObjects($data, $params);
         }
         
         return $data;
     }
 
-    public function getOne($table, $lang, $id, $params = []){
-        $tableBundle = $this->bundle . ':' . ucfirst($table);
-        $obj = $this->em->getRepository($tableBundle)
-        ->find($id);
+    public function getSimpleFilter($table, $params = []){
+
+        $where = (isset($params['where'])) ? $params['where'] : [];
+        $orderBy = (isset($params['orderBy'])) ? $params['orderBy'] : [];
+
+        $obj = $this->em->getRepository($this->_getTableBundle($table))
+        ->findBy($where, $orderBy);
+    }
+
+    public function getAll($table){
+        $obj = $this->em->getRepository($this->_getTableBundle($table))
+        ->findAll();
+        $obj = $this->_prepareObjects($obj, $params);
+        return $obj;
+    }
+
+    public function getOne($table, $id, $params = []){
+        $obj = $this->em->getRepository($this->bundle . ':' . ucfirst($table))->find($id);
+
+        $obj = $this->_prepareObject($obj, $params);
         return $obj;
 
     }
@@ -208,19 +213,16 @@ class PttServices
         return $modules;
     }
 
-    private function _prepareObjects($elements, $table, $lang, $parameters = []){
-        if($lang){
-            $elements = $this->_mergeArray($elements);
-        }
+    private function _prepareObjects($elements, $parameters = [], $father = false){
 
         foreach ($elements as $k => $el) {
-            $elements[$k] = $this->_prepareObject($el, $table, false, $parameters);
+            $elements[$k] = $this->_prepareObject($el, $parameters, $father);
         }
 
         return $elements;
     }
 
-    private function _prepareObject($el, $table, $lang, $parameters){
+    private function _prepareObject($el, $parameters, $father = false){
         //Pdf
         if(method_exists($el, 'getPdf') && $el->getPdf() != ''){
             $el->setPdf($this->uploadsUrl . $el->getPdf());
@@ -231,32 +233,28 @@ class PttServices
             foreach ($parameters['sizes'] as $key => $value) {
                 $getMethod = 'get' . ucfirst($key);
                 $setMethod = 'set' . ucfirst($key);
-                if(method_exists($el, $setMethod) && $el->$getMethod() != '' ){
+                if(method_exists($el, $setMethod) && $el->$getMethod() != ''){
                     $el->$setMethod($this->uploadsUrl . $value . $el->$getMethod());
                 }
             }
         }
         
-        // Model
-        $el->_model = $table;
+        $object = new \ReflectionObject($el);
+        foreach ($object->getMethods() as $method) {
+            if(substr($method, 0, 3) === "get"){
+                $setMethod = 's' . substr($method, 1);
+                if(is_array($el->$method())){
+                    $el->$setMethod($_prepareObjects($el->$method(), $parameters));
+                } elseif (is_object($el->$method())) {
+                    $el->$setMethod($_prepareObject($el->$method(), $parameters));
+                }
+            }
+        }
 
         return $el;
     }
 
-    private function _mergeArray($elements){
-        $final = [];
-        for ($i=0; $i < count($elements); $i++) { 
-            $base = $elements[$i];
-            $i++;
-            $trans = $elements[$i];
-
-            if(isset($base['title'])) { unset($base['title']);}
-            if(isset($base['slug'])) { unset($base['slug']);}
-            unset($trans['relatedId']);
-            unset($trans['id']);
-            $final[] = array_merge($base, $trans);
-        }
-
-        return $final;
+    private function _getTableBundle($table){
+        return $this->bundle . ':' . ucfirst($table);
     }
 }
