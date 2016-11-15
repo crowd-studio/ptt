@@ -25,15 +25,12 @@ use Crowd\PttBundle\Annotations\PttAnnotation;
 
 class PttController extends Controller
 {
-
     private $entityName;
     private $className;
     private $bundle;
     private $repositoryName;
     private $fields;
     private $self;
-
-    
 
     /**
      * @Route("{entity}/list/{page}", name="list");
@@ -367,10 +364,6 @@ class PttController extends Controller
         return method_exists($this->_initEntity(), "getCopy");
     }
 
-    protected function listTitle(){
-        return $this->get('pttTrans')->trans('list') . ' ' . $this->_entityInfoValue('plural');
-    }
-
     protected function afterSave($entity){}
 
     protected function flushCache($entity){}
@@ -385,12 +378,15 @@ class PttController extends Controller
             }
         } 
     }
+    protected function listTitle(){
+        $title = $this->_getAnnotation('createTitle');
+        return ($title) ? $title : $this->get('pttTrans')->trans('list') . ' ' . $this->_entityInfoValue('plural');
+    }
 
     protected function editTitle($id){
-        $entityInfo = $this->entityInfo();
-        $title = ($id != null) ? $this->get('pttTrans')->trans('edit') . ' ' : $this->get('pttTrans')->trans('create') . ' ';
-        $title .= $this->_entityInfoValue('lowercase');
-        return $title;
+        $name = ($id != null) ? 'edit' : 'create';
+        $title = $this->_getAnnotation($name . 'Title');
+        return ($title) ?  $title : $this->get('pttTrans')->trans($name) . ' ' . $this->_entityInfoValue('lowercase');
     }
 
     protected function fieldsToList(){
@@ -418,11 +414,12 @@ class PttController extends Controller
             return [];
         }
 
-        return array(
+        return [
             'title' => [ 
                 'label' => $this->get('pttTrans')->trans('title'),
                 'type' => 'text'
-            ]);
+            ]
+        ];
     }
 
     protected function continueWithDeletion($entity){
