@@ -16,9 +16,10 @@ class PttFormFieldValueSelect extends PttFormFieldValue
         $multiple = (isset($this->field->options['multiple']));
         if ($this->field->options['type'] == 'entity' && $multiple) {
             if ($this->request->getMethod() == 'POST') {
-                return ($this->sentData != null) ? $this->sentData : array();
+                return ($this->sentData != null) ? $this->sentData : [];
             } else {
-                return $this->_valueForMultipleRelations();
+                $method = 'get' . ucfirst($this->field->options['multiple']);
+                return $this->entityInfo->getEntity()->$method();
             }
         } else {
             if ($this->field->mapped) {
@@ -35,43 +36,6 @@ class PttFormFieldValueSelect extends PttFormFieldValue
             } else {
                 return null;
             }
-        }
-    }
-
-    private function _valueForMultipleRelations()
-    {
-        $multipleInfo = $this->field->options['multiple'];
-        if (is_array($multipleInfo)) {
-            if ($this->entityInfo->get('pttId') != null) {
-
-                $me = $multipleInfo['me'];
-                $them = $multipleInfo['them'];
-
-                $dql = '
-                select
-                    e.' . $them . ' id
-                from
-                    ' . $this->entityInfo->getBundle() . ':' . $multipleInfo['relatingEntity'] . ' e
-                where
-                    e.' . $me . ' = :id
-                ';
-
-                $em = $this->entityInfo->getEntityManager();
-                $query = $em->createQuery($dql);
-                $query->setParameter('id', $this->entityInfo->get('pttId'));
-                $results = $query->getResult();
-
-                $ids = array();
-                foreach ($results as $result) {
-                    $ids[] = $result['id'];
-                }
-
-                return $ids;
-            } else {
-                return array();
-            }
-        } else {
-            throw new \Exception('The multiple key must be an array (entity, me, them) for field ' . $this->field->name);
         }
     }
 }

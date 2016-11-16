@@ -113,27 +113,21 @@ class PttServices
     }
 
     public function getSimpleFilter($table, $params = []){
-
         $where = (isset($params['where'])) ? $params['where'] : [];
         $orderBy = (isset($params['orderBy'])) ? $params['orderBy'] : [];
 
-        $obj = $this->em->getRepository($this->_getTableBundle($table))
-        ->findBy($where, $orderBy);
+        $obj = $this->em->getRepository($this->_getTableBundle($table))->findBy($where, $orderBy);
+        return $this->_prepareObjects($obj, $params);
     }
 
     public function getAll($table){
-        $obj = $this->em->getRepository($this->_getTableBundle($table))
-        ->findAll();
-        $obj = $this->_prepareObjects($obj, $params);
-        return $obj;
+        $obj = $this->em->getRepository($this->_getTableBundle($table))->findAll();
+        return $this->_prepareObjects($obj, $params);
     }
 
     public function getOne($table, $id, $params = []){
-        $obj = $this->em->getRepository($this->bundle . ':' . ucfirst($table))->find($id);
-
-        $obj = $this->_prepareObject($obj, $params);
-        return $obj;
-
+        $obj = $this->em->getRepository($this->_getTableBundle($table))->find($id);
+        return $this->_prepareObject($obj, $params);
     }
 
     public function getByPag($table, $lang, $params = []){
@@ -214,7 +208,6 @@ class PttServices
     }
 
     private function _prepareObjects($elements, $parameters = [], $father = false){
-
         foreach ($elements as $k => $el) {
             $elements[$k] = $this->_prepareObject($el, $parameters, $father);
         }
@@ -243,10 +236,10 @@ class PttServices
         foreach ($object->getMethods() as $method) {
             if(substr($method, 0, 3) === "get"){
                 $setMethod = 's' . substr($method, 1);
-                if(is_array($el->$method())){
-                    $el->$setMethod($_prepareObjects($el->$method(), $parameters));
-                } elseif (is_object($el->$method())) {
-                    $el->$setMethod($_prepareObject($el->$method(), $parameters));
+                if(is_array($el->$method()) && substr($method, 3) != $father){
+                    $el->$setMethod($_prepareObjects($el->$method(), $parameters, $object->getShortName()));
+                } elseif (is_object($el->$method()) && substr($method, 3) != $father) {
+                    $el->$setMethod($_prepareObject($el->$method(), $parameters, $object->getShortName()));
                 }
             }
         }

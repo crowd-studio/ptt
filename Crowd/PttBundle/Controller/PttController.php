@@ -669,7 +669,6 @@ class PttController extends Controller
         }
 
         $info["keymap"] = PttUtil::pttConfiguration('google')["key"];
-
         return $this->render($template, $info);
     }
 

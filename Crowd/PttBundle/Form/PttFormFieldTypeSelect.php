@@ -15,7 +15,7 @@ class PttFormFieldTypeSelect extends PttFormFieldType
 	private $search;
 
 	public function field()
-	{
+	{	
 		$this->search = (isset($this->field->options['search']) && $this->field->options['search']);
 		if ($this->search){
 			$this->field->options['attr'] = [];
@@ -63,15 +63,9 @@ class PttFormFieldTypeSelect extends PttFormFieldType
 	protected function extraAttrsForField()
 	{
 		if ($this->search){
-			return array('data-model' => $this->field->options['entity']);
-		}
-
-		if ($this->multiple) {
-			$label = (isset($this->field->options['empty'])) ? $this->field->options['empty'] : false;
-			if ($label) {
-				$label = (isset($this->field->options['label'])) ? $this->field->options['label'] : $this->field->name;
-			}
-			return array('multiple' => 'multiple', 'title' => $this->pttTrans->trans($label));
+			return ['data-model' => $this->field->options['entity']];
+		} elseif ($this->multiple) {
+			return ['multiple' => 'multiple', 'title' => (isset($this->field->options['empty'])) ? $this->field->options['empty'] : ''];
 		} else {
 			return parent::extraAttrsForField();
 		}
@@ -116,6 +110,7 @@ class PttFormFieldTypeSelect extends PttFormFieldType
 						}
 					}
 				}
+
 				$html .= '<option' . $this->_selected($entity->getPttId());
 				if ($extraHtmlArr) {
 					$html .= ' ' . implode(' ', $extraHtmlArr);
@@ -129,7 +124,16 @@ class PttFormFieldTypeSelect extends PttFormFieldType
 	private function _selected($id)
 	{
 		if ($this->multiple) {
-			return (in_array($id, $this->value)) ? ' selected="selected"' : '';
+			$methodName = 'get' . ucfirst($this->field->options['multiple']);
+			$existEntity = $this->entityInfo->getEntity()->$methodName();
+
+			foreach ($existEntity as $key => $exist) {
+				if($id == $exist->getPttId()){
+					return ' selected="selected"';
+				}
+			}
+			return '';
+			return ($existEntity->contains($id)) ? ' selected="selected"' : '';
 		} elseif ($this->field->options['type'] == 'entity') {
 			return ($id == $this->value->getPttId()) ? ' selected="selected"' : '';
 		} else {
