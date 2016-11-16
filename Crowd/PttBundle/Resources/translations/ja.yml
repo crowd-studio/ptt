@@ -1,0 +1,50 @@
+actions : 行動
+add : 追加する
+cancel : キャンセル
+content_was_saved : コンテンツが保存されました
+create : 作成
+delete : 削除
+delete_the_entity_name : %@ "%@"を削除しますか？
+download_file : ファイルをダウンロードする
+edit : 編集
+error : エラー
+filter : フィルタ
+free_size : フリーサイズ
+list : リスト
+login : ログイン
+logout : ログアウト
+must_be_valid_number : 有効な数字である必要があります。
+no : いいえ
+no_results_found : 結果は見つかりませんでした。
+on : に
+password : パスワード
+publish : 公開する
+published : 公開済み
+recover : リカバリ
+recover_the_published_version_on : 公開されたバージョンを%@でリカバリしますか？
+recover_the_saved_version_on : 保存したバージョンを%@でリカバリしますか？
+remember_me : 私を覚えている
+remove : 削除
+required_field : 必須フィールド
+reset_filters : フィルタをリセットする
+save : 保存
+save_and_create_another : 別の名前を保存して作成する
+saved : 保存済み
+sign_in : サインイン
+snap_picture : スナップピクチャ
+the_current_user_cant_access : 現在のユーザーはこのコンテンツにアクセスできません
+the_entity_couldnt_be_deleted : %@を削除できませんでした
+the_entity_does_not_exist : %@は存在しません
+the_entity_was_deleted : %@を削除しました
+title : タイトル
+toggle_webcam_viewer : ウェブカメラビューアを切り替える
+unpublish : 未公開
+username : ユーザー名
+validation_errors_were_found : 検証エラーが見つかりました
+view_in_larger_size : 大きなサイズで表示
+yes : はい
+order: オーダー
+collapse: 折りたたむ
+expand: 拡大する
+pick_file: ファイルを選択
+open: オープン
