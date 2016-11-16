@@ -7,17 +7,16 @@
 
 namespace Crowd\PttBundle\Form;
 
-use Crowd\PttBundle\Form\PttFormValue;
+use Symfony\Component\HttpFoundation\Request;
 
-class PttFormFieldValueEntity extends PttFormFieldValue
+class PttFormFieldSentValueEntity extends PttFormFieldSentValue
 {
     public function value()
     {
-        if ($this->request->getMethod() == 'POST') {
-            return ($this->sentData != null) ? $this->sentData : [];
-        } else {
-            $method = 'get' . ucfirst($this->field->name);
-            return $this->entityInfo->getEntity()->$method();
+        foreach ($this->sentData as $key => $entity) {
+            if($entity['id'] != ''){
+                $this->sentData[$key] = $this->entityInfo->getEntityManager()->getRepository($this->entityInfo->getBundle() . ':' . $this->field->options['entity'])->find($entity['id']);
+            }
         }
     }
 }
