@@ -77,17 +77,17 @@ class PttHelperFormFieldTypeEntity
 
     public function formForEntity($entity, $key = false, $errors = false)
     {
+
         $pttForm = $this->container->get('pttForm');
         $pttForm->setEntity($entity);
 
         if ($errors != false) {
             $pttForm->setErrors($errors);
         }
-
-        if ($key == false) {
+        if ($key === false) {
             $key = ($entity->getPttId() != null) ? $entity->getPttId() : '{{index}}';
         }
-
+        
         $pttForm->setFormName($this->field->getFormName() . '[' . $key . ']');
         return $pttForm;
     }

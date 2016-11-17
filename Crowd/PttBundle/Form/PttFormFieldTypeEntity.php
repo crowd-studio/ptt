@@ -41,56 +41,32 @@ class PttFormFieldTypeEntity extends PttFormFieldType
     }
 
     private function _hiddenDiv() {
-
         $pttHelper = new PttHelperFormFieldTypeEntity($this->entityInfo, $this->field, $this->container, $this->em);
-        $form = $pttHelper->formForEntity($pttHelper->cleanRelatedEntity());
-
-        $formName = $this->field->options['label'];
-
-        
-        $htmlField = '<script type="text/template" class="template"><div class="collapse-head"><span class="handle hidden"></span><span class="title-triangle"><a class="triangle-open triangle"></a><a class="title title-open">'. $formName .' {{index}}</a></span><a class="remove list-eliminar">'.$this->pttTrans->trans('remove').'</a></div><div class="collapse-body">' . $form->createView('multi');
-        $htmlField .= '<input type="hidden" id="'. $this->field->getFormName() . '-{{index}}-_order" name="'. $this->field->getFormName() . '[{{index}}]' .'[_order]" data-required="false" class="form-control field-order" value="{{index}}">';
-        $htmlField .= '<input type="hidden" id="'. $this->field->getFormName() . '-{{index}}-_model" name="'. $this->field->getFormName() . '[{{index}}]' .'[_model]" data-required="false" class="form-control" value="'. $this->pttForm->getEntityInfo()->getEntityName() .'">';
-        $htmlField .= '</div></script>';
-
-        $formErrors = $this->pttForm->getErrors($this->field->name);
+        $htmlField = '<script type="text/template" class="template">'. $this->_getHtml('{{index}}', $this->field->options['label'], $pttHelper->formForEntity($pttHelper->cleanRelatedEntity())) .'</script>';
 
         return $htmlField;
-    }
-
-    function moduleSort( $a, $b ) {
-        if (!isset($a)) {
-            return -1;
-        } elseif (!isset($b)) {
-            return 1;
-        } else {
-            return $a->get_Order() == $b->get_Order() ? 0 : ( $a->get_Order() > $b->get_Order() ) ? 1 : -1;
-        }
     }
 
     private function _fillData()
     {
         $htmlField = '';
-        if (is_array($this->value) && count($this->value)){
+        if($this->value){
             $pttHelper = new PttHelperFormFieldTypeEntity($this->entityInfo, $this->field, $this->container, $this->em);
-            $formName = $this->field->options['label'];
-
-
-            if (is_array($this->value) && count($this->value)) {
-                $index = 1;
-                foreach ($this->value as $key => $entityData) {
-                    if ($key != -1) {
-                        $errors = (isset($formErrors[$key])) ? $formErrors[$key] : false;
-                        $form = $pttHelper->formForEntity($pttHelper->entityWithData($entityData), $index, $errors);
-                        $htmlField .= '<li class="entity"><div class="collapse-head"><span class="handle hidden"></span><span class="title-triangle"><a class="triangle-closed triangle"></a><a class="title title-closed">'. $formName .' '. $index .'</a></span><a class="remove list-eliminar">'.$this->pttTrans->trans('remove').'</a></div><div class="collapse-body hidden">' . $form->createView('multi');
-                        $htmlField .= '<input type="hidden" id="'. $this->field->getFormName() . '-' . $index .'-_order" name="'. $this->field->getFormName() . '[' . $index . ']' .'[_order]" data-required="false" class="form-control field-order" value="'. $index .'">';
-                        $htmlField .= '<input type="hidden" id="'. $this->field->getFormName() . '-' . $index .'-_model" name="'. $this->field->getFormName() . '[' . $index . ']' .'[_model]" data-required="false" class="form-control" value="'. $this->pttForm->getEntityInfo()->getEntityName() .'">';
-                        $htmlField .= '</div></li>';
-                        $index++;
-                    }
-                }
+            for ($i=0; $i < count($this->value); $i++) { 
+                $ent = $this->value->get($i);
+                $htmlField .= '<li class="entity">' . $this->_getHtml($i+1, $this->field->options['label'], $pttHelper->formForEntity($ent, $i+1, (isset($formErrors[$i])) ? $formErrors[$i] : false)) . '</li>';
             }
         }
+        
+        return $htmlField;
+    }
+
+    private function _getHtml($key, $formName, $form){
+        $htmlField = '<div class="collapse-head"><span class="handle hidden"></span><span class="title-triangle"><a class="triangle-closed triangle"></a><a class="title title-closed">'. $formName .' '. $key .'</a></span><a class="remove list-eliminar">'.$this->pttTrans->trans('remove').'</a></div><div class="collapse-body hidden">' . $form->createView('multi');
+        $htmlField .= '<input type="hidden" id="'. $this->field->getFormName() . '-' . $key .'-_order" name="'. $this->field->getFormName() . '[' . $key . ']' .'[_order]" data-required="false" class="form-control field-order" value="'. $key .'">';
+        $htmlField .= '<input type="hidden" id="'. $this->field->getFormName() . '-' . $key .'-_model" name="'. $this->field->getFormName() . '[' . $key . ']' .'[_model]" data-required="false" class="form-control" value="'. $this->pttForm->getEntityInfo()->getEntityName() .'">';
+        $htmlField .= '</div>';
+
         return $htmlField;
     }
 

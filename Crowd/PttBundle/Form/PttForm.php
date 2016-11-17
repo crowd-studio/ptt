@@ -158,7 +158,6 @@ class PttForm
 	public function isValid()
 	{
 		$this->_updateSentData();
-
 		$this->_performFieldsLoopAndCallMethodNamed('_validateField');
 
 		return !$this->errors->hasErrors();
@@ -166,7 +165,7 @@ class PttForm
 
 	public function save()
 	{
-		$this->_updateModuleSentData();
+		// $this->_updateModuleSentData();
 		$this->_performFieldsLoopAndCallMethodNamed('_saveForField', true);	
 
 		if ($this->entityInfo->hasMethod('setTitle') && $this->entityInfo->hasMethod('getTitle')) {
@@ -445,35 +444,15 @@ class PttForm
 
 	private function _validateField(PttField $field, $languageCode = false)
 	{
-		$hasFoundErrors = false;
-
 		if ($field->validations) {
 			foreach ($field->validations as $type => $message) {
 				$validationClassName = PttClassNameGenerator::validation($type);
 				$formValidation = new $validationClassName($this, $field, $languageCode);
 				if (!$formValidation->isValid()) {
-					$hasFoundErrors = true;
 					$this->errors->add($field->name, $message, $languageCode);
 				}
 			}
 		}
-
-		$fieldClassName = PttClassNameGenerator::field($field->type);
-		$formField = new $fieldClassName($this, $field);
-
-		$value = $this->_valueForField($field, $languageCode);
-
-		if ($field->mapped) {
-			$this->entityInfo->set($field->name, $value, $languageCode);
-		}
-	}
-
-	private function _valueForField(PttField $field, $languageCode = false)
-	{
-		$sentValueClassName = PttClassNameGenerator::sentValue($field->type);
-		$sentValue = new $sentValueClassName($field, $this, $languageCode);
-		$value = $sentValue->value();
-		return $value;
 	}
 
 	private function _saveForField(PttField $field, $languageCode = false)
