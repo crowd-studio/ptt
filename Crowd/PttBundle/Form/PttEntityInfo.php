@@ -129,21 +129,6 @@ class PttEntityInfo
 					$entity = $this->_entityForLanguageCode($languageCode);
 					$entity->{$methodName}($value);
 				}
-			} elseif(is_array($value)) {
-
-				$methodName = 'update' . ucfirst($name);
-				if (!$this->hasMethod($methodName)) {
-					throw new \Exception('The method ' . $methodName . ' does not exist for entity ' . $this->getEntityName());
-				} else {
-					$this->entity->$methodName($value);
-				}
-			} elseif (is_object($value)) {
-				$methodName = 'set' . ucfirst($name);
-				if (!$this->hasMethod($methodName)) {
-					throw new \Exception('The method ' . $methodName . ' does not exist for entity ' . $this->getEntityName());
-				} else {
-					$this->entity->$methodName($value);
-				}
 			} else {
 				if (!$this->hasMethod($methodName)) {
 					throw new \Exception('The method ' . $methodName . ' does not exist for entity ' . $this->getEntityName());

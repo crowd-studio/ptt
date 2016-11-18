@@ -7,17 +7,16 @@
 
 namespace Crowd\PttBundle\Form;
 
-use Crowd\PttBundle\Form\PttFormValue;
+use Crowd\PttBundle\Form\PttFormSave;
 
-class PttFormFieldValueGallery extends PttFormFieldValue
+class PttFormSaveGallery extends PttFormSave
 {
     public function value()
     {
-        if ($this->request->getMethod() == 'POST') {
-            return ($this->sentData != null) ? $this->sentData : [];
-        } else {
-            $method = 'get' . ucfirst($this->field->name);
-            return $this->entityInfo->getEntity()->$method();
-        }
+    	if(isset($this->sentData[$this->field->name])){
+    		return ($this->languageCode) ? $this->sentData[$this->languageCode][$this->field->name] : $this->sentData[$this->field->name];
+    	} else {
+    		return [];
+    	}
     }
 }

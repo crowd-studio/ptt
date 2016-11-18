@@ -165,9 +165,7 @@ class PttForm
 
 	public function save()
 	{
-
-		// $this->_updateModuleSentData();
-		$this->_performFieldsLoopAndCallMethodNamed('_saveForField', true);	
+		$this->_performFieldsLoopAndCallMethodNamed('_saveForField');	
 
 		if ($this->entityInfo->hasMethod('setTitle') && $this->entityInfo->hasMethod('getTitle')) {
 			if(isset($this->sentData['Trans'][PttUtil::pttConfiguration('preferredLanguage', false)]['title'])){
@@ -338,10 +336,9 @@ class PttForm
 			$cleanName = str_replace(']', '', $this->entityInfo->getFormName());
 
 			$cleanNameArr = explode('[', $cleanName);
-			$i = 0;
-			$sentData = array();
+			$sentData = [];
 
-			foreach ($cleanNameArr as $key) {
+			foreach ($cleanNameArr as $i => $key) {
 				if ($i == 0) {
 					$sentData = $this->request->get($key);
 				} else {
@@ -349,11 +346,10 @@ class PttForm
 						$sentData = $sentData[$key];
 					}
 				}
-				$i++;
 			}
 			$this->sentData = $sentData;
 
-			$transEntity = array();
+			$transEntity = [];
 			if ($this->languages) {
 				foreach ($this->languages as $languageCode => $languageTitle) {
 					$entityTrans = $this->entityInfo->getFormName() . '[Trans]';
@@ -366,46 +362,11 @@ class PttForm
 			$this->sentDataTrans = $transEntity;
 		} else {
 			$this->sentData = $this->request->get($this->entityInfo->getFormName());
-			$transEntity = array();
-		}
-	}
-
-	private function _updateModuleSentData()
-	{
-		if (strpos($this->entityInfo->getFormName(), '[') !== false) {
-			$cleanName = str_replace(']', '', $this->entityInfo->getFormName());
-
-			$cleanNameArr = explode('[', $cleanName);
-			$i = 0;
-			$sentData = array();
-
-			foreach ($cleanNameArr as $key) {
-				if ($i == 0) {
-					$sentData = $this->request->get($key);
-				} else {
-					if (isset($sentData[$key])) {
-						$sentData = $sentData[$key];
-					}
-				}
-				$i++;
-			}
-			$this->sentData = $sentData;
-
-			$transEntity = array();
-			if ($this->languages) {
-				foreach ($this->languages as $languageCode => $languageTitle) {
-					$entityTrans = $this->entityInfo->getFormName() . '[Trans]';
-					$aux = $this->request->get($entityTrans);
-					if(isset($aux)){
-						$transEntity[$languageCode] = reset($aux);
-					}
-				}
-			}
-			$this->sentDataTrans = $transEntity;
+			$transEntity = [];
 		}
 	}
 	
-	private function _performFieldsLoopAndCallMethodNamed($nameOfMethod, $checkForMapped = false)
+	private function _performFieldsLoopAndCallMethodNamed($nameOfMethod)
 	{
 		$fields = $this->entityInfo->getFields();
 		$index = 0;
@@ -413,13 +374,7 @@ class PttForm
 		foreach ($fields->block as $block) {
 			if($fields->static[$index]){
 				foreach ($fields->static[$index] as $field) {
-					if ($checkForMapped) {
-						if ($field->mapped) {
-							$this->$nameOfMethod($field);
-						}
-					} else {
-						$this->$nameOfMethod($field);
-					}
+					$this->$nameOfMethod($field);
 				}
 			}
 			
@@ -427,14 +382,7 @@ class PttForm
 				foreach ($this->languages as $languageCode => $languageTitle) {
 					if($fields->trans[$index]){
 						foreach ($fields->trans[$index] as $field) {
-							if ($checkForMapped) {
-								if ($field->mapped) {
-									$this->$nameOfMethod($field, $languageCode);
-								}
-							} else {
-
-								$this->$nameOfMethod($field, $languageCode);
-							}
+							$this->$nameOfMethod($field, $languageCode);
 						}
 					}
 				}

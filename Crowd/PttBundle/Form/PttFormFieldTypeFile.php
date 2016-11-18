@@ -16,7 +16,7 @@ class PttFormFieldTypeFile extends PttFormFieldType
 		$html = $this->start();
 
 		if ($this->field->options['type'] == 'image' || $this->field->options['type'] == 'gallery') {
-			$sizes = array();
+			$sizes = [];
 			$maxW = 0;
 			$maxH = 0;
 			foreach ($this->field->options['sizes'] as $size) {

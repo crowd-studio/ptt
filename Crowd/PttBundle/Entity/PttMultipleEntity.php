@@ -14,13 +14,6 @@ class PttMultipleEntity extends PttEntity
 {
 
     /**
-     * @var string
-     *
-     * @ORM\Column(name="related_id", type="string", length=255)
-     */
-    protected $relatedId;
-
-    /**
      * @var integer
      *
      * @ORM\Column(name="_order", type="integer")
@@ -33,29 +26,6 @@ class PttMultipleEntity extends PttEntity
      * @ORM\Column(name="_model", type="text")
      */
     protected $_model;
-
-    /**
-     * Set creationUserId
-     *
-     * @param string $creationUserId
-     * @return Entity
-     */
-    public function setRelatedId($relatedId)
-    {
-        $this->relatedId = $relatedId;
-
-        return $this;
-    }
-
-    /**
-     * Get creationUserId
-     *
-     * @return integer
-     */
-    public function getRelatedId()
-    {
-        return $this->relatedId;
-    }
 
     /**
      * Set _order

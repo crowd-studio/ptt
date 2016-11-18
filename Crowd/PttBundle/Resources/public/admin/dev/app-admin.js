@@ -116,7 +116,7 @@ define([
                 var cloneMultipleEntitiesView = new CloneMultipleEntitiesView({el:$(this)});
                 var myDropzone = new Dropzone(".dropzone", {
                     acceptedFiles: "image/*",
-                    url: this.getAttribute('data-prefix') + window.app.baseUrl + "ptt/media/upload/",
+                    url: this.getAttribute('data-prefix') + window.app.baseUrl + "gestordecontenidos/ptt/media/upload/",
                     success: function(file, response) {
                         cloneMultipleEntitiesView.add_gallery(response["file"], response["path"]);
                         if (file.previewElement) {
@@ -184,7 +184,7 @@ define([
                 var defaultId = $(this).val();
                 $(this).select2({
                     ajax: {
-                        url: window.app.baseUrl + 'ptt/media/autocomplete/',
+                        url: window.app.baseUrl + 'gestordecontenidos/ptt/media/autocomplete/',
                         dataType: 'json',
                         type : 'POST',
                         delay: 250,
@@ -206,7 +206,7 @@ define([
                     initSelection: function (element, callback) {
                         if (defaultId != -1 && defaultId != '') {
                             $.ajax({
-                                url: window.app.baseUrl + 'ptt/media/autocomplete/',
+                                url: window.app.baseUrl + 'gestordecontenidos/ptt/media/autocomplete/',
                                 dataType: 'json',
                                 type : 'POST',
                                 data : {type : 'init', id : defaultId, field : field},

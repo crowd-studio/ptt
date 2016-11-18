@@ -34,7 +34,6 @@ class PttHelperFormFieldTypeGallery
     {
         $className = $this->classNameForRelatedEntity();
         $entity = new $className();
-        $entity->setRelatedId($this->entityInfo->get('pttId'));
         return $entity;
     }
 
@@ -44,7 +43,6 @@ class PttHelperFormFieldTypeGallery
 
         if (!isset($entityData['id']) || $entityData['id'] == '') {
             $entity = new $className();
-            $entity->setRelatedId($this->entityInfo->get('pttId'));
         } else {
             $entity = $this->em->getRepository($this->entityInfo->getBundle() . ':' . $this->field->options['entity'])->findOneBy(array('id' => $entityData['id']));
         }
@@ -68,7 +66,6 @@ class PttHelperFormFieldTypeGallery
         if (is_object($entityData)) {
             if ($entityData->getPttId() == null) {
                 $entity = new $className();
-                $entity->setRelatedId($this->entityInfo->get('pttId'));
             } else {
                 $entity = $this->em->getRepository($this->entityInfo->getBundle() . ':' . $this->field->options['entity'])->findOneBy(array('id' => $entityData->getId()));
             }
@@ -88,7 +85,7 @@ class PttHelperFormFieldTypeGallery
             $pttForm->setErrors($errors);
         }
 
-        if ($key == false) {
+        if ($key === false) {
             $key = ($entity->getPttId() != null) ? $entity->getPttId() : '{{index}}';
         }
 
@@ -104,7 +101,6 @@ class PttHelperFormFieldTypeGallery
         $type = implode('\\', $classNameArr) . '\\' . $type . 'Trans';
 
         $entity = new $type();
-        $entity->setRelatedId($relatedId);
         $entity->setLanguage($lang);
         
         foreach ($data as $key => $value) {

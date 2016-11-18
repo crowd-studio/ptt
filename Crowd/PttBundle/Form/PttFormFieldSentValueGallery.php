@@ -9,7 +9,7 @@ namespace Crowd\PttBundle\Form;
 
 use Symfony\Component\HttpFoundation\Request;
 
-class PttFormFieldSentValueEntity extends PttFormFieldSentValue
+class PttFormFieldSentValueGallery extends PttFormFieldSentValue
 {
     public function value()
     {
