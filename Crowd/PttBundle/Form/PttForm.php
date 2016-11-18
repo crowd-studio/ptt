@@ -165,6 +165,7 @@ class PttForm
 
 	public function save()
 	{
+
 		// $this->_updateModuleSentData();
 		$this->_performFieldsLoopAndCallMethodNamed('_saveForField', true);	
 
@@ -462,13 +463,24 @@ class PttForm
 		$formSave = new $saveClassName($field, $this->entityInfo, $this->request, $this->sentData, $this->container, $languageCode);
 		$value = $formSave->value();
 		
-
 		if (strpos($fieldClassName, 'PttFormFieldTypeSelectMultiple') !== false) {
 			 $this->entityInfo->set($field->name . '_model', $this->sentData[$field->name . '_model'], $languageCode);
 		}
 
-		$this->entityInfo->set($field->name, $value, $languageCode);
+		if($value){
+			$this->entityInfo->set($field->name, $value, $languageCode);
+		} else {
+			$value = $this->_valueForField($field, $languageCode);
+			$this->entityInfo->set($field->name, $value, $languageCode);
+		}
+	}
 
+	private function _valueForField(PttField $field, $languageCode = false)
+	{
+		$sentValueClassName = PttClassNameGenerator::sentValue($field->type);
+		$sentValue = new $sentValueClassName($field, $this, $languageCode);
+		$value = $sentValue->value();
+		return $value;
 	}
 
 	private function _afterSaveForField(PttField $field, $languageCode = false)
