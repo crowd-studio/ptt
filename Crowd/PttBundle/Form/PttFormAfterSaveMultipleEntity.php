@@ -32,7 +32,7 @@ class PttFormAfterSaveMultipleEntity extends PttFormAfterSave
                     $entity = $pttHelper->entityForDataArray($entityData);
                     $form = $pttHelper->formForEntity($entity, $key);
                     
-                    $form->setTotalData($index);
+                    // $form->setTotalData($index);
                     $form->isValid();
                     $form->save();
                     $index += 1;

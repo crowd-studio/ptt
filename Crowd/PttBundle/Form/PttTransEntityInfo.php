@@ -35,7 +35,7 @@ class PttTransEntityInfo
 	{
 		$transClassName = $this->_transEntityClass();
 		if ($languages && class_exists($transClassName)) {
-			$this->transEntities = array();
+			$this->transEntities = [];
 
 			$this->transEntities = $this->_transEntity($languages);
 		} else {
@@ -45,30 +45,29 @@ class PttTransEntityInfo
 
 	private function _transEntity($languages)
 	{		
-		$transEntity = array();		
-		foreach ($languages as $languageCode => $language) {
-			$transEntity[$languageCode] = $this->_emptyTransEntity($languageCode);
-		}	
+		$data = $this->entityInfo->get('trans');
+		if(count($data)){
 
-		if ($this->entityInfo->get('id') != null) {
-			$data = $this->entityInfo->getEntityManager()->getRepository($this->entityInfo->getRepositoryName() . 'Trans')->findBy(array('relatedId' => $this->entityInfo->get('id')));
-			foreach ($data as $trans) {
-				$transEntity[$trans->getLanguage()] = $trans;
-			}
+		} else {
+			$transEntity = [];		
+			foreach ($languages as $languageCode => $language) {
+				$transEntity[$languageCode] = $this->_emptyTransEntity($languageCode);
+				$this->entityInfo->getEntity()->addTrans($transEntity[$languageCode]);
+			}	
 		}
+
 		return $transEntity;
 	}
 
 	private function _transEntityClass()
 	{
-		return $this->entityInfo->getClassName() . 'Trans';
+		return $this->entityInfo->getClassName() . 'trans';
 	}
 
 	private function _emptyTransEntity($languageCode)
 	{
 		$transClassName = $this->_transEntityClass();
 		$transEntity = new $transClassName();
-		$transEntity->setRelatedId($this->entityInfo->get('id'));
 		$transEntity->setLanguage($languageCode);
 		return $transEntity;
 	}

@@ -86,9 +86,8 @@ class PttController extends Controller
      * @Route("/{entity}/create", name="create");
      * @Template()
      */
-    public function editAction(Request $request, $entity, $id = null){
-
-
+    public function editAction(Request $request, $entity, $id = null)
+    {
         $this->entityName = ucfirst($entity);
         if ($id == null) {
             $saveEntity = $this->_initEntity();
@@ -103,7 +102,7 @@ class PttController extends Controller
         $pttForm = $this->get('pttForm');
         
         $pttForm->setEntity($saveEntity); // on es crea el ppttEntityInfo
-        $pttForm->setTotalData($this->_totalEntities($this->_repositoryName()));
+        // $pttForm->setTotalData($this->_totalEntities($this->_repositoryName()));
 
 
         if ($request->getMethod() == 'POST') {
@@ -165,13 +164,15 @@ class PttController extends Controller
 
             $this->beforeDeletion($deleteEntity);
 
-            $transClassName = $this->_className() . 'Trans';
-            if (class_exists($transClassName)) {
-                $transEntities = $em->getRepository($this->_repositoryName() . 'Trans')->findBy(['relatedId' => $deleteEntity->getPttId()]);
-                foreach ($transEntities as $transEntity) {
-                    $em->remove($transEntity);
-                }
-            }
+            // EL TRANS JA S'ESBORRARÀ PER CASCADA
+            // 
+            // $transClassName = $this->_className() . 'trans';
+            // if (class_exists($transClassName)) {
+            //     $transEntities = $em->getRepository($this->_repositoryName() . 'Trans')->findBy(['relatedId' => $deleteEntity->getPttId()]);
+            //     foreach ($transEntities as $transEntity) {
+            //         $em->remove($transEntity);
+            //     }
+            // }
 
             $this->flushCache($deleteEntity);
 

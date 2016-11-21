@@ -118,7 +118,7 @@ class PttHelperFormFieldTypeMultipleEntity
         $pttForm = $this->container->get('pttForm');
 
         $pttForm->setEntity($entity);
-        $pttForm->setTotalData($this->_totalEntities());
+        // $pttForm->setTotalData($this->_totalEntities());
 
         if ($errors != false) {
             $pttForm->setErrors($errors);

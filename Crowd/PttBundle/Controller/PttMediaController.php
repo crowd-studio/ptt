@@ -92,7 +92,7 @@ class PttMediaController extends Controller
             $extension = end($originalNameArray);
             $prefix = (PttUtil::pttConfiguration('prefix') != '') ? PttUtil::pttConfiguration('prefix') : '';
             $shortName = '/tmp/' . PttUtil::token(100) . '.' . $extension;
-            $name = __DIR__ . '/../../../../../../web/' . $shortName;
+            $name = __DIR__ . '/../../../../../../web' . $shortName;
             copy($_FILES['file']['tmp_name'], $name);
 
             $shortName = $prefix . $shortName;

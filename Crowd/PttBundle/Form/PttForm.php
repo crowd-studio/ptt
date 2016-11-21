@@ -165,6 +165,7 @@ class PttForm
 
 	public function save()
 	{
+		var_dump($this->entityInfo->getTransEntities());die();
 		$this->_performFieldsLoopAndCallMethodNamed('_saveForField');	
 
 		if ($this->entityInfo->hasMethod('setTitle') && $this->entityInfo->hasMethod('getTitle')) {
@@ -192,6 +193,13 @@ class PttForm
 				if(!$entityPrincipal->get_Order()){
 					$entityPrincipal->set_Order(-1);
 				}
+			}
+		}
+
+
+		if($this->entityInfo->hasMethod('getTrans')){
+			if(!count($this->entityInfo->get('trans'))){
+
 			}
 		}
 
@@ -448,7 +456,7 @@ class PttForm
 		}
 	}
 
-	public function setTotalData ($totalData){
-		$this->totalData = $totalData;
-	}
+	// public function setTotalData ($totalData){
+	// 	$this->totalData = $totalData;
+	// }
 }

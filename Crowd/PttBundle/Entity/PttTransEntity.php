@@ -20,13 +20,6 @@ class PttTransEntity
     protected $language;
 
     /**
-     * @var integer
-     *
-     * @ORM\Column(name="relatedId", type="integer")
-     */
-    protected $relatedId;
-
-    /**
      * @var string
      *
      * @ORM\Column(name="slug", type="string", length=255)
@@ -54,29 +47,6 @@ class PttTransEntity
     public function getLanguage()
     {
         return $this->language;
-    }
-
-    /**
-     * Set relatedId
-     *
-     * @param integer $relatedId
-     * @return PttTransEntity
-     */
-    public function setRelatedId($relatedId)
-    {
-        $this->relatedId = $relatedId;
-
-        return $this;
-    }
-
-    /**
-     * Get relatedId
-     *
-     * @return integer
-     */
-    public function getRelatedId()
-    {
-        return $this->relatedId;
     }
 
     /**
