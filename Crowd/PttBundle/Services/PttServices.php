@@ -242,7 +242,10 @@ class PttServices
             $keys = $parameters['clean'];
         } else {
             $keys = array_keys($el);
-            unset($keys[array_search('_totalPagCount', $keys)]);
+            $pos = array_search('_totalPagCount', $keys);
+            if($pos > 0){
+                unset($keys[$pos]);    
+            }
         }
 
         $el = $this->_cleanObject($el, $keys);
