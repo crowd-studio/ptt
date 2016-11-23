@@ -373,7 +373,10 @@ class PttController extends Controller
 
     protected function afterSave($entity){}
 
-    protected function flushCache($entity){}
+    protected function flushCache($entity){
+        $cache = new PttCache();
+        $cache->removeAll();
+    }
 
     protected function deleteTemp(){
         $dir = __DIR__ . "/../../../../../../web/tmp/"; 

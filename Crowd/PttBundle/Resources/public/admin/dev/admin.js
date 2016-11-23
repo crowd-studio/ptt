@@ -1,9 +1,9 @@
 require.config({
     paths:{
         "jquery": "vendor/jquery/dist/jquery",
-        "Backbone": "vendor/backbone/backbone-min",
+        "Backbone": "vendor/backbone-amd/backbone-min",
         "modernizr": "vendor/modernizr/modernizr",
-        "underscore": "vendor/underscore/underscore-min",
+        "underscore": "vendor/underscore-amd/underscore-min",
         "mustache": "vendor/mustache/mustache",
         "text": "vendor/requirejs-plugins/lib/text",
         "bootstrap" : "vendor/bootstrap/dist/js/bootstrap",
