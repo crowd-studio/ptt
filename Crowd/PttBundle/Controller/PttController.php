@@ -367,9 +367,8 @@ class PttController extends Controller
         return method_exists($this->_initEntity(), "getCopy");
     }
 
-
     protected function listTitle(){
-        $title = $this->_getAnnotation('createTitle');
+        $title = $this->_getAnnotation('listTitle');
         return ($title) ? $title : $this->get('pttTrans')->trans('list') . ' ' . $this->_entityInfoValue('plural');
     }
 
