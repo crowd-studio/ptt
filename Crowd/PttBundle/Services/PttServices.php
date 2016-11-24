@@ -161,12 +161,16 @@ class PttServices
         $hasNewPages = sizeOf( $total ) / $limit - $params['page'] > 1;
 
         if($hasNewPages){
-            $hasNewPages = str_replace('{{page}}', $params['page'] + 1, $params['url']);
+            $hasNewPages = [
+                'path' => str_replace('{{page}}', $params['page'] + 1, $params['url'])
+            ];
+
+            if(isset($params['urlParams'])){
+                $hasNewPages['params'] = $params['urlParams'];
+            }
         }
 
-        $urlParams = (isset($params['urlParams'])) ? $params['urlParams'] : [];
-
-        return ['content' => $data, 'newPage' => $hasNewPages, 'params' => $urlParams];
+        return ['content' => $data, 'newPage' => $hasNewPages];
     }
 
     public function getModules($id, $model, $lang, $params = []){
