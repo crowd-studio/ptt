@@ -158,7 +158,7 @@ class PttServices
         $total = (isset($data[0])) ? $data[0]["_totalPagCount"] : 0;
         $data = $this->_prepareObjects($data, $table, $params);
         $limit = (isset($params['limit'])) ? $params['limit'] : $this->limit;
-        $hasNewPages = sizeOf( $total ) / $limit - $params['page'] > 1;
+        $hasNewPages = $total / $limit - $params['page'] > 1;
 
         if($hasNewPages){
             $hasNewPages = [
@@ -170,7 +170,7 @@ class PttServices
             }
         }
 
-        return ['content' => $data, 'newPage' => $hasNewPages];
+        return ['content' => $data, 'newPage' => $hasNewPages, 'limit' => $limit];
     }
 
     public function getModules($id, $model, $lang, $params = []){
