@@ -367,8 +367,16 @@ class PttController extends Controller
         return method_exists($this->_initEntity(), "getCopy");
     }
 
+
     protected function listTitle(){
-        return $this->get('pttTrans')->trans('list') . ' ' . $this->_entityInfoValue('plural');
+        $title = $this->_getAnnotation('createTitle');
+        return ($title) ? $title : $this->get('pttTrans')->trans('list') . ' ' . $this->_entityInfoValue('plural');
+    }
+
+    protected function editTitle($id){
+        $name = ($id != null) ? 'edit' : 'create';
+        $title = $this->_getAnnotation($name . 'Title');
+        return ($title) ?  $title : $this->get('pttTrans')->trans($name) . ' ' . $this->_entityInfoValue('lowercase');
     }
 
     protected function afterSave($entity){}
@@ -387,13 +395,6 @@ class PttController extends Controller
                 unlink($dir.$file); 
             }
         } 
-    }
-
-    protected function editTitle($id){
-        $entityInfo = $this->entityInfo();
-        $title = ($id != null) ? $this->get('pttTrans')->trans('edit') . ' ' : $this->get('pttTrans')->trans('create') . ' ';
-        $title .= $this->_entityInfoValue('lowercase');
-        return $title;
     }
 
     protected function fieldsToList(){
