@@ -21,30 +21,18 @@ class PttClassNameGenerator
 
     public static function save($type)
     {
-        $className = 'Crowd\PttBundle\Form\PttFormSave' . ucfirst($type);
-        if (!class_exists($className)) {
-            $className = 'Crowd\PttBundle\Form\PttFormSaveDefault';
-        }
-        return $className;
+        return $this->exists('Crowd\PttBundle\Form\PttFormSave', $type);
     }
 
     public static function sentValue($type)
     {
-        $className = 'Crowd\PttBundle\Form\PttFormFieldSentValue' . ucfirst($type);
-        if (!class_exists($className)) {
-            $className = 'Crowd\PttBundle\Form\PttFormFieldSentValueDefault';
-        }
-        return $className;
+        return $this->exists('Crowd\PttBundle\Form\PttFormFieldSentValue', $type);
     }
 
     public static function afterSave($type)
     {
         $className = 'Crowd\PttBundle\Form\PttFormAfterSave' . ucfirst($type);
-        if (!class_exists($className)) {
-            return false;
-        } else {
-            return $className;
-        }
+        return (!class_exists($className)) ? false : $className;
     }
 
     public static function validation($type)
@@ -55,5 +43,10 @@ class PttClassNameGenerator
             $capitalizedType .= ucfirst($type);
         }
         return 'Crowd\PttBundle\Form\PttFormValidation' . $capitalizedType;
+    }
+
+    private function exists($name, $type){
+        $className = $name . ucfirst($type);
+        return (!class_exists($className)) ? $className : $name . 'Default';
     }
 }

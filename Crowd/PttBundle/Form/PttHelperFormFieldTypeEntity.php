@@ -92,33 +92,4 @@ class PttHelperFormFieldTypeEntity
         return $pttForm;
     }
 
-    public function createTransEntities($data, $lang, $relatedId, $type){
-        $em = $this->entityInfo->getEntityManager();
-
-        $classNameArr = explode('\\', $this->entityInfo->getClassName());
-        array_pop($classNameArr);
-        $type = implode('\\', $classNameArr) . '\\' . $type . 'Trans';
-
-        $entity = new $type();
-        $entity->setLanguage($lang);
-        
-        foreach ($data as $key => $value) {
-            if ($key != 'id') {
-                $methodName = 'set' . ucfirst($key);
-                if (method_exists($entity, $methodName)) {
-                    $entity->{$methodName}($value);
-                }
-            }
-        }
-
-        if (method_exists($entity, 'getTitle')){
-            $entity->setSlug(PttUtil::slugify($entity->getTitle()));
-        } else {
-            $entity->setSlug('');
-        }
-
-        $em->persist($entity);
-        $em->flush();
-    }
-
 }

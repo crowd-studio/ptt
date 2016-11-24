@@ -65,36 +65,6 @@ class PttHelperFormFieldTypeMultipleEntity
         return $entity;
     }
 
-    public function createTransEntities($data, $lang, $relatedId, $type){
-        $classNameArr = explode('\\', $this->entityInfo->getClassName());
-        array_pop($classNameArr);
-        $type = implode('\\', $classNameArr) . '\\' . $type . 'Trans';
-
-        $entity = new $type();
-        $entity->setRelatedId($relatedId);
-        $entity->setLanguage($lang);
-        
-        foreach ($data as $key => $value) {
-            if ($key != 'id') {
-                $methodName = 'set' . ucfirst($key);
-                if (method_exists($entity, $methodName)) {
-                    $entity->{$methodName}($value);
-                }
-            }
-        }
-
-        if (method_exists($entity, 'getTitle')){
-            $entity->setSlug(PttUtil::slugify($entity->getTitle()));
-        } else {
-            $entity->setSlug('');
-        }
-
-        
-
-        $this->em->persist($entity);
-        // var_dump($entity->getSlug());die();
-    }
-
     public function entityWithData($entityData)
     {
         $className = $this->classNameForRelatedEntity();
@@ -118,7 +88,6 @@ class PttHelperFormFieldTypeMultipleEntity
         $pttForm = $this->container->get('pttForm');
 
         $pttForm->setEntity($entity);
-        // $pttForm->setTotalData($this->_totalEntities());
 
         if ($errors != false) {
             $pttForm->setErrors($errors);
@@ -131,15 +100,5 @@ class PttHelperFormFieldTypeMultipleEntity
         $pttForm->setFormName($this->field->getFormName() . '[' . $key . ']');
 
         return $pttForm;
-    }
-
-    private function _totalEntities(){
-        $repositoryName = $this->repositoryName = $this->entityInfo->getBundle() . ':' . $this->entity;
-        $query = $this->em->createQueryBuilder()
-                      ->select('count(p.id)')
-                      ->from($repositoryName, 'p');
-
-        $total = $query->getQuery()->getSingleScalarResult();
-        return $total;
     }
 }

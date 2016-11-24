@@ -44,8 +44,19 @@ class PttEntityInfo
 
 		$this->formName = $this->entityName;
 
-		$pttTransEntityInfo = new PttTransEntityInfo($this, $languages);
-		$this->transEntities = $pttTransEntityInfo->getTransEntities();
+		if(method_exists($entity, 'getTrans')){
+			$trans = $entity->getTrans();
+			if(!$trans->count()){
+				foreach ($languages as $key => $value) {
+					$this->entity->createTrans($key);
+				}
+				$trans = $entity->getTrans();
+			}
+
+			for($iterator = $trans->getIterator(); $iterator->valid(); $iterator->next()) {
+	            $this->transEntities[$iterator->current()->getLanguage()] = $iterator->current();
+	        }
+		}
 
 		$this->pttTrans = $pttTrans;
 		
@@ -157,6 +168,10 @@ class PttEntityInfo
 				return $this->entity->{$methodName}();
 			}
 		}
+	}
+
+	private function _value($method, $languageCode){
+		
 	}
 
 	public function appendField($field)

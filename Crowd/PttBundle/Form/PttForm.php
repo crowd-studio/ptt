@@ -38,7 +38,7 @@ class PttForm
 		$this->securityContext = $securityContext;
 		$this->container = $serviceContainer;
 		$this->languages = PttUtil::pttConfiguration('languages', false);
-		$this->htmlFields = array();
+		$this->htmlFields = [];
 	}
 
 	public function setRequest($requestObj)
@@ -196,46 +196,12 @@ class PttForm
 			}
 		}
 
-
-		if($this->entityInfo->hasMethod('getTrans')){
-			if(!count($this->entityInfo->get('trans'))){
-
-			}
+		if(method_exists($entityPrincipal, 'updateTrans')){
+			$entityPrincipal->updateTrans($this->sentData['Trans']);
 		}
 
 		$this->em->persist($entityPrincipal);
 		$this->em->flush();
-
-		$fileArrPrinc = explode('\\', get_class($entityPrincipal));
-        $filenamePrinc = end($fileArrPrinc);
-
-		if ($this->entityInfo->getTransEntities()) {
-			foreach ($this->entityInfo->getTransEntities() as $entity) {
-				$fileArr = explode('\\', get_class($entity));
-            	$filename = end($fileArr);
-				if($filename === $filenamePrinc . 'Trans' ){	
-            		if(method_exists($entity, 'getTitle')){
-						$entity->setSlug(PttUtil::slugify($entity->getTitle()));	
-					} else {
-						$entity->setSlug('');
-					}	
-					foreach ($this->sentData['Trans'][$entity->getLanguage()] as $key => $value) {
-			            if ($key != 'id') {
-			                $methodName = 'set' . ucfirst($key);
-			                if (method_exists($entity, $methodName)) {
-			                    $entity->{$methodName}($value);
-			                }
-			            }
-			        }
-					$entity->setRelatedId($entityPrincipal->getPttId());
-					$this->em->persist($entity);
-            	}
-			}
-		}
-		
-		$this->em->flush();
-
-		$this->_performFieldsLoopAndCallMethodNamed('_afterSaveForField');
 	}
 
 	//PRIVATE
@@ -251,23 +217,20 @@ class PttForm
 		$entityName = $this->entityInfo->getEntityName();
 		$fields = $this->entityInfo->getFields();
 
-		$index = 0;
-		foreach ($fields->block as $block) {
-
+		foreach ($fields->block as $i => $block) {
 			if ($key == false){
 				$html .= '<div class="block-container col-sm-12"><div class="block-header"><p>' . $block . '</p></div><div class="block-body col-sm-12">';
 			} else {
 				$html .= '<div><div>';
 			}
 			
-			if($fields->static[$index]){
-				foreach ($fields->static[$index] as $field) {
+			if($fields->static[$i]){
+				foreach ($fields->static[$i] as $field) {
 					$html .= $this->htmlFields[$field->name];
 				}
 			}
 			
-
-			if ($this->languages && isset($fields->trans[$index]) && $fields->trans[$index]) {
+			if ($this->languages && isset($fields->trans[$i]) && $fields->trans[$i]) {
 				$html .= '<ul class="nav nav-tabs col-sm-12">';
 				$i = 0;
 				foreach ($this->languages as $languageCode => $languageTitle) {
@@ -281,7 +244,7 @@ class PttForm
 				foreach ($this->languages as $languageCode => $languageTitle) {
 					$active = ($i == 0) ? ' active' : '';
 					$html .= '<div class="tab-pane' . $active . ' language-' . $languageCode  . '">';
-					foreach ($fields->trans[$index] as $field) {
+					foreach ($fields->trans[$i] as $field) {
 						$html .= $this->htmlFields[$languageCode][$field->name];
 					}
 					$html .= '</div>';
@@ -290,7 +253,6 @@ class PttForm
 				$html .= '</div>';
 			}
 			$html .= '</div></div>';
-			$index++;
 		}
 		
 
@@ -302,10 +264,9 @@ class PttForm
 		if (!count($this->htmlFields)) {
 			$fields = $this->entityInfo->getFields();
 
-			$index = 0;
-			foreach ($fields->block as $block) {
-				if($fields->static[$index]){
-					foreach ($fields->static[$index] as $field) {
+			foreach ($fields->block as $key => $block) {
+				if($fields->static[$key]){
+					foreach ($fields->static[$key] as $field) {
 						$fieldClassName = PttClassNameGenerator::field($field->type);
 						$formField = new $fieldClassName($this, $field);
 						$this->htmlFields[$field->name] = $formField->field();
@@ -314,8 +275,8 @@ class PttForm
 				if ($this->languages && $fields->trans) {
 
 					foreach ($this->languages as $languageCode => $languageTitle) {
-							if($fields->trans[$index]){
-								foreach ($fields->trans[$index] as $field) {
+							if($fields->trans[$key]){
+								foreach ($fields->trans[$key] as $field) {
 								if (strpos($field->getFormNameSec(), '[Trans]') === false){
 									$field->setFormName($field->getFormNameSec() . '[Trans]');
 								}
@@ -323,19 +284,16 @@ class PttForm
 								$fieldClassName = PttClassNameGenerator::field($field->type);
 								$formField = new $fieldClassName($this, $field, $languageCode);
 								if (!isset($this->htmlFields[$languageCode]) || !is_array($this->htmlFields[$languageCode])) {
-									$this->htmlFields[$languageCode] = array();
+									$this->htmlFields[$languageCode] = [];
 								}
 								$this->htmlFields[$languageCode][$field->name] = $formField->field();
 							}
 						}
 					}
 				}
-				$index++;
 			}
 			
 		}
-
-
 	}
 
 	private function _updateSentData()
@@ -377,25 +335,23 @@ class PttForm
 	private function _performFieldsLoopAndCallMethodNamed($nameOfMethod)
 	{
 		$fields = $this->entityInfo->getFields();
-		$index = 0;
 
-		foreach ($fields->block as $block) {
-			if($fields->static[$index]){
-				foreach ($fields->static[$index] as $field) {
+		foreach ($fields->block as $key => $block) {
+			if($fields->static[$key]){
+				foreach ($fields->static[$key] as $field) {
 					$this->$nameOfMethod($field);
 				}
 			}
 			
-			if ($this->languages && isset($fields->trans[$index])) {
+			if ($this->languages && isset($fields->trans[$key])) {
 				foreach ($this->languages as $languageCode => $languageTitle) {
-					if($fields->trans[$index]){
-						foreach ($fields->trans[$index] as $field) {
+					if($fields->trans[$key]){
+						foreach ($fields->trans[$key] as $field) {
 							$this->$nameOfMethod($field, $languageCode);
 						}
 					}
 				}
 			}
-			$index++;
 		}
 	}
 
@@ -438,25 +394,4 @@ class PttForm
 		$value = $sentValue->value();
 		return $value;
 	}
-
-	private function _afterSaveForField(PttField $field, $languageCode = false)
-	{
-		$afterSaveClassName = PttClassNameGenerator::afterSave($field->type);
-		if ($afterSaveClassName) {
-			$fieldClassName = PttClassNameGenerator::field($field->type);
-			$formField = new $fieldClassName($this, $field);
-
-			if (strpos($fieldClassName, 'PttFormFieldTypeSelectMultiple') === false) {
-				$afterFormSave = new $afterSaveClassName($field, $this->entityInfo, $this->getSentData($field->name, $languageCode), $this->container, $languageCode);
-			} else {
-				$afterFormSave = new $afterSaveClassName($field, $this->entityInfo, $this->getSentData($field->name . '_model', $languageCode), $this->container, $languageCode);
-			}
-			
-			$afterFormSave->perform();
-		}
-	}
-
-	// public function setTotalData ($totalData){
-	// 	$this->totalData = $totalData;
-	// }
 }

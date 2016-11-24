@@ -33,7 +33,6 @@ class PttField
 
 	private function _mapField($field)
 	{
-
 		if (array_key_exists('name', $field)) {
 			$this->name = $field['name'];
 		} else {
