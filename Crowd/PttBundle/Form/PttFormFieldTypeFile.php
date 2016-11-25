@@ -19,6 +19,7 @@ class PttFormFieldTypeFile extends PttFormFieldType
 			$sizes = array();
 			$maxW = 0;
 			$maxH = 0;
+			$maximum = 0;
 			foreach ($this->field->options['sizes'] as $size) {
 				if ($size['w'] == 0 && $size['h'] == 0) {
 					$sizes[] = $this->pttTrans->trans('free_size');
@@ -31,6 +32,10 @@ class PttFormFieldTypeFile extends PttFormFieldType
 						$maxH = $size['h'];
 					}
 				}
+
+				if($size['h'] =="m"){
+					$maximum = $size['w'];
+				}
 			}
 			// $append = ' (' . implode(', ', $sizes) . ')';
 			if($maxW == 0){
@@ -40,6 +45,9 @@ class PttFormFieldTypeFile extends PttFormFieldType
 				$maxH = '...';
 			}
 			$append = ' ('.$maxW.'x'.$maxH.')';
+			if($maximum>0){
+				$append .= ' and max ' . $maximum . 'px';
+			}
 		} else {
 			$append = '';
 		}

@@ -29,10 +29,23 @@ class PttUploadFile
                 $filename = $width . '-' . $height . '-' . $uploadName;
                 $saveThumbPath = WEB_DIR . $uploadsUrl . $filename;
 
-                if ($width != 0 && $height != 0) {
+                
+
+                $realSize = getimagesize($file);
+                if($height == 'm'){
+                    if ($realSize[0] > $width){
+                        $height = round(($size['w'] * $realSize[1]) / $realSize[0]);
+                    }
+                    if ($realSize[1] > $height){
+                        $width = round(($size['w'] * $realSize[0]) / $realSize[1]);
+                    }
+                    \WideImage\WideImage::load($tmpSaveThumbPath)->resize($width, $height, 'outside')->saveToFile($saveThumbPath, 100);
+                    \WideImage\WideImage::load($saveThumbPath)->crop('center', 'center', $width, $height)->saveToFile($saveThumbPath);
+                } elseif ($width != 0 && $height != 0) {
                     \WideImage\WideImage::load($tmpSaveThumbPath)->resize($width, $height, 'outside')->saveToFile($saveThumbPath, 100);
                     \WideImage\WideImage::load($saveThumbPath)->crop('center', 'center', $width, $height)->saveToFile($saveThumbPath);
                 }
+
                 if ($uploadToS3) {
                     PttUploadFile::_uploadToS3($saveThumbPath, $filename);
                 }
@@ -115,6 +128,13 @@ class PttUploadFile
                         $height = round(($size['w'] * $realSize[1]) / $realSize[0]);
                     } elseif ($size['w'] == 0){
                         $width = round(($size['h'] * $realSize[0]) / $realSize[1]);
+                    } elseif ($height == 'm'){
+                        if ($realSize[0] > $width){
+                            $height = round(($size['w'] * $realSize[1]) / $realSize[0]);
+                        }
+                        if ($realSize[1] > $height){
+                            $width = round(($size['w'] * $realSize[0]) / $realSize[1]);
+                        }
                     }
 
                     $filename = $size['w'] . '-' . $size['h'] . '-' . $uploadName;
