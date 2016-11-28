@@ -29,15 +29,15 @@ class PttUploadFile
                 $filename = $width . '-' . $height . '-' . $uploadName;
                 $saveThumbPath = WEB_DIR . $uploadsUrl . $filename;
 
-                
-
                 $realSize = getimagesize($file);
                 if($height == 'm'){
-                    if ($realSize[0] > $width){
-                        $height = round(($size['w'] * $realSize[1]) / $realSize[0]);
-                    }
-                    if ($realSize[1] > $height){
-                        $width = round(($size['w'] * $realSize[0]) / $realSize[1]);
+                    $height = $width;
+                    if($realSize[0] > $width || $realSize[1] > $height){
+                        if($realSize[0] > $realSize[1]){ // Més ample
+                            $height = round(($size['w'] * $realSize[1]) / $realSize[0]);
+                        } else { // Més alta o igual
+                            $width = round(($size['w'] * $realSize[0]) / $realSize[1]);
+                        }
                     }
                     \WideImage\WideImage::load($tmpSaveThumbPath)->resize($width, $height, 'outside')->saveToFile($saveThumbPath, 100);
                     \WideImage\WideImage::load($saveThumbPath)->crop('center', 'center', $width, $height)->saveToFile($saveThumbPath);
@@ -124,17 +124,21 @@ class PttUploadFile
                     $height = $size['h'];
                     $width = $size['w'];
 
-                    if ($size['h'] == 0){
-                        $height = round(($size['w'] * $realSize[1]) / $realSize[0]);
+                    if ($height == 'm'){
+                        $height = $width;
+                        if($realSize[0] > $width || $realSize[1] > $height){
+                            if($realSize[0] > $realSize[1]){
+                                // Més ample
+                                $height = round(($size['w'] * $realSize[1]) / $realSize[0]);
+                            } else {
+                                // Més alta o igual
+                                $width = round(($size['w'] * $realSize[0]) / $realSize[1]);
+                            }
+                        }
                     } elseif ($size['w'] == 0){
                         $width = round(($size['h'] * $realSize[0]) / $realSize[1]);
-                    } elseif ($height == 'm'){
-                        if ($realSize[0] > $width){
-                            $height = round(($size['w'] * $realSize[1]) / $realSize[0]);
-                        }
-                        if ($realSize[1] > $height){
-                            $width = round(($size['w'] * $realSize[0]) / $realSize[1]);
-                        }
+                    } elseif ($size['h'] == 0){
+                        $height = round(($size['w'] * $realSize[1]) / $realSize[0]);
                     }
 
                     $filename = $size['w'] . '-' . $size['h'] . '-' . $uploadName;
