@@ -48,19 +48,10 @@ class PttFormAfterSaveMultipleEntity extends PttFormAfterSave
         $this->_deleteUnnecessaryRelations($entityRemains, $em);
     }
 
-    private function _deleteTransEntities($module, $id){
-        $em = $this->entityInfo->getEntityManager();
-        $entityRepository = $this->entityInfo->getBundle() . ':' . $module . 'Trans';
-
-        $dql = 'delete ' . $entityRepository . ' e WHERE e.relatedId = :id';
-
-        $query = $em->createQuery($dql);
-        $query->setParameter('id', $id);
-        $query->execute();
-    }
 
     private function _deleteUnnecessaryRelations($entityRemains, $em)
     {
+        $schema = $em->getConnection()->getSchemaManager();
         foreach ($this->field->options['modules'] as $key => $value)
         {
             $entityRepository = $this->entityInfo->getBundle() . ':' . $value['entity'];
@@ -77,8 +68,14 @@ class PttFormAfterSaveMultipleEntity extends PttFormAfterSave
             $query->setParameter('id', $this->entityInfo->get('pttId'));
             $query->setParameter('model', $this->entityInfo->getEntityName());
             $query->execute();
+
+            if($schema->tablesExist([$value['entity'].'Trans']) === true){
+                $dql = '
+                DELETE ' . $entityRepository . 'Trans e 
+                WHERE e.relatedId NOT IN (SELECT a.id FROM '. $entityRepository.' a)';
+                $query = $em->createQuery($dql);
+                $query->execute();
+            }
         }
-
-
     }
 }
