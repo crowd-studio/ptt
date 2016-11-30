@@ -20,22 +20,37 @@ class PttFormFieldTypeDisabled extends PttFormFieldType
 			$language = 'en';
 		}
 
-		if ($this->value instanceof \DateTime) {
-			if($this->value->format('Y') > -1){
-				$this->value = $this->value->format('d/m/Y');
-			} else {
-				$this->value = null;
-			}
-		}
-		$repository = $this->container->get('pttEntityMetadata')->respositoryName($this->field->options['entity']);
-		$entity = $this->em->getRepository($repository)->find($this->value);
-
-		$value = (isset($entity[$this->field->options['column']])) ? $entity[$this->field->options['column']] : '';
-
 		$htmlField = '<input type="text" data-language="' . $language . '" ';
 		$htmlField .= $this->attributes();
-		$htmlField .= 'value="' . $value . '"';
-		$htmlField .= ' disabled >';
+
+
+		if ($this->entityInfo->getEntity()->getPttId() || !isset($this->field->options['editable']) || !$this->field->options['editable']){
+			if(isset($this->field->options['entity'])){
+				// Una entitat diferent
+				$repository = $this->container->get('pttEntityMetadata')->respositoryName($this->field->options['entity']);
+				$entity = $this->em->getRepository($repository)->find($this->value);
+
+				$method = 'get' . ucfirst($this->field->options['column']);
+				$value = (method_exists($entity, $method)) ? $entity->$method() : '';
+			} else {
+				if(isset($this->field->options['column'])){
+					// De l'entitat una columna
+					$method = 'get' . ucfirst($this->field->options['column']);
+					$entity = $this->entityInfo->getEntity();
+					$value = (method_exists($entity, $method)) ? $entity->$method() : '';
+				} else {
+					// De l'entitat la mateixa columna
+					$value = $this->value;
+				}
+			}
+
+			$htmlField .= 'value="' . $value . '"';
+			$htmlField .= ' disabled >';
+		} else {
+			$htmlField .= ' >';
+		}
+
+		
 
 		$html .= $htmlField;
 		$html .= $this->end();
