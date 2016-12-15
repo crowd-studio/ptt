@@ -260,7 +260,8 @@
 	}
 
 	ul.table li.head span.actions {
-		width: 220px;
+		width: 120px;
+		text-align: right;
 	}
 
 	ul.sortable, ul.table, ul.multi-sortable {
@@ -269,7 +270,7 @@
 		padding: 0;
 		li.head {
 			background: #c2c2c2 !important;
-			line-height: 40px;
+			line-height: 50px;
 			color: #fff;
 
 			padding: 0px 7px 0px 20px;
@@ -278,7 +279,7 @@
 				color: #fff !important;
 			}
 
-			line-height: 50px;
+			
 
 			.display(flex);
 			
@@ -293,6 +294,11 @@
 				.flex(1);
 				font-size: 16px;
 
+			}
+
+			span.big {
+				.flex(3) !important;
+				padding-right: 40px;
 			}
 
 			span.handle {
@@ -320,7 +326,16 @@
 				white-space: nowrap;
 			    overflow: hidden;
 			    text-overflow: ellipsis;
-			    margin-right: 40px;
+			}
+
+			span.big {
+				.flex(3) !important;
+				padding-right: 40px;
+			}
+
+			span.actions {
+				width: 120px;
+				text-align: right;
 			}
 
 			span.handle {
@@ -354,8 +369,7 @@
 			padding: 0px 7px 0px 20px;
 			
 			a.list-editar, a.list-eliminar {
-				padding-left: 30px;
-				padding-right: 15px;
+				padding-right: 30px;
 				color: #949494;
 				width: 140px;
 

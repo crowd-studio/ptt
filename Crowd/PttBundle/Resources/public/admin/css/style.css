@@ -7897,7 +7897,8 @@ html[dir="rtl"] .select2-container-multi .select2-search-choice-close {
   margin-top: 50px !important;
 }
 .wrapper ul.table li.head span.actions {
-  width: 220px;
+  width: 120px;
+  text-align: right;
 }
 .wrapper ul.sortable,
 .wrapper ul.table,
@@ -7910,10 +7911,9 @@ html[dir="rtl"] .select2-container-multi .select2-search-choice-close {
 .wrapper ul.table li.head,
 .wrapper ul.multi-sortable li.head {
   background: #c2c2c2 !important;
-  line-height: 40px;
+  line-height: 50px;
   color: #fff;
   padding: 0px 7px 0px 20px;
-  line-height: 50px;
   display: -webkit-box;
   display: -moz-box;
   display: -webkit-flex;
@@ -7959,6 +7959,16 @@ html[dir="rtl"] .select2-container-multi .select2-search-choice-close {
   -ms-flex: 1;
   flex: 1;
   font-size: 16px;
+}
+.wrapper ul.sortable li.head span.big,
+.wrapper ul.table li.head span.big,
+.wrapper ul.multi-sortable li.head span.big {
+  -webkit-box-flex: 3 !important;
+  -moz-box-flex: 3 !important;
+  -webkit-flex: 3 !important;
+  -ms-flex: 3 !important;
+  flex: 3 !important;
+  padding-right: 40px;
 }
 .wrapper ul.sortable li.head span.handle,
 .wrapper ul.table li.head span.handle,
@@ -8027,7 +8037,28 @@ html[dir="rtl"] .select2-container-multi .select2-search-choice-close {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  margin-right: 40px;
+}
+.wrapper ul.sortable li.entity span.big,
+.wrapper ul.table li.entity span.big,
+.wrapper ul.multi-sortable li.entity span.big,
+.wrapper ul.sortable li.list:not(.list-group-item) span.big,
+.wrapper ul.table li.list:not(.list-group-item) span.big,
+.wrapper ul.multi-sortable li.list:not(.list-group-item) span.big {
+  -webkit-box-flex: 3 !important;
+  -moz-box-flex: 3 !important;
+  -webkit-flex: 3 !important;
+  -ms-flex: 3 !important;
+  flex: 3 !important;
+  padding-right: 40px;
+}
+.wrapper ul.sortable li.entity span.actions,
+.wrapper ul.table li.entity span.actions,
+.wrapper ul.multi-sortable li.entity span.actions,
+.wrapper ul.sortable li.list:not(.list-group-item) span.actions,
+.wrapper ul.table li.list:not(.list-group-item) span.actions,
+.wrapper ul.multi-sortable li.list:not(.list-group-item) span.actions {
+  width: 120px;
+  text-align: right;
 }
 .wrapper ul.sortable li.entity span.handle,
 .wrapper ul.table li.entity span.handle,
@@ -8083,8 +8114,7 @@ html[dir="rtl"] .select2-container-multi .select2-search-choice-close {
 .wrapper ul.sortable li.list:not(.list-group-item) a.list-eliminar,
 .wrapper ul.table li.list:not(.list-group-item) a.list-eliminar,
 .wrapper ul.multi-sortable li.list:not(.list-group-item) a.list-eliminar {
-  padding-left: 30px;
-  padding-right: 15px;
+  padding-right: 30px;
   color: #949494;
   width: 140px;
   text-transform: uppercase;

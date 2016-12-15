@@ -42,17 +42,17 @@
 		<li class="head">
 			{%if sortable %}<span class="handle hidden">Order</span>{% endif %}
 	            {% for field, title in fields %}
-	            <span{% if not loop.first %} class="hidden-xs"{% endif %}>{%if sortable == false %}<a href="{{ path('list', {entity : entityConfigurationInfo.entityName, order : field}) }}">{% endif %}
+	            <span {% if field == 'title' %}class="hidden-xs big" {% else %} class="hidden-xs"{% endif %}>{% if sortable == false %}<a href="{{ path('list', {entity : entityConfigurationInfo.entityName, order : field}) }}">{% endif %}
 	            {{title}}{%if sortable == false %}</a>{% endif %}</span>
 	            {% endfor %}
-	            <span class="actions">{{'actions'|trans}}</span>
+	            <span class="actions"></span>
 		</li>
 		{% for row in rows %}
 		        <li class="list" {%if sortable %}data-id="{{row.id}}"{% endif %}>
 	        	{% if sortable %}<span class="handle hidden"></span>{% endif %}
 
 		            {% for field, title in fields %}
-		            <span{% if not loop.first %} class="hidden-xs"{% endif %}>
+		             <span {% if field == 'title' %}class="hidden-xs big" {% else %} class="hidden-xs"{% endif %}>
 		            	{% if row|dynamicValue(field).timestamp is defined %}
 		            		{{ row|dynamicValue(field).date|date("d/m/Y") }}
 		            	{% else %}
@@ -61,8 +61,8 @@
 		            {% endfor %}
 		            <span class="actions">
 		                <div class="btn-group">
-		                    <a href="{{ path('edit', {entity : entityConfigurationInfo.entityName, id : row.id}) }}" class="list-editar">{{'edit'|trans}}</a>
-		                    <a href="{{ path('delete', {entity : entityConfigurationInfo.entityName, id : row.id}) }}" data-alert='{{ 'delete_the_entity_name'|trans([entityInfo.lowercase, row]) }}' class="list-eliminar">{{'delete'|trans}}</a>
+		                    <a href="{{ path('edit', {entity : entityConfigurationInfo.entityName, id : row.id}) }}" class="list-editar"></a>
+		                    <a href="{{ path('delete', {entity : entityConfigurationInfo.entityName, id : row.id}) }}" data-alert='{{ 'delete_the_entity_name'|trans([entityInfo.lowercase, row]) }}' class="list-eliminar"></a>
 		                </div>
 		            </span>
 		        </li>
