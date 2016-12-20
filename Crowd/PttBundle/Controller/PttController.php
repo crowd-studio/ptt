@@ -367,7 +367,10 @@ class PttController extends Controller
 
     protected function afterSave($entity){}
 
-    protected function flushCache($entity){}
+    protected function flushCache($entity){
+        $cache = new PttCache();
+        $cache->removeAll();
+    }
 
     protected function deleteTemp(){
         $dir = __DIR__ . "/../../../../../../web/tmp/"; 
@@ -379,8 +382,9 @@ class PttController extends Controller
             }
         } 
     }
+    
     protected function listTitle(){
-        $title = $this->_getAnnotation('createTitle');
+        $title = $this->_getAnnotation('listTitle');
         return ($title) ? $title : $this->get('pttTrans')->trans('list') . ' ' . $this->_entityInfoValue('plural');
     }
 

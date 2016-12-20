@@ -142,9 +142,20 @@ class PttServices
         $params['limit'] = $limit;
         $data = $this->get($table, $lang, $params);
         
-        $hasNewPages = count($total) / $limit - $page > 1;
+        $hasNewPages = count($total) / $limit - $params['page'] > 1;
 
-        return ['content' => $data, 'hasNewPages' => $hasNewPages, 'size' =>  $limit];
+        if($hasNewPages){
+            $hasNewPages = [
+                'path' => str_replace('{{page}}', $params['page'] + 1, $params['url'])
+            ];
+
+            if(isset($params['urlParams'])){
+                $hasNewPages['params'] = $params['urlParams'];
+            }
+        }
+        $urlParams = (isset($params['urlParams'])) ? $params['urlParams'] : [];
+
+        return ['content' => $data, 'newPage' => $hasNewPages, 'limit' => $limit];
     }
 
     public function getModules($id, $model, $lang, $params = []){

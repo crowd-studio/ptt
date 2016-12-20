@@ -61,10 +61,7 @@ class PttTrans
 
     public function trans($key, $strings = false)
     {
-        $language = (isset($this->request)) ? $this->request->get('_locale') : false;
-        if(!$language){
-            $language = $this->defaultLanguage;
-        }
+        $language = strpos($this->request->get('_route'),'-') ? $language = substr($this->request->get('_route'), -2) : $language = $this->defaultLanguage;
         
         $transStrings = $this->languages[$language];
 

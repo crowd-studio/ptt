@@ -1,7 +1,7 @@
 define([
     "jquery",
     "globals",
-    "backbone",
+    "Backbone",
     "underscore",
     "mustache",
     "text!templates/upload-file-modal.mustache",
@@ -19,7 +19,7 @@ define([
     "sortable",
     "backboneView",
     "dropzone",
-    "selectize"
+    "Selectize"
 ], function($, globals, Backbone, _, Mustache, uploadFileTemplate, moment){
 
     window.app = {
@@ -34,7 +34,7 @@ define([
 
             _.each($('a'), function(link) {
                 $(link).bind('click', function(event){
-                    if ($(link).attr('target') != '_blank' && typeof $(link).attr('href') != 'undefined' && $(link).attr('href') != '#' 
+                    if ($(link).attr('target') != '_blank' && typeof $(link).attr('href') != 'undefined' && $(link).attr('href') != '#'
                         && $(link).attr('href').indexOf('language-') == -1 && $(link).attr('href').indexOf('export-csv') == -1) {
                         $('.loader').addClass('visible');
                     }
@@ -94,7 +94,7 @@ define([
                 });
 
                 // Informem el valor guardat a la BBDD
-                if(id != "" && parseInt(id) > -1){ 
+                if(id != "" && parseInt(id) > -1){
                     that.parent().find('input').val(title);
                     $(field[0]).find('option').val(id);
                 }
@@ -252,53 +252,12 @@ define([
             });
 
             $.each($('.select-multiple'), function(element){
-
                 var selectMultiple = new SelectMultiple({el:$(this)});
-            
-            //     var xhr;
-            //     var select_state, $select_state;
-            //     var select_city, $select_city;
-
-            //     $select_state = el:$(this).selectize({
-            //         onChange: function(value) {
-            //             if (!value.length) return;
-            //             select_city.disable();
-            //             select_city.clearOptions();
-            //             select_city.load(function(callback) {
-            //                 xhr && xhr.abort();
-            //                 xhr = $.ajax({
-            //                     url: 'https://jsonp.afeld.me/?url=http://api.sba.gov/geodata/primary_city_links_for_state_of/' + value + '.json',
-            //                     success: function(results) {
-            //                         select_city.enable();
-            //                         callback(results);
-            //                     },
-            //                     error: function() {
-            //                         callback();
-            //                     }
-            //                 })
-            //             });
-            //         }
-            //     });
-
-            //     $select_city = $('.select-multiple-result').selectize({
-            //         valueField: 'name',
-            //         labelField: 'name',
-            //         searchField: ['name']
-            //     });
-
-            //     select_city  = $select_city[0].selectize;
-            //     select_state = $select_state[0].selectize;
-
-            //     select_city.disable();
-
            });
 
              $.each($('.nav-tabs'), function(element){
                 var tab = new Tab({el:$(this)});
-            
             });
-
-
         },
         resize : function()
         {

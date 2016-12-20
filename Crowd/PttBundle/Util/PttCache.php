@@ -52,6 +52,7 @@ class PttCache
 
     public function remove($key = false)
     {
+        $fs = new Filesystem();
         $fs->remove(array('files', __DIR__ . "/../../../../../../" . $this->_cachePath, $this->_key . $this->_cacheExtension));
     }
 
