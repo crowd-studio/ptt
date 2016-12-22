@@ -18,7 +18,7 @@ class PttFormFieldValueSelect extends PttFormFieldValue
             if ($this->request->getMethod() == 'POST') {
                 return ($this->sentData != null) ? $this->sentData : [];
             } else {
-                $method = 'get' . ucfirst($this->field->options['multiple']);
+                $method = 'get' . ucfirst($this->field->name);
                 return $this->entityInfo->getEntity()->$method();
             }
         } else {

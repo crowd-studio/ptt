@@ -23,25 +23,32 @@ class PttFormFieldTypeDisabled extends PttFormFieldType
 		$htmlField = '<input type="text" data-language="' . $language . '" ';
 		$htmlField .= $this->attributes();
 
-
 		if ($this->entityInfo->getEntity()->getPttId() || !isset($this->field->options['editable']) || !$this->field->options['editable']){
+			
 			if(isset($this->field->options['entity'])){
-				// Una entitat diferent
-				$repository = $this->container->get('pttEntityMetadata')->respositoryName($this->field->options['entity']);
-				$entity = $this->em->getRepository($repository)->find($this->value);
-
-				$method = 'get' . ucfirst($this->field->options['column']);
-				$value = (method_exists($entity, $method)) ? $entity->$method() : '';
-				if(isset($this->field->options['column'])){
-					// De l'entitat una columna
+				if(is_object($this->value)){
 					$method = 'get' . ucfirst($this->field->options['column']);
-					$entity = $this->entityInfo->getEntity();
-					$value = (method_exists($entity, $method)) ? $entity->$method() : '';
+					$value = (method_exists($this->value, $method)) ? $this->value->$method() : '';
 				} else {
-					// De l'entitat la mateixa columna
-					$value = $this->value;
+					// Una entitat diferent
+					$repository = $this->container->get('pttEntityMetadata')->respositoryName($this->field->options['entity']);
+					$entity = $this->em->getRepository($repository)->findById($this->value);
+
+					$method = 'get' . ucfirst($this->field->options['column']);
+					$value = (method_exists($entity, $method)) ? $entity->$method() : '';
 				}
+				
+				
+			} elseif(isset($this->field->options['column'])){
+				// De l'entitat una columna
+				$method = 'get' . ucfirst($this->field->options['column']);
+				$entity = $this->entityInfo->getEntity();
+				$value = (method_exists($entity, $method)) ? $entity->$method() : '';
+			} else {
+				// De l'entitat la mateixa columna
+				$value = $this->value;
 			}
+
 			$htmlField .= 'value="' . $value . '"';
 			$htmlField .= ' disabled >';
 		} else {

@@ -13,14 +13,6 @@ class PttFormFieldSentValueEntity extends PttFormFieldSentValue
 {
     public function value()
     {
-    	if($this->sentData){
-    		foreach ($this->sentData as $key => $entity) {
-	            if($entity['id'] != ''){
-	                $this->sentData[$key] = $this->entityInfo->getEntityManager()->getRepository($this->entityInfo->getBundle() . ':' . $this->field->options['entity'])->find($entity['id']);
-	            }
-	        }
-    	} else {
-    		return [];
-    	}
+    	return (isset($this->sentData)) ? $this->sentData : [];
     }
 }

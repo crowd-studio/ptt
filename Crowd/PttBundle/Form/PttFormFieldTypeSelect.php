@@ -124,7 +124,7 @@ class PttFormFieldTypeSelect extends PttFormFieldType
 	private function _selected($id)
 	{
 		if ($this->multiple) {
-			$methodName = 'get' . ucfirst($this->field->options['multiple']);
+			$methodName = 'get' . ucfirst($this->field->name);
 			$existEntity = $this->entityInfo->getEntity()->$methodName();
 
 			foreach ($existEntity as $key => $exist) {

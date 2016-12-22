@@ -179,6 +179,10 @@ class PttEntity
         return $this->slug;
     }
 
+    public function getPttParameters($type = false){
+        return [];
+    }
+
     public function setUpdateObjectValues($userId = -1)
     {
         $dateTime = new \DateTime();

@@ -13,7 +13,6 @@ class PttFormFieldSentValueDefault extends PttFormFieldSentValue
 {
     public function value()
     {
-        // return (isset($this->sentData[$this->field->name])) ? $this->sentData[$this->field->name] : null;
         return (isset($this->sentData)) ? $this->sentData : null;
     }
 }

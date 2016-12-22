@@ -14,6 +14,8 @@ use Symfony\Component\Security\Core\Util\SecureRandom;
 use Symfony\Component\Security\Core\Encoder\EncoderFactory;
 use Symfony\Component\Security\Core\Encoder\MessageDigestPasswordEncoder;
 
+use Doctrine\ORM\Tools\Pagination\Paginator;
+
 class PttServices
 {
     private $em;
@@ -46,24 +48,23 @@ class PttServices
 
         $qb = $this->em->createQueryBuilder();
         $tableBundle = $this->_getTableBundle($table);
-        $orderCol = [];
+
+        $qb->select(['t'])->from($tableBundle, 't');
+
+        if(isset($params['where'])){ 
+            $qb = $this->_where($params['where'], $qb);
+        }
+
+
         if(isset($params['order'])){
             foreach ($params['order'] as $key => $order) {
                 $qb->orderBy('t.' . $order['order'], $order['orderDir']);
-                $orderCol[] = 't.' . $order['order'];
              } 
         } else {
             $col = $this->em->getClassMetadata($tableBundle)->getFieldNames();
             if(array_search('_order', $col)){
                 $qb->orderBy('t._order');
-                $orderCol[] ='t._order';
             }
-        }
-
-        $qb->select(array_merge(['t'], $orderCol))->from($tableBundle, 't');
-
-        if(isset($params['where'])){ 
-            $qb = $this->_where($params['where'], $qb);
         }
 
         if(isset($params['page'])){
@@ -120,7 +121,7 @@ class PttServices
         return $this->_prepareObjects($obj, $params);
     }
 
-    public function getAll($table){
+    public function getAll($table, $params = []){
         $obj = $this->em->getRepository($this->_getTableBundle($table))->findAll();
         return $this->_prepareObjects($obj, $params);
     }
@@ -134,28 +135,24 @@ class PttServices
         $page = (isset($params['page'])) ? $params['page'] : 0;
         $limit = (isset($params['limit'])) ? $params['limit'] : $this->limit;
 
-        unset($params['page']); unset($params['limit']);
+        $qb = $this->_sql($table, $lang, $params);
+        $query = $qb->getQuery();
 
-        $total = $this->get($table, $lang, $params);
+        $paginator = new Paginator($query);
 
-        $params['page'] = $page;
-        $params['limit'] = $limit;
-        $data = $this->get($table, $lang, $params);
-        
-        $hasNewPages = count($total) / $limit - $params['page'] > 1;
+        $paginator->getQuery()
+            ->setFirstResult($limit * $page) // Offset
+            ->setMaxResults($limit); // Limit
 
-        if($hasNewPages){
-            $hasNewPages = [
-                'path' => str_replace('{{page}}', $params['page'] + 1, $params['url'])
-            ];
+        $maxPages = ceil($paginator->count() / $limit);
+        $hasNewPages = ($maxPages >= $page) ? false : true;
 
-            if(isset($params['urlParams'])){
-                $hasNewPages['params'] = $params['urlParams'];
-            }
+        $data = [];
+        foreach ($paginator->getIterator() as $key => $row) {
+            $data[] = $this->_prepareObject($row, $params);
         }
-        $urlParams = (isset($params['urlParams'])) ? $params['urlParams'] : [];
-
-        return ['content' => $data, 'newPage' => $hasNewPages, 'limit' => $limit];
+        
+        return ['content' => $data, 'newPage' => $hasNewPages, 'limit' => $limit, 'maxPages' => $maxPages];
     }
 
     public function getModules($id, $model, $lang, $params = []){
@@ -246,14 +243,16 @@ class PttServices
         $object = new \ReflectionObject($el);
         foreach ($object->getMethods() as $method) {
             if(substr($method, 0, 3) === "get"){
+                $methodObj = $el->$method();
                 $setMethod = 's' . substr($method, 1);
-                if(is_array($el->$method()) && substr($method, 3) != $father){
-                    $el->$setMethod($_prepareObjects($el->$method(), $parameters, $object->getShortName()));
-                } elseif (is_object($el->$method()) && substr($method, 3) != $father) {
-                    $el->$setMethod($_prepareObject($el->$method(), $parameters, $object->getShortName()));
+                if(is_array($methodObj) && substr($method, 3) != $father){
+                    $el->$setMethod($_prepareObjects($methodObj, $parameters, $object->getShortName()));
+                } elseif (is_object($methodObj) && substr($method, 3) != $father && !($methodObj instanceof DateTime)) {
+                    $el->$setMethod($_prepareObject($methodObj, $parameters, $object->getShortName()));
                 }
             }
         }
+        
 
         return $el;
     }
