@@ -104,10 +104,10 @@ class PttServices
         
         if(isset($params['one']) && $params['one']){    
             $data = $query->getSingleResult();
-            $data = $this->_prepareObject($data, $params);
+            $data = $this->_prepareObject($data);
         } else {
             $data = $query->getResult();
-            $data = $this->_prepareObjects($data, $params);
+            $data = $this->_prepareObjects($data);
         }
         
         return $data;
@@ -118,17 +118,17 @@ class PttServices
         $orderBy = (isset($params['orderBy'])) ? $params['orderBy'] : [];
 
         $obj = $this->em->getRepository($this->_getTableBundle($table))->findBy($where, $orderBy);
-        return $this->_prepareObjects($obj, $params);
+        return $this->_prepareObjects($obj);
     }
 
     public function getAll($table, $params = []){
         $obj = $this->em->getRepository($this->_getTableBundle($table))->findAll();
-        return $this->_prepareObjects($obj, $params);
+        return $this->_prepareObjects($obj);
     }
 
     public function getOne($table, $id, $params = []){
         $obj = $this->em->getRepository($this->_getTableBundle($table))->find($id);
-        return $this->_prepareObject($obj, $params);
+        return $this->_prepareObject($obj);
     }
 
     public function getByPag($table, $lang, $params = []){
@@ -149,60 +149,75 @@ class PttServices
 
         $data = [];
         foreach ($paginator->getIterator() as $key => $row) {
-            $data[] = $this->_prepareObject($row, $params);
+            $data[] = $this->_prepareObject($row);
         }
         
         return ['content' => $data, 'newPage' => $hasNewPages, 'limit' => $limit, 'maxPages' => $maxPages];
     }
 
-    private function _prepareObjects($elements, $father = false){
+    private function _prepareObjects($elements, $deep = 0){
         foreach ($elements as $k => $el) {
-            $elements[$k] = $this->_prepareObject($el, $father);
+            $elements[$k] = $this->_prepareObject($el, $deep);
         }
 
         return $elements;
     }
 
-    private function _prepareObject($el, $father = false){
-        $parameters = $el->getPttParameters();
+    private function _prepareObject($el, $deep = 0){
+        if(!$el->isPrepared()){
+            $parameters = $el->getPttParameters();
 
-        //Pdf
-        if(method_exists($el, 'getPdf') && $el->getPdf() != ''){
-            $el->setPdf($this->uploadsUrl . $el->getPdf());
-        }
-
-        // Images
-        if(isset($parameters['sizes'])){
-            foreach ($parameters['sizes'] as $key => $value) {
-                $getMethod = 'get' . ucfirst($key);
-                foreach ($value as $i => $field) {
-                    $setMethod = 'set' . ucfirst($i);
-                    if(method_exists($el, $setMethod)){
-                        if($el->$getMethod() != ''){
-                            $el->$setMethod($this->uploadsUrl . $value . $el->$getMethod());    
-                        }
-                    } else {
-                        $el->$key = $this->uploadsUrl . $value . $el->$getMethod();
-                    }
-                } 
+            //Pdf
+            if(method_exists($el, 'getPdf') && $el->getPdf() != ''){
+                $el->setPdf($this->uploadsUrl . $el->getPdf());
             }
-        }
-        
-        if(!$father){
-            $object = new \ReflectionObject($el);
-            foreach ($object->getMethods() as $method) {
-                if(substr($method, 0, 3) === "get"){
-                    $methodObj = $el->$method();
-                    $setMethod = 's' . substr($method, 1);
-                    if(is_array($methodObj) && substr($method, 3) != $father){
-                        $el->$setMethod($_prepareObjects($methodObj, true));
-                    } elseif (is_object($methodObj) && substr($method, 3) != $father && !($methodObj instanceof DateTime)) {
-                        $el->$setMethod($_prepareObject($methodObj, true));
-                    }
+
+
+            // Images
+            if(isset($parameters['sizes'])){
+                foreach ($parameters['sizes'] as $key => $value) {
+                    $getMethod = 'get' . ucfirst($key);
+                    foreach ($value as $i => $field) {
+                        $setMethod = 'set' . ucfirst($i);
+                        if(method_exists($el, $setMethod)){
+                            if($el->$getMethod() != ''){
+                                $el->$setMethod($this->uploadsUrl . $field . $el->$getMethod());    
+                            }
+                        } else {
+                            $el->$i = $this->uploadsUrl . $field . $el->$getMethod();
+                        }
+                    } 
+                }
+            }
+
+            if($deep < 2){
+                $object = new \ReflectionObject($el);
+                foreach ($object->getMethods() as $method) {
+                    $name = $method->name;
+                    if($name != 'getId' && $name != 'getPttParameters'){
+                        if(substr($name, 0, 3) == "get"){
+                            $nameObj = $el->$name();
+                            $setname = 's' . substr($name, 1);
+                            
+                            if(is_array($nameObj)){
+                                if(method_exists($el, $setname)){
+                                    $el->$setname($this->_prepareObjects($nameObj, $deep + 1));
+                                }   
+                            } elseif (is_object($nameObj) && get_class($nameObj) != 'DateTime') {
+                                if(method_exists($el, $setname)){
+                                    if(get_class($nameObj) == 'Doctrine\ORM\PersistentCollection'){
+                                        $el->$setname($this->_prepareObjects($nameObj, $deep + 1));
+                                    } else {
+                                        $el->$setname($this->_prepareObject($nameObj, $deep + 1));    
+                                    }
+                                }
+                            }
+                        }
+                    } 
                 }
             }
         }
-
+          
         return $el;
     }
 
