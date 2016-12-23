@@ -11,6 +11,7 @@ use Doctrine\ORM\Mapping as ORM;
 
 class PttEntity
 {
+    protected $prepared;
     public function __toString()
     {
         if (method_exists($this, 'getTitle')) {
@@ -180,7 +181,13 @@ class PttEntity
     }
 
     public function getPttParameters($type = false){
+        $this->prepared = true;
         return [];
+
+    }
+
+    public function isPrepared(){
+        return $this->prepared;
     }
 
     public function setUpdateObjectValues($userId = -1)
