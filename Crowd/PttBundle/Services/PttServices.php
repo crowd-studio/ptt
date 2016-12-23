@@ -155,75 +155,17 @@ class PttServices
         return ['content' => $data, 'newPage' => $hasNewPages, 'limit' => $limit, 'maxPages' => $maxPages];
     }
 
-    public function getModules($id, $model, $lang, $params = []){
-        $moduleSQL = [];
-        foreach ($params as $module => $mod) {
-            $moduleSQL[] = 'SELECT id, "' . $module . '" as type, _order FROM ' . $module . ' WHERE related_id = :relid AND _model = :model';
-        }
-
-        $sql = implode(' UNION ALL ', $moduleSQL);
-
-        $stmt = $this->em->getConnection()->prepare($sql);
-        $stmt->bindValue('relid', $id);
-        $stmt->bindValue('model', $model);
-        $stmt->execute();
-        $array = $stmt->fetchAll();
-        $size = count($array);
-        
-        $modules = [];
-        if($size){
-            foreach ($array as $key => $row)
-            {
-                $order[$key] = $row['_order'];
-            }
-
-            array_multisort($order, SORT_ASC, $array);   
-
-            for($i=0; $i<$size; $i++)
-            {
-                if($params[$array[$i]['type']]['trans']){
-                    $sql = '
-                    SELECT a.*, at.*, "'.$array[$i]['type'].'" as type
-                    FROM '. $array[$i]['type'] .' a LEFT JOIN '.$array[$i]['type'].'_trans at ON a.id = at.relatedId
-                    WHERE a.ID = :id AND at.language = :lang';
-
-                    $stmt = $this->em->getConnection()->prepare($sql);
-                    $stmt->bindValue('id', $array[$i]['id']);
-                    $stmt->bindValue('lang', $lang);
-                
-                } else {
-                    $sql = '
-                    SELECT a.*, "'.$array[$i]['type'].'" as type
-                    FROM '. $array[$i]['type'] .' a 
-                    WHERE a.ID = :id ';
-
-                    $stmt = $this->em->getConnection()->prepare($sql);
-                    $stmt->bindValue('id', $array[$i]['id']);
-                }
-                
-
-                $stmt->execute();
-                $aux = $stmt->fetchAll();
-
-                foreach ($aux as $key => $module) {
-                    $modules[] = $this->_prepareObject($module, $module['type'], $params[$module['type']]);
-                }
-                
-            }
-        }
-
-        return $modules;
-    }
-
-    private function _prepareObjects($elements, $parameters = [], $father = false){
+    private function _prepareObjects($elements, $father = false){
         foreach ($elements as $k => $el) {
-            $elements[$k] = $this->_prepareObject($el, $parameters, $father);
+            $elements[$k] = $this->_prepareObject($el, $father);
         }
 
         return $elements;
     }
 
-    private function _prepareObject($el, $parameters, $father = false){
+    private function _prepareObject($el, $father = false){
+        $parameters = $el->getPttParameters();
+
         //Pdf
         if(method_exists($el, 'getPdf') && $el->getPdf() != ''){
             $el->setPdf($this->uploadsUrl . $el->getPdf());
@@ -233,26 +175,33 @@ class PttServices
         if(isset($parameters['sizes'])){
             foreach ($parameters['sizes'] as $key => $value) {
                 $getMethod = 'get' . ucfirst($key);
-                $setMethod = 'set' . ucfirst($key);
-                if(method_exists($el, $setMethod) && $el->$getMethod() != ''){
-                    $el->$setMethod($this->uploadsUrl . $value . $el->$getMethod());
-                }
+                foreach ($value as $i => $field) {
+                    $setMethod = 'set' . ucfirst($i);
+                    if(method_exists($el, $setMethod)){
+                        if($el->$getMethod() != ''){
+                            $el->$setMethod($this->uploadsUrl . $value . $el->$getMethod());    
+                        }
+                    } else {
+                        $el->$key = $this->uploadsUrl . $value . $el->$getMethod();
+                    }
+                } 
             }
         }
         
-        $object = new \ReflectionObject($el);
-        foreach ($object->getMethods() as $method) {
-            if(substr($method, 0, 3) === "get"){
-                $methodObj = $el->$method();
-                $setMethod = 's' . substr($method, 1);
-                if(is_array($methodObj) && substr($method, 3) != $father){
-                    $el->$setMethod($_prepareObjects($methodObj, $parameters, $object->getShortName()));
-                } elseif (is_object($methodObj) && substr($method, 3) != $father && !($methodObj instanceof DateTime)) {
-                    $el->$setMethod($_prepareObject($methodObj, $parameters, $object->getShortName()));
+        if(!$father){
+            $object = new \ReflectionObject($el);
+            foreach ($object->getMethods() as $method) {
+                if(substr($method, 0, 3) === "get"){
+                    $methodObj = $el->$method();
+                    $setMethod = 's' . substr($method, 1);
+                    if(is_array($methodObj) && substr($method, 3) != $father){
+                        $el->$setMethod($_prepareObjects($methodObj, true));
+                    } elseif (is_object($methodObj) && substr($method, 3) != $father && !($methodObj instanceof DateTime)) {
+                        $el->$setMethod($_prepareObject($methodObj, true));
+                    }
                 }
             }
         }
-        
 
         return $el;
     }
