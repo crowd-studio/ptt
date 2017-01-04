@@ -8,10 +8,14 @@
 namespace Crowd\PttBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Crowd\PttBundle\Util\PttUtil;
+use Symfony\Component\Yaml\Parser;
+use Symfony\Component\Yaml\Exception\ParseException;
 
+/** @ORM\MappedSuperclass @ORM\HasLifecycleCallbacks */
 class PttEntity
 {
-    protected $prepared;
+    protected $uploadUrl;
     public function __toString()
     {
         if (method_exists($this, 'getTitle')) {
@@ -23,7 +27,7 @@ class PttEntity
         }
     }
 
-	/**
+    /**
      * @var \DateTime
      *
      * @ORM\Column(name="creationDate", type="datetime")
@@ -64,7 +68,7 @@ class PttEntity
         return $this->getId();
     }
 
-	/**
+    /**
      * Set creationDate
      *
      * @param \DateTime $creationDate
@@ -180,14 +184,24 @@ class PttEntity
         return $this->slug;
     }
 
-    public function getPttParameters($type = false){
-        $this->prepared = true;
-        return [];
-
+    /** @ORM\PostLoad */
+    public function doPostLoad()
+    {
+        // do stuff
     }
 
-    public function isPrepared(){
-        return $this->prepared;
+    protected function getPttUploadUrl(){
+        if (!$this->uploadUrl){
+            try {
+                $yaml = new Parser();
+                $ptt = $yaml->parse(file_get_contents(__DIR__ . '/../../../../../../app/config/ptt.yml'));
+                $this->uploadUrl = (isset($ptt['s3']['force']) && $ptt['s3']['force']) ? $ptt['s3']['prodUrl'] . $ptt['s3']['dir'] . '/' : '/uploads/';
+                
+            } catch (ParseException $e) {
+                printf("Unable to parse the YAML string: %s", $e->getMessage());
+            }
+        }
+        return $this->uploadUrl;
     }
 
     public function setUpdateObjectValues($userId = -1)

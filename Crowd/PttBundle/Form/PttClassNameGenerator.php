@@ -21,12 +21,16 @@ class PttClassNameGenerator
 
     public static function save($type)
     {
-        return $this->exists('Crowd\PttBundle\Form\PttFormSave', $type);
+        $name = 'Crowd\PttBundle\Form\PttFormSave';
+        $className = $name . ucfirst($type);
+        return (class_exists($className)) ? $className : $name . 'Default';
     }
 
     public static function sentValue($type)
     {
-        return $this->exists('Crowd\PttBundle\Form\PttFormFieldSentValue', $type);
+        $name = 'Crowd\PttBundle\Form\PttFormFieldSentValue';
+        $className = $name . ucfirst($type);
+        return (class_exists($className)) ? $className : $name . 'Default';
     }
 
     public static function afterSave($type)
@@ -46,7 +50,6 @@ class PttClassNameGenerator
     }
 
     private function exists($name, $type){
-        $className = $name . ucfirst($type);
-        return (!class_exists($className)) ? $className : $name . 'Default';
+        
     }
 }

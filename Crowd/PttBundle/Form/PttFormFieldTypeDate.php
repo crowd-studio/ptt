@@ -46,6 +46,6 @@ class PttFormFieldTypeDate extends PttFormFieldType
 
 	protected function extraClassesForFieldContainer()
 	{
-		return 'form-group datepicker col-sm-6';
+		return 'form-group col-sm-6';
 	}
 }
