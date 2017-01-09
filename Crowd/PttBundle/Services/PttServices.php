@@ -102,12 +102,12 @@ class PttServices
         $qb = $this->_sql($table, $lang, $params);
         $query = $qb->getQuery();
         
-        if(isset($params['one']) && $params['one']){    
+        if(isset($params['as_array']) && $params['as_array']){ 
+            $data = $query->getArrayResult();  
+        } elseif(isset($params['one']) && $params['one']){    
             $data = $query->getSingleResult();
-            $data = $this->_prepareObject($data);
         } else {
             $data = $query->getResult();
-            $data = $this->_prepareObjects($data);
         }
         
         return $data;
@@ -117,18 +117,15 @@ class PttServices
         $where = (isset($params['where'])) ? $params['where'] : [];
         $orderBy = (isset($params['orderBy'])) ? $params['orderBy'] : [];
 
-        $obj = $this->em->getRepository($this->_getTableBundle($table))->findBy($where, $orderBy);
-        return $this->_prepareObjects($obj);
+        return $this->em->getRepository($this->_getTableBundle($table))->findBy($where, $orderBy);
     }
 
     public function getAll($table, $params = []){
-        $obj = $this->em->getRepository($this->_getTableBundle($table))->findAll();
-        return $this->_prepareObjects($obj);
+        return $this->em->getRepository($this->_getTableBundle($table))->findAll();
     }
 
     public function getOne($table, $id, $params = []){
-        $obj = $this->em->getRepository($this->_getTableBundle($table))->find($id);
-        return $this->_prepareObject($obj);
+        return $this->em->getRepository($this->_getTableBundle($table))->find($id);
     }
 
     public function getByPag($table, $lang, $params = []){
@@ -149,76 +146,34 @@ class PttServices
 
         $data = [];
         foreach ($paginator->getIterator() as $key => $row) {
-            $data[] = $this->_prepareObject($row);
+            $data[] = $row;
         }
         
         return ['content' => $data, 'newPage' => $hasNewPages, 'limit' => $limit, 'maxPages' => $maxPages];
     }
 
-    private function _prepareObjects($elements, $deep = 0){
-        foreach ($elements as $k => $el) {
-            $elements[$k] = $this->_prepareObject($el, $deep);
+    public function update($table, $id, $data){
+        $row = $this->em->getRepository($this->_getTableBundle($table))->find($id);
+
+        if(!$row){
+            return false;
         }
 
-        return $elements;
+        foreach ($data as $key => $value) {
+            $method = 'set' . ucfirst($key);
+            if (method_exists($row, $method)){
+                $row->$method($value);
+            }
+        }
+
+        $this->em->flush();
+        return true;
     }
 
-    private function _prepareObject($el, $deep = 0){
-        if(!$el->isPrepared()){
-            $parameters = $el->getPttParameters();
-
-            //Pdf
-            if(method_exists($el, 'getPdf') && $el->getPdf() != ''){
-                $el->setPdf($this->uploadsUrl . $el->getPdf());
-            }
-
-
-            // Images
-            if(isset($parameters['sizes'])){
-                foreach ($parameters['sizes'] as $key => $value) {
-                    $getMethod = 'get' . ucfirst($key);
-                    foreach ($value as $i => $field) {
-                        $setMethod = 'set' . ucfirst($i);
-                        if(method_exists($el, $setMethod)){
-                            if($el->$getMethod() != ''){
-                                $el->$setMethod($this->uploadsUrl . $field . $el->$getMethod());    
-                            }
-                        } else {
-                            $el->$i = $this->uploadsUrl . $field . $el->$getMethod();
-                        }
-                    } 
-                }
-            }
-
-            if($deep < 2){
-                $object = new \ReflectionObject($el);
-                foreach ($object->getMethods() as $method) {
-                    $name = $method->name;
-                    if($name != 'getId' && $name != 'getPttParameters'){
-                        if(substr($name, 0, 3) == "get"){
-                            $nameObj = $el->$name();
-                            $setname = 's' . substr($name, 1);
-                            
-                            if(is_array($nameObj)){
-                                if(method_exists($el, $setname)){
-                                    $el->$setname($this->_prepareObjects($nameObj, $deep + 1));
-                                }   
-                            } elseif (is_object($nameObj) && get_class($nameObj) != 'DateTime') {
-                                if(method_exists($el, $setname)){
-                                    if(get_class($nameObj) == 'Doctrine\ORM\PersistentCollection'){
-                                        $el->$setname($this->_prepareObjects($nameObj, $deep + 1));
-                                    } else {
-                                        $el->$setname($this->_prepareObject($nameObj, $deep + 1));    
-                                    }
-                                }
-                            }
-                        }
-                    } 
-                }
-            }
-        }
-          
-        return $el;
+    public function create($object){
+        $this->em->persist($object);
+        $this->em->flush();
+        return true;
     }
 
     private function _getTableBundle($table){
