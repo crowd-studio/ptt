@@ -9,6 +9,7 @@ namespace Crowd\PttBundle\Form;
 
 class PttFormFieldTypeCheckbox extends PttFormFieldType
 {
+
 	public function field()
 	{
 		$html = $this->start();
@@ -36,7 +37,7 @@ class PttFormFieldTypeCheckbox extends PttFormFieldType
 
 	protected function extraClassesForFieldContainer()
 	{
-		return 'checkbox col-sm-6';
+		return 'checkbox col-sm-' . $this->getWidth();
 	}
 
 	protected function extraClassesForField()

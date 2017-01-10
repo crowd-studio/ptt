@@ -47,6 +47,6 @@ class PttFormFieldTypeMap extends PttFormFieldType
 
 	protected function extraClassesForFieldContainer()
     {
-        return 'form-group map col-sm-12';
+        return 'form-group map col-sm-' . $this->getWidth();
     }
 }

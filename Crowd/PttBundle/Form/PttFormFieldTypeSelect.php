@@ -152,6 +152,6 @@ class PttFormFieldTypeSelect extends PttFormFieldType
 
 	protected function extraClassesForFieldContainer()
     {
-        return 'form-group select col-sm-12';
+        return 'form-group select col-sm-' . $this->getWidth();
     }
 }

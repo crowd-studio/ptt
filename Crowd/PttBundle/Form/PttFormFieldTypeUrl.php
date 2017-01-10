@@ -33,6 +33,6 @@ class PttFormFieldTypeUrl extends PttFormFieldType
 
 	protected function extraClassesForFieldContainer()
     {
-        return 'form-group url col-sm-12';
+        return 'form-group url col-sm-' . $this->getWidth();
     }
 }

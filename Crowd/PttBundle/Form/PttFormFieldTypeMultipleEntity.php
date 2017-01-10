@@ -150,6 +150,6 @@ class PttFormFieldTypeMultipleEntity extends PttFormFieldType {
 
 	protected function extraClassesForFieldContainer()
     {
-        return 'form-group multipleentity col-sm-12';
+        return 'form-group multipleentity col-sm-' . $this->getWidth();
     }
 }

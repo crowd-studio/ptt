@@ -27,6 +27,6 @@ class PttFormFieldTypeNumber extends PttFormFieldType
 
 	protected function extraClassesForFieldContainer()
     {
-        return 'form-group number col-sm-12';
+        return 'form-group number col-sm-' . $this->getWidth();
     }
 }

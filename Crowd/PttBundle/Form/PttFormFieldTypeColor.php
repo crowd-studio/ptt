@@ -11,8 +11,6 @@ class PttFormFieldTypeColor extends PttFormFieldType
 {
 	public function field()
 	{
-		
-
 		$html = $this->start();
 		$html .= $this->label();
 
@@ -31,7 +29,7 @@ class PttFormFieldTypeColor extends PttFormFieldType
 
 	protected function extraClassesForFieldContainer()
 	{
-		return 'form-group colorPicker col-sm-6';
+		return 'form-group colorPicker col-sm-' . $this->getWidth();
 	}
 
 	protected function extraClassesForField()

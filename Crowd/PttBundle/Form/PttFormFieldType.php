@@ -139,6 +139,28 @@ class PttFormFieldType
 		return false;
 	}
 
+	protected function getWidth(){
+		if(isset($this->field->options['size'])){
+			switch ($this->field->options['size']) {
+				case 'small':
+					return 3;
+					break;
+				case 'medium':
+					return 6;
+					break;
+				case 'large':
+					return 12;
+					break;
+				default:
+					return 12;
+					break;
+			}
+		} else {
+			return 12;
+		}
+		return () ? $this->field->options['size'] : false;
+	}
+
 	private function _prepare()
 	{
 		$className = $this->_formValueClassName($this->field->type);

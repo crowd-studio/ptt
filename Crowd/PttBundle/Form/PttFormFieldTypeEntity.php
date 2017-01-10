@@ -73,6 +73,6 @@ class PttFormFieldTypeEntity extends PttFormFieldType
 
     protected function extraClassesForFieldContainer()
     {
-        return 'form-group entity col-sm-12';
+        return 'form-group entity col-sm-' . $this->getWidth();
     }
 }

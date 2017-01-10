@@ -66,6 +66,6 @@ class PttFormFieldTypeInstagram extends PttFormFieldType
 
 	protected function extraClassesForFieldContainer()
     {
-        return 'form-group text col-sm-12';
+        return 'form-group text col-sm-' . $this->getWidth();
     }
 }

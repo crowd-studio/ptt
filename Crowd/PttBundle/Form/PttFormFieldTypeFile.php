@@ -245,6 +245,6 @@ class PttFormFieldTypeFile extends PttFormFieldType
 
 	protected function extraClassesForFieldContainer()
     {
-        return 'form-group file col-sm-6';
+        return 'form-group file col-sm-' . $this->getWidth();
     }
 }

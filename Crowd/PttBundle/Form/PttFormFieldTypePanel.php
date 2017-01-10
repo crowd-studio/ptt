@@ -50,6 +50,6 @@ class PttFormFieldTypePanel extends PttFormFieldType
 
 	protected function extraClassesForFieldContainer()
     {
-        return 'form-group panel col-sm-12';
+        return 'form-group panel col-sm-' . $this->getWidth();
     }
 }

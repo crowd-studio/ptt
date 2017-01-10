@@ -35,6 +35,6 @@ class PttFormFieldTypePassword extends PttFormFieldType
 
 	protected function extraClassesForFieldContainer()
     {
-        return 'form-group password col-sm-12';
+        return 'form-group password col-sm-' . $this->getWidth();
     }
 }

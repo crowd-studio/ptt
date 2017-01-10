@@ -39,6 +39,6 @@ class PttFormFieldTypeTextarea extends PttFormFieldType
 
 	protected function extraClassesForFieldContainer()
     {
-        return 'form-group textarea col-sm-12';
+        return 'form-group textarea col-sm-' . $this->getWidth();
     }
 }
