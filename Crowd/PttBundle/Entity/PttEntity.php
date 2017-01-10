@@ -190,6 +190,14 @@ class PttEntity
         // do stuff
     }
 
+    public function beforeSave(){
+        
+    }
+
+    public function afterSave(){
+        
+    }
+
     protected function getPttUploadUrl(){
         if (!$this->uploadUrl){
             try {

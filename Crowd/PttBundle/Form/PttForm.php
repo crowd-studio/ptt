@@ -160,6 +160,8 @@ class PttForm
 	public function isValid()
 	{
 		$this->_updateSentData();
+
+		$this->entityInfo->getEntity()->beforeSave($this->sentData);
 		$this->_performFieldsLoopAndCallMethodNamed('_validateField');
 
 		return !$this->errors->hasErrors();
@@ -201,9 +203,10 @@ class PttForm
 			$entityPrincipal->updateTrans($this->sentData['Trans']);
 		}
 
-
 		$this->em->persist($entityPrincipal);
 		$this->em->flush();
+
+		$entityPrincipal->afterSave($this->sentData);
 	}
 
 	//PRIVATE
@@ -335,8 +338,6 @@ class PttForm
 			$this->sentData = $this->request->get($this->entityInfo->getFormName());
 			$transEntity = [];
 		}
-
-		// var_dump($this->sentData);die();
 	}
 	
 	private function _performFieldsLoopAndCallMethodNamed($nameOfMethod)
@@ -387,7 +388,7 @@ class PttForm
 	private function _saveForField(PttField $field, $languageCode = false)
 	{
 		$fieldClassName = PttClassNameGenerator::field($field->type);
-		if(strpos($fieldClassName, 'PttFormFieldTypeEntity') === false && strpos($fieldClassName, 'PttFormFieldTypeMultipleEntity') === false && strpos($fieldClassName, 'PttFormFieldTypeGallery') === false){
+		if($field->mapped && strpos($fieldClassName, 'PttFormFieldTypeEntity') === false && strpos($fieldClassName, 'PttFormFieldTypeMultipleEntity') === false && strpos($fieldClassName, 'PttFormFieldTypeGallery') === false){
 			$saveClassName = PttClassNameGenerator::save($field->type);
 			$formSave = new $saveClassName($field, $this->entityInfo, $this->request, $this->sentData, $this->container, $languageCode);
 			$value = $formSave->value();
