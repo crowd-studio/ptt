@@ -158,7 +158,6 @@ class PttFormFieldType
 		} else {
 			return $default;
 		}
-		return () ? $this->field->options['size'] : false;
 	}
 
 	private function _prepare()

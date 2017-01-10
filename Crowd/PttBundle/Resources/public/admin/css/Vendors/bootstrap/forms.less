@@ -62,7 +62,7 @@
 
       .right-container {
           position: absolute;
-          right: 15px;
+          right: 32px;
 
       }
     }
@@ -397,6 +397,13 @@ input[type="checkbox"] {
   .form-control-validation(@state-danger-text; @state-danger-text; @state-danger-bg);
 }
 
+.form-control input[disabled]{
+    background-color: #cfd9db !important;
+}
+
+.form-control select[disabled]{
+    background-color: #cfd9db !important;
+}
 
 // Reposition feedback icon if label is hidden with "screenreader only" state
 .has-feedback label.sr-only ~ .form-control-feedback {
