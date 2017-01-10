@@ -46,6 +46,6 @@ class PttFormFieldTypeDate extends PttFormFieldType
 
 	protected function extraClassesForFieldContainer()
 	{
-		return 'form-group col-sm-' . $this->getWidth();
+		return 'form-group col-sm-' . $this->getWidth(6);
 	}
 }

@@ -139,7 +139,7 @@ class PttFormFieldType
 		return false;
 	}
 
-	protected function getWidth(){
+	protected function getWidth($default = 12){
 		if(isset($this->field->options['size'])){
 			switch ($this->field->options['size']) {
 				case 'small':
@@ -152,11 +152,11 @@ class PttFormFieldType
 					return 12;
 					break;
 				default:
-					return 12;
+					return $default;
 					break;
 			}
 		} else {
-			return 12;
+			return $default;
 		}
 		return () ? $this->field->options['size'] : false;
 	}

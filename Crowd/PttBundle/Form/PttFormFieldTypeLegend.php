@@ -21,6 +21,6 @@ class PttFormFieldTypeLegend extends PttFormFieldType
 
 	protected function extraClassesForFieldContainer()
     {
-        return 'form-group legend col-sm-12';
+        return 'form-group legend col-sm-' . $this->getWidth();
     }
 }

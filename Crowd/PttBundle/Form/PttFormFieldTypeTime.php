@@ -27,6 +27,6 @@ class PttFormFieldTypeTime extends PttFormFieldType
 
 	protected function extraClassesForFieldContainer()
     {
-        return 'form-group time col-sm-' . $this->getWidth();
+        return 'form-group time col-sm-' . $this->getWidth(6);
     }
 }

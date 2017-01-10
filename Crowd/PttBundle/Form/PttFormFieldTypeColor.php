@@ -29,7 +29,7 @@ class PttFormFieldTypeColor extends PttFormFieldType
 
 	protected function extraClassesForFieldContainer()
 	{
-		return 'form-group colorPicker col-sm-' . $this->getWidth();
+		return 'form-group colorPicker col-sm-' . $this->getWidth(6);
 	}
 
 	protected function extraClassesForField()

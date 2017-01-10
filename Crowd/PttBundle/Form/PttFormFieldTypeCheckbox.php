@@ -37,7 +37,7 @@ class PttFormFieldTypeCheckbox extends PttFormFieldType
 
 	protected function extraClassesForFieldContainer()
 	{
-		return 'checkbox col-sm-' . $this->getWidth();
+		return 'checkbox col-sm-' . $this->getWidth(6);
 	}
 
 	protected function extraClassesForField()
