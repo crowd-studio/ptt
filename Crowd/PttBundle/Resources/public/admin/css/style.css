@@ -2345,13 +2345,13 @@ fieldset {
 legend {
   display: block;
   width: 100%;
-  padding: 0;
-  margin-bottom: 21px;
-  font-size: 22.5px;
   line-height: inherit;
   color: #2C3E50;
   border: 0;
   border-bottom: 1px solid transparent;
+}
+.legend.col-sm-6 legend {
+  padding-top: 45px;
 }
 label {
   display: inline-block;
