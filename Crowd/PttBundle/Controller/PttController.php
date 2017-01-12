@@ -365,11 +365,12 @@ class PttController extends Controller
         return method_exists($this->_initEntity(), "getCopy");
     }
 
-    protected function afterSave($entity){}
+    protected function afterSave($entity){
+        $this->_initEntity()->afterSave($entity);
+    }
 
     protected function flushCache($entity){
-        $cache = new PttCache();
-        $cache->removeAll();
+        $this->_initEntity()->flushCache($entity);
     }
 
     protected function deleteTemp(){
@@ -384,47 +385,43 @@ class PttController extends Controller
     }
     
     protected function listTitle(){
-        $title = $this->_getAnnotation('listTitle');
-        return ($title) ? $title : $this->get('pttTrans')->trans('list') . ' ' . $this->_entityInfoValue('plural');
+        return $this->get('pttTrans')->trans('list') . ' ' . $this->_entityInfoValue('plural');
     }
 
     protected function editTitle($id){
-        $name = ($id != null) ? 'edit' : 'create';
-        $title = $this->_getAnnotation($name . 'Title');
-        return ($title) ?  $title : $this->get('pttTrans')->trans($name) . ' ' . $this->_entityInfoValue('lowercase');
+        return $this->get('pttTrans')->trans(($id != null) ? 'edit' : 'create') . ' ' . $this->_entityInfoValue('lowercase');
     }
 
     protected function fieldsToList(){
-        $fields = $this->_getAnnotation('defaultField');
-        if ($fields){
-            $chunks = array_chunk(preg_split('/(=|,)/', $fields), 2);
-            $result = array_combine(array_column($chunks, 0), array_column($chunks, 1));
-            return $result;
-        } else {
-            return ['title' => $this->get('pttTrans')->trans('title')];
-        }
-        
+        $fields = $this->_initEntity()->fieldsToList();
+        return ($fields) ? $result : ['title' => $this->get('pttTrans')->trans('title')];
     }
 
     protected function orderList(){
-        return 'asc';
+        return $this->_initEntity()->orderList();
     }
 
     protected function enableFilters(){
-        return false;
+        return $this->_initEntity()->enableFilters();
     }
 
     protected function fieldsToFilter(){
-        if (!$this->enableFilters()) {
+        if($this->enableFilters()){
+            $fields = $this->_initEntity()->fieldsToFilter();
+            if($fields){
+                return $fields;
+            } else {
+                return [
+                    'title' => [ 
+                        'label' => $this->get('pttTrans')->trans('title'),
+                        'type' => 'text'
+                    ]
+                ];
+            }
+        } else {
             return [];
         }
-
-        return [
-            'title' => [ 
-                'label' => $this->get('pttTrans')->trans('title'),
-                'type' => 'text'
-            ]
-        ];
+        
     }
 
     protected function continueWithDeletion($entity){
@@ -439,11 +436,7 @@ class PttController extends Controller
     }
 
     protected function entityInfo(){
-        return [
-            'simple' => $this->entityName,
-            'lowercase' => strtolower($this->entityName),
-            'plural' => $this->entityName . 's'
-        ];
+        return $this->_initEntity()->entityInfo($this->entityName);
     }
 
     protected function entityConfigurationInfo(){

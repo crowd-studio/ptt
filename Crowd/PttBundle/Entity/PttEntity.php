@@ -8,9 +8,11 @@
 namespace Crowd\PttBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use Crowd\PttBundle\Util\PttUtil;
 use Symfony\Component\Yaml\Parser;
 use Symfony\Component\Yaml\Exception\ParseException;
+
+use Crowd\PttBundle\Util\PttUtil;
+use Crowd\PttBundle\Util\PttCache;
 
 /** @ORM\MappedSuperclass @ORM\HasLifecycleCallbacks */
 class PttEntity
@@ -194,8 +196,37 @@ class PttEntity
         
     }
 
-    public function afterSave(){
+    public function afterSave($entity = false){
         
+    }
+
+    public function fieldsToFilter(){
+        return false;
+    }
+
+    public function enableFilters(){
+        return false;
+    }
+
+    public function orderList(){
+        return 'asc';
+    }
+
+    public function fieldsToList(){
+        return false;
+    }
+
+    public function entityInfo($entityName = false){
+        return [
+            'simple' => $entityName,
+            'lowercase' => strtolower($entityName),
+            'plural' => $entityName . 's'
+        ];
+    }
+
+    public function flushCache($entity){
+        $cache = new PttCache();
+        $cache->removeAll();
     }
 
     protected function getPttUploadUrl(){

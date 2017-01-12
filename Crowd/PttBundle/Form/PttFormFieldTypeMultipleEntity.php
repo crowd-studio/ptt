@@ -9,14 +9,8 @@ namespace Crowd\PttBundle\Form;
 
 use Crowd\PttBundle\Util\PttUtil;
 
-class PttFormFieldTypeMultipleEntity extends PttFormFieldType {
-	protected $pttForm;
-
-    public function __construct(PttForm $pttForm, PttField $field, $languageCode = false) {
-        parent::__construct($pttForm, $field, $languageCode);
-        $this->pttForm = $pttForm;
-    }
-
+class PttFormFieldTypeMultipleEntity extends PttFormFieldType 
+{
 	public function field() {
 		$name = false;
 
@@ -58,8 +52,6 @@ class PttFormFieldTypeMultipleEntity extends PttFormFieldType {
                 $htmlField .= '<input type="hidden" id="'. $this->field->getFormName() . '-{{index}}-_order" name="'. $this->field->getFormName() . '[{{index}}]' .'[_order]" data-required="false" class="form-control field-order" value="{{index}}">';
                 $htmlField .= '<input type="hidden" id="'. $this->field->getFormName() . '-{{index}}-_model" name="'. $this->field->getFormName() . '[{{index}}]' .'[_model]" data-required="false" class="form-control" value="'. $this->pttForm->getEntityInfo()->getEntityName() .'"> </div></script>';
 				$formErrors = $this->pttForm->getErrors($this->field->name);
-
-	            
 			}
 		}
 
@@ -76,8 +68,7 @@ class PttFormFieldTypeMultipleEntity extends PttFormFieldType {
         }
     }
 
-	private function _fillData()
-	{
+	private function _fillData() {
         $htmlField = '';
 		if (is_array($this->value) && count($this->value))
         {
@@ -91,8 +82,6 @@ class PttFormFieldTypeMultipleEntity extends PttFormFieldType {
             } else {
             	$data = $this->value;
             }
-            
-            
             usort($data, array($this, "moduleSort"));
             
             $size = count($data);	

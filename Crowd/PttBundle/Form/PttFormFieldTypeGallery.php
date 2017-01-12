@@ -11,16 +11,7 @@ use Crowd\PttBundle\Util\PttUtil;
 
 class PttFormFieldTypeGallery extends PttFormFieldType
 {
-	protected $pttForm;
-
-    public function __construct(PttForm $pttForm, PttField $field, $languageCode = false)
-    {
-        parent::__construct($pttForm, $field, $languageCode);
-        $this->pttForm = $pttForm;
-    }
-
-	public function field()
-	{
+	public function field() {
 		$html = $this->start();
 		$html .= $this->label();
 
@@ -46,8 +37,7 @@ class PttFormFieldTypeGallery extends PttFormFieldType
         return $htmlField;
     }
 
-    private function _fillData()
-    {
+    private function _fillData() {
         $htmlField = '';
         if($this->value && !is_array($this->value)){
             $pttHelper = new PttHelperFormFieldTypeEntity($this->entityInfo, $this->field, $this->container, $this->em);
@@ -61,8 +51,7 @@ class PttFormFieldTypeGallery extends PttFormFieldType
         return $htmlField;
     }
 
-    private function _getHtml($key, $formName, $form)
-    {
+    private function _getHtml($key, $formName, $form) {
         $htmlField = '<div class="collapse-head"><span class="handle hidden"></span><span class="title-triangle"><a class="triangle-closed triangle"></a><a class="title title-closed">'. $formName .' '. $key .'</a></span><a class="remove list-eliminar"></a></div><div class="collapse-body hidden">' . $form->createView('multi');
         $htmlField .= '<input type="hidden" id="'. $this->field->getFormName() . '-' . $key .'-_order" name="'. $this->field->getFormName() . '[' . $key . ']' .'[_order]" data-required="false" class="form-control field-order" value="'. $key .'">';
         $htmlField .= '<input type="hidden" id="'. $this->field->getFormName() . '-' . $key .'-_model" name="'. $this->field->getFormName() . '[' . $key . ']' .'[_model]" data-required="false" class="form-control" value="'. $this->pttForm->getEntityInfo()->getEntityName() .'">';
@@ -71,15 +60,12 @@ class PttFormFieldTypeGallery extends PttFormFieldType
         return $htmlField;
     }
 
-	protected function extraClassesForFieldContainer()
-    {
+	protected function extraClassesForFieldContainer() {
         return 'form-group entity col-sm-' . $this->getWidth();
     }
 
-    protected function extraAttrsForContainer()
-    {
-        $attrs = ['data-prefix' => PttUtil::pttConfiguration('prefix')];
-        return $attrs;
+    protected function extraAttrsForContainer() {
+        return ['data-prefix' => PttUtil::pttConfiguration('prefix')];
     }
 
 }

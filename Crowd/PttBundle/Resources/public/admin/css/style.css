@@ -2676,12 +2676,6 @@ select[multiple].input-lg {
 .has-error .form-control-feedback {
   color: #fff;
 }
-.form-control input[disabled] {
-  background-color: #cfd9db !important;
-}
-.form-control select[disabled] {
-  background-color: #cfd9db !important;
-}
 .has-feedback label.sr-only ~ .form-control-feedback {
   top: 0;
 }
@@ -7699,6 +7693,9 @@ html[dir="rtl"] .select2-container-multi .select2-search-choice-close {
   padding-bottom: 20px;
   background-color: #fff;
   border: 1px solid #dadada;
+}
+.wrapper .container-fluid > .row > .main .content form .block-container .block-body input.form-control[disabled] {
+  background-color: #cfd9db !important;
 }
 .wrapper .container-fluid > .row > .main .content a {
   text-decoration: none;

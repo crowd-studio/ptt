@@ -258,6 +258,10 @@ define([
              $.each($('.nav-tabs'), function(element){
                 var tab = new Tab({el:$(this)});
             });
+
+             $.each($('[slave]'), function(element){
+                var slave = new Slave({el:$(this)});
+             });
         },
         resize : function()
         {
@@ -1090,6 +1094,30 @@ define([
             this.$el.find("div.logout").remove();
             this.$el.find("div.login").attr("style", "");
         },
+    });
+
+    var Slave = Backbone.View.extend({
+        initialize : function(){
+            var $master = $('[master="' + this.$el.attr('slave') + '"]');
+            var option = this.$el.attr('slave-option');
+            $master.has('select').bind('change', function(event){
+                this.setVisibility($master, option);
+            }.bind(this));
+
+            $master.has('input').bind('change', function(event){
+                this.setVisibility($master, option);
+            }.bind(this));
+
+            this.setVisibility($master, option);
+        },
+        setVisibility : function($master, option){
+            console.log($master.has('select').length);
+            if($master.has('select').length == 0){
+                this.$el.toggle($master.find('input:checked').length == option);
+            } else {
+                this.$el.toggle($master.find('select').val() == option);    
+            }
+        }
     });
 
     return window.app;

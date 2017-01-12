@@ -11,14 +11,6 @@ use Crowd\PttBundle\Util\PttUtil;
 
 class PttFormFieldTypeEntity extends PttFormFieldType
 {
-    protected $pttForm;
-
-    public function __construct(PttForm $pttForm, PttField $field, $languageCode = false)
-    {
-        parent::__construct($pttForm, $field, $languageCode);
-        $this->pttForm = $pttForm;
-    }
-
     public function field()
     {
         $html = $this->start();

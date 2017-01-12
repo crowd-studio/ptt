@@ -136,7 +136,7 @@ class PttFormFieldType
 
 	protected function extraAttrsForContainer()
 	{
-		return false;
+		return [];
 	}
 
 	protected function getWidth($default = 12){
@@ -179,8 +179,9 @@ class PttFormFieldType
 	private function _addExtraAttrsToField()
 	{
 		if (!isset($this->field->options['attr']) || !is_array($this->field->options['attr'])) {
-			$this->field->options['attr'] = array();
+			$this->field->options['attr'] = [];
 		}
+
 		$extraAttrs = $this->extraAttrsForField();
 		if ($extraAttrs) {
 			foreach ($extraAttrs as $extraAttrKey => $extraAttrValue) {
@@ -192,6 +193,16 @@ class PttFormFieldType
 	private function _addExtraAttrsToContainer()
 	{
 		$extraAttrs = $this->extraAttrsForContainer();
+
+		if (isset($this->field->options['slave'])) {
+			$extraAttrs['slave'] = $this->field->options['slave']['master'];
+			$extraAttrs['slave-option'] = $this->field->options['slave']['option'];
+		}
+
+		if (isset($this->field->options['master']) && $this->field->options['master'] === true) {
+			$extraAttrs['master'] = $this->field->name;
+		}
+		
 		$attrs = '';
 		if ($extraAttrs) {
 			foreach ($extraAttrs as $extraAttrKey => $extraAttrValue) {
