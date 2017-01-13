@@ -14,7 +14,6 @@ class PttFormSaveFile extends PttFormSave
 {
     public function value()
     {
-        var_dump('here');die();
 
         $files = $this->_files();
 
