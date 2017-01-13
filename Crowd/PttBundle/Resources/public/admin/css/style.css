@@ -7697,6 +7697,9 @@ html[dir="rtl"] .select2-container-multi .select2-search-choice-close {
 .wrapper .container-fluid > .row > .main .content form .block-container .block-body input.form-control[disabled] {
   background-color: #cfd9db !important;
 }
+.wrapper .container-fluid > .row > .main .content form .block-container .block-body .form-group.col-sm-3 {
+  margin-top: 20px;
+}
 .wrapper .container-fluid > .row > .main .content a {
   text-decoration: none;
 }

@@ -22,6 +22,21 @@
         </div>
     </div>
     {{ form.createView()|raw }}
+
+    <div class="col-lg-12 col-md-12 col-sm-12" style="text-align: right;padding: 0; margin-bottom: 20px;">
+            <div class="right-container">
+                <input type="submit" class="btn btn-save" name="save" value="{{'save'|trans}}" />
+                {% if app.request.get('id') == null %}
+                    <input type="submit" class="btn btn-save btn-save-another" name="another" value="{{'save_and_create_another'|trans}}" />
+                {% endif %}
+                {% if cancel == 1 %}
+                    <a href="{{ path('edit', {entity : entityConfigurationInfo.entityName, 'id': app.request.get('id'), 'self': 1}) }}" class="btn btn-cancel">{{'cancel'|trans}}</a>
+                {% else %}
+                    <a href="{{ path('list', {entity : entityConfigurationInfo.entityName}) }}" class="btn btn-cancel" style="margin-left: 15px;">{{'cancel'|trans}}</a>
+                {% endif %}
+                
+            </div>
+        </div>
 </form>
 
 {% endblock %}
