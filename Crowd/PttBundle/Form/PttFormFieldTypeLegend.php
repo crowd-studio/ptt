@@ -11,11 +11,12 @@ class PttFormFieldTypeLegend extends PttFormFieldType
 {
 	public function field()
 	{
-
+		$html = $this->start();
+		
 		$legend = (isset($this->field->options['label'])) ? $this->field->options['label'] : '';
-
-		$html = '<legend>' . $legend . '</legend>';
-
+		$html .= '<legend>' . $legend . '</legend>';
+		
+		$html .= $this->end();
 		return $html;
 	}
 

@@ -177,6 +177,7 @@ class PttController extends Controller
             $this->flushCache($deleteEntity);
 
             $em->remove($deleteEntity);
+
             $em->flush();
 
             $this->get('session')->getFlashBag()->add('success', $this->get('pttTrans')->trans('the_entity_was_deleted', $this->_entityInfoValue('lowercase')));
@@ -366,11 +367,11 @@ class PttController extends Controller
     }
 
     protected function afterSave($entity){
-        $this->_initEntity()->afterSave($entity);
+        $entity->afterSave($entity);
     }
 
     protected function flushCache($entity){
-        $this->_initEntity()->flushCache($entity);
+        $entity->flushCache($entity);
     }
 
     protected function deleteTemp(){
@@ -394,7 +395,7 @@ class PttController extends Controller
 
     protected function fieldsToList(){
         $fields = $this->_initEntity()->fieldsToList();
-        return ($fields) ? $result : ['title' => $this->get('pttTrans')->trans('title')];
+        return ($fields) ? $fields : ['title' => $this->get('pttTrans')->trans('title')];
     }
 
     protected function orderList(){
@@ -404,6 +405,8 @@ class PttController extends Controller
     protected function enableFilters(){
         return $this->_initEntity()->enableFilters();
     }
+
+    
 
     protected function fieldsToFilter(){
         if($this->enableFilters()){
@@ -432,7 +435,6 @@ class PttController extends Controller
     }
 
     protected function beforeDeletion($entity){
-        //nothing
     }
 
     protected function entityInfo(){

@@ -196,6 +196,7 @@ class PttFormFieldType
 
 		if (isset($this->field->options['slave'])) {
 			$extraAttrs['slave'] = $this->field->options['slave']['master'];
+			$extraAttrs['style'] = 'display:none;';
 			$extraAttrs['slave-option'] = $this->field->options['slave']['option'];
 		}
 
