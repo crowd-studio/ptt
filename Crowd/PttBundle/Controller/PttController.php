@@ -110,8 +110,6 @@ class PttController extends Controller
             if ($pttForm->isValid()) {
                 
                 $pttForm->save();
-
-                $this->afterSave($saveEntity);
                 $this->flushCache($saveEntity);
 
                 $this->get('session')->getFlashBag()->add('success', $pttForm->getSuccessMessage());
