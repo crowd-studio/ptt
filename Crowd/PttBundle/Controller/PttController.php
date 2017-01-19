@@ -287,6 +287,24 @@ class PttController extends Controller
     }
 
     /**
+     * @Route("/s3-sign", name="sign");
+     * @Template()
+     */
+     public function signAction(Request $request){
+        $secret = 'Cv9mrwiEfb5t1b/xaNndIHG3U3riHwd1';
+        $json = $request->request->getContent();
+        $content = json_decode($json);
+        if(isset($content['to_sign'])){
+            $value = hash_hmac('sha256', $content['to_sign'], $secret);
+            $output = base64_encode($value);
+            
+            return new Response($output, Response::HTTP_OK);
+        } else {
+            return new Response('Missing to_sign param', Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    /**
      * @Route("/login/", name="admin_login")
      * @Template()
      */
