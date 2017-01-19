@@ -262,6 +262,10 @@ define([
              $.each($('[slave]'), function(element){
                 var slave = new Slave({el:$(this)});
              });
+
+            $.each($('.multipart-upload'), function(element){
+                // var slave = new Slave({el:$(this)});
+            });
         },
         resize : function()
         {
@@ -930,7 +934,7 @@ define([
     var SortableList = Backbone.View.extend({
         events : {
             'click .btn-sort-list' : 'sort',
-        }, 
+        },
         initialize: function(options) {
             this.sortables = new Sortables();
         },
@@ -1115,7 +1119,7 @@ define([
             if($master.has('select').length == 0){
                 this.$el.toggle($master.find('input:checked').length == option);
             } else {
-                this.$el.toggle($master.find('select').val() == option);    
+                this.$el.toggle($master.find('select').val() == option);
             }
         }
     });
