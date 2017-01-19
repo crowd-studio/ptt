@@ -35,9 +35,11 @@ class PttFormFieldTypeUpload extends PttFormFieldType
 		$html .= '</div>';
 		// DIV 4: FITXER, DOWNLOAD I DELETE
 		$html .= '<div class="view-mode col-sm-12 nopadding" style="text-align:right;">';
-			$html .= '<input class="col-sm-12 form-control" type="text" value="'. $this->value .'" />';
-			$html .= '<a href="" class="btn btn-download">' . $this->pttTrans->trans('download') . '</a>';
-			$html .= '<a href="" class="btn btn-delete">' . $this->pttTrans->trans('delete') . '</a>';
+			$html .= '<input class="col-sm-12 form-control" disabled type="text" value="'. $this->value .'" />';
+			$html .= '<div class="action-buttons col-sm-12 nopadding">';
+				$html .= '<a href="" class="btn btn-download">' . $this->pttTrans->trans('download') . '</a>';
+				$html .= '<a href="" class="btn btn-delete">' . $this->pttTrans->trans('delete') . '</a>';
+			$html .= '</div>';	
 		$html .= '</div>';
 
 		$html .= $this->end();

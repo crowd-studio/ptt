@@ -7765,6 +7765,23 @@ html[dir="rtl"] .select2-container-multi .select2-search-choice-close {
 .wrapper .container-fluid > .row > .main .content form input[type="date"] {
   padding-right: 0;
 }
+.wrapper .container-fluid > .row > .main .content form div.upload-field-container div.view-mode .action-buttons {
+  margin-top: 15px;
+}
+.wrapper .container-fluid > .row > .main .content form div.upload-field-container div.view-mode .action-buttons .btn-download,
+.wrapper .container-fluid > .row > .main .content form div.upload-field-container div.view-mode .action-buttons .btn-delete {
+  min-width: 140px;
+  line-height: 22px !important;
+  text-transform: uppercase;
+  color: white;
+}
+.wrapper .container-fluid > .row > .main .content form div.upload-field-container div.view-mode .action-buttons .btn-download {
+  background-color: #2ac5f1;
+}
+.wrapper .container-fluid > .row > .main .content form div.upload-field-container div.view-mode .action-buttons .btn-delete {
+  background-color: #fd4343;
+  margin-left: 15px;
+}
 .wrapper .container-fluid > .row > .main .content form div.camera {
   margin-top: 10px;
 }
