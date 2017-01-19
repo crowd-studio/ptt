@@ -8806,7 +8806,10 @@ table > tbody > tr.published > td {
   max-width: 100%;
   height: auto;
 }
-.multipart-upload-container {
+.multipart-upload {
+  height: 178px;
+}
+.multipart-upload .multipart-upload-container {
   display: -webkit-box;
   display: -moz-box;
   display: -webkit-flex;
@@ -8821,11 +8824,11 @@ table > tbody > tr.published > td {
   flex-direction: column;
   text-align: center;
 }
-.multipart-upload-container input {
+.multipart-upload .multipart-upload-container input {
   top: 0;
   display: none;
 }
-.multipart-upload-container a.fakeClick {
+.multipart-upload .multipart-upload-container a.fakeClick {
   width: 140px;
   line-height: 34px;
   border-radius: 4px;
