@@ -264,7 +264,7 @@ define([
              });
 
             $.each($('.multipart-upload'), function(element){
-                // var slave = new Slave({el:$(this)});
+                var multipart = new Multipart({el:$(this)});
             });
         },
         resize : function()
@@ -1121,6 +1121,13 @@ define([
             } else {
                 this.$el.toggle($master.find('select').val() == option);
             }
+        }
+    });
+
+    var Multipart = Backbone.View.extend({
+        initialize: function() {
+            this.$input = this.$el.find('input.hidden');
+            console.log(this.$input);
         }
     });
 
