@@ -264,7 +264,11 @@ class PttServices
         if(isset($parameters['sizes'])){
             foreach ($parameters['sizes'] as $key => $value) {
                 if(isset($el[$key]) && $el[$key] != '' ){
-                    $el[$key] = $this->uploadsUrl . $value . $el[$key];
+                    if(substr($el[$key], -4) == '.gif'){
+                        $el[$key] = $this->uploadsUrl . '0-0-' . $el[$key];
+                    } else {
+                        $el[$key] = $this->uploadsUrl . $value . $el[$key];    
+                    }
                 }
             }
         }
