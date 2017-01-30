@@ -88,61 +88,38 @@ class PttController extends Controller
      */
     public function editAction(Request $request, $entity, $id = null)
     {
-        $this->entityName = ucfirst($entity);
+        $entity = $this->bundleName . ucfirst($entity);
         if ($id == null) {
-            $saveEntity = $this->_initEntity();
+            $obj = new $entity;
         } else {
-            $em = $this->get('doctrine')->getManager();
-            $saveEntity = $em->getRepository($this->_repositoryName())->find($id);
-            if ($saveEntity == null) {
-                throw $this->createNotFoundException($this->get('pttTrans')->trans('the_entity_does_not_exist', $this->_entityInfoValue('lowercase')));
-            }
+            $obj = $this->getDoctrine()
+                ->getRepository($entity)
+                ->find($id);
         }
-
-        $pttForm = $this->get('pttForm');
         
-        $pttForm->setEntity($saveEntity); // on es crea el ppttEntityInfo
-        // $pttForm->setTotalData($this->_totalEntities($this->_repositoryName()));
+        $form = $this->_buildForm($obj, $entity);
+        $form->handleRequest($request);
 
+        if ($request->getMethod() == 'POST' && $form->isValid()) {
+                $em->persist($obj);
+                $em = $this->getDoctrine()->getManager();
+                $em->flush();
 
-        if ($request->getMethod() == 'POST') {
-
-            if ($pttForm->isValid()) {
-                
-                $pttForm->save();
-                $this->flushCache($saveEntity);
-
-                $this->get('session')->getFlashBag()->add('success', $pttForm->getSuccessMessage());
-
-                $this->self = $this->get('session')->get('self');
-                if($this->self == 1){
-                    return $this->redirect($this->generateUrl('edit', ['entity' => $entity, 'id' => $id, 'self' => 1]));
-                } else {
-                    if ($id == null && $request->get('another') != null) {
-                        return $this->redirect($this->generateUrl('edit', ['entity' => $entity, 'id' => $id]));
-                    } else {
-                        return $this->redirect($this->generateUrl('list', ['entity' => $entity]));
-                    }
-                }
-                
-            } else {
-                $this->get('session')->getFlashBag()->add('error', $pttForm->getErrorMessage());
-            }
+                return $this->generateUrl('list', ['entity' => $entity]);
         } else {
-            $this->self = false;
-            $this->self = $request->query->get('self');
-            $this->get('session')->set('self', $this->self);
-        }
-
-        $this->deleteTemp();
-        return $this->_renderTemplateForActionInfo('edit', [
-                'entityInfo' => $this->entityInfo(),
-                'form' => $pttForm,
-                'cancel' => $this->self,
-                'page' => [
-                    'title' => $this->editTitle($id)
+            return $this->render('form.html.twig', array(
+                'form' => $form->createView(),
+                'info' => [
+                    'admin' => [
+                        'title' => 'admin'
                     ]
-            ]);
+                ],
+                'isDebug' => true,
+                'isAllowed' => true,
+                'cancel' => 1,
+                'keymap' => ''
+            ));
+        }
     }
 
     /**
@@ -662,6 +639,73 @@ class PttController extends Controller
         }
     }
 
+    private function _buildForm($obj, $entity){
+        $reader = new AnnotationReader();
+        $data = $obj->getAttributes();
+        
+        foreach($data as $key => $value) {
+            $reflectionProp = new \ReflectionProperty($entity, $key);
+            $relation = $reader->getPropertyAnnotation($reflectionProp, PttAnnotation::class);
+            $column = $reader->getPropertyAnnotation($reflectionProp, Column::class);
+            
+            $field = [];
+
+            if($relation){
+                $relation->options = $this->_getOptionArray($relation->options);
+                $field = (array) $relation;
+
+                $field["name"] = $column->name;
+                if(!isset($field["type"])){
+                    $field["type"] = $column->type;
+                }
+                $fields[] = $field;  
+            }
+        }
+
+        $formBuilder = $this->createFormBuilder($obj);
+        foreach ($fields as $field) {
+            if ($field["type"] === 'password') {
+                $field["type"] = "Repeated";
+                $field['options'] = [
+                    'type' => PasswordType::class,
+                    'invalid_message' => 'The password fields must match.',
+                    'options' => ['attr' => ['class' => 'password-field']],
+                    'required' => true,
+                    'first_options'  => ['label' => (isset($field["options"]["label"])) ? $field["options"]["label"] : $field["name"]],
+                    'second_options' => ['label' => (isset($field["options"]["label"])) ? 'Repeat ' . $field["options"]["label"] : 'Repeat ' . $field["name"]]
+                ];
+            }
+
+            $prefix = ($field["type"] !== 'entity') ? 'Symfony\\Component\\Form\\Extension\\Core\\Type\\' : 'Symfony\\Bridge\\Doctrine\\Form\\Type\\';
+            $formBuilder->add($field["name"], $prefix .ucfirst($field["type"]).'Type', $field['options']);
+        }
+
+        return $formBuilder->getForm();
+    }
+
+    private function _getOptionArray($option){
+        if ($option !== ""){
+            $array = explode(',', $option);
+            foreach ($array as $lineNum => $line)
+            {
+                list($key, $value) = explode("=", $line);
+                if($key === 'choices'){
+                    $choices = explode('|', $value);
+                    $value = [];
+                    foreach ($choices as $choice) {
+                        list($val, $name) = explode(">", $choice);
+                        $value[$val] = $name;
+                    }
+                }
+                $newArray[$key] = $value;
+            }
+            return $newArray;
+        } else {
+            return [];
+        }
+        
+    }
+
     protected function _renderTemplateForActionInfo($action, $info = []){
         $filename = $action . '.html.twig';
 
@@ -688,23 +732,22 @@ class PttController extends Controller
         return $this->render($template, $info);
     }
 
-    protected function _fields(){
+    protected function _fields()
+    {
         if ($this->fields == null) {
             $this->fields = PttUtil::pttConfiguration();
         }
         return $this->fields;
     }
 
-    protected function _initEntity(){
+    protected function _initEntity()
+    {
         $className = $this->_className();
-
-        // var_dump($className);die();
         return new $className();
     }
 
-    protected function _className(){
-
-
+    protected function _className()
+    {
         if ($this->className == null) {
             $entityClassArr[] = $this->_bundle();
             $entityClassArr[] = 'Entity';
@@ -726,21 +769,5 @@ class PttController extends Controller
             $this->repositoryName = $this->_bundle() . ':' . $this->entityName;
         }
         return $this->repositoryName;
-    }
-
-    private function _getAnnotation($field = false){
-        $reader = new AnnotationReader();
-        $class = $this->_className();
-
-        $pttAnnotation = $reader->getClassAnnotation(new \ReflectionClass(new $class), PttAnnotation::class);
-        if(!$pttAnnotation) {
-            return false;
-        }
-
-        if ($field){
-            return $pttAnnotation->$field;
-        } else {
-            return $pttAnnotation;
-        }
     }
 }
