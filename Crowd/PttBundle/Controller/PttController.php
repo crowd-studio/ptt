@@ -22,6 +22,7 @@ use Crowd\PttBundle\Form\PttForm;
 use Crowd\PttBundle\Util\PttUtil;
 use Crowd\PttBundle\Util\PttCache;
 use Crowd\PttBundle\Annotations\PttAnnotation;
+use Crowd\PttBundle\Form\PttFields;
 
 class PttController extends Controller
 {
@@ -88,37 +89,38 @@ class PttController extends Controller
      */
     public function editAction(Request $request, $entity, $id = null)
     {
-        $entity = $this->bundleName . ucfirst($entity);
+        $this->entityName = $entity;
         if ($id == null) {
-            $obj = new $entity;
+            $obj = $this->_initEntity();
         } else {
             $obj = $this->getDoctrine()
-                ->getRepository($entity)
+                ->getRepository($this->_repositoryName())
                 ->find($id);
         }
         
-        $form = $this->_buildForm($obj, $entity);
+        $form = $this->_buildForm($obj, $this->_repositoryName());
         $form->handleRequest($request);
 
         if ($request->getMethod() == 'POST' && $form->isValid()) {
-                $em->persist($obj);
+
+                // Falta l'update del formulari?
+
+                if(method_exists($obj, 'setSlug')){
+                    $obj->setSlug(PttUtil::slugify((string)$obj));
+                }
+                $obj->setUpdateObjectValues();
                 $em = $this->getDoctrine()->getManager();
+                $em->persist($obj);
                 $em->flush();
 
-                return $this->generateUrl('list', ['entity' => $entity]);
+                return $this->redirectToRoute('list', ['entity' => $this->entityName]);
         } else {
-            return $this->render('form.html.twig', array(
+            return $this->_renderTemplateForActionInfo('edit', [
+                'entityInfo' => $this->entityInfo(),
                 'form' => $form->createView(),
-                'info' => [
-                    'admin' => [
-                        'title' => 'admin'
-                    ]
-                ],
-                'isDebug' => true,
-                'isAllowed' => true,
-                'cancel' => 1,
-                'keymap' => ''
-            ));
+                'cancel' => $this->self,
+                'page' => ['title' => $this->editTitle($id)]
+            ]);
         }
     }
 
@@ -640,45 +642,34 @@ class PttController extends Controller
     }
 
     private function _buildForm($obj, $entity){
-        $reader = new AnnotationReader();
-        $data = $obj->getAttributes();
-        
-        foreach($data as $key => $value) {
-            $reflectionProp = new \ReflectionProperty($entity, $key);
-            $relation = $reader->getPropertyAnnotation($reflectionProp, PttAnnotation::class);
-            $column = $reader->getPropertyAnnotation($reflectionProp, Column::class);
-            
-            $field = [];
-
-            if($relation){
-                $relation->options = $this->_getOptionArray($relation->options);
-                $field = (array) $relation;
-
-                $field["name"] = $column->name;
-                if(!isset($field["type"])){
-                    $field["type"] = $column->type;
-                }
-                $fields[] = $field;  
-            }
-        }
+        // Recuperar yml
+        $kernel = $this->container->get('kernel');
+        $filePath = $kernel->locateResource('@' . $this->_bundle() . '/Form/' . ucfirst($this->entityName) . '.yml');
+        $fields = new PttFields($filePath, $obj, $this->entityName, $this->entityName);
 
         $formBuilder = $this->createFormBuilder($obj);
-        foreach ($fields as $field) {
-            if ($field["type"] === 'password') {
-                $field["type"] = "Repeated";
-                $field['options'] = [
-                    'type' => PasswordType::class,
-                    'invalid_message' => 'The password fields must match.',
-                    'options' => ['attr' => ['class' => 'password-field']],
-                    'required' => true,
-                    'first_options'  => ['label' => (isset($field["options"]["label"])) ? $field["options"]["label"] : $field["name"]],
-                    'second_options' => ['label' => (isset($field["options"]["label"])) ? 'Repeat ' . $field["options"]["label"] : 'Repeat ' . $field["name"]]
-                ];
-            }
 
-            $prefix = ($field["type"] !== 'entity') ? 'Symfony\\Component\\Form\\Extension\\Core\\Type\\' : 'Symfony\\Bridge\\Doctrine\\Form\\Type\\';
-            $formBuilder->add($field["name"], $prefix .ucfirst($field["type"]).'Type', $field['options']);
+        foreach ($fields->block as $key => $block) {
+            if($fields->static[$key]){
+                foreach ($fields->static[$key] as $field) {
+                    if ($field->type === 'password') {
+                        $field->type = "Repeated";
+                        $field->options = [
+                            'type' => PasswordType::class,
+                            'invalid_message' => 'The password fields must match.',
+                            'options' => ['attr' => ['class' => 'password-field']],
+                            'required' => true,
+                            'first_options'  => ['label' => (isset($field["options"]["label"])) ? $field["options"]["label"] : $field["name"]],
+                            'second_options' => ['label' => (isset($field["options"]["label"])) ? 'Repeat ' . $field["options"]["label"] : 'Repeat ' . $field["name"]]
+                        ];
+                    }
+
+                    $prefix = ($field->type !== 'entity') ? 'Symfony\\Component\\Form\\Extension\\Core\\Type\\' : 'Symfony\\Bridge\\Doctrine\\Form\\Type\\';
+                    $formBuilder->add($field->name, $prefix .ucfirst($field->type).'Type', $field->options);
+                }
+            }
         }
+
 
         return $formBuilder->getForm();
     }
@@ -766,7 +757,7 @@ class PttController extends Controller
 
     protected function _repositoryName(){
         if ($this->repositoryName == null) {
-            $this->repositoryName = $this->_bundle() . ':' . $this->entityName;
+            $this->repositoryName = $this->_bundle() . ':' . ucfirst($this->entityName);
         }
         return $this->repositoryName;
     }

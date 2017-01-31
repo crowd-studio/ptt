@@ -19,11 +19,9 @@ class PttFields
     public $errorMessage;
     public $successMessage;
     public $table;
-    private $pttTrans;
 
-    public function __construct($filePath, $entity, $entityName, $formName, $pttTrans)
+    public function __construct($filePath, $entity, $entityName, $formName)
     {
-        $this->pttTrans = $pttTrans;
         try {
             $yaml = new Parser();
             $fields = $yaml->parse(file_get_contents($filePath));
@@ -79,13 +77,9 @@ class PttFields
         }
         if (isset($fields['errorMessage'])) {
             $this->errorMessage = $fields['errorMessage'];
-        } else {
-            $this->errorMessage = $this->pttTrans->trans('validation_errors_were_found');
         }
         if (isset($fields['successMessage'])) {
             $this->successMessage = $fields['successMessage'];
-        } else {
-            $this->successMessage = $this->pttTrans->trans('content_was_saved');
         }
         if (isset($fields['table'])) {
             $this->table = $fields['table'];
