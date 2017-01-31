@@ -1,5 +1,5 @@
 <?php
-namespace AppBundle\Annotations;
+namespace Crowd\PttBundle\Annotation;
 
 use Doctrine\Common\Annotations\Annotation;
 
