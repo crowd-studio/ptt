@@ -14,4 +14,5 @@ final class PttAnnotation extends Annotation
 	public $listTitle;
 	public $createTitle;
 	public $editTitle;
+	public $orderList;
 }

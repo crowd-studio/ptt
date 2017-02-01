@@ -409,7 +409,8 @@ class PttController extends Controller
     }
 
     protected function orderList(){
-        return 'asc';
+        $order = $this->_getAnnotation('orderList');
+        return ($order) ? $order : 'asc';
     }
 
     protected function enableFilters(){
