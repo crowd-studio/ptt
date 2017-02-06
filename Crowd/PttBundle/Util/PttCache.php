@@ -7,24 +7,19 @@
 
 namespace Crowd\PttBundle\Util;
 
-use Symfony\Component\Filesystem\Filesystem;
-use Symfony\Component\Filesystem\Exception\IOException;
 use Symfony\Component\Cache\Adapter\FilesystemAdapter;
 
 class PttCache
 {
-    private $_cachePath = 'tmp/cache/';
-    private $_cacheExtension = '.pttCache';
+    private $_cachePath = '../tmp/cache/';
     private $_key = false;
-    private $_absolutePath = '';
     private $cache;
 
     public function __construct($key = false)
     {
-        $this->cache = new FilesystemAdapter();
+        $this->cache = new FilesystemAdapter('', 0, $this->_cachePath);
         if ($key != false) {
             $this->_key = $key;
-            // $this->_absolutePath = $this->_cachePath($key);
         }
     }
 

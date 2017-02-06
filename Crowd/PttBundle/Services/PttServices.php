@@ -176,6 +176,12 @@ class PttServices
         return true;
     }
 
+    public function remove($object){
+        $this->em->remove($object);
+        $this->em->flush();
+        return true;
+    }
+
     private function _getTableBundle($table){
         return $this->bundle . ':' . ucfirst($table);
     }

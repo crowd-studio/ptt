@@ -257,4 +257,119 @@ class PttEntity
     public function getClassName(){
         return (new \ReflectionClass($this))->getShortName();
     }
+
+    protected function setOne($array, $objects, $entity, $newMethod){
+        if(is_array($objects)){
+            // Esborrem els sobrers
+            for($iterator = $array->getIterator(); $iterator->valid(); $iterator->next()) {
+                $exists = false;
+                foreach ($objects as $key => $obj) {
+                    if(isset($obj['id'])){
+                        if($iterator->current()->getPttId() == $obj['id']){    
+                            $exists = true;
+                        }
+                    }
+                }
+                if(!$exists){
+                    $array->removeElement($iterator->current());
+                }
+            }
+
+            // Sobreescrivim
+            foreach ($objects as $key => $obj) {
+                $feat = false;
+                if(isset($obj['id']) && $obj['id'] != ''){
+                    for($iterator = $array->getIterator(); $iterator->valid(); $iterator->next()) {
+                        if($iterator->current()->getPttId() == $obj['id']){
+                            $feat = $iterator->current();
+                            $index = $iterator->key();
+                        }
+                    }
+                }
+                
+                $update = ($feat) ? true : false;
+                if(!$update){
+                    $name = PttUtil::pttConfiguration('bundles')[0]["bundle"] . '\\Entity\\' . $entity;
+                    $feat = new $name();
+                }
+
+                foreach ($obj as $meth => $value) {
+                    $method = 'set' . ucfirst($meth);
+                    if(method_exists($feat, $method)){
+                        $feat->$method($value);
+                    }
+                }
+
+                if($update){
+                    $array->set($index, $feat);
+                } else {
+                    $array = $this->addOne($array, $feat, $newMethod);
+                }
+            }
+        } else {
+            $array = $objects;
+        }
+
+        return $array;
+    }
+
+    protected function addOne($array, $new, $setMethod){
+        if ($array->contains($new)) {
+            return $array;
+        }
+        $array->add($new);
+        
+        $setMethod = 'set' . $setMethod;
+        if(method_exists($new, $setMethod)){
+            $new->$setMethod($this);
+        }
+
+        if(method_exists($new, 'set_Order')){
+            if(!$new->get_Order()){
+                $new->set_Order(-1);
+            }
+        }
+
+        $new->set_Model($this->getClassName());
+        $new->setUpdateObjectValues(1);
+        if(method_exists($new, 'setSlug')){
+            $new->setSlug(PttUtil::slugify((string)$new));    
+        }
+
+        return $array;
+    }
+
+    protected function setMany($array, $objects, $method){
+        if(is_array($objects)){
+            // Esborrem els sobrers
+            foreach ($array as $key => $obj) {
+                if(!in_array($obj, $objects)){
+                    $array->removeElement($obj);
+                }
+            }
+
+            // Afegim els que falten
+            foreach ($objects as $value) {
+                if (!$array->contains($value)) {
+                    $array = $this->addMany($array, $value, $method);
+                }
+            }
+        } else {
+            $array = $objects;
+        }
+
+        return $array;
+    }
+
+    protected function addMany($array, $new, $setMethod){
+        if ($array->contains($new)) {
+            return $array;
+        }
+        $array->add($new);
+        $setMethod = 'set' . $setMethod;
+        if(method_exists($new, $setMethod)){
+            $new->$setMethod($this);
+        }
+        return $array;
+    }
 }
