@@ -20,7 +20,9 @@ require.config({
         "sortable" : "vendor-static/html5sortable/jquery.sortable",
         "backboneView" : "vendor-static/backboneView/backboneView",
         "dropzone" : "vendor-static/dropzone/dropzone",
-        "Selectize" : "vendor-static/selectize/dist/js/standalone/selectize.min"
+        "Selectize" : "vendor-static/selectize/dist/js/standalone/selectize.min",
+        "Evaporate": "vendor/EvaporateJS/evaporate",
+        "aws": "vendor/aws-sdk/dist/aws-sdk.min"
     },
     shim:{
         "Backbone": ["underscore"],

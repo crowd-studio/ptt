@@ -54,7 +54,7 @@ class PttController extends Controller
 
         if ($this->isSortable()) {
             $order = [
-                '_order', 
+                '_order',
                 $this->orderList()
             ];
         } else {
@@ -100,7 +100,7 @@ class PttController extends Controller
         }
 
         $pttForm = $this->get('pttForm');
-        
+
         $pttForm->setEntity($saveEntity); // on es crea el ppttEntityInfo
         // $pttForm->setTotalData($this->_totalEntities($this->_repositoryName()));
 
@@ -108,7 +108,7 @@ class PttController extends Controller
         if ($request->getMethod() == 'POST') {
 
             if ($pttForm->isValid()) {
-                
+
                 $pttForm->save();
                 $this->flushCache($saveEntity);
 
@@ -124,7 +124,7 @@ class PttController extends Controller
                         return $this->redirect($this->generateUrl('list', ['entity' => $entity]));
                     }
                 }
-                
+
             } else {
                 $this->get('session')->getFlashBag()->add('error', $pttForm->getErrorMessage());
             }
@@ -163,7 +163,7 @@ class PttController extends Controller
             $this->beforeDeletion($deleteEntity);
 
             // EL TRANS JA S'ESBORRARÀ PER CASCADA
-            // 
+            //
             // $transClassName = $this->_className() . 'trans';
             // if (class_exists($transClassName)) {
             //     $transEntities = $em->getRepository($this->_repositoryName() . 'Trans')->findBy(['relatedId' => $deleteEntity->getPttId()]);
@@ -226,7 +226,7 @@ class PttController extends Controller
                     $entity->set_Order($field->_order);
                     $cache->remove($this->entityName.$field->id);
                 }
-                $em->flush();  
+                $em->flush();
                 $response['success'] = true;
              } catch (Exception $e) {
                 $response['success'] = false;
@@ -244,12 +244,12 @@ class PttController extends Controller
     public function lastAction(Request $request, $entity){
         $this->entityName = ucfirst($entity);
         $limit = $request->get('limit');
-        $result = []; 
+        $result = [];
         try {
             $objects = $this->_buildQueryLast($this->_repositoryName(), $limit);
             foreach ($objects as $object) {
                 $result[] = [
-                    'id' => $object->getId(), 
+                    'id' => $object->getId(),
                     'title' => $object->getTitle()
                 ];
             }
@@ -257,7 +257,7 @@ class PttController extends Controller
         } catch(Exception $e){
             $result = ['results' => 'Fail ' . $e];
         }
-        
+
         return new JsonResponse($result);
     }
 
@@ -269,12 +269,12 @@ class PttController extends Controller
         $this->entityName = ucfirst($entity);
         $limit = $request->get('page_limit');
         $query = $request->get('q');
-        $result = []; 
+        $result = [];
         try {
             $objects = $this->_buildQuery($this->_repositoryName(), ['title' => $query], ['title', 'asc'], $limit, 0, 0);
             foreach ($objects as $object) {
                 $result[] = [
-                    'id' => $object->getId(), 
+                    'id' => $object->getId(),
                     'title' => $object->getTitle()
                 ];
             }
@@ -282,7 +282,7 @@ class PttController extends Controller
         } catch(Exception $e){
             $result = ['results' => 'Fail ' . $e];
         }
-        
+
         return new JsonResponse($result);
     }
 
@@ -292,12 +292,11 @@ class PttController extends Controller
      */
      public function signAction(Request $request){
         $secret = 'Cv9mrwiEfb5t1b/xaNndIHG3U3riHwd1';
-        $json = $request->request->getContent();
-        $content = json_decode($json);
+        $content = $request->request->all();
         if(isset($content['to_sign'])){
             $value = hash_hmac('sha256', $content['to_sign'], $secret);
             $output = base64_encode($value);
-            
+
             return new Response($output, Response::HTTP_OK);
         } else {
             return new Response('Missing to_sign param', Response::HTTP_INTERNAL_SERVER_ERROR);
@@ -309,7 +308,7 @@ class PttController extends Controller
      * @Template()
      */
     public function loginAction(Request $request)
-    {   
+    {
         $helper = $this->get('security.authentication_utils');
 
         return $this->render('AdminBundle:Login:login.html.twig', [
@@ -329,23 +328,23 @@ class PttController extends Controller
             $user = $this->get('security.token_storage')->getToken()->getUser();
             $configuration = PttUtil::pttConfiguration();
             if (isset($configuration['admin']) && isset($configuration['admin']['sidebar'])) {
-                return $this->redirect($this->generateUrl($configuration['admin']['default_url'], ['entity' => $configuration['admin']['default_entity']]));    
+                return $this->redirect($this->generateUrl($configuration['admin']['default_url'], ['entity' => $configuration['admin']['default_entity']]));
             } else {
                 return $this->redirect($this->generateUrl('list', ['entity' => 'user']));
             }
         } else {
             return $this->redirect($this->generateUrl('admin_login'));
         }
-    }  
+    }
 
     // public function generateCSV($query, $name){
     //     $em = $this->container->get('doctrine')->getManager();
     //     $query = $em->createQuery($query);
-    //     $data = $query->getResult(); 
+    //     $data = $query->getResult();
 
-    //     $filename = $name . "_".date("Y_m_d_His").".csv"; 
-        
-    //     $response = $this->render('PttBundle:Default:csv.html.twig', array('data' => $data)); 
+    //     $filename = $name . "_".date("Y_m_d_His").".csv";
+
+    //     $response = $this->render('PttBundle:Default:csv.html.twig', array('data' => $data));
 
     //     $response->setStatusCode(200);
     //     $response->headers->set('Content-Type', 'text/csv');
@@ -354,8 +353,8 @@ class PttController extends Controller
     //     $response->headers->set('Content-Transfer-Encoding', 'binary');
     //     $response->headers->set('Pragma', 'no-cache');
     //     $response->headers->set('Expires', '0');
-        
-    //     return $response; 
+
+    //     return $response;
     // }
 
     //SHOULD CREATE DEFAULT METHODS
@@ -391,16 +390,16 @@ class PttController extends Controller
     }
 
     protected function deleteTemp(){
-        $dir = __DIR__ . "/../../../../../../web/tmp/"; 
-        $handle = opendir($dir); 
+        $dir = __DIR__ . "/../../../../../../web/tmp/";
+        $handle = opendir($dir);
 
-        while ($file = readdir($handle))  {   
-            if (is_file($dir.$file)) { 
-                unlink($dir.$file); 
+        while ($file = readdir($handle))  {
+            if (is_file($dir.$file)) {
+                unlink($dir.$file);
             }
-        } 
+        }
     }
-    
+
     protected function listTitle(){
         return $this->get('pttTrans')->trans('list') . ' ' . $this->_entityInfoValue('plural');
     }
@@ -422,7 +421,7 @@ class PttController extends Controller
         return $this->_initEntity()->enableFilters();
     }
 
-    
+
 
     protected function fieldsToFilter(){
         if($this->enableFilters()){
@@ -431,7 +430,7 @@ class PttController extends Controller
                 return $fields;
             } else {
                 return [
-                    'title' => [ 
+                    'title' => [
                         'label' => $this->get('pttTrans')->trans('title'),
                         'type' => 'text'
                     ]
@@ -440,7 +439,7 @@ class PttController extends Controller
         } else {
             return [];
         }
-        
+
     }
 
     protected function continueWithDeletion($entity){
@@ -473,7 +472,7 @@ class PttController extends Controller
 
     protected function allowAccess($methodName, $entity = false){
         return [
-            true, 
+            true,
             $this->get('pttTrans')->trans('the_current_user_cant_access')
         ];
     }
@@ -547,8 +546,8 @@ class PttController extends Controller
         ];
 
         return [
-            $pagination, 
-            ($page - 1) * $offset, 
+            $pagination,
+            ($page - 1) * $offset,
             $limit
         ];
     }
