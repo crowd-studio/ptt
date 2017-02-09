@@ -25,18 +25,20 @@ class PttEntityInfo
 	private $formName;
 	private $container;
 	private $pttTrans;
+	private $pttEntityMetadata;
 
 	public function __construct($entity, EntityManager $entityManager, ContainerInterface $container, $languages = false, $pttTrans)
 	{
 		$this->container = $container;
+		$this->pttEntityMetadata = $this->container->get('pttEntityMetadata');
 
-		$this->className = $this->container->get('pttEntityMetadata')->className($entity);
+		$this->className = $this->pttEntityMetadata->className($entity);
 
-		$this->entityName = $this->container->get('pttEntityMetadata')->entityName($entity);
+		$this->entityName = $this->pttEntityMetadata->entityName($entity);
 
-		$this->bundle = $this->container->get('pttEntityMetadata')->bundle($entity);
+		$this->bundle = $this->pttEntityMetadata->bundle($entity);
 
-		$this->repositoryName = $this->container->get('pttEntityMetadata')->respositoryName($entity);
+		$this->repositoryName = $this->pttEntityMetadata->respositoryName($entity);
 
 		$this->em = $entityManager;
 

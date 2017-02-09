@@ -15,12 +15,8 @@ class PttFormFieldTypeDisabled extends PttFormFieldType
 		$html = $this->start();
 		$html .= $this->label();
 
-		$language = PttUtil::pttConfiguration('preferredLanguage');
-		if ($language == false) {
-			$language = 'en';
-		}
 
-		$htmlField = '<input type="text" data-language="' . $language . '" ';
+		$htmlField = '<input type="text" ';
 		$htmlField .= $this->attributes();
 
 		if ($this->entityInfo->getEntity()->getPttId() || !isset($this->field->options['editable']) || !$this->field->options['editable']){

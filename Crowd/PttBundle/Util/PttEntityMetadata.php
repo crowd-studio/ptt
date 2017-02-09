@@ -153,4 +153,19 @@ class PttEntityMetadata
         }
         return false;
     }
+
+    public function getLanguages(){
+        return $this->em->getRepository($this->_getLanguageBundle())->findAll();
+    }
+
+    public function getPreferredLanguage(){
+        $pref = $this->em->getRepository($this->_getLanguageBundle())->findBy(['preferred' => 1]);
+
+        return (isset($pref[0])) ? $pref[0] : null;
+    }
+
+
+    private function _getLanguageBundle(){
+        return PttUtil::pttConfiguration('bundles')[0]['bundle'] . ':Language';
+    }
 }

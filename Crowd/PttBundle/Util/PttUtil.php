@@ -141,47 +141,6 @@ class PttUtil
         }
     }
 
-    static public function trans($key, $strings = false)
-    {
-
-        try {
-            $language = PttUtil::pttConfiguration('preferredLanguage');
-            $yaml = new Parser();
-            $filePath = __DIR__ . '/../Resources/translations/' . $language . '.yml';
-            $transStrings = $yaml->parse(file_get_contents($filePath));
-
-            $extendedFilePath = __DIR__ . "/../../../../../../app/config/ptt/translations/" . $language . '.yml';
-            if (file_exists($extendedFilePath) && is_file($extendedFilePath)) {
-                try {
-                    $extendedTransStrings = $yaml->parse(file_get_contents($extendedFilePath));
-                    $transStrings = array_merge($transStrings, $extendedTransStrings);
-                } catch (ParseException $e) {
-                    throw new \Exception('Unable to parse the ' . $key . '.yml file');
-                }
-            }
-        } catch (ParseException $e) {
-            throw new \Exception('Unable to parse the ' . $key . '.yml file');
-        }
-
-        if (isset($transStrings[$key])) {
-            $value = $transStrings[$key];
-            if (is_string($strings)) {
-                $value = str_replace('%@', (string)$strings, $value);
-            } else if (is_array($strings)) {
-                foreach ($strings as $string) {
-                    $string = (string)$string;
-                    $pos = strpos($value, '%@');
-                    if ($pos !== false) {
-                        $value = substr_replace($value, $string, $pos, strlen('%@'));
-                    }
-                }
-            }
-            return $value;
-        } else {
-            return $key;
-        }
-    }
-
     static public function extractControllerName($filename)
     {
         $controllerStringPos = strpos($filename, 'Controller');

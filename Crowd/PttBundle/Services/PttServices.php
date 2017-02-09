@@ -30,14 +30,7 @@ class PttServices
         $this->em = $em;
         $this->kernel = $kernel;
         
-        try {
-            $yaml = new Parser();
-            $ptt = $yaml->parse(file_get_contents(__DIR__ . '/../../../../../../app/config/ptt.yml'));
-            $this->uploadsUrl = (isset($ptt['s3']['force']) && $ptt['s3']['force']) ? $ptt['s3']['prodUrl'] . $ptt['s3']['dir'] . '/' : '/uploads/';
-            $this->bundle = $ptt['bundles'][0]['bundle'];
-        } catch (ParseException $e) {
-            printf("Unable to parse the YAML string: %s", $e->getMessage());
-        }
+        $this->bundle = PttUtil::pttConfiguration('bundles')[0]['bundle'];
     }
 
     public function setRequest(RequestStack $request_stack){
