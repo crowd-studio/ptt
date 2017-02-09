@@ -673,3 +673,50 @@ For php 5.4 you need to specify the doctrine specific version on 2.3
 ```json
 "doctrine/common": "2.3"
 ```
+
+#   ROADMAP
+In priority order:
+
+1. SUPPORT FOR A TRANSLATABLE CONTENT 
+2. MENU REDESIGN WITH SECTIONS
+3. SCREEN REDESIGN (ADD TOP MENU)
+4. EDIT VIEW - ADD FEATURES:
+    - Button SAVE
+    - Button SAVE & EXIT
+    - Button DELETE
+    - Button PREVIEW
+    - Minify blocks
+5. LIST VIEW - ADD FEATURES:
+    - Add total apges, total items, actual page
+    - Add textbox for move to certain page
+    - Add direction arrows at columns when order action is triggered
+    - Add actions for all items (delete, publicate,...)
+    - Add filters
+    - Add item fast actions (from YML)
+6. MODULES REDESIGN
+7. DASHBOARDS
+    - Create modules:
+        - Last changes
+        - Item counts
+        - Analytics view
+        - Text
+8. MEDIA MANAGEMENT
+    - Create media screens
+    - Create media selector
+9. USER MANAGEMENT
+    - Add status (new, active, banned, disabled)
+10. ROLE MANAGEMENT
+    - Advanced role management
+    - Apply security
+11. GENERAL MODIFICATIONS
+    - Log page
+    - Analytics page
+    - Favicon page
+    - String page
+    - Web Map generator
+    - PHP Cache (for performance)
+12. REFACTORING
+13. REDESIGN
+14. TAB FORM
+15. CREATOR (Visual module generator)
+POPURRÍ
