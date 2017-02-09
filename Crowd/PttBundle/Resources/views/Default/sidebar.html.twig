@@ -35,8 +35,8 @@
 			{% endif %}
 				<div class="info">
 					<div class="img">
-						{% if app.user.image is defined and app.user.image != '' %}
-							<div class="img-container" style="background-image:url('{{ asset('uploads/60-60-' ~ app.user.image) }}');"></div>
+						{% if app.user.publicimage is defined and app.user.publicimage != '' %}
+							<div class="img-container" style="background-image:url('{{ asset(app.user.publicimage) }}');"></div>
 						{% else %}
 							<div class="img-container"></div>
 						{% endif %}

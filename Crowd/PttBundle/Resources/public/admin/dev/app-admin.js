@@ -37,7 +37,7 @@ define([
             _.each($('a'), function(link) {
                 $(link).bind('click', function(event){
                     if ($(link).attr('target') != '_blank' && typeof $(link).attr('href') != 'undefined' && $(link).attr('href') != '#'
-                        && $(link).attr('href').indexOf('language-') == -1 && $(link).attr('href').indexOf('export-csv') == -1) {
+                        && $(link).attr('href').indexOf('language-') == -1 && $(link).attr('href').indexOf('export-csv') == -1 && _.isUndefined($(link).attr('download'))) {
                         $('.loader').addClass('visible');
                     }
                 });
@@ -1122,79 +1122,99 @@ define([
         }
     });
 
+
     var Multipart = Backbone.View.extend({
         events : {
             'click a.fakeClick' : 'fakeClick',
             'change input.chooseFile' : 'onFileSelected',
             'click a.btn-delete' : 'delete',
+            'click a.btn-retry' : 'retry',
             'click a.btn-cancel' : 'cancel'
         },
         initialize: function() {
+            // VIEWS
+            this.uploadcontainer = this.$el.find('.multipart-upload-container');
+            this.loadmode = this.$el.find('.load-mode');
+            this.result = this.$el.find('.result');
+            this.viewmode = this.$el.find('.view-mode');
+
+            // INIT VIEWS
             this.$input = this.$el.find('input.hidden');
-            this.$el.find('.multipart-upload-container').toggleClass('hidden', (this.$input.val() !== ''));
-            this.$el.find('.view-mode').toggleClass('hidden', (this.$input.val() === ''));
+            this.name = this.$input.attr('value');
+            this.viewmode.toggleClass('hidden', (this.$input.val() === ''));
+            this.uploadcontainer.toggleClass('hidden', (this.$input.val() !== ''));
+
+            //CONFIG
+            this.config = {
+                signerUrl: this.$input.attr('data-signer'),
+                aws_key: this.$input.attr('data-key'),
+                bucket: this.$input.attr('data-bucket') + '/' + this.$input.attr('data-folder'),
+                awsRegion: this.$input.attr('data-region'),
+                awsSignatureVersion: '2'
+            };
         },
         onFileSelected: function(e) {
             e.preventDefault();
             var fileInput = e.target;
+            var that = this;
             if (fileInput.files && fileInput.files[0]) {
-                var selected_file = fileInput.files[0];
-                this.$el.find('.multipart-upload-container').toggleClass('hidden', true);
-                this.$el.find('.load-mode').toggleClass('hidden', false);
-                // var signer = this.$input.attr('data-signer');
-                var signer = '/app_dev.php/admin_panel/s3-sign';
-                var config = {
-                    aws_key: this.$input.attr('data-key'),
-                    bucket: this.$input.attr('data-bucket'),
-                    awsRegion: 'eu-west-1',
-                    cloudfront: true,
-                    computeContentMd5: true,
-                    cryptoMd5Method: function (data) { return crypto.createHash('md5').update(data).digest('base64'); },
-                    cryptoHexEncodedHash256: function (data) { return AWS.util.crypto.sha256(data, 'hex'); },
-                    customAuthMethod: function(signParams, signHeaders, stringToSign, dateString) {
-                        return new Promise(function(resolve, reject) {
-                            // var params = JSON.stringify({
-                            //    to_sign: stringToSign,
-                            //    sign_params: signParams,
-                            //    sign_headers: signHeaders
-                            // });
-                            var params = {
-                               to_sign: stringToSign,
-                               sign_params: signParams,
-                               sign_headers: signHeaders
-                           };
-                            $.ajax({
-                                url: signer,
-                                method: 'POST',
-                                data: params,
-                                success: function(data) {
-                                    resolve(String(data));
-                                },
-                                error: function(data) {
-                                    reject(data);
-                                }
-                            });
-                        });
-                    }
-                };
+                // GET FILE
+                this.selected_file = fileInput.files[0];
+                var progressBar = this.loadmode.find('.progress-bar');
+                var percent = progressBar.find('span');
+                
+                // SHOW LOAD MODE
+                this.uploadcontainer.toggleClass('hidden', true);
+                this.loadmode.toggleClass('hidden', false);
 
-                Evaporate.create(config)
-                    .then(function (evaporate) {
+                // CALCULATE NEW NAME
+                that.name = new Date().getTime() + Math.round((Math.random() * 1000)) + '.' +  that.selected_file.name.split('.').pop();
 
-                        var  addConfig = {
-                            name: selected_file.name,
-                            file: selected_file,
-                            progress: function (progressValue) { console.log('Progress', progressValue); },
-                            complete: function (_xhr, awsKey) { console.log('Complete!'); },
-                        };
-                      evaporate.add(addConfig)
-                          .then(function (awsObjectKey) {
-                                console.log('File successfully uploaded to:', awsObjectKey);
-                              },
-                              function (reason) {
-                                console.log('File did not upload sucessfully:', reason);
-                              });
+                // UPLOAD FILE
+                Evaporate.create(this.config)
+                .then(function (_e_) {
+                    that.evaporate = _e_;
+                    var promise = _e_.add({
+                        name: that.name,
+                        file: that.selected_file,
+                        progress: function (progress) {
+                           console.log('making progress: ' + progress);
+                           var percentText = Math.round(progress * 100);
+                           progressBar.attr('aria-valuenow', percentText);
+                           percentText += '%';
+                           progressBar.css('width', percentText);
+
+                           if(progress == 0){
+                                percentText += ' Initializing upload...';
+                           }
+                           percent.text(percentText);
+                        }
+                    })
+                    .then(function (awsKey) {
+                        // COMPLETE => SET VALUE & SHOW VIEW MODE
+                        that.loadmode.toggleClass('hidden', true);
+
+                        that.viewmode.find('input').attr('value', that.name);
+                        var download = that.viewmode.find('.btn-download').attr('href');
+                        var fileName = download.split('/').pop();
+                        download = download.slice(0, download.length - fileName.length);
+                        download = download + that.name;
+
+                        that.viewmode.find('.btn-download').attr('href', download);
+                        that.$input.attr('value', that.name);
+
+                        that.viewmode.toggleClass('hidden', false);
+                    }, function (reason){
+                        // ERROR => SHOW ERROR LAYOUT
+                        console.log('All files were not uploaded successfully:', reason);
+                        that.loadmode.toggleClass('hidden', true);
+                        that.result.find('.upload-fail').text(reason);
+                        that.result.toggleClass('hidden', false);
                     });
+                },
+                function (reason) {
+                   console.log('Evaporate failed to initialize: ', reason)
+                });
             }
         },
         fakeClick : function(e){
@@ -1203,15 +1223,25 @@ define([
         },
         delete : function(e){
             e.preventDefault();
-            this.$el.find('.multipart-upload-container').toggleClass('hidden', false);
-            this.$el.find('.view-mode').toggleClass('hidden', true);
-            this.$input.val('');
+            this.uploadcontainer.find('input').val('');
+            this.uploadcontainer.toggleClass('hidden', false);
+            this.viewmode.toggleClass('hidden', true);
+            this.$input.attr('value', '');
         },
-        cancel : function(e){
+        retry : function(e){
+            e.preventDefault;
+            this.uploadcontainer.find('input').val('');
+            this.uploadcontainer.toggleClass('hidden', false);
+            this.result.toggleClass('hidden', true);
+        },
+        cancel : function(e){            
             e.preventDefault();
-            this.$el.find('.multipart-upload-container').toggleClass('hidden', false);
-            this.$el.find('.load-mode').toggleClass('hidden', true);
-            this.$input.val('');
+            var that = this;
+
+            this.evaporate.cancel(this.config.bucket + '/' + that.name)
+            .then(function () {
+                console.log('Canceled!');
+            });
         }
     });
 

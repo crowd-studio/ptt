@@ -20,30 +20,35 @@ class PttFormFieldTypeUpload extends PttFormFieldType
 		//content here
 		$html .= $this->label();
 
-		$html .= '<input class="hidden" type="hidden" ' . $this->attributes() .' data-url="'. $s3['url'] .'" data-produrl="'. $s3['prodUrl'] .'" data-key="'. $s3['accessKey'] .'" data-folder="'. $this->field->options['folder'] .'"  data-bucket="' . $s3['bucket'] . '" data-signer="' . $s3['signer'] . '" value="'. $this->value .'" />';
+		$html .= '<input class="hidden" type="hidden" ' . $this->attributes() .' data-produrl="'. $s3['prodUrl'] .'" data-key="'. $s3['accessKey'] .'" data-folder="'. $this->entityInfo->getEntityName() . '-'. $this->field->name. '"  data-bucket="' . $s3['bucket'] . '" data-signer="' . $s3['signer'] . '" data-region="' . $s3['region'] . '" value="'. $this->value .'" />';
 
 		// DIV 1: UPLOAD BUTTON
-		$html .= '<div class="multipart-upload-container col-sm-12 nopadding hidden">';
+		$html .= '<div class="multipart-upload-container hidden">';
 			$html .= '<a class="fakeClick">' . $this->pttTrans->trans('pick_file') . '</a><input type="file" class="chooseFile" ';
 			$html .= $this->attributes() .'>';
 		$html .= '</div>';
 		// DIV 2: BARRA DE CARREGA
-		$html .= '<div class="load-mode col-sm-12 nopadding hidden">';
-			$html .= '<div class="col-xs-12 col-sm-6 col-lg-8 nopadding" style="margin:0">';
-				$html .= '<div class="progress-bar progress-bar-info progress-bar-striped active" role="progressbar" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100" style="width: 0%;height: 30px;padding:5px;border-radius: 4px;"><span>0%</span></div>';
+		$html .= '<div class="load-mode hidden">';
+			$html .= '<div class="progress-bar-div col-xs-12 nopadding">';
+				$html .= '<div class="progress-bar progress-bar-info progress-bar-striped active" role="progressbar" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100"><span>0%</span></div>';
 			$html .= '</div>';
-			$html .= '<div class="col-sm-3 nopadding" style="text-align:right;"><a class="btn btn-cancel" style="height: 30px;padding: 3px 15px;border-color: #fd4343;">'.$this->pttTrans->trans('cancel').'</a></div>';
+			$html .= '<div class="action-buttons col-sm-12"><a class="btn btn-cancel">'.$this->pttTrans->trans('cancel').'</a></div>';
 		$html .= '</div>';
 		// DIV 3: RESULT
-		$html .= '<div class="result col-sm-12 nopadding hidden">';
-			$html .= '<span class="glyphicon glyphicon-ok">Missatge</span>';
-			$html .= '<span class="glyphicon glyphicon-remove">Missatge</span>';
+		$html .= '<div class="result hidden">';
+			$html .= '<div class="error-div col-xs-12 nopadding">';
+				$html .= '<p class="upload-fail btn"></p>';
+			$html .= '</div>';
+			$html .= '<div class="action-buttons col-sm-12">';
+				$html .= '<a class="btn btn-retry">' . $this->pttTrans->trans('retry') . '</a>';
+			$html .= '</div>';
 		$html .= '</div>';
 		// DIV 4: FITXER, DOWNLOAD I DELETE
-		$html .= '<div class="view-mode col-sm-12 nopadding hidden" style="text-align:right;">';
-			$html .= '<input class="col-sm-12 form-control" disabled type="text" value="'. $s3['prodUrl'] . '/' . $this->field->options['folder'] . '/' . $this->value .'" />';
-			$html .= '<div class="action-buttons col-sm-12 nopadding">';
-				$html .= '<a class="btn btn-download">' . $this->pttTrans->trans('download') . '</a>';
+		$html .= '<div class="view-mode hidden">';
+			$html .= '<input class="form-control" disabled type="text" value="'.$this->value.'" />';
+			$html .= '<div class="action-buttons col-sm-12">';
+				$name = ($this->value && $this->value != '') ? $this->value : '1486568677864.mp4';
+				$html .= '<a class="btn btn-download" href="' . PttUtil::pttConfiguration('s3')['prodUrl'] . $this->entityInfo->getEntityName() . '-'. $this->field->name.'/' . $name .'" download>' . $this->pttTrans->trans('download') . '</a>';
 				$html .= '<a class="btn btn-delete">' . $this->pttTrans->trans('delete') . '</a>';
 			$html .= '</div>';
 		$html .= '</div>';

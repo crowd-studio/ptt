@@ -7765,15 +7765,41 @@ html[dir="rtl"] .select2-container-multi .select2-search-choice-close {
 .wrapper .container-fluid > .row > .main .content form input[type="date"] {
   padding-right: 0;
 }
-.wrapper .container-fluid > .row > .main .content form div.multipart-upload div.view-mode .action-buttons {
+.wrapper .container-fluid > .row > .main .content form div.multipart-upload div.action-buttons {
+  text-align: right;
   margin-top: 15px;
+  padding: 0;
 }
-.wrapper .container-fluid > .row > .main .content form div.multipart-upload div.view-mode .action-buttons .btn-download,
-.wrapper .container-fluid > .row > .main .content form div.multipart-upload div.view-mode .action-buttons .btn-delete {
+.wrapper .container-fluid > .row > .main .content form div.multipart-upload div.action-buttons .btn {
   min-width: 140px;
   line-height: 22px !important;
   text-transform: uppercase;
   color: white;
+}
+.wrapper .container-fluid > .row > .main .content form div.multipart-upload div.load-mode div.progress-bar-div {
+  margin: 0;
+}
+.wrapper .container-fluid > .row > .main .content form div.multipart-upload div.load-mode div.progress-bar-div div.progress-bar {
+  width: 100%;
+  height: 30px;
+  padding: 5px;
+  border-radius: 4px;
+}
+.wrapper .container-fluid > .row > .main .content form div.multipart-upload div.load-mode div.action-buttons a.btn-cancel {
+  border-color: #fd4343;
+}
+.wrapper .container-fluid > .row > .main .content form div.multipart-upload div.result .error-div {
+  margin: 0;
+}
+.wrapper .container-fluid > .row > .main .content form div.multipart-upload div.result .error-div .upload-fail {
+  width: 100%;
+  text-align: left;
+  text-transform: uppercase;
+  color: white;
+  background-color: #fd4343;
+}
+.wrapper .container-fluid > .row > .main .content form div.multipart-upload div.result .action-buttons .btn-retry {
+  background-color: #2ac5f1;
 }
 .wrapper .container-fluid > .row > .main .content form div.multipart-upload div.view-mode .action-buttons .btn-download {
   background-color: #2ac5f1;
@@ -8969,3 +8995,4 @@ div.logout img {
   margin-top: 90px;
   margin-bottom: -50px;
 }
+/*# sourceMappingURL=style.css.map */
