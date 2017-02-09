@@ -33,7 +33,6 @@ class PttForm
 
 	public function __construct(EntityManager $entityManager, TokenStorage $securityContext, ContainerInterface $serviceContainer)
 	{
-
 		$this->em = $entityManager;
 		$this->securityContext = $securityContext;
 		$this->container = $serviceContainer;

@@ -67,18 +67,18 @@ class PttController extends Controller
         $entities = $this->_buildQuery($this->_repositoryName(), $filters, $order, $limit, $offset, $page);
 
         return $this->_renderTemplateForActionInfo('list', [
-                'entityInfo' => $this->entityInfo(),
-                'fields' => $this->fieldsToList(),
-                'rows' => $entities,
-                'pagination' => $pagination,
-                'filters' => $this->fieldsToFilter(),
-                'page' => [
-                    'title' => $this->listTitle()
-                ],
-                'sortable' => $this->isSortable(),
-                'csvexport' => $this->isCsvExport(),
-                'copy' => $this->isCopy()
-            ]);
+            'entityInfo' => $this->entityInfo(),
+            'fields' => $this->fieldsToList(),
+            'rows' => $entities,
+            'pagination' => $pagination,
+            'filters' => $this->fieldsToFilter(),
+            'page' => [
+                'title' => $this->listTitle()
+            ],
+            'sortable' => $this->isSortable(),
+            'csvexport' => $this->isCsvExport(),
+            'copy' => $this->isCopy()
+        ]);
     }
 
     /**
@@ -100,18 +100,13 @@ class PttController extends Controller
         }
 
         $pttForm = $this->get('pttForm');
-
         $pttForm->setEntity($saveEntity); // on es crea el ppttEntityInfo
-        // $pttForm->setTotalData($this->_totalEntities($this->_repositoryName()));
-
 
         if ($request->getMethod() == 'POST') {
-
             if ($pttForm->isValid()) {
-
                 $pttForm->save();
-                $this->flushCache($saveEntity);
 
+                $this->flushCache($saveEntity);
                 $this->get('session')->getFlashBag()->add('success', $pttForm->getSuccessMessage());
 
                 $this->self = $this->get('session')->get('self');
@@ -124,25 +119,23 @@ class PttController extends Controller
                         return $this->redirect($this->generateUrl('list', ['entity' => $entity]));
                     }
                 }
-
             } else {
                 $this->get('session')->getFlashBag()->add('error', $pttForm->getErrorMessage());
             }
         } else {
-            $this->self = false;
             $this->self = $request->query->get('self');
             $this->get('session')->set('self', $this->self);
         }
 
         $this->deleteTemp();
         return $this->_renderTemplateForActionInfo('edit', [
-                'entityInfo' => $this->entityInfo(),
-                'form' => $pttForm,
-                'cancel' => $this->self,
-                'page' => [
-                    'title' => $this->editTitle($id)
-                    ]
-            ]);
+            'entityInfo' => $this->entityInfo(),
+            'form' => $pttForm,
+            'cancel' => $this->self,
+            'page' => [
+                'title' => $this->editTitle($id)
+                ]
+        ]);
     }
 
     /**
@@ -159,23 +152,10 @@ class PttController extends Controller
 
         list($valid, $message) = $this->continueWithDeletion($deleteEntity);
         if ($valid) {
-
             $this->beforeDeletion($deleteEntity);
-
-            // EL TRANS JA S'ESBORRARÀ PER CASCADA
-            //
-            // $transClassName = $this->_className() . 'trans';
-            // if (class_exists($transClassName)) {
-            //     $transEntities = $em->getRepository($this->_repositoryName() . 'Trans')->findBy(['relatedId' => $deleteEntity->getPttId()]);
-            //     foreach ($transEntities as $transEntity) {
-            //         $em->remove($transEntity);
-            //     }
-            // }
-
             $this->flushCache($deleteEntity);
 
             $em->remove($deleteEntity);
-
             $em->flush();
 
             $this->get('session')->getFlashBag()->add('success', $this->get('pttTrans')->trans('the_entity_was_deleted', $this->_entityInfoValue('lowercase')));
@@ -184,7 +164,6 @@ class PttController extends Controller
         }
 
         return $this->redirect($this->generateUrl('list', ['entity' => $entity]));
-
     }
 
     /**
