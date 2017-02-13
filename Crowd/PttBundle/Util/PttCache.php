@@ -11,7 +11,7 @@ use Symfony\Component\Cache\Adapter\FilesystemAdapter;
 
 class PttCache
 {
-    private $_cachePath = '../tmp/cache/';
+    private $_cachePath = '../var/cache/ptt';
     private $_key = false;
     private $cache;
 
