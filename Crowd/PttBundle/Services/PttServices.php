@@ -166,13 +166,24 @@ class PttServices
     public function create($object){
         $this->em->persist($object);
         $this->em->flush();
+
+        $this->_deleteCache();
         return true;
     }
+
+
 
     public function remove($object){
         $this->em->remove($object);
         $this->em->flush();
+
+        $this->_deleteCache();
         return true;
+    }
+
+    private function _deleteCache(){
+        $cache = new PttCache();
+        $cache->removeAll();
     }
 
     private function _getTableBundle($table){
