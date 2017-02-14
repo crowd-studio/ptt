@@ -160,6 +160,7 @@ class PttServices
         }
 
         $this->em->flush();
+        $this->_deleteCache();
         return true;
     }
 
