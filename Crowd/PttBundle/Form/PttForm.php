@@ -27,17 +27,21 @@ class PttForm
 	private $errors;
 	private $request;
 	private $languages;
+	private $preferredLanguage;
 	private $htmlFields;
 	private $pttTrans;
 	private $totalData = 0;
 
 	public function __construct(EntityManager $entityManager, TokenStorage $securityContext, ContainerInterface $serviceContainer)
 	{
-
 		$this->em = $entityManager;
 		$this->securityContext = $securityContext;
 		$this->container = $serviceContainer;
-		$this->languages = PttUtil::pttConfiguration('languages', false);
+
+		$metadata = $this->container->get('pttEntityMetadata');
+		$this->languages = $metadata->getLanguages();
+		$this->preferredLanguage = $metadata->getPreferredLanguage();
+
 		$this->htmlFields = [];
 	}
 
@@ -171,9 +175,10 @@ class PttForm
 	{
 		$this->_performFieldsLoopAndCallMethodNamed('_saveForField');	
 
+		
 		if ($this->entityInfo->hasMethod('setTitle') && $this->entityInfo->hasMethod('getTitle')) {
-			if(isset($this->sentData['Trans'][PttUtil::pttConfiguration('preferredLanguage', false)]['title'])){
-				$this->entityInfo->set('title', $this->getSentData('title', PttUtil::pttConfiguration('preferredLanguage', false)));
+			if(isset($this->sentData['Trans'][$this->preferredLanguage]['title'])){
+				$this->entityInfo->set('title', $this->getSentData('title', $this->preferredLanguage));
 			}
 		}
 
@@ -238,23 +243,26 @@ class PttForm
 			if ($this->languages && isset($fields->trans[$i]) && $fields->trans[$i]) {
 				$html .= '<ul class="nav nav-tabs col-sm-12">';
 				$i = 0;
-				foreach ($this->languages as $languageCode => $languageTitle) {
+
+				foreach ($this->languages as $language) {
 					$active = ($i == 0) ? 'active' : '';
-					$error = ($this->errors->hasErrors($languageCode)) ? ' error' : '';
-					$html .= '<li class="' . $active . $error . ' language-'. $languageCode .'"><a href="language-' . $languageCode . '" >' . $languageTitle . '</a></li>';
+					$error = ($this->errors->hasErrors($language->getCode())) ? ' error' : '';
+					$html .= '<li class="' . $active . $error . ' language-'. $language->getCode() .'"><a href="language-' . $language->getCode() . '" >' . $language->getTitle() . '</a></li>';
 					$i++;
 				}
+
 				$html .= '</ul><div class="tab-content col-sm-12">';
 				$i = 0;
-				foreach ($this->languages as $languageCode => $languageTitle) {
+				foreach ($this->languages as $language) {
 					$active = ($i == 0) ? ' active' : '';
-					$html .= '<div class="tab-pane' . $active . ' language-' . $languageCode  . '">';
+					$html .= '<div class="tab-pane' . $active . ' language-' .$language->getCode()  . '">';
 					foreach ($fields->trans[$i] as $field) {
-						$html .= $this->htmlFields[$languageCode][$field->name];
+						$html .= $this->htmlFields[$language->getCode()][$field->name];
 					}
 					$html .= '</div>';
 					$i++;
 				}
+
 				$html .= '</div>';
 			}
 			$html .= '</div></div>';
@@ -280,25 +288,25 @@ class PttForm
 						$this->htmlFields[$field->name] = $formField->field();
 					}
 				}
-				// if ($this->languages && $fields->trans) {
+				if ($this->languages && $fields->trans) {
 
-				// 	foreach ($this->languages as $languageCode => $languageTitle) {
-				// 			if($fields->trans[$key]){
-				// 				foreach ($fields->trans[$key] as $field) {
-				// 				if (strpos($field->getFormNameSec(), '[Trans]') === false){
-				// 					$field->setFormName($field->getFormNameSec() . '[Trans]');
-				// 				}
+					foreach ($this->languages as $language) {
+							if($fields->trans[$key]){
+								foreach ($fields->trans[$key] as $field) {
+								if (strpos($field->getFormNameSec(), '[Trans]') === false){
+									$field->setFormName($field->getFormNameSec() . '[Trans]');
+								}
 
-				// 				$fieldClassName = PttClassNameGenerator::field($field->type);
-				// 				$formField = new $fieldClassName($this, $field, $languageCode);
-				// 				if (!isset($this->htmlFields[$languageCode]) || !is_array($this->htmlFields[$languageCode])) {
-				// 					$this->htmlFields[$languageCode] = [];
-				// 				}
-				// 				$this->htmlFields[$languageCode][$field->name] = $formField->field();
-				// 			}
-				// 		}
-				// 	}
-				// }
+								$fieldClassName = PttClassNameGenerator::field($field->type);
+								$formField = new $fieldClassName($this, $field, $language->getCode());
+								if (!isset($this->htmlFields[$language->getCode()]) || !is_array($this->htmlFields[$language->getCode()])) {
+									$this->htmlFields[$language->getCode()] = [];
+								}
+								$this->htmlFields[$language->getCode()][$field->name] = $formField->field();
+							}
+						}
+					}
+				}
 			}
 			
 		}
@@ -325,11 +333,11 @@ class PttForm
 
 			$transEntity = [];
 			if ($this->languages) {
-				foreach ($this->languages as $languageCode => $languageTitle) {
+				foreach ($this->languages as $language) {
 					$entityTrans = $this->entityInfo->getFormName() . '[Trans]';
 					$aux = $this->request->get($entityTrans);
 					if(isset($aux)){
-						$transEntity[$languageCode] = reset($aux);
+						$transEntity[$language->getCode()] = reset($aux);
 					}
 				}
 			}
@@ -352,10 +360,10 @@ class PttForm
 			}
 			
 			if ($this->languages && isset($fields->trans[$key])) {
-				foreach ($this->languages as $languageCode => $languageTitle) {
+				foreach ($this->languages as $language) {
 					if($fields->trans[$key]){
 						foreach ($fields->trans[$key] as $field) {
-							$this->$nameOfMethod($field, $languageCode);
+							$this->$nameOfMethod($field, $language->getCode());
 						}
 					}
 				}

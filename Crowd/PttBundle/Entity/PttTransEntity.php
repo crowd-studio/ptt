@@ -13,9 +13,8 @@ class PttTransEntity
 {
 
     /**
-     * @var string
-     *
-     * @ORM\Column(name="language", type="string", length=255)
+     * @ORM\ManyToOne(targetEntity="Language", fetch="EAGER")
+     * @ORM\JoinColumn(name="language", referencedColumnName="id")
      */
     protected $language;
 
@@ -27,12 +26,20 @@ class PttTransEntity
     protected $slug;
 
     /**
+     * @var string
+     *
+     * @ORM\Column(name="relatedid", type="integer")
+     */
+    protected $relatedid;
+
+    /**
      * Set language
      *
-     * @param string $language
-     * @return PttTransEntity
+     * @param \AdminBundle\Entity\Language $language
+     *
+     * @return Trans
      */
-    public function setLanguage($language)
+    public function setLanguage(\AdminBundle\Entity\Language $language = null)
     {
         $this->language = $language;
 
@@ -42,7 +49,7 @@ class PttTransEntity
     /**
      * Get language
      *
-     * @return string
+     * @return \AdminBundle\Entity\Language
      */
     public function getLanguage()
     {
@@ -53,7 +60,7 @@ class PttTransEntity
      * Set slug
      *
      * @param string $slug
-     * @return Page
+     * @return PttTransEntity
      */
     public function setSlug($slug)
     {
@@ -70,5 +77,29 @@ class PttTransEntity
     public function getSlug()
     {
         return $this->slug;
+    }
+
+
+    /**
+     * Set relatedid
+     *
+     * @param string $relatedid
+     * @return PttTransEntity
+     */
+    public function setRelatedid($relatedid)
+    {
+        $this->relatedid = $relatedid;
+
+        return $this;
+    }
+
+    /**
+     * Get relatedid
+     *
+     * @return string
+     */
+    public function getRelatedid()
+    {
+        return $this->relatedid;
     }
 }

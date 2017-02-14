@@ -26,6 +26,7 @@ class PttFormFieldType
 	protected $pttTrans;
 	protected $container;
 	protected $pttForm;
+	protected $preferredLanguage;
 
 	public function __construct(PttForm $pttForm, PttField $field, $languageCode = false)
 	{
@@ -38,6 +39,7 @@ class PttFormFieldType
 		$this->languageCode = $languageCode;
 		$this->pttTrans = $pttForm->getPttTrans();
 		$this->container = $pttForm->getContainer();
+		$this->preferredLanguage = $this->container->get('pttEntityMetadata')->getPreferredLanguage();
 		$this->pttForm = $pttForm;
 
 		$this->_prepare();

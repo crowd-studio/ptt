@@ -6,7 +6,6 @@
  */
 
 namespace Crowd\PttBundle\Form;
-use Crowd\PttBundle\Util\PttUtil;
 
 class PttFormFieldTypeDate extends PttFormFieldType
 {
@@ -15,20 +14,12 @@ class PttFormFieldTypeDate extends PttFormFieldType
 		$html = $this->start();
 		$html .= $this->label();
 
-		$language = PttUtil::pttConfiguration('preferredLanguage');
-		if ($language == false) {
-			$language = 'en';
-		}
 
 		if ($this->value instanceof \DateTime) {
-			if($this->value->format('Y') > -1){
-				$this->value = $this->value->format('d/m/Y');
-			} else {
-				$this->value = null;
-			}
+			$this->value = ($this->value->format('Y') > -1) ? $this->value->format('d/m/Y') : null;
 		}
 
-		$htmlField = '<input type="text" data-language="' . $language . '" ';
+		$htmlField = '<input type="text" data-language="' . $this->preferredLanguage . '" ';
 		$htmlField .= $this->attributes();
 		$htmlField .= 'value="' . $this->value . '"';
 		$htmlField .= '>';

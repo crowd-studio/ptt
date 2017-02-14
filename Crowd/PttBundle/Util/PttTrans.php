@@ -19,6 +19,8 @@ class PttTrans
     private $tokenStorage;
     private $container;
     private $request;
+    private $languages;
+    private $preferredLanguage;
 
     public function __construct(EntityManager $entityManager, TokenStorage $tokenStorage, ContainerInterface $serviceContainer)
     {
@@ -26,29 +28,31 @@ class PttTrans
         $this->tokenStorage = $tokenStorage;
         $this->container = $serviceContainer;
 
-        $this->defaultLanguage = PttUtil::pttConfiguration('preferredLanguage');
-        $languages = PttUtil::pttConfiguration('languages');
+        $metadata = $this->container->get('pttEntityMetadata');
+        $languages = $metadata->getLanguages();
+        $this->preferredLanguage = $metadata->getPreferredLanguage();
+
         $this->languages = [];
 
-        foreach ($languages as $language => $name) {
+        foreach ($languages as $language) {
             try {
                 $yaml = new Parser();
-                $filePath = __DIR__ . '/../Resources/translations/' . $language . '.yml';
+                $filePath = __DIR__ . '/../Resources/translations/' . $language->getCode() . '.yml';
                 $transStrings = $yaml->parse(file_get_contents($filePath));
 
-                $extendedFilePath = __DIR__ . "/../../../../../../app/config/ptt/translations/" . $language . '.yml';
+                $extendedFilePath = __DIR__ . "/../../../../../../app/config/ptt/translations/" . $language->getCode() . '.yml';
                 if (file_exists($extendedFilePath) && is_file($extendedFilePath)) {
                     try {
                         $extendedTransStrings = $yaml->parse(file_get_contents($extendedFilePath));
                         $transStrings = array_merge($transStrings, $extendedTransStrings);
                     } catch (ParseException $e) {
-                        throw new \Exception('Unable to parse the ' . $key . '.yml file');
+                        throw new \Exception('Unable to parse the ' . $language->getCode() . '.yml file');
                     }
                 }
-                $this->languages[$language] = $transStrings;
+                $this->languages[$language->getCode()] = $transStrings;
 
             } catch (ParseException $e) {
-                throw new \Exception('Unable to parse the ' . $key . '.yml file');
+                throw new \Exception('Unable to parse the ' . $language->getCode() . '.yml file');
             }
         }
 
@@ -61,12 +65,12 @@ class PttTrans
 
     public function trans($key, $strings = false)
     {
+
         if($this->request){
-            $language = (strpos($this->request->get('_route'),'-')) ? substr($this->request->get('_route'), -2) : $this->defaultLanguage;
+            $language = (strpos($this->request->get('_route'),'-')) ? substr($this->request->get('_route'), -2) : $this->preferredLanguage->getCode();
         } else {
-            $language = $this->defaultLanguage;
+            $language = $this->preferredLanguage->getCode();
         }
-        
         
         $transStrings = $this->languages[$language];
 
