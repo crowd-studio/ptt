@@ -37,7 +37,7 @@ class PttServices
         $this->request = $request_stack->getCurrentRequest();
     }
 
-    private function _sql($table, $lang, $params){
+    private function _sql($table, $params){
 
         $qb = $this->em->createQueryBuilder();
         $tableBundle = $this->_getTableBundle($table);
@@ -91,8 +91,8 @@ class PttServices
         return $qb;
     }
 
-    public function get($table, $lang, $params = []){
-        $qb = $this->_sql($table, $lang, $params);
+    public function get($table, $params = []){
+        $qb = $this->_sql($table, $params);
         $query = $qb->getQuery();
         
         if(isset($params['as_array']) && $params['as_array']){ 
@@ -121,11 +121,11 @@ class PttServices
         return $this->em->getRepository($this->_getTableBundle($table))->find($id);
     }
 
-    public function getByPag($table, $lang, $params = []){
+    public function getByPag($table, $params = []){
         $page = (isset($params['page'])) ? $params['page'] : 0;
         $limit = (isset($params['limit'])) ? $params['limit'] : $this->limit;
-
-        $qb = $this->_sql($table, $lang, $params);
+        $url = (isset($params['url'])) ? $params['url'] : '';
+        $qb = $this->_sql($table, $params);
         $query = $qb->getQuery();
 
         $paginator = new Paginator($query);
@@ -142,7 +142,14 @@ class PttServices
             $data[] = $row;
         }
         
-        return ['content' => $data, 'newPage' => $hasNewPages, 'limit' => $limit, 'maxPages' => $maxPages];
+        return [
+            'content' => $data, 
+            'pagination' => [
+                'thisPage' => $page,
+                'maxPages' => $maxPages,
+                'name' => $url
+            ]
+        ];
     }
 
     public function update($table, $id, $data){
