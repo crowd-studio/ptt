@@ -15,6 +15,11 @@ class PttFormFieldTypeUpload extends PttFormFieldType
 	{
 		$s3 = PttUtil::pttConfiguration('s3');
 
+		$prefix = $s3['prodUrl'] . $this->entityInfo->getEntityName() . '-' . $this->field->name . '/';
+		$name = ($this->value && $this->value != '') ? $prefix . $this->value : '';
+
+		$download = ($name != '') ? $name : $prefix;
+
 		$html = $this->start();
 
 		//content here
@@ -45,10 +50,9 @@ class PttFormFieldTypeUpload extends PttFormFieldType
 		$html .= '</div>';
 		// DIV 4: FITXER, DOWNLOAD I DELETE
 		$html .= '<div class="view-mode hidden">';
-			$html .= '<input class="form-control" disabled type="text" value="'.$this->value.'" />';
+			$html .= '<input class="form-control" disabled type="text" value="'.$name.'" />';
 			$html .= '<div class="action-buttons col-sm-12">';
-				$name = ($this->value && $this->value != '') ? $this->value : '1486568677864.mp4';
-				$html .= '<a class="btn btn-download" href="' . PttUtil::pttConfiguration('s3')['prodUrl'] . $this->entityInfo->getEntityName() . '-'. $this->field->name.'/' . $name .'" download>' . $this->pttTrans->trans('download') . '</a>';
+				$html .= '<a class="btn btn-download" href="' . $download .'" download>' . $this->pttTrans->trans('download') . '</a>';
 				$html .= '<a class="btn btn-delete">' . $this->pttTrans->trans('delete') . '</a>';
 			$html .= '</div>';
 		$html .= '</div>';

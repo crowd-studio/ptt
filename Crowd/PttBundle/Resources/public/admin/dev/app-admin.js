@@ -1196,8 +1196,12 @@ define([
 
                         that.viewmode.find('input').attr('value', that.name);
                         var download = that.viewmode.find('.btn-download').attr('href');
-                        var fileName = download.split('/').pop();
-                        download = download.slice(0, download.length - fileName.length);
+
+                        if (download.slice(-1) != '/'){
+                            var fileName = download.split('/').pop();
+                            download = download.slice(0, download.length - fileName.length);
+                        }
+                        
                         download = download + that.name;
 
                         that.viewmode.find('.btn-download').attr('href', download);
