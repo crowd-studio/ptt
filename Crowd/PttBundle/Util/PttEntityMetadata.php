@@ -3,6 +3,7 @@
 namespace Crowd\PttBundle\Util;
 
 use Doctrine\ORM\EntityManager;
+use Crowd\PttBundle\Util\PttCache;
 
 class PttEntityMetadata
 {
@@ -155,13 +156,26 @@ class PttEntityMetadata
     }
 
     public function getLanguages(){
-        return $this->em->getRepository($this->_getLanguageBundle())->findAll();
+        $pttCache = new PttCache('getLanguages');
+        $data = $pttCache->retrieve();
+        if (!$data) {
+            $data = $this->em->getRepository($this->_getLanguageBundle())->findAll();
+            $pttCache->store($data);
+        }
+
+        return $data;
     }
 
     public function getPreferredLanguage(){
-        $pref = $this->em->getRepository($this->_getLanguageBundle())->findBy(['preferred' => 1]);
+        $pttCache = new PttCache('getPreferredLanguage');
+        $data = $pttCache->retrieve();
+        if (!$data) {
+            $data = $this->em->getRepository($this->_getLanguageBundle())->findBy(['preferred' => 1]);
+            $data = (isset($data[0])) ? $data[0] : null;
+            $pttCache->store($data);
+        }
 
-        return (isset($pref[0])) ? $pref[0] : null;
+        return $data;
     }
 
 
