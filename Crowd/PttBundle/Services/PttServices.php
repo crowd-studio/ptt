@@ -122,9 +122,9 @@ class PttServices
     }
 
     public function getByPag($table, $params = []){
-        $page = (isset($params['page'])) ? $params['page'] : 0;
+        $page = (isset($params['page'])) ? $params['page'] - 1 : 0;
         $limit = (isset($params['limit'])) ? $params['limit'] : $this->limit;
-        $url = (isset($params['url'])) ? $params['url'] : '';
+        $name = (isset($params['name'])) ? $params['name'] : '';
         $qb = $this->_sql($table, $params);
         $query = $qb->getQuery();
 
@@ -145,9 +145,10 @@ class PttServices
         return [
             'content' => $data, 
             'pagination' => [
-                'thisPage' => $page,
+                'thisPage' => $page + 1,
                 'maxPages' => $maxPages,
-                'name' => $url
+                'hasNewPages' => $hasNewPages,
+                'name' => $name
             ]
         ];
     }
