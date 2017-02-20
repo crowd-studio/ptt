@@ -19,7 +19,7 @@ class PttFormSaveSelectMultiple extends PttFormSave
         if($this->languageCode){
             $model = $this->sentData[$this->languageCode][$this->field->name . '_model'];
             $id = $this->sentData[$this->languageCode][$this->field->name];
-            $entityModel = $em->getRepository($this->entityInfo->getBundle() . ':' . $model . 'Trans')->findOneBy(array('relatedId' => $id, 'language' => $this->languageCode));
+            $entityModel = $em->getRepository($this->entityInfo->getBundle() . ':' . $model . 'Trans')->findOneBy(array('relatedid' => $id, 'language' => $this->languageCode));
         } else {
             $model = $this->sentData[$this->field->name . '_model'];
             $id = $this->sentData[$this->field->name];

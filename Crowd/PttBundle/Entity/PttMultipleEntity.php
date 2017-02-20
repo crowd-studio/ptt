@@ -28,6 +28,13 @@ class PttMultipleEntity extends PttEntity
     protected $_model;
 
     /**
+     * @var string
+     *
+     * @ORM\Column(name="relatedid", type="integer")
+     */
+    protected $relatedid;
+
+    /**
      * Set _order
      *
      * @param integer $_order
@@ -73,5 +80,29 @@ class PttMultipleEntity extends PttEntity
     public function get_Model()
     {
         return $this->_model;
+    }
+
+    /**
+     * Set relatedid
+     *
+     * @param integer $relatedid
+     *
+     * @return Entity
+     */
+    public function setRelatedid($relatedid)
+    {
+        $this->relatedid = $relatedid;
+
+        return $this;
+    }
+
+    /**
+     * Get relatedid
+     *
+     * @return integer
+     */
+    public function getRelatedid()
+    {
+        return $this->relatedid;
     }
 }

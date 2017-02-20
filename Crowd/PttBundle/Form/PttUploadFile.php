@@ -32,12 +32,10 @@ class PttUploadFile
                 $realSize = getimagesize($file);
                 if($height == 'm'){
                    $height = $width;
-                    if($realSize[0] > $width || $realSize[1] > $height){
-                        if($realSize[0] > $realSize[1]){ // Més ample
-                            $height = round(($size['w'] * $realSize[1]) / $realSize[0]);
-                        } else { // Més alta o igual
-                            $width = round(($size['w'] * $realSize[0]) / $realSize[1]);
-                        }
+                    if($realSize[0] > $realSize[1]){ // Més ample
+                        $height = round(($size['w'] * $realSize[1]) / $realSize[0]);
+                    } else { // Més alta o igual
+                        $width = round(($size['w'] * $realSize[0]) / $realSize[1]);
                     }
                     \WideImage\WideImage::load($tmpSaveThumbPath)->resize($width, $height, 'outside')->saveToFile($saveThumbPath, 100);
                     \WideImage\WideImage::load($saveThumbPath)->crop('center', 'center', $width, $height)->saveToFile($saveThumbPath);

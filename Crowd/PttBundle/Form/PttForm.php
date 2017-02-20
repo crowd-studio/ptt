@@ -177,8 +177,8 @@ class PttForm
 
 		
 		if ($this->entityInfo->hasMethod('setTitle') && $this->entityInfo->hasMethod('getTitle')) {
-			if(isset($this->sentData['Trans'][$this->preferredLanguage]['title'])){
-				$this->entityInfo->set('title', $this->getSentData('title', $this->preferredLanguage));
+			if(isset($this->sentData['Trans'][$this->preferredLanguage->getCode()]['title'])){
+				$this->entityInfo->set('title', $this->getSentData('title', $this->preferredLanguage->getCode()));
 			}
 		}
 
@@ -212,6 +212,7 @@ class PttForm
 		$this->em->flush();
 
 		$entityPrincipal->afterSave($this->sentData);
+		$this->_performFieldsLoopAndCallMethodNamed('_afterSaveForField');
 	}
 
 	//PRIVATE
@@ -239,28 +240,28 @@ class PttForm
 					$html .= $this->htmlFields[$field->name];
 				}
 			}
-			
+
 			if ($this->languages && isset($fields->trans[$i]) && $fields->trans[$i]) {
 				$html .= '<ul class="nav nav-tabs col-sm-12">';
-				$i = 0;
+				$lang = 0;
 
 				foreach ($this->languages as $language) {
-					$active = ($i == 0) ? 'active' : '';
+					$active = ($lang == 0) ? 'active' : '';
 					$error = ($this->errors->hasErrors($language->getCode())) ? ' error' : '';
 					$html .= '<li class="' . $active . $error . ' language-'. $language->getCode() .'"><a href="language-' . $language->getCode() . '" >' . $language->getTitle() . '</a></li>';
-					$i++;
+					$lang++;
 				}
 
 				$html .= '</ul><div class="tab-content col-sm-12">';
-				$i = 0;
+				$lang = 0;
 				foreach ($this->languages as $language) {
-					$active = ($i == 0) ? ' active' : '';
+					$active = ($lang == 0) ? ' active' : '';
 					$html .= '<div class="tab-pane' . $active . ' language-' .$language->getCode()  . '">';
 					foreach ($fields->trans[$i] as $field) {
 						$html .= $this->htmlFields[$language->getCode()][$field->name];
 					}
 					$html .= '</div>';
-					$i++;
+					$lang++;
 				}
 
 				$html .= '</div>';
@@ -274,7 +275,6 @@ class PttForm
 
 	private function _makeHtmlFields()
 	{
-
 		if (!count($this->htmlFields)) {
 			$fields = $this->entityInfo->getFields();
 
@@ -288,8 +288,8 @@ class PttForm
 						$this->htmlFields[$field->name] = $formField->field();
 					}
 				}
-				if ($this->languages && $fields->trans) {
 
+				if ($this->languages && $fields->trans) {
 					foreach ($this->languages as $language) {
 							if($fields->trans[$key]){
 								foreach ($fields->trans[$key] as $field) {
@@ -393,6 +393,15 @@ class PttForm
 		}
 	}
 
+	private function _valueForField(PttField $field, $languageCode = false)
+	{
+		$sentValueClassName = PttClassNameGenerator::sentValue($field->type);
+		$sentValue = new $sentValueClassName($field, $this, $languageCode);
+		$value = $sentValue->value();
+
+		return $value;
+	}
+
 	private function _saveForField(PttField $field, $languageCode = false)
 	{
 		$fieldClassName = PttClassNameGenerator::field($field->type);
@@ -409,12 +418,20 @@ class PttForm
 		
 	}
 
-	private function _valueForField(PttField $field, $languageCode = false)
+	private function _afterSaveForField(PttField $field, $languageCode = false)
 	{
-		$sentValueClassName = PttClassNameGenerator::sentValue($field->type);
-		$sentValue = new $sentValueClassName($field, $this, $languageCode);
-		$value = $sentValue->value();
+		$afterSaveClassName = PttClassNameGenerator::afterSave($field->type);
+		if ($afterSaveClassName) {
+			$fieldClassName = PttClassNameGenerator::field($field->type);
+			$formField = new $fieldClassName($this, $field);
 
-		return $value;
+			if (strpos($fieldClassName, 'PttFormFieldTypeSelectMultiple') === false) {
+				$afterFormSave = new $afterSaveClassName($field, $this->entityInfo, $this->getSentData($field->name, $languageCode), $this->container, $languageCode);
+			} else {
+				$afterFormSave = new $afterSaveClassName($field, $this->entityInfo, $this->getSentData($field->name . '_model', $languageCode), $this->container, $languageCode);
+			}
+			
+			$afterFormSave->perform();
+		}
 	}
 }

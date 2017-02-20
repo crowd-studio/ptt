@@ -99,10 +99,17 @@ class PttServices
             $data = $query->getArrayResult();  
         } elseif(isset($params['one']) && $params['one']){    
             $data = $query->getSingleResult();
+
         } else {
             $data = $query->getResult();
         }
-        
+
+        if(is_array($data)){
+            $data = $this->_parseObjects($data, $params);
+        } else {
+            $data = $this->_parseObjects([$data], $params)[0];
+        }
+
         return $data;
     }
 
@@ -110,21 +117,24 @@ class PttServices
         $where = (isset($params['where'])) ? $params['where'] : [];
         $orderBy = (isset($params['orderBy'])) ? $params['orderBy'] : [];
 
-        return $this->em->getRepository($this->_getTableBundle($table))->findBy($where, $orderBy);
+        $data = $this->em->getRepository($this->_getTableBundle($table))->findBy($where, $orderBy);
+        return $this->_parseObjects($data, $params);
     }
 
     public function getAll($table, $params = []){
-        return $this->em->getRepository($this->_getTableBundle($table))->findAll();
+        $data = $this->em->getRepository($this->_getTableBundle($table))->findAll();
+        return $this->_parseObjects($data, $params);
     }
 
     public function getOne($table, $id, $params = []){
-        return $this->em->getRepository($this->_getTableBundle($table))->find($id);
+        $data = $this->em->getRepository($this->_getTableBundle($table))->find($id);
+        return ($data) ? $this->_parseObjects([$data], $params)[0] : null;
     }
 
     public function getByPag($table, $params = []){
-        $page = (isset($params['page'])) ? $params['page'] - 1 : 0;
+        $page = (isset($params['page'])) ? $params['page'] : 0;
         $limit = (isset($params['limit'])) ? $params['limit'] : $this->limit;
-        $name = (isset($params['name'])) ? $params['name'] : '';
+
         $qb = $this->_sql($table, $params);
         $query = $qb->getQuery();
 
@@ -141,16 +151,11 @@ class PttServices
         foreach ($paginator->getIterator() as $key => $row) {
             $data[] = $row;
         }
+
+        $data = $this->_parseObjects($data, $params);
+            
         
-        return [
-            'content' => $data, 
-            'pagination' => [
-                'thisPage' => $page + 1,
-                'maxPages' => $maxPages,
-                'hasNewPages' => $hasNewPages,
-                'name' => $name
-            ]
-        ];
+        return ['content' => $data, 'newPage' => $hasNewPages, 'limit' => $limit, 'maxPages' => $maxPages];
     }
 
     public function update($table, $id, $data){
@@ -168,34 +173,73 @@ class PttServices
         }
 
         $this->em->flush();
-        $this->_deleteCache();
         return true;
     }
 
     public function create($object){
         $this->em->persist($object);
         $this->em->flush();
-
-        $this->_deleteCache();
         return true;
     }
-
-
 
     public function remove($object){
         $this->em->remove($object);
         $this->em->flush();
-
-        $this->_deleteCache();
         return true;
     }
 
-    private function _deleteCache(){
-        $cache = new PttCache();
-        $cache->removeAll();
+    private function _parseObjects($array, $params){
+        foreach ($array as $key => $obj) {
+            $array[$key] = (isset($params['language'])) ? $this->_parseLanguage($obj, $params['language']) : $obj;
+            $array[$key] = (isset($params['modules'])) ? $this->_parseModules($obj, $params) : $obj;
+        }
+
+        return $array;
+    }
+
+    private function _parseLanguage($obj, $lang){
+        if(method_exists($obj, 'getTrans')){
+            foreach ($obj->getTrans() as $key => $value) {
+                if($value->getLanguage()->getCode() == $lang){
+                    $obj->setATrans($value);
+                }
+            }
+        }
+
+        return $obj;
+    }
+
+    private function _parseModules($obj, $params){
+        if(method_exists($obj, 'getModules')){
+            $id = $obj->getId();
+            $name = $this->get_class_name($obj);
+            $mods = [];
+            foreach ($params['modules'] as $key => $module) {
+                $data = $this->em->getRepository($this->_getTableBundle($module))->findBy(['relatedid' => $id, '_model' => $name], ['_order' => 'ASC']);
+                $mods = array_merge($mods, $data);
+            }
+
+            $mods = $this->_parseObjects($mods, $params);
+            
+            foreach ($mods as $key => $row){
+                $order[$key] = $row->get_Order();
+            }
+
+            array_multisort($order, SORT_ASC, $mods); 
+            $obj->setModules($mods);  
+        }
+
+        return $obj;
     }
 
     private function _getTableBundle($table){
         return $this->bundle . ':' . ucfirst($table);
+    }
+
+    private function get_class_name($obj)
+    {
+        $classname = get_class($obj);
+        if ($pos = strrpos($classname, '\\')) return substr($classname, $pos + 1);
+        return $pos;
     }
 }

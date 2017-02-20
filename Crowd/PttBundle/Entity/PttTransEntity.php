@@ -11,7 +11,16 @@ use Doctrine\ORM\Mapping as ORM;
 
 class PttTransEntity
 {
-
+    public function __toString()
+    {
+        if (method_exists($this, 'getTitle')) {
+            return (string)$this->getTitle();
+        } else if (method_exists($this, 'getReference')) {
+            return (string)$this->getReference();
+        } else {
+            return (string)$this->getId();
+        }
+    }
     /**
      * @ORM\ManyToOne(targetEntity="Language", fetch="EAGER")
      * @ORM\JoinColumn(name="language", referencedColumnName="id")
@@ -25,11 +34,6 @@ class PttTransEntity
      */
     protected $slug;
 
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="relatedid", type="integer")
-     */
     protected $relatedid;
 
     /**
@@ -79,11 +83,10 @@ class PttTransEntity
         return $this->slug;
     }
 
-
     /**
      * Set relatedid
      *
-     * @param string $relatedid
+     * @param Country $relatedid
      * @return PttTransEntity
      */
     public function setRelatedid($relatedid)

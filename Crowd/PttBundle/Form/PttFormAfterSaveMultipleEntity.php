@@ -32,7 +32,6 @@ class PttFormAfterSaveMultipleEntity extends PttFormAfterSave
                     $entity = $pttHelper->entityForDataArray($entityData);
                     $form = $pttHelper->formForEntity($entity, $key);
                     
-                    // $form->setTotalData($index);
                     $form->isValid();
                     $form->save();
                     $index += 1;
@@ -51,7 +50,7 @@ class PttFormAfterSaveMultipleEntity extends PttFormAfterSave
         $em = $this->entityInfo->getEntityManager();
         $entityRepository = $this->entityInfo->getBundle() . ':' . $module . 'Trans';
 
-        $dql = 'delete ' . $entityRepository . ' e WHERE e.relatedId = :id';
+        $dql = 'delete ' . $entityRepository . ' e WHERE e.relatedid = :id';
 
         $query = $em->createQuery($dql);
         $query->setParameter('id', $id);
@@ -66,7 +65,7 @@ class PttFormAfterSaveMultipleEntity extends PttFormAfterSave
 
             $dql = '
             delete ' . $entityRepository . ' e
-            where e.relatedId = :id and e._model = :model';
+            where e.relatedid = :id and e._model = :model';
             if (isset($entityRemains[$value['entity']]) && count($entityRemains[$value['entity']])) {
                 $dql .= '
                 and e.id not in (' . $entityRemains[$value['entity']] . ')';

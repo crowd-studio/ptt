@@ -45,18 +45,28 @@ class PttEntityInfo
 		$this->entity = $entity;
 
 		$this->formName = $this->entityName;
-
+		$this->transEntities = [];
 		if(method_exists($entity, 'getTrans')){
 			$trans = $entity->getTrans();
-			if(!$trans->count()){
-				foreach ($languages as $key => $value) {
-					$this->entity->createTrans($key);
+
+			if(!count($trans)){
+
+				foreach ($languages as $language) {
+
+					$this->entity->createTrans($language);
 				}
 				$trans = $entity->getTrans();
 			}
 
 			for($iterator = $trans->getIterator(); $iterator->valid(); $iterator->next()) {
-	            $this->transEntities[$iterator->current()->getLanguage()] = $iterator->current();
+				if($iterator->current()->getLanguage()){
+					$lang = $iterator->current()->getLanguage()->getCode();
+				} else {
+					$lang = $languages[$iterator->key() % 2]->getCode();
+					$iterator->current()->setLanguage($languages[$iterator->key() % 2]);
+					$iterator->current()->setRelatedid($this->entity);
+				}
+	            $this->transEntities[$lang] = $iterator->current();
 	        }
 		}
 
