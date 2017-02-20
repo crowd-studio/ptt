@@ -378,4 +378,8 @@ class PttEntity
         }
         return $array;
     }
+
+    public function getJSON(){
+        return 'This entity does not have JSON parser';
+    }
 }

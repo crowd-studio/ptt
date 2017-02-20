@@ -77,11 +77,11 @@ class PttFormFieldTypeFile extends PttFormFieldType
 		if (isset($this->field->options['delete'])){
 			if( $this->field->options['delete'] != false){
 				
-				$htmlField .= '<a class="btn btn-xs btn-danger remove-image">&#x2716;</a>';	
+				$htmlField .= '<a class="btn btn-xs btn-danger remove-image">x</a>';	
 				$boolRemove = true;
 			}
 		} else {
-			$htmlField .= '<a class="btn btn-xs btn-danger remove-image">&#x2716;</a>';
+			$htmlField .= '<a class="btn btn-xs btn-danger remove-image">x</a>';
 			$boolRemove = true;
 		}
 
@@ -154,7 +154,7 @@ class PttFormFieldTypeFile extends PttFormFieldType
 
 		$delete = '';
 		if($boolRemove){
-			$delete = '<a class="btn btn-xs btn-danger remove-image">&#x2716;</a>';
+			$delete = '<a class="btn btn-xs btn-danger remove-image">x</a>';
 		}
 
 		$html = '
@@ -178,7 +178,7 @@ class PttFormFieldTypeFile extends PttFormFieldType
 
 		$delete = '';
 		if($boolRemove){
-			$delete = '<a class="btn btn-xs btn-danger remove-image">&#x2716;</a>';
+			$delete = '<a class="btn btn-xs btn-danger remove-image">x</a>';
 		}
 
 		$html = '
@@ -200,7 +200,7 @@ class PttFormFieldTypeFile extends PttFormFieldType
 
 		$delete = '';
 		if($boolRemove){
-			$delete = '<a class="btn btn-xs btn-danger remove-image">&#x2716;</a>';
+			$delete = '<a class="btn btn-xs btn-danger remove-image">x</a>';
 		}
 
 		$html = '
