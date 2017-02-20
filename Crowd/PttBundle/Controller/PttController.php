@@ -270,13 +270,17 @@ class PttController extends Controller
      * @Template()
      */
      public function signAction(Request $request){
-        $secret = 'Cv9mrwiEfb5t1b/xaNndIHG3U3riHwd1';
-        $content = $request->request->all();
-        if(isset($content['to_sign'])){
-            $value = hash_hmac('sha256', $content['to_sign'], $secret);
-            $output = base64_encode($value);
+        $secret = PttUtil::pttConfiguration('s3')['secretKey'];
+        $to_sign = $request->query->get('to_sign');
+ 
+        if(isset($to_sign)){
 
-            return new Response($output, Response::HTTP_OK);
+            $hmac_sha1 = hash_hmac('sha1',$to_sign,$secret,true);
+            $signature = base64_encode($hmac_sha1);
+            $response = new Response($signature, 200);
+            $response->headers->set('Content-Type', 'text/HTML');
+
+            return $response;
         } else {
             return new Response('Missing to_sign param', Response::HTTP_INTERNAL_SERVER_ERROR);
         }
@@ -399,8 +403,6 @@ class PttController extends Controller
     protected function enableFilters(){
         return $this->_initEntity()->enableFilters();
     }
-
-
 
     protected function fieldsToFilter(){
         if($this->enableFilters()){
