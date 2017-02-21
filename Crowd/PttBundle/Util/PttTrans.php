@@ -35,24 +35,31 @@ class PttTrans
         $this->languages = [];
 
         foreach ($languages as $language) {
+            $code = $language->getCode();
             try {
                 $yaml = new Parser();
-                $filePath = __DIR__ . '/../Resources/translations/' . $language->getCode() . '.yml';
-                $transStrings = $yaml->parse(file_get_contents($filePath));
+                $filePath = __DIR__ . '/../Resources/translations/' . $code . '.yml';
 
-                $extendedFilePath = __DIR__ . "/../../../../../../app/config/ptt/translations/" . $language->getCode() . '.yml';
+
+                if(!file_exists($filePath)){
+                    $filePath = __DIR__ . '/../Resources/translations/' . $this->preferredLanguage->getCode() . '.yml';
+                    $code = $this->preferredLanguage->getCode();
+                }
+                
+                $transStrings = $yaml->parse(file_get_contents($filePath));
+                    $extendedFilePath = __DIR__ . "/../../../../../../app/config/ptt/translations/" . $code . '.yml';
+                
                 if (file_exists($extendedFilePath) && is_file($extendedFilePath)) {
                     try {
                         $extendedTransStrings = $yaml->parse(file_get_contents($extendedFilePath));
                         $transStrings = array_merge($transStrings, $extendedTransStrings);
                     } catch (ParseException $e) {
-                        throw new \Exception('Unable to parse the ' . $language->getCode() . '.yml file');
+                        throw new \Exception('Unable to parse the ' . $code . '.yml file');
                     }
                 }
-                $this->languages[$language->getCode()] = $transStrings;
-
-            } catch (ParseException $e) {
-                throw new \Exception('Unable to parse the ' . $language->getCode() . '.yml file');
+                $this->languages[$code] = $transStrings;
+            } catch (Exception $e) {
+                throw new \Exception('Unable to parse the ' . $code . '.yml file');
             }
         }
 
