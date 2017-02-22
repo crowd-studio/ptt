@@ -45,6 +45,11 @@ class PttFormFieldTypeDisabled extends PttFormFieldType
 				$value = $this->value;
 			}
 
+
+			if(is_object($value) && is_a($value, 'DateTime')){
+				$value = $value->format('d/m/Y H:i:s');
+			}
+
 			$htmlField .= 'value="' . $value . '"';
 			$htmlField .= ' disabled >';
 		} else {
