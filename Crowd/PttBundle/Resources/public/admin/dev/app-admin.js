@@ -1150,7 +1150,8 @@ define([
                 aws_key: this.$input.attr('data-key'),
                 bucket: this.$input.attr('data-bucket') + '/' + this.$input.attr('data-folder'),
                 awsRegion: this.$input.attr('data-region'),
-                awsSignatureVersion: '2'
+                awsSignatureVersion: '2',
+                logging: false
             };
         },
         onFileSelected: function(e) {
@@ -1178,7 +1179,7 @@ define([
                         name: that.name,
                         file: that.selected_file,
                         progress: function (progress) {
-                           console.log('making progress: ' + progress);
+                           // console.log('making progress: ' + progress);
                            var percentText = Math.round(progress * 100);
                            progressBar.attr('aria-valuenow', percentText);
                            percentText += '%';
