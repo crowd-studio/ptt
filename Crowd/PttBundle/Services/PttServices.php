@@ -110,6 +110,10 @@ class PttServices
             $data = $this->_parseObjects([$data], $params)[0];
         }
 
+        if (isset($params['json']) && $params['json']) {
+            $data = json_encode($data);
+        }
+
         return $data;
     }
 
@@ -190,8 +194,11 @@ class PttServices
 
     private function _parseObjects($array, $params){
         foreach ($array as $key => $obj) {
-            $array[$key] = (isset($params['language'])) ? $this->_parseLanguage($obj, $params['language']) : $obj;
-            $array[$key] = (isset($params['modules'])) ? $this->_parseModules($obj, $params) : $obj;
+            $obj = (isset($params['language'])) ? $this->_parseLanguage($obj, $params['language']) : $obj;
+            $obj = (isset($params['modules'])) ? $this->_parseModules($obj, $params) : $obj;
+            $obj = (isset($params['json']) && $params['json']) ? $this->_parseJSON($obj) : $obj;
+
+            $array[$key] = $obj;
         }
 
         return $array;
@@ -230,6 +237,10 @@ class PttServices
         }
 
         return $obj;
+    }
+
+    private function _parseJSON($obj){
+        return (method_exists($obj, 'getJSON')) ? $obj->getJson() : $obj;
     }
 
     private function _getTableBundle($table){
