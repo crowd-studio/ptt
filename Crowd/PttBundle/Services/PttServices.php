@@ -177,18 +177,21 @@ class PttServices
         }
 
         $this->em->flush();
+        $this->_deleteCache();
         return true;
     }
 
     public function create($object){
         $this->em->persist($object);
         $this->em->flush();
+        $this->_deleteCache();
         return true;
     }
 
     public function remove($object){
         $this->em->remove($object);
         $this->em->flush();
+        $this->_deleteCache();
         return true;
     }
 
@@ -252,5 +255,10 @@ class PttServices
         $classname = get_class($obj);
         if ($pos = strrpos($classname, '\\')) return substr($classname, $pos + 1);
         return $pos;
+    }
+
+    private function _deleteCache(){
+        $pttCache = new PttCache();
+        $pttCache->removeAll();
     }
 }
