@@ -88,8 +88,8 @@ class PttFaviconGenerator
             }
         });
         // This is where the icons will be stored and accessible. This path is about the target web site, not the local file system.
-        $resolver->setDefaults(['icons_path' => null]);
-        $resolver->setAllowedTypes('icons_path', ['null', 'string']);
+        // $resolver->setDefaults(['icons_path' => null]);
+        // $resolver->setAllowedTypes('icons_path', ['null', 'string']);
     }
     /**
      * Configure favicon design.
@@ -104,6 +104,7 @@ class PttFaviconGenerator
             'windows',
             'firefox_app',
             'android_chrome',
+            'safariPinnedTab',
             'coast',
             'yandex_browser'
         ]);
@@ -141,6 +142,7 @@ class PttFaviconGenerator
     {
         // Parse all Options
         $resolver = new OptionsResolver();
+
         $this->configureOptions($resolver);
         $this->options = $resolver->resolve($options);
         // Parse General Options
@@ -175,18 +177,19 @@ class PttFaviconGenerator
             $data['master_picture']['type'] = 'inline';
             $data['master_picture']['content'] = $this->options['general']['src'];
         }
-        if (!$this->options['general']['icons_path']) {
+        // if (!$this->options['general']['icons_path']) {
             $data['files_location']['type'] = 'root';
-        } else {
-            $data['files_location']['type'] = 'path';
-            $data['files_location']['type'] = $this->options['general']['icons_path'];
-        }
+        // } else {
+        //     $data['files_location']['type'] = 'path';
+        //     $data['files_location']['type'] = $this->options['general']['icons_path'];
+        // }
         if (!empty($this->options['design'])) {
             $data['favicon_design'] = $this->options['design'];
         }
         if (!empty($this->options['settings'])) {
             $data['settings'] = $this->options['settings'];
         }
+
         return array('favicon_generation' => $data);
     }
     /**

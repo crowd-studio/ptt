@@ -58,47 +58,43 @@ class PttUploadFile
         return $uploadName;
     }
 
-    public static function generateFavicon($fileName){
-        $s3 = PttUtil::getPttConfiguration('s3');
-        $uploadUrl = (isset($s3['force']) && $s3['force']) ? $s3['prodUrl'] . $s3['dir'] . '/' : '/uploads/';
-        $file = $uploadUrl . $filename;
+    public static function generateFavicon($fileName, $favicon, $url){
+        $s3 = PttUtil::pttConfiguration('s3');
+        $uploadUrl = (isset($s3['force']) && $s3['force']) ? $s3['prodUrl'] . $s3['dir'] . '/' : $url . '/uploads/';
 
-        $options = [
-            'general' => [
-                'src' => $file,
-                'icons_path' => '_/frontend/assets/favicon/'
-            ],
-            'design' => [ 
-                'desktop_browser', 
-                'ios',
-                'windows',
-                'firefox_app',
-                'android_chrome',
-                'coast',
-                'yandex_browser'
-            ],
-            'settings' => [
-                'compression',
-                'scaling_algorithm',
-                'error_on_image_too_small'
-            ]
-        ];
+        // $filename = 'nyhaty2y2aganu4a8usunademe9e2e4avejajupabyryhy9a8eba9ypuje5uny4umu4e2ujuty7yva3ajevy2uqahevetahuguhu1487667309.png';
+        // $prefix = '740-400-';
+        $prefix = '512-512-';
+        $file = $uploadUrl . $prefix . $fileName;
+        
+        $generator = new PttFaviconGenerator($favicon['key']);
+        $options = $favicon['options'];
+        $options['general']['src'] = $file;
+        $response = $generator->generateFavicon($options);
+        PttUploadFile::_deleteFavicons();
+        
 
-        $generator = new PttFaviconGenerator(PttUtil::getPttConfiguration('favicon'));
-        $response = $generator->generate($options);
-
-        // The generated files have an available limit time. You can download and unpack them.
         $response->downloadAndUnpack('_/frontend/assets/', 'favicon');
+    }
+
+    public static function deleteFavicons(){
+        $files = glob(__DIR__ . '/../../../../../../web/_/frontend/assets/favicon/*'); // get all file names
+        foreach($files as $file){ // iterate files
+            if(is_file($file)) {
+                unlink($file); // delete file
+            }
+        }
     }
 
     public static function upload($file, $field = false)
     {
-        $validFilename = PttUtil::checkTypeForFile($file->getClientOriginalName(), $field->options['type']);
+        $type = (isset($field->options['type'])) ? $field->options['type'] : 'image';
+        $validFilename = PttUtil::checkTypeForFile($file->getClientOriginalName(), $type);
         if (!$validFilename) {
             return '';
         }
 
-        switch ($field->options['type']) {
+        switch ($type) {
             case 'image':
                 return PttUploadFile::_uploadImage($file, $field);
                 break;
@@ -149,7 +145,6 @@ class PttUploadFile
             $sizes = ($file && isset($field->options['sizes'])) ? $field->options['sizes'] : array(array('h' => 0, 'w' => 0));
 
             $realSize = getimagesize($file);
-
 
             if (count($sizes)) {
                 foreach ($sizes as $size) {

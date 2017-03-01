@@ -23,8 +23,13 @@ class PttFormSaveFavicon extends PttFormSave
         }
 
         if ($file) {
+            $this->field->options['sizes'] = [['h' => 512, 'w' => 512]];
             $value = PttUploadFile::upload($file, $this->field);
-            PttUploadFile::generateFavicon($value);
+            PttUploadFile::generateFavicon(
+                $value, 
+                $this->container->getParameter('favicon'),
+                $this->request->getSchemeAndHttpHost()
+            );
         } else {
             $value = $this->entityInfo->get($this->field->name, $this->languageCode);
             if ($this->languageCode) {
@@ -32,7 +37,7 @@ class PttFormSaveFavicon extends PttFormSave
                     $this->_deleteFile($this->sentData[$this->languageCode][$this->field->name . '-delete']);
                     $value = '';
 
-                    // DELETE FAVICONS
+                    PttUploadFile::deleteFavicons();
                 }
             } else {
                 if (isset($this->sentData[$this->field->name . '-delete']) && $this->sentData[$this->field->name . '-delete'] != '0') {

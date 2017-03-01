@@ -11,7 +11,7 @@ use Crowd\PttBundle\Util\PttUtil;
 
 class PttFormFieldTypeFavicon extends PttFormFieldType
 {
-	$sizes = ['w' => '512', 'h' => '512'];
+	private $sizes = ['w' => '512', 'h' => '512'];
 
 	public function field()
 	{
@@ -28,11 +28,7 @@ class PttFormFieldTypeFavicon extends PttFormFieldType
 		$htmlField .= '"><a class="fakeClick">' . $this->pttTrans->trans('pick_file') . '</a><input type="file" class="chooseFile" ';
 		$htmlField .= $this->attributes() .'>';
 
-		$class = '';
-		if($this->field->options['type'] != 'file'){
-			$class = 'img-input';
-		}
-		$htmlField .= '<div class="row '. $class .' image-container hidden col-sm-12">
+		$htmlField .= '<div class="row img-input image-container hidden col-sm-12">
 		<img class="preview-image" src="#"/>';
 
 		$boolRemove = false;
