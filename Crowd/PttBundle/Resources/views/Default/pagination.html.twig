@@ -1,41 +1,40 @@
 {% if pagination.numberOfPages > 1 %}
+    {% if pagination.currentPage is null %}
+        {% set pagination = {currentPage : 1} | extend(pagination) %}
+    {% endif %}
+
+    {% set limitVisible = 2 %}
 
     <ul class="pagination pagination-sm">
+        <li {{ pagination.currentPage == 1 ? 'class="disabled"' }}>
+            <a href="{{ path('list', {entity : entityConfigurationInfo.entityName, page : pagination.currentPage-1 < 1 ? 1 : pagination.currentPage-1 }) }}">&laquo;</a>
+        </li>
 
-        {% if pagination.currentPage > 1 %}
-            <li><a title="Go to the previous page" href="{{ path('list', {entity : entityConfigurationInfo.entityName,page : pagination.currentPage - 1 }) }}">&laquo;</a></li>
+        {% if pagination.currentPage > limitVisible + 1 %}
+            <li><a href="{{ path('list', {entity : entityConfigurationInfo.entityName, page : 1 }) }}">1</a></li>
+            {% if pagination.currentPage > limitVisible + 2 %}
+                <li class="disabled"><span>...</span></li>
+            {% endif %}
         {% endif %}
 
-        {% if pagination.currentPage > 5 %}
-            <li><a href="{{ path('list', {entity : entityConfigurationInfo.entityName, page : 1 }) }}">1...</a></li>
-        {% endif %}
-
-        {% for i in 1..pagination.currentPage %}
-            {% if i + 5 > pagination.currentPage and i != pagination.currentPage %}
-            <li><a title="Go to the page {{ i }} of {{pagination.numberOfPages}}" href="{{ path('list', {entity : entityConfigurationInfo.entityName,  page : i }) }}">{{ i }}</a></li>
+        {% for i in pagination.currentPage - limitVisible .. pagination.currentPage + limitVisible %}
+            {% if i > 0 and i <= pagination.numberOfPages %}
+                <li {{ pagination.currentPage == i ? 'class="active"' }}>
+                    <a href="{{ path('list', {entity : entityConfigurationInfo.entityName, page : i }) }}">{{ i }}</a>
+                </li>
             {% endif %}
         {% endfor %}
 
-        <li class="active"><a title="Go to the page {{ pagination.currentPage }} of {{pagination.numberOfPages}}" href="{{ path('list', {entity : entityConfigurationInfo.entityName, page : pagination.currentPage }) }}">{{ pagination.currentPage }}</a></li>
-
-        {% for i in pagination.currentPage+1..pagination.currentPage + 4 %}
-            {% if i < pagination.numberOfPages+1 and i != pagination.currentPage %}
-                <li><a title="Go to the page {{ i }} of {{pagination.numberOfPages+1}}" href="{{ path('list', {entity : entityConfigurationInfo.entityName,page : i }) }}">{{ i }}</a></li>
+        {% if pagination.currentPage <= pagination.numberOfPages - ( limitVisible + 1 ) %}
+            {% if pagination.currentPage < pagination.numberOfPages - ( limitVisible + 1) %}
+                <li class="disabled"><span>...</span></li>
             {% endif %}
-        {% endfor %}
-
-        {% if pagination.currentPage+4 < pagination.numberOfPages %}
-            <li><a href="{{ path('list', {entity : entityConfigurationInfo.entityName, page : pagination.numberOfPages }) }}">
-            {% if pagination.currentPage+5 < pagination.numberOfPages %}
-            ...
-            {% endif %}
-            {{pagination.numberOfPages}}</a></li>
+            <li><a href="{{ path('list', {entity : entityConfigurationInfo.entityName, page : pagination.numberOfPages }) }}">{{ pagination.numberOfPages }}</a></li>
         {% endif %}
 
-        {% if pagination.currentPage < pagination.numberOfPages %}
-            <li><a title="Go to the next page" href="{{ path('list', {entity : entityConfigurationInfo.entityName, page : pagination.currentPage + 1 }) }}">&raquo;</a></li>
-        {% endif %}
-
+        <li {{ pagination.currentPage == pagination.numberOfPages ? 'class="disabled"' }}>
+            <a href="{{ path('list', {entity : entityConfigurationInfo.entityName, page: pagination.currentPage+1 <= pagination.numberOfPages ? pagination.currentPage+1 : pagination.currentPage}) }}">&raquo;</a>
+        </li>
     </ul>
 
 {% endif %}
