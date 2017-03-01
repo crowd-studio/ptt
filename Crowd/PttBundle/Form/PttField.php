@@ -60,11 +60,7 @@ class PttField
 
 	public function getFormName($languageCode = false, $append = '')
 	{
-		if ($languageCode) {
-			return $this->formName . '[' . $languageCode . '][' . $this->name . ']' . $append;
-		} else {
-			return $this->formName . '[' . $this->name . ']' . $append;
-		}
+		return ($languageCode) ? $this->formName . '[' . $languageCode . '][' . $this->name . ']' . $append : $this->formName . '[' . $this->name . ']' . $append;
 	}
 
 	public function getSimpleFormName(){

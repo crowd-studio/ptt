@@ -48,8 +48,4 @@ class PttClassNameGenerator
         }
         return 'Crowd\PttBundle\Form\PttFormValidation' . $capitalizedType;
     }
-
-    private function exists($name, $type){
-        
-    }
 }

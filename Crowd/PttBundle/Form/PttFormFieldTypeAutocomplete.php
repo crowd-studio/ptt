@@ -15,11 +15,7 @@ class PttFormFieldTypeAutocomplete extends PttFormFieldType
 		$html = $this->start();
 		$html .= $this->label();
 
-		$htmlField = '<input type="text" value="' . $this->value . '"';
-		$htmlField .= $this->attributes(false);
-		$htmlField .= '>';
-
-		$html .= $htmlField;
+		$html .= '<input type="text" value="' . $this->value . '"' $this->attributes(false) . '>';
 		$html .= $this->end();
 
 		return $html;

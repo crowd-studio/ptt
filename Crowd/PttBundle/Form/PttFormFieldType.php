@@ -49,11 +49,9 @@ class PttFormFieldType
 	{
 		$errorClass = ($this->errors && $this->field->showErrors) ? ' has-error': '';
 
-		$html = '
+		return '
 		<div class="' . $this->extraClassesForFieldContainer() . $errorClass . '" data-fieldName="' . $this->field->getFormName($this->languageCode) . '" data-fieldType="' . $this->field->type . '" '. $this->_addExtraAttrsToContainer().'>
 		';
-
-		return $html;
 	}
 
 	public function label($required = false, $append = '')
@@ -90,7 +88,6 @@ class PttFormFieldType
 
 	protected function attributes($formFieldId = false, $formFieldName = false)
 	{
-
 		if ($formFieldId == false) {
 			$formFieldId = $this->field->getFormId($this->languageCode);
 		}
@@ -98,9 +95,7 @@ class PttFormFieldType
 			$formFieldName = $this->field->getFormName($this->languageCode);
 		}
 
-		$htmlField = '';
-		$htmlField .= 'id="' . $formFieldId . '" ';
-		$htmlField .= 'name="' . $formFieldName . '" ';
+		$htmlField = 'id="' . $formFieldId . '" name="' . $formFieldName . '" ';
 
 		$required = ($this->_optionsValue('required', false)) ? 'true' : 'false';
 		$htmlField .= 'data-required="' . $required . '" ';
@@ -217,20 +212,12 @@ class PttFormFieldType
 
 	private function _optionsValue($value, $default = null)
 	{
-		if (isset($this->field->options[$value])) {
-			return $this->field->options[$value];
-		} else {
-			return $default;
-		}
+		return (isset($this->field->options[$value])) ? $this->field->options[$value] : $default;
 	}
 
 	private function _formValueClassName($type)
 	{
 		$className = 'Crowd\PttBundle\Form\PttFormFieldValue' . ucfirst($type);
-		if (!class_exists($className)) {
-			return 'Crowd\PttBundle\Form\PttFormFieldValueDefault';
-		} else {
-			return $className;
-		}
+		return (!class_exists($className)) ? 'Crowd\PttBundle\Form\PttFormFieldValueDefault' : $className;
 	}
 }

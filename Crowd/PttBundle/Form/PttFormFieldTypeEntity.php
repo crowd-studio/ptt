@@ -16,12 +16,7 @@ class PttFormFieldTypeEntity extends PttFormFieldType
         $html = $this->start();
         $html .= $this->label();
 
-        $htmlField = '<div class="multi-selector-container"><div class="col-sm-6 nopadding"><a class="btn btn-md btn-primary add">' . $this->pttTrans->trans('add') . '</a></div>';
-        $htmlField .= '<div class="col-sm-6 nopadding"><a class="btn btn-md btn-primary btn-collapse btn-danger" data-expand="'. $this->pttTrans->trans('expand') .'" data-collapse="'. $this->pttTrans->trans('collapse') .'">' . $this->pttTrans->trans('expand') . '</a>';
-        $htmlField .= '<a class="btn btn-md btn-primary btn-sort" data-order="' . $this->pttTrans->trans('order') . '" data-edit="' . $this->pttTrans->trans('edit') . '">' . $this->pttTrans->trans('order') . '</a>';
-        $htmlField .= '</div></div><div class="related-multiple-entities">';
-
-        $htmlField .= '<ul class="multi-sortable"><li class="head"><span class="handle">Order</span><span class="hidden-xs">Entity</span><span class="actions"></span></li>';
+        $htmlField = '<div class="multi-selector-container"><div class="col-sm-6 nopadding"><a class="btn btn-md btn-primary add">' . $this->pttTrans->trans('add') . '</a></div><div class="col-sm-6 nopadding"><a class="btn btn-md btn-primary btn-collapse btn-danger" data-expand="'. $this->pttTrans->trans('expand') .'" data-collapse="'. $this->pttTrans->trans('collapse') .'">' . $this->pttTrans->trans('expand') . '</a><a class="btn btn-md btn-primary btn-sort" data-order="' . $this->pttTrans->trans('order') . '" data-edit="' . $this->pttTrans->trans('edit') . '">' . $this->pttTrans->trans('order') . '</a></div></div><div class="related-multiple-entities"><ul class="multi-sortable"><li class="head"><span class="handle">Order</span><span class="hidden-xs">Entity</span><span class="actions"></span></li>';
         $htmlField .= $this->_hiddenDiv();
         $htmlField .= $this->_fillData();
         $htmlField  .= '</ul></div>';

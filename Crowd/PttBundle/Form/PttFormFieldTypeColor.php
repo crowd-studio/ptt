@@ -14,14 +14,7 @@ class PttFormFieldTypeColor extends PttFormFieldType
 		$html = $this->start();
 		$html .= $this->label();
 
-		$htmlField = '<div class="picker-body"><input type="text" ';
-		$htmlField .= $this->attributes();
-		$htmlField .= 'value="' . $this->value . '"';
-		$htmlField .= '>';
-
-		$htmlField .= '<span class="input-group-addon"><i></i></span></div>';
-
-		$html .= $htmlField;
+		$html .= '<div class="picker-body"><input type="text" ' . $this->attributes() . 'value="' . $this->value . '"><span class="input-group-addon"><i></i></span></div>';
 		$html .= $this->end();
 
 		return $html;

@@ -9,6 +9,7 @@ namespace Crowd\PttBundle\Form;
 
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Crowd\PttBundle\Util\PttUtil;
+use Crowd\PttBundle\Util\PttFaviconGenerator;
 use WideImage;
 
 class PttUploadFile
@@ -55,6 +56,39 @@ class PttUploadFile
         }
 
         return $uploadName;
+    }
+
+    public static function generateFavicon($fileName){
+        $s3 = PttUtil::getPttConfiguration('s3');
+        $uploadUrl = (isset($s3['force']) && $s3['force']) ? $s3['prodUrl'] . $s3['dir'] . '/' : '/uploads/';
+        $file = $uploadUrl . $filename;
+
+        $options = [
+            'general' => [
+                'src' => $file,
+                'icons_path' => '_/frontend/assets/favicon/'
+            ],
+            'design' => [ 
+                'desktop_browser', 
+                'ios',
+                'windows',
+                'firefox_app',
+                'android_chrome',
+                'coast',
+                'yandex_browser'
+            ],
+            'settings' => [
+                'compression',
+                'scaling_algorithm',
+                'error_on_image_too_small'
+            ]
+        ];
+
+        $generator = new PttFaviconGenerator(PttUtil::getPttConfiguration('favicon'));
+        $response = $generator->generate($options);
+
+        // The generated files have an available limit time. You can download and unpack them.
+        $response->downloadAndUnpack('_/frontend/assets/', 'favicon');
     }
 
     public static function upload($file, $field = false)

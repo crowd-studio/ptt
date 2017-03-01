@@ -150,15 +150,7 @@ class PttForm
 	public function createView($key = false)
 	{
 		$this->_makeHtmlFields();
-
-		if ($key != false && $key != 'multi') {
-			
-			$html = $this->_createSingleView($key);
-		} else {
-			$html = $this->_createGlobalView($key);
-		}
-		
-		return $html;
+		return ($key != false && $key != 'multi') ? $this->_createSingleView($key) : $this->_createGlobalView($key);
 	}
 
 	public function isValid()

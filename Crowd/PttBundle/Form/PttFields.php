@@ -31,7 +31,7 @@ class PttFields
             $this->_parse($fields, $entityName, $formName);
 
             if (!isset($fields['block'])){
-                $this->block = array("title" => "");
+                $this->block = ["title" => ""];
             }
             $this->_addAdditionFields($formName);
         } catch (ParseException $e) {
@@ -49,7 +49,7 @@ class PttFields
     {
         if (isset($fields['static'])) {
             if ($fields['static']){
-                $staticFields = array();
+                $staticFields = [];
                 foreach ($fields['static'] as $field) {
                     $pttField = new PttField($field, $formName);
                     $staticFields[] = $pttField;
@@ -62,14 +62,13 @@ class PttFields
         }
         if (isset($fields['trans'])) {
             if(!isset($this->trans)) {
-                $this->trans = array();
+                $this->trans = [];
             } 
-            $transFields = array();
+            $transFields = [];
             if($fields['trans']){
                 foreach ($fields['trans'] as $field) {
                     $pttField = new PttField($field, $formName, true);
                     $transFields[] = $pttField;
-
                 }
                 $this->trans[] = $transFields;
             } else {
@@ -95,7 +94,7 @@ class PttFields
 
         if (isset($fields['block'])) {
 
-            $this->block = array();
+            $this->block = [];
             $index = 0;
             foreach ($fields['block'] as $block) {
                 $this->block[$index] = $block['title'];
@@ -107,11 +106,11 @@ class PttFields
 
     private function _addAdditionFields($formName)
     {
-        $field = array(
+        $field = [
             'name' => 'id',
             'type' => 'hidden',
-            'options' => array('label' => 'id')
-            );
+            'options' => ['label' => 'id']
+        ];
         $pttField = new PttField($field, $formName);
         $this->static[0][] = $pttField;
     }

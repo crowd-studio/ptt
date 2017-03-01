@@ -9,10 +9,10 @@ namespace Crowd\PttBundle\Form;
 
 use Symfony\Component\HttpFoundation\Request;
 
-class PttFormFieldSentValueCheckbox extends PttFormFieldSentValue
+class PttFormFieldSentValueFavicon extends PttFormFieldSentValue
 {
     public function value()
     {
-    	return ($this->sentData) ? 1 : 0;
+        return $this->entityInfo->get($this->field->name, $this->languageCode);
     }
 }
