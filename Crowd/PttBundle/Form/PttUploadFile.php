@@ -71,7 +71,7 @@ class PttUploadFile
         $options = $favicon['options'];
         $options['general']['src'] = $file;
         $response = $generator->generateFavicon($options);
-        PttUploadFile::_deleteFavicons();
+        PttUploadFile::deleteFavicons();
         
 
         $response->downloadAndUnpack('_/frontend/assets/', 'favicon');
