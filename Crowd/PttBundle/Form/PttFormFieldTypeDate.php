@@ -19,12 +19,8 @@ class PttFormFieldTypeDate extends PttFormFieldType
 			$this->value = ($this->value->format('Y') > -1) ? $this->value->format('d/m/Y') : null;
 		}
 
-		$htmlField = '<input type="text" data-language="' . $this->preferredLanguage . '" ';
-		$htmlField .= $this->attributes();
-		$htmlField .= 'value="' . $this->value . '"';
-		$htmlField .= '>';
-
-		$html .= $htmlField;
+		$html .= '<input type="text" data-language="' . $this->preferredLanguage . '" ' . $this->attributes() . 'value="' . $this->value . '">';
+		
 		$html .= $this->end();
 
 		return $html;

@@ -16,8 +16,7 @@ class PttFormFieldTypeCheckbox extends PttFormFieldType
 		$html .= $this->label();
 
 		$delete = '';
-		if(isset($this->field->options['delete']))
-		{
+		if(isset($this->field->options['delete'])){
 			$delete = "onclick=\"return confirm('" . $this->field->options['delete'] . "')\"";
 		}
 

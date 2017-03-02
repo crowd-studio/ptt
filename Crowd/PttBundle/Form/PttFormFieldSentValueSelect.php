@@ -23,9 +23,8 @@ class PttFormFieldSentValueSelect extends PttFormFieldSentValue
             }
             return $result;
         } elseif ($this->field->options['type'] == 'entity') {
-            $result = $this->entityInfo->getEntityManager()->getRepository($this->entityInfo->getBundle() . ':' . $this->field->options['entity'])
+            return $this->entityInfo->getEntityManager()->getRepository($this->entityInfo->getBundle() . ':' . $this->field->options['entity'])
                 ->find($this->sentData);
-            return $result;
         } else {
             return (isset($this->sentData)) ? $this->sentData : null;
         }
