@@ -220,8 +220,7 @@ class PttFormFieldTypeFile extends PttFormFieldType
 
 	private function _urlPrefix()
 	{
-		$uploadToS3 = (isset($this->field->options['s3']) && $this->field->options['s3']) ? true : false;
-		if ($uploadToS3) {
+		if (isset($this->field->options['s3']) && $this->field->options['s3']) {
 			return PttUtil::pttConfiguration('s3')['prodUrl'] . PttUtil::pttConfiguration('s3')['dir'] . '/';
 		} else {
 			return (isset($this->field->options['cdn']) && $this->field->options['cdn']) ? PttUtil::pttConfiguration('cdn')['prodUrl'] : PttUtil::pttConfiguration('prefix') . PttUtil::pttConfiguration('images');
