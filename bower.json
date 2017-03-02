@@ -1,0 +1,26 @@
+{
+  "name": "ptt",
+  "description": "Admin bundle for symfony",
+  "main": "./Frontend/modules/main.js",
+  "authors": [
+    "crowd studio"
+  ],
+  "license": "ISC",
+  "keywords": [
+    "admin",
+    "symfony",
+    "cms"
+  ],
+  "homepage": "https://github.com/crowd-studio/ptt",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "normalize-less": "*"
+  }
+}

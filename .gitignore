@@ -69,3 +69,7 @@ Icon
 .Trashes
 
 npm-debug.log
+
+# -- FRONTEND ------------------------------
+node_modules
+bower_components
