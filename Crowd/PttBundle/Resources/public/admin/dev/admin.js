@@ -1,9 +1,9 @@
 require.config({
     paths:{
         "jquery": "vendor/jquery/dist/jquery",
-        "Backbone": "vendor/backbone/backbone-min",
+        "backbone": "vendor/backbone-amd/backbone",
         "modernizr": "vendor/modernizr/modernizr",
-        "underscore": "vendor/underscore/underscore-min",
+        "underscore": "vendor/underscore-amd/underscore",
         "mustache": "vendor/mustache/mustache",
         "text": "vendor/requirejs-plugins/lib/text",
         "bootstrap" : "vendor/bootstrap/dist/js/bootstrap",
@@ -20,10 +20,9 @@ require.config({
         "sortable" : "vendor-static/html5sortable/jquery.sortable",
         "backboneView" : "vendor-static/backboneView/backboneView",
         "dropzone" : "vendor-static/dropzone/dropzone",
-        "Selectize" : "vendor-static/selectize/dist/js/standalone/selectize.min"
+        "selectize" : "vendor-static/selectize/src/selectize.jquery"
     },
     shim:{
-        "Backbone": ["underscore"],
         "bootstrap" : ["jquery"],
         "bootstrap-markdown" : ["jquery"],
         "asmselect" : ["jquery"],
@@ -33,8 +32,7 @@ require.config({
         "select2" : ["jquery"],
         "select2-es" : ["select2"],
         "sortable" : ["jquery"],
-        "backboneView" : ["jquery", "Backbone"],
-        "Selectize" : ["jquery"]
+        "backboneView" : ["jquery", "backbone"]
     }
 });
 

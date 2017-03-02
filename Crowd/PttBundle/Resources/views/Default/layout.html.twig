@@ -14,7 +14,11 @@
 <!-- <script src="http://imsky.github.io/holder/holder.js"></script> -->
 {% if keymap is defined and keymap != '' %}<script src="https://maps.googleapis.com/maps/api/js?key={{keymap}}"></script>{%  endif %}
 
+{% if isDebug() %}
 <script type="text/javascript" src="{{ asset('bundles/ptt/admin/scripts/require.js') }}" data-main="{{ asset('bundles/ptt/admin/dev/admin') }}"></script>
+{% else %}
+<script type="text/javascript" src="{{ asset('bundles/ptt/admin/scripts/require.js') }}" data-main="{{ asset('bundles/ptt/admin/scripts/app-admin') }}"></script>
+{% endif %}
 {% block javascripts %}{% endblock %}
 </body>
 </html>
