@@ -1,0 +1,167 @@
+.share,
+.record,
+.upload{
+	.step {
+		transition: all ease-out 200ms;
+		opacity: 1;
+
+		a.back{
+			cursor:pointer;
+			svg{
+				//padding-top:5px;
+				vertical-align: bottom;
+				.size(25px);
+				polygon{
+					fill: @gray;
+				}
+			}
+			margin-right: 10px;
+		}
+
+		input#ownQuestion{
+			height: 45px;
+		}
+		select.question{
+			text-align-last:center;
+			color: @blue;
+			height: 45px;
+		}
+		&.ng-hide {
+			opacity: 0;
+			&.to-left{
+				.transform(translate(-5%, 0));
+			}
+			&.to-right{
+				.transform(translate(5%, 0));
+			}
+		}
+	}
+}
+.share{
+	.multiple{
+		.display(flex);
+		.align-items(stretch);
+		.flex-wrap(wrap);
+		>div{
+			margin-bottom: 20px;
+		}
+	}
+	.share-block{
+		padding-left:  20px;
+		padding-right: 20px;
+		height: 100%;
+	}
+}
+.record,
+.upload{
+	.steps{
+		margin-bottom: 10px;
+		margin-top: 10px;
+		strong{
+			color: @gray-dark;
+			font-size: 1.25em;
+		}
+		ul{
+			margin-bottom:0;
+			margin-left: 15px;
+			display:inline-block;
+			li{
+				margin-right: 10px;
+				margin-left: 10px;
+				text-align: center;
+				border: 1px solid @gray-light;
+				.border-radius(50%);
+				.size(45);
+				color: @gray-dark;
+				line-height: 40px;
+				&.active
+				{
+					color:white;
+					text-decoration: none;
+					background: @blue;
+				}
+				&:last-child{
+					margin-right:0;
+				}
+			}
+		}
+	}
+	.description{
+		.record-advise{
+			border: 1px solid @gray-light;
+			padding: 15px;
+			background: @white;
+			h1,h2,h3,h4,h5,h6{
+				color: @gray!important;
+			}
+			a{
+				color: @gray-dark;
+				img{
+					margin-right: 10px;
+				}
+			}
+		}
+	}
+	.progress-block{
+		strong{
+			color: @blue;
+			font-size: @line-height-computed * .8;
+			line-height: @line-height-computed;
+			float:left;
+			margin-right:15px;
+			&.info{
+				color: @gray;
+			}
+			&.success{
+				color: @brand-success;
+			}
+		}
+		.progress{
+			margin-bottom:0;
+		}
+	}
+	.links{
+		svg.close-svg{
+			margin: 5px 0px;
+			.size(20px);
+		}
+		.add{
+			cursor:pointer;
+			overflow:hidden;
+			svg.add-svg{
+				path{
+					fill: @blue;
+				}
+				.size(40px);
+				margin-right: 10px;
+			}
+			>*{
+				display:inline-block;
+				vertical-align: middle;
+			}
+			&:hover{
+				span{
+					text-decoration: underline;
+				}
+			}
+		}
+			
+	}
+	.tags{
+		margin-left: -5px;
+		li{
+			padding-left: 5px;
+			padding-right: 5px;
+		}
+	}
+}
+
+
+@media (min-width: @screen-sm-min) {
+	.record,
+	.upload{
+		.steps{
+			.pull-right();
+		}
+	}
+}	
