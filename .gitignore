@@ -71,6 +71,5 @@ Icon
 npm-debug.log
 
 # -- FRONTEND ------------------------------
-frontend
 node_modules
 bower_components

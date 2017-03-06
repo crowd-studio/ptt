@@ -1,0 +1,23 @@
+.loader{
+	background-color: rgba(0, 0, 0, 0.7);
+	z-index: 9000;
+	.coordinates0(false);
+
+	display:none;
+  
+	.loader-inner{
+		position:absolute;
+		top: 50%;
+		left: 50%;
+		transform: translate(-50%,-50%);
+		vertical-align: middle;
+		svg{
+			.size(100px);
+		}
+	}
+
+
+	&.show{
+		display:block;
+	}
+}

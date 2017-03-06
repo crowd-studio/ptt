@@ -1,0 +1,138 @@
+.sidebar{
+	background: #23282d;
+	//display:none;
+	.sidebar-inner{
+		.display(flex);
+		.flex-direction(column);
+		.menu-container{
+			h1,h2,h3,h4,h5,h6{
+				color: #eee;
+				padding: 5px (@grid-gutter-width / 2);
+				margin:0;
+				border-bottom: 1px solid #eee;
+			}
+		}
+		.menu-container>ul,
+		>ul{
+			list-style: none;
+			padding-left: 0px;
+			>li{
+				position:relative;
+				&:hover{
+					background: rgba(0,0,0,0.2);
+					>a{
+						color: @link-color;
+						
+						&:before{
+							border-left-color: @link-color!important;
+						}
+						svg{
+							polyline,line{
+								stroke: @link-color!important;
+							}
+							path{
+								fill: @link-color!important;
+							}
+						}
+					}
+				}
+				a{
+					display:block;
+					padding: 6px (@grid-gutter-width / 2 + 10px) 6px (@grid-gutter-width + 10px);
+					font-weight: normal;
+					text-decoration: none;
+					color: #eee;
+					.img{
+						position:absolute;
+						.size(20px);
+						left: (@grid-gutter-width / 2) - 5px;
+					}
+					svg{
+						position:absolute;
+						left: (@grid-gutter-width / 2) - 5px;
+						.size(20px);
+						top: 7px;
+						&.link-svg{
+							.size(11px);
+							top: 10px;
+							margin-left: 5px;
+							polyline,line{
+								stroke: white;
+							}
+						}
+						&.logout-svg{
+							path{
+								fill: white;
+							}	
+						}
+						
+					}
+				}
+				ul{
+					background: #32373c;
+					list-style: none;
+					padding-left: 0;
+					li{
+						&:hover{
+							a{
+								color: @link-color;
+							}
+						}
+						a{
+							font-size: .9em;
+							text-decoration: none;
+							//padding-left: @grid-gutter-width * 2;
+						}
+					}
+				} 
+				/*&.subSections{
+					
+					>a:before{
+					    content: '';
+						position: absolute;
+						width: 0;
+						height: 0;
+						border-style: solid;
+						border-width: 6px 0 6px 10px;
+						border-color: transparent transparent transparent #eee;
+						left: @grid-gutter-width / 2 + 5px;
+						top: 10px;
+					}
+				}*/
+			}
+		}
+		ul.options{
+			margin-top: auto;
+			margin-bottom:0;
+		}
+	}
+}
+
+@media (min-width: @screen-md-min) {
+	.sidebar{
+		.sidebar-inner{
+			.menu-container>ul,>ul{
+				li{
+					>ul{
+						display:none;
+						position:absolute;
+						top:0;
+						left: 100%;
+						z-index: 100;
+						//background: #23282d;
+						li a{
+							padding-left: @grid-gutter-width / 2;
+							padding-right: @grid-gutter-width / 2;
+							min-width: 150px;
+						}
+					}
+					&:hover{
+						>ul{
+							display:block;
+						}
+					}
+				}
+			}
+		}
+	}
+}
