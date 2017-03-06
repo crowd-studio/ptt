@@ -34,6 +34,7 @@ body{
 /* FLEXBOX BODY 100% */
 
 html,body,.wrapper{
+	width:100%;
 	min-height:100vh;
 }
 //HACK IE11
@@ -43,25 +44,25 @@ _:-ms-fullscreen, html,body,.wrapper {
 }
 .wrapper{
 	.display(flex);
-	.flex-direction(column);
+	//.flex-direction(column);
+	.align-items(stretch);
 	>.content{
-		.flex-grow(1);
+		float:left;
+		/*.flex-grow(1);
 		.display(flex);
 		.flex-direction(column);
 		overflow:none;
-		>.content-inner{
+		>.container-fluid{
+			width:100%;
 			.flex-grow(1);
 			.display(flex);
 			.flex-direction(column);
-			>.content-inner-controller{
+			>.row{
+				.flex-grow(1);
 				.display(flex);
-				.flex-direction(column);
-				.flex-grow(1);
+				.align-items(stretch);
 			}
-			.form-block{
-				.flex-grow(1);
-			}
-		}
+		}*/
 	}
 }
 

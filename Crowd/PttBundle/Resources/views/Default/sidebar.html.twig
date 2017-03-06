@@ -1,3 +1,34 @@
+{% import 'PttBundle:Default:sprites.html.twig' as sprites %}
+{% import _self as sidebar %}
+
+<div class="sidebar">
+	<div class="menu-container">
+		<h2>{{info('admin').title}}</h2>
+		{{ sidebar.menu(info('admin').sidebar, true) }}
+	</div>
+	<ul class="options">
+		<li class="user">
+			{% if info('admin', 'noLinkToUser') == true %}
+				<a href="{{ path('edit', {entity: 'user', id:app.user.id}) }}">
+			{% endif %}
+				<div class="img">
+					{% if app.user.publicimage is defined and app.user.publicimage != '' %}
+						<img class="img-circle" src="{{ asset(app.user.publicimage) }}"/>
+					{% else %}
+						<div class="img-container"></div>
+					{% endif %}
+				</div>
+				<span>{{app.user}}</span>
+			{% if info('admin', 'noLinkToUser') == true %}
+				</a>
+			{% endif %}
+		</li>
+
+
+		<li class="logout"><a href="{{ path('logout') }}">{{sprites.logout()}}{{'logout'|trans}}</a></li>
+	</ul>
+</div>
+
 {% macro menu(list, principal) %}
 	{% import _self as sidebar %}
     <ul{% if principal %} class="menu"{% endif %}>
@@ -20,35 +51,3 @@
     	{% endfor %}
     </ul>
 {% endmacro %}
-
-{% import _self as sidebar %}
-
-<div class="sidebar-container">
-	<div class="menu-container">
-		<h3>{{info('admin').title}}</h3>
-		{{ sidebar.menu(info('admin').sidebar, true) }}
-	</div>
-	<ul class="options">
-		<li class="user">
-			{% if info('admin', 'noLinkToUser') == true %}
-				<a href="{{ path('edit', {entity: 'user', id:app.user.id}) }}">
-			{% endif %}
-				<div class="info">
-					<div class="img">
-						{% if app.user.publicimage is defined and app.user.publicimage != '' %}
-							<div class="img-container" style="background-image:url('{{ asset(app.user.publicimage) }}');"></div>
-						{% else %}
-							<div class="img-container"></div>
-						{% endif %}
-					</div>
-					<span>{{app.user}}</span>
-				</div>
-			{% if info('admin', 'noLinkToUser') == true %}
-				</a>
-			{% endif %}
-		</li>
-
-
-		<li class="logout"><a href="{{ path('logout') }}">{{'logout'|trans}}</a></li>
-	</ul>
-</div>

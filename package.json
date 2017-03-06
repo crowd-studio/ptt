@@ -76,11 +76,6 @@
     "parsley-en": "./node_modules/parsleyjs/dist/i18n/en.js"
   },
   "browserify-shim": {
-    "stickykit": {
-      "depends": [
-        "jquery:jQuery"
-      ]
-    },
     "parsleyjs": {
       "depends": [
         "jquery:jQuery"

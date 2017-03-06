@@ -2,7 +2,7 @@
 
 var fs = require('fs'),
   argv = require('yargs').argv,
-  tasks = fs.readdirSync('./Frontend/gulp/tasks/');
+  tasks = fs.readdirSync('./frontend/gulp/tasks/');
 
 require('./config');
 

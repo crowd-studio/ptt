@@ -41,10 +41,12 @@ www.crowd.st
         <meta name="theme-color" content="#ffffff">
         <!-- /favicon -->
 
-		<link href="{{ asset('bundles/ptt/admin/css/style.css') }}" rel="stylesheet">
-		<link href="{{ asset('bundles/ptt/admin/dev/vendor-static/dropzone/dropzone.css') }}" rel="stylesheet">
-
 		{% block styles %}{% endblock %}
+
+<!-- styles -->
+    <link href="{{ asset('/bundles/ptt/main.css') }}" rel="stylesheet">
+<!-- /styles -->
+
 	</head>
 	<body id="{{ app.request.get('_route') }}">
 
@@ -56,6 +58,9 @@ www.crowd.st
 		<script type="text/javascript" src="{{ asset('bundles/ptt/admin/scripts/require.js') }}" data-main="{{ asset('bundles/ptt/admin/dev/admin') }}"></script>
 
 		{% block javascripts %}{% endblock %}
+<!-- scripts -->
+    <link href="{{ asset('/bundles/ptt/main.js') }}" rel="stylesheet">
+<!-- /scripts -->
 	</body>
 </html>
 {% endspaceless %}
