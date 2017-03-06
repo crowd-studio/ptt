@@ -1,10 +1,10 @@
 {% import 'PttBundle:Default:sprites.html.twig' as sprites %}
-{% import _self as sidebar %}
 
+{% import _self as sidebar %}
 <div class="sidebar">
 	<div class="menu-container">
-		<h2>{{info('admin').title}}</h2>
-		{{ sidebar.menu(info('admin').sidebar, true) }}
+		{% set menuItems = [{path : 'homes', label : info('admin').title}] | merge(info('admin').sidebar) %}
+		{{ sidebar.menu(menuItems, true) }}
 	</div>
 	<ul class="options">
 		<li class="user">
@@ -38,6 +38,10 @@
 					{# li final #}
 					<li{% if info.class is defined %} class="{{ info.class }}"{% endif %}>
 						<a{% if app.request.uri|slice(app.request.getSchemeAndHttpHost()|length) == path(info.path, info.parameters|default({})) %} class="selected"{% endif %} href="{{ path(info.path, info.parameters|default({})) }}">
+						{%- if info.path == 'homes' -%}
+							{% import 'PttBundle:Default:sprites.html.twig' as sprites %}
+							{{ sprites.link() }}
+						{%- endif -%}
 							<span>{{info.label|trans}}</span>
 						</a>
 					</li>

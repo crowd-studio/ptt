@@ -3,6 +3,7 @@
 {% import 'PttBundle:Default:sprites.html.twig' as sprites %}
 
 {% block body %}
+	{% set baseUrl = app.environment == 'dev' ? '/app_dev.php/' : '/' %}
 	{% include 'PttBundle:Default:loader.html.twig' %}
 	<div class="wrapper">
 		{% include 'PttBundle:Default:sidebar.html.twig' %}
