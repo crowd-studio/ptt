@@ -2,31 +2,32 @@
 
 {% import _self as sidebar %}
 <div class="sidebar">
-	<div class="menu-container">
-		{% set menuItems = [{path : 'homes', label : info('admin').title}] | merge(info('admin').sidebar) %}
-		{{ sidebar.menu(menuItems, true) }}
+	<div class="sidebar-inner">
+		<div class="menu-container">
+			{% set menuItems = [{path : 'homes', label : info('admin').title}] | merge(info('admin').sidebar) %}
+			{{ sidebar.menu(menuItems, true) }}
+		</div>
+		<ul class="options">
+			<li class="user">
+				{% if info('admin', 'noLinkToUser') == true %}
+					<a href="{{ path('edit', {entity: 'user', id:app.user.id}) }}">
+				{% endif %}
+					<div class="img">
+						{% if app.user.publicimage is defined and app.user.publicimage != '' %}
+							<img class="img-circle" src="{{ asset(app.user.publicimage) }}"/>
+						{% else %}
+							<div class="img-container"></div>
+						{% endif %}
+					</div>
+					<span>{{app.user}}</span>
+				{% if info('admin', 'noLinkToUser') == true %}
+					</a>
+				{% endif %}
+			</li>
+			<li class="logout"><a href="{{ path('logout') }}">{{sprites.logout()}}{{'logout'|trans}}</a></li>
+		</ul>
 	</div>
-	<ul class="options">
-		<li class="user">
-			{% if info('admin', 'noLinkToUser') == true %}
-				<a href="{{ path('edit', {entity: 'user', id:app.user.id}) }}">
-			{% endif %}
-				<div class="img">
-					{% if app.user.publicimage is defined and app.user.publicimage != '' %}
-						<img class="img-circle" src="{{ asset(app.user.publicimage) }}"/>
-					{% else %}
-						<div class="img-container"></div>
-					{% endif %}
-				</div>
-				<span>{{app.user}}</span>
-			{% if info('admin', 'noLinkToUser') == true %}
-				</a>
-			{% endif %}
-		</li>
-
-
-		<li class="logout"><a href="{{ path('logout') }}">{{sprites.logout()}}{{'logout'|trans}}</a></li>
-	</ul>
+		
 </div>
 
 {% macro menu(list, principal) %}

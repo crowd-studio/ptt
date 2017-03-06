@@ -1,29 +1,15 @@
-@gray-dark: #414141;
-@gray: #8c8c8c;
-@gray-light:   #e5e5e5;
-@gray-lighter: #f5f5f5;
-
-@brand-primary: @gray-dark;
-@brand-info: @blue;
+@blue : #4a90e2;
 
 @font-family-sans-serif:  "Lato", "Helvetica Neue", Helvetica, Arial, sans-serif;
 
 //* links
 @link-color: @blue;
 @link-hover-color: @blue;
-//@link-hover-decoration: none;
 
-//* butons
-@btn-default-color: @blue;
-@btn-default-border: @gray-light;
-@btn-font-weight: bold;
-
-//@btn-default-bg: green;
+/* WEL */
+@well-border: @well-bg;
 
 /* inputs */
-@input-group-addon-bg: @input-bg;
-//@input-group-addon-border-color: transparent;
-
 /* modal */
 @border-radius-large: 1;
 
@@ -137,5 +123,23 @@ form.loading .btn.btn-none{
 	}
 	&.small-text{
 		font-size: floor((100% * @font-size-small / @font-size-base));
+	}
+}
+
+.wrapper{
+	.display(flex);
+	.align-items(stretch);
+	.content-block{
+		.flex-grow(1);
+	}
+}
+
+
+@media (min-width: @screen-md-min) {
+	.wrapper{
+		.sidebar{
+			display:block;
+			width: 250px;
+		}
 	}
 }

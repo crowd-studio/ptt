@@ -70,6 +70,7 @@ class PttController extends Controller
             'entityInfo' => $this->entityInfo(),
             'fields' => $this->fieldsToList(),
             'rows' => $entities,
+            'order' => $order,
             'pagination' => $pagination,
             'filters' => $this->fieldsToFilter(),
             'page' => [
@@ -393,7 +394,7 @@ class PttController extends Controller
 
     protected function fieldsToList(){
         $fields = $this->_initEntity()->fieldsToList();
-        return ($fields) ? $fields : ['title' => $this->get('pttTrans')->trans('title')];
+        return ($fields) ? $fields : [['field' => 'title', 'label' => 'Title','primary' => true]];
     }
 
     protected function orderList(){
@@ -559,13 +560,16 @@ class PttController extends Controller
     protected function _currentOrder(Request $request){
         $cookies = $request->cookies;
         $fields = $this->fieldsToList();
-        foreach ($fields as $field => $label) {
+        $fieldsKeys = [];
+        foreach ($fields as $f) {
+            $field = $f['field'];
+            $label = $f['label'];
             $name = $this->entityName . '-' . $field;
+            array_push($fieldsKeys, $f['field']);
             if ($cookies->has($name)) {
                 return array($field, $cookies->get($name));
             }
         }
-        $fieldsKeys = array_keys($fields);
         return array($fieldsKeys[0], $this->orderList());
     }
 
@@ -651,10 +655,11 @@ class PttController extends Controller
             $template = $this->_repositoryName() . ':' . $action . '.html.twig';
 
         } catch (\Exception $e) {
-            $defaultFileDir = __DIR__ . '/../Resources/views/Default/';
+            $defaultFileDir = __DIR__ . '/../Resources/views/' . ucfirst($action) . '/';
             $filePath = $defaultFileDir . $filename;
             if (file_exists($filePath) && is_file($filePath)) {
-                $template = 'PttBundle:Default:' . $filename;
+                $template = 'PttBundle:' . ucfirst($action) . ':' . $filename;
+                
             } else {
                 throw new \Exception('The requested template does not exist');
             }
