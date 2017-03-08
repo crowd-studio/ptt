@@ -31,7 +31,16 @@
 								<div class="form-group">
 									<input class="form-control" type="text" name="filter-{{ entityConfigurationInfo.entityName }}-{{ key }}" placeholder="{{ filter.label }}" value="{{ filter(key, entityConfigurationInfo.entityName) }}">
 								</div>
+							{% elseif filter.type == 'selector' %}
+								<div class="form-group">
+									<select class="form-control" type="select" name="filter-{{ entityConfigurationInfo.entityName }}-{{ key }}" placeholder="{{ filter.label }}" value="{{ filter(key, entityConfigurationInfo.entityName) }}">
+									{% for option in filter.options %}
+										<option value="{{option.value}}">{{option.label}}</option>
+									{% endfor %}
+									</select>
+								</div>
 							{% endif %}
+
 						{% endfor %}
 					</div>
 				</form>
