@@ -1,20 +1,61 @@
+{% spaceless %}
 <!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
+
+<!--
+                                                   __                  __
+                                                  |  \                |  \
+  _______   ______    ______   __   __   __   ____| $$      _______  _| $$_
+ /       \ /      \  /      \ |  \ |  \ |  \ /      $$     /       \|   $$ \
+|  $$$$$$$|  $$$$$$\|  $$$$$$\| $$ | $$ | $$|  $$$$$$$    |  $$$$$$$ \$$$$$$
+| $$      | $$   \$$| $$  | $$| $$ | $$ | $$| $$  | $$     \$$    \   | $$ __
+| $$_____ | $$      | $$__/ $$| $$_/ $$_/ $$| $$__| $$ __  _\$$$$$$\  | $$|  \
+ \$$     \| $$       \$$    $$ \$$   $$   $$ \$$    $$|  \|       $$   \$$  $$
+  \$$$$$$$ \$$        \$$$$$$   \$$$$$\$$$$   \$$$$$$$ \$$ \$$$$$$$     \$$$$
+
+www.crowd.st
+  -->
 <html lang="en">
-<head>
-<title>{% if page.title is defined %}{{page.title | raw}} | {% endif %}{{info('admin').title | raw}}</title>
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<link href="{{ asset('bundles/ptt/admin/css/style.css') }}" rel="stylesheet">
-<link href="{{ asset('bundles/ptt/admin/dev/vendor-static/dropzone/dropzone.css') }}" rel="stylesheet">
-{% block styles %}{% endblock %}
-</head>
-<body id="{{ app.request.get('_route') }}">
+	<head>
+		<title>{% if page.title is defined %}{{page.title | raw}} | {% endif %}{{info('admin').title | raw}}</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 
-{% block body %}{% endblock %}
+		<!-- /favicon -->
 
-<!-- <script src="http://imsky.github.io/holder/holder.js"></script> -->
-{% if keymap is defined and keymap != '' %}<script src="https://maps.googleapis.com/maps/api/js?key={{keymap}}"></script>{% endif %}
+        <link rel="apple-touch-icon" sizes="57x57" href="{{ asset('/_/favicon/apple-touch-icon-57x57.png') }}">
+        <link rel="apple-touch-icon" sizes="60x60" href="{{ asset('/_/favicon/apple-touch-icon-60x60.png') }}">
+        <link rel="apple-touch-icon" sizes="72x72" href="{{ asset('/_/favicon/apple-touch-icon-72x72.png') }}">
+        <link rel="apple-touch-icon" sizes="76x76" href="{{ asset('/_/favicon/apple-touch-icon-76x76.png') }}">
+        <link rel="apple-touch-icon" sizes="114x114" href="{{ asset('/_/favicon/apple-touch-icon-114x114.png') }}">
+        <link rel="apple-touch-icon" sizes="120x120" href="{{ asset('/_/favicon/apple-touch-icon-120x120.png') }}">
+        <link rel="apple-touch-icon" sizes="144x144" href="{{ asset('/_/favicon/apple-touch-icon-144x144.png') }}">
+        <link rel="apple-touch-icon" sizes="152x152" href="{{ asset('/_/favicon/apple-touch-icon-152x152.png') }}">
+        <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('/_/favicon/apple-touch-icon-180x180.png') }}">
+        <link rel="icon" type="image/png" href="{{ asset('/_/favicon/favicon-32x32.png') }}" sizes="32x32">
+        <link rel="icon" type="image/png" href="{{ asset('/_/favicon/favicon-16x16.png') }}" sizes="16x16">
+        <link rel="manifest" href="{{ asset('/_/favicon/manifest.json') }}">
+        <link rel="mask-icon" href="{{ asset('/_/favicon/safari-pinned-tab.svg') }}" color="#5bbad5">
+        <meta name="theme-color" content="#ffffff">
+        <!-- /favicon -->
 
-<script type="text/javascript" src="{{ asset('bundles/ptt/admin/scripts/require.js') }}" data-main="{{ asset('bundles/ptt/admin/dev/admin') }}"></script>
-{% block javascripts %}{% endblock %}
-</body>
+		<link href="{{ asset('bundles/ptt/admin/css/style.css') }}" rel="stylesheet">
+		<link href="{{ asset('bundles/ptt/admin/dev/vendor-static/dropzone/dropzone.css') }}" rel="stylesheet">
+
+		{% block styles %}{% endblock %}
+	</head>
+	<body id="{{ app.request.get('_route') }}">
+
+		{% block body %}{% endblock %}
+
+		<!-- <script src="http://imsky.github.io/holder/holder.js"></script> -->
+		{% if keymap is defined and keymap != '' %}<script src="https://maps.googleapis.com/maps/api/js?key={{keymap}}"></script>{% endif %}
+
+		<script type="text/javascript" src="{{ asset('bundles/ptt/admin/scripts/require.js') }}" data-main="{{ asset('bundles/ptt/admin/dev/admin') }}"></script>
+
+		{% block javascripts %}{% endblock %}
+	</body>
 </html>
+{% endspaceless %}

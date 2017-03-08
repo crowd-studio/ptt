@@ -74,11 +74,12 @@ class PttUploadFile
         PttUploadFile::deleteFavicons();
         
 
-        $response->downloadAndUnpack('_/frontend/assets/', 'favicon');
+        $response->downloadAndUnpack('_/', 'favicon');
+        unlink(__DIR__ . '/../../../../../../web/_/favicon.zip'); //delete zip file
     }
 
     public static function deleteFavicons(){
-        $files = glob(__DIR__ . '/../../../../../../web/_/frontend/assets/favicon/*'); // get all file names
+        $files = glob(__DIR__ . '/../../../../../../web/_/favicon/*'); // get all file names
         foreach($files as $file){ // iterate files
             if(is_file($file)) {
                 unlink($file); // delete file
