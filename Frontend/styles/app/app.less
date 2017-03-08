@@ -126,11 +126,43 @@ form.loading .btn.btn-none{
 	}
 }
 
+div.well{
+    background: #ddd;
+}
+
 .wrapper{
 	.display(flex);
 	.align-items(stretch);
 	.content-block{
 		.flex-grow(1);
+	}
+}
+
+
+.content{
+	.header-line{
+		overflow:hidden;
+		
+		h1,h2,h3,h4,h5,h6{
+			.pull-left();
+			margin-top:0;
+			font-weight: bold;
+		}
+
+		.actions{
+			.pull-right();
+			
+			margin-top: 2px;
+			float:right;
+			>*:not(:first-child){
+				margin-left: 10px;
+			}
+		}
+	}
+	.form-group{
+		input[type=password]:nth-of-type(2){
+			margin-top: 5px;
+		}
 	}
 }
 

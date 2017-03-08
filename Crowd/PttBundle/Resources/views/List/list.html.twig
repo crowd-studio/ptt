@@ -1,25 +1,25 @@
 {% extends 'PttBundle:Default:base.html.twig' %}
 {% block content %}
 	<div class="content ng-hide" ng-controller="listController">
-		<div class="content-header">
+		<div class="content-header <header-></header->line">
 			{% if page.title is defined %}
 				<h2 class="title">{{ page.title }}</h2>
-				<div class="actions">
-					{% if sortable %}
-						<a class="btn btn-default btn-sm btn-sort" data-order="{{'order' | trans}}" data-edit="'{{'edit'|trans}}">{{ 'order' | trans }}</a>
-					{% endif %}
-					{% if filters|length > 0 %}
-						<a ng-click="showFilters = !showFilters" class="btn btn-default btn-sm btn-filter" ng-class="{'btn-primary': showFilters}">{{ 'filters' | trans }}</a>
-					{% endif %}
-					<a class="btn btn-default btn-sm" href="{{ path('create', {entity: entityConfigurationInfo.entityName}) }}">{{ 'create' | trans }} {{entityInfo.lowercase}}</a>
-				</div>
 			{% endif %}
+			<div class="actions">
+				{% if sortable %}
+					<a class="btn btn-default btn-sm btn-sort" data-order="{{'order' | trans}}" data-edit="'{{'edit'|trans}}">{{ 'order' | trans }}</a>
+				{% endif %}
+				{% if filters|length > 0 %}
+					<a ng-click="showFilters = !showFilters" class="btn btn-default btn-sm btn-filter" ng-class="{'btn-primary': showFilters}">{{ 'filters' | trans }}</a>
+				{% endif %}
+				<a class="btn btn-default btn-sm" href="{{ path('create', {entity: entityConfigurationInfo.entityName}) }}">{{ 'create' | trans }} {{entityInfo.lowercase}}</a>
+			</div>
 		</div>
 		{% if sortable %}<div class="sortable-list">{% endif %}
 			{% if filters|length > 0 %}
 				<div class="filters well" ng-show="showFilters" active-filters="{{ activeFilters | json_encode }}">
 					<form action="{{ path('list', {entity : entityConfigurationInfo.entityName}) }}" method="post" name="filter-{{ entityConfigurationInfo.entityName }}" class="row" style="margin:0;padding:0;">
-						<div class="filters-header">
+						<div class="filters-header header-line">
 							<h3>Filters</h3>
 								<div class="actions">
 								<a href="{{ path('list', {entity : entityConfigurationInfo.entityName, filter:'reset'}) }}" class="btn btn-danger btn-cancel btn-xs">{{ 'clean_filters' | trans }}</a>

@@ -1,42 +1,20 @@
 {% extends 'PttBundle:Default:base.html.twig' %}
 {% block content %}
-
-<form action="{{ path('edit', {entity : entityConfigurationInfo.entityName, id : app.request.get('id')}) }}" class="edit" method="post" enctype="multipart/form-data">
-    <div class="form-actions">
-        <div class="col-lg-9 col-md-9 col-sm-9">
-            {% if page.title is defined %}
-                <span>{{page.title|trans}}</span>
-            {% endif %}
-            <div class="right-container">
-                <input type="submit" class="btn btn-save" name="save" value="{{'save'|trans}}" />
-                {% if app.request.get('id') == null %}
-                    <input type="submit" class="btn btn-save btn-save-another" name="another" value="{{'save_and_create_another'|trans}}" />
-                {% endif %}
-                {% if cancel == 1 %}
-                    <a href="{{ path('edit', {entity : entityConfigurationInfo.entityName, 'id': app.request.get('id'), 'self': 1}) }}" class="btn btn-cancel">{{'cancel'|trans}}</a>
-                {% else %}
-                    <a href="{{ path('list', {entity : entityConfigurationInfo.entityName}) }}" class="btn btn-cancel">{{'cancel'|trans}}</a>
-                {% endif %}
-                
-            </div>
-        </div>
+	<div class="content ng-hide" ng-controller="editController">
+		<form action="{{ path('edit', {entity : entityConfigurationInfo.entityName, id : app.request.get('id')}) }}" class="edit" method="post" enctype="multipart/form-data">
+			<div class="content-header header-line">
+				{% if page.title is defined %}
+					<h2 class="title">{{ page.title }}</h2>
+				{% endif %}
+				<div class="actions">
+					<input type="submit" class="btn btn-sm btn-success" name="save" value="{{'save' | trans}}" />
+					{% if app.request.get('id') == null %}
+						<input type="submit" class="btn btn-info btn-sm" value="{{ 'save_and_create_another' | trans }}" />
+					{% endif %}
+					<a href="{{ path('list', {entity : entityConfigurationInfo.entityName}) }}" class="btn btn-sm btn-danger">{{ 'cancel' | trans }}</a>
+				</div>
+			</div>
+            {{ form.createView() | raw }}
+        </form>
     </div>
-    {{ form.createView()|raw }}
-
-    <div class="col-lg-12 col-md-12 col-sm-12" style="text-align: right;padding: 0; margin-bottom: 20px;">
-            <div class="right-container">
-                <input type="submit" class="btn btn-save" name="save" value="{{'save'|trans}}" />
-                {% if app.request.get('id') == null %}
-                    <input type="submit" class="btn btn-save btn-save-another" name="another" value="{{'save_and_create_another'|trans}}" />
-                {% endif %}
-                {% if cancel == 1 %}
-                    <a href="{{ path('edit', {entity : entityConfigurationInfo.entityName, 'id': app.request.get('id'), 'self': 1}) }}" class="btn btn-cancel">{{'cancel'|trans}}</a>
-                {% else %}
-                    <a href="{{ path('list', {entity : entityConfigurationInfo.entityName}) }}" class="btn btn-cancel" style="margin-left: 15px;">{{'cancel'|trans}}</a>
-                {% endif %}
-                
-            </div>
-        </div>
-</form>
-
 {% endblock %}

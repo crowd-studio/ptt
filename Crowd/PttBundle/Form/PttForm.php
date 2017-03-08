@@ -222,7 +222,7 @@ class PttForm
 
 		foreach ($fields->block as $i => $block) {
 			if ($key == false){
-				$html .= '<div class="block-container col-sm-12"><div class="block-header"><p>' . $block . '</p></div><div class="block-body col-sm-12">';
+				$html .= '<div class="block-container well container-fluid"><div class="block-header header-line"><h4>' . $block . '</h4></div><div class="block-body row">';
 			} else {
 				$html .= '<div><div>';
 			}
