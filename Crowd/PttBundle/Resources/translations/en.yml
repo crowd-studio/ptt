@@ -9,7 +9,7 @@ delete_the_entity_name : Delete the %@ "%@"?
 download_file : Download file
 edit : Edit
 error : Error
-filter : Filter
+filters : Filters
 free_size : Free size
 list : List
 login : Login
@@ -27,7 +27,8 @@ recover_the_saved_version_on : Recover the saved version on %@?
 remember_me : Remember me
 remove : Remove
 required_field : Required field
-reset_filters : Reset filters
+clean_filters : Clean filters
+apply_filters : Apply filters
 save : Save
 save_and_create_another : Save and create another
 saved : Saved

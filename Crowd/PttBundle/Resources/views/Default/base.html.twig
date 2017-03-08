@@ -7,11 +7,10 @@
 	{% include 'PttBundle:Default:loader.html.twig' %}
 	<div class="wrapper">
 		{% include 'PttBundle:Default:sidebar.html.twig' %}
-		<div class="content-block">
+		<div class="content-block {{ app.request.get('_route') }}">
 			<div class="container-fluid">
 				<div class="row">
-					<div class="col-xs-12 content">
-
+					<div class="col-xs-12">
 						{% for flashMessage in app.session.flashbag.get('success') %}
 						    <div class="alert alert-success">{{ flashMessage }}
 						    <button type="button" class="close" data-dismiss="alert">×</button></div>
@@ -31,11 +30,7 @@
 						    <div class="alert alert-danger persist">{{ flashMessage }}
 						    <button type="button" class="close" data-dismiss="alert">×</button></div>
 						{% endfor %}
-
-						<div class="content">
 						{% block content %}{% endblock %}
-
-						</div>
 					</div>
 				</div>
 			</div>

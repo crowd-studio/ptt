@@ -1,1 +1,1 @@
-'use strict';module.exports =    angular.module('app.base', [    ])    .controller('baseController', require('./baseController'));
+'use strict';module.exports =    angular.module('app.base', [    ])    .controller('baseController', require('./baseController'))    .controller('listController', require('./listController'));

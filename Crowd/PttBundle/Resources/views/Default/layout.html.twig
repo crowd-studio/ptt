@@ -48,18 +48,18 @@ www.crowd.st
 <!-- /styles -->
 
 	</head>
-	<body id="{{ app.request.get('_route') }}">
+	<body class="{{ app.request.get('_route') }}" ng-app="app" ng-controller="baseController">
 
 		{% block body %}{% endblock %}
 
 		<!-- <script src="http://imsky.github.io/holder/holder.js"></script> -->
 		{% if keymap is defined and keymap != '' %}<script src="https://maps.googleapis.com/maps/api/js?key={{keymap}}"></script>{% endif %}
 
-		<script type="text/javascript" src="{{ asset('bundles/ptt/admin/scripts/require.js') }}" data-main="{{ asset('bundles/ptt/admin/dev/admin') }}"></script>
+		<!-- <script type="text/javascript" src="{{ asset('bundles/ptt/admin/scripts/require.js') }}" data-main="{{ asset('bundles/ptt/admin/dev/admin') }}"></script>-->
 
 		{% block javascripts %}{% endblock %}
 <!-- scripts -->
-    <link href="{{ asset('/bundles/ptt/main.js') }}" rel="stylesheet">
+    <script type="text/javascript" src="{{ asset('/bundles/ptt/main.js') }}"></script>
 <!-- /scripts -->
 	</body>
 </html>

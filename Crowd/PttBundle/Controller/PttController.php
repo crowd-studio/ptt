@@ -73,6 +73,7 @@ class PttController extends Controller
             'order' => $order,
             'pagination' => $pagination,
             'filters' => $this->fieldsToFilter(),
+            'activeFilters' => $filters,
             'page' => [
                 'title' => $this->listTitle()
             ],
