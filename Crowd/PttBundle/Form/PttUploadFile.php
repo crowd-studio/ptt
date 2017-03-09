@@ -102,7 +102,7 @@ class PttUploadFile
             case 'gallery':
                 return PttUploadFile::_uploadImage($file, $field);
                 break;
-            case 'file':
+            case 'file': case 'csv':
                 return PttUploadFile::_uploadFile($file, $field);
                 break;
             case 'svg':
@@ -112,6 +112,49 @@ class PttUploadFile
                 return '';
                 break;
         }
+    }
+
+    public static function parseCsv($file, $field = false, $em, $entity = false){
+
+        $csv = array_map('str_getcsv', file($file));
+        foreach ($csv as $k => $c) {
+            $csv[$k] = explode(';', $c[0]);
+        }
+
+        array_walk($csv, function(&$a) use ($csv) {
+            $a = array_combine($csv[0], $a);
+        });
+
+        array_shift($csv); # remove column header
+
+        $class = PttUploadFile::_getClassName($field->options['entity']);
+        foreach ($csv as $num => $line) {
+            $obj = new $class;
+            foreach ($line as $key => $value) {
+                $setMethod = 'set' . ucfirst($key);
+                $obj->$setMethod($value);
+            }
+
+            if(isset($field->options['related'])){
+                $setMethod = 'set' . ucfirst($field->options['related']);
+                $obj->$setMethod($entity);
+                $obj->set_Order($num);
+                $obj->set_Model($entity->getClassName());
+            }
+
+            $obj->setUpdateObjectValues(1);
+            $obj->setSlug($obj->__toString());
+            $em->persist($obj);
+        }
+
+        $em->flush();
+    }
+
+    private static function _getClassName($entityName){
+        $entityClassArr[] = PttUtil::pttConfiguration('bundles')[0]["bundle"];
+        $entityClassArr[] = 'Entity';
+        $entityClassArr[] = ucfirst($entityName);
+        return implode('\\', $entityClassArr);
     }
 
     private static function _extensionAndCompression($extension)

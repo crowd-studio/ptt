@@ -67,7 +67,7 @@ class PttFormFieldTypeFile extends PttFormFieldType
 		}
 
 		$class = '';
-		if($this->field->options['type'] != 'file'){
+		if($this->field->options['type'] != 'file' && $this->field->options['type'] != 'csv'){
 			$class = 'img-input';
 		}
 		$htmlField .= '<div class="row '. $class .' image-container hidden col-sm-12">
@@ -108,9 +108,12 @@ class PttFormFieldTypeFile extends PttFormFieldType
 		if ($this->value != '') {
 			if($this->field->options['type'] == 'gallery'){
 				$type = '_image';
+			} elseif($this->field->options['type'] == 'csv') {
+				$type = '_file';
 			} else {
 				$type = '_' . $this->field->options['type'];
 			}
+			
 
 			$htmlField .= $this->{$type}($boolRemove);
 		}

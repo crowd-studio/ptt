@@ -23,7 +23,11 @@ class PttFormSaveFile extends PttFormSave
             $file = (isset($files[$this->field->name])) ? $files[$this->field->name] : false;
         }
         if ($file) {
+            if($this->field->options['type'] == 'csv'){
+                PttUploadFile::parseCsv($file, $this->field, $this->container->get('doctrine.orm.entity_manager'), $this->entityInfo->getEntity());
+            }
             $value = PttUploadFile::upload($file, $this->field);
+            
         } else {
 
             // $sentData = $this->request->get($this->entityInfo->getFormName());
