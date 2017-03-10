@@ -23,9 +23,8 @@ define([
     "Selectize",
     "Evaporate"
 ], function($, globals, Backbone, _, Mustache, uploadFileTemplate, moment){
-
     window.app = {
-        baseUrl : '/app_dev.php/',
+        baseUrl : window.conf.baseURL,
         initialize: function()
         {
             var that = this;
