@@ -41,7 +41,6 @@ tmtags
 
 # netbeans
 nbproject/private/
-build/
 nbbuild/
 nbdist/
 nbactions.xml
