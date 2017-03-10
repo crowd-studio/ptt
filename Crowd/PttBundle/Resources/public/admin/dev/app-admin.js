@@ -1145,7 +1145,7 @@ define([
 
             //CONFIG
             this.config = {
-                signerUrl: this.$input.attr('data-signer'),
+                signerUrl: window.app.baseUrl + this.$input.attr('data-signer'),
                 aws_key: this.$input.attr('data-key'),
                 bucket: this.$input.attr('data-bucket') + '/' + this.$input.attr('data-folder'),
                 awsRegion: this.$input.attr('data-region'),
