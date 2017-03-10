@@ -203,7 +203,17 @@ class PttForm
 		$this->em->persist($entityPrincipal);
 		$this->em->flush();
 
-		$entityPrincipal->afterSave($this->sentData);
+		$action = $entityPrincipal->afterSave($this->sentData);
+
+
+		foreach ($action as $key => $act) {
+            switch($act['type']){
+                case 'mail':
+                    PttUtil::sendMail($act['to'], $act['subject'], $act['render']);
+                break;
+            }
+        }
+
 		$this->_performFieldsLoopAndCallMethodNamed('_afterSaveForField');
 	}
 

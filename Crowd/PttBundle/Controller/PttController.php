@@ -364,18 +364,6 @@ class PttController extends Controller
         return method_exists($this->_initEntity(), "getCopy");
     }
 
-    protected function afterSave($entity){
-        $action = $entity->afterSave($entity);
-        
-        foreach ($action as $key => $act) {
-            switch($key){
-                case 'mail':
-                    PttUtil::sendMail($act['to'], $act['subject'], $this->render($act['render'], $act['data']));
-                break;
-            }
-        }
-    }
-
     protected function flushCache($entity){
         $entity->flushCache($entity);
     }
