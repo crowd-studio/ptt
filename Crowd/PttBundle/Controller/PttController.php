@@ -365,7 +365,15 @@ class PttController extends Controller
     }
 
     protected function afterSave($entity){
-        $entity->afterSave($entity);
+        $action = $entity->afterSave($entity);
+        
+        foreach ($action as $key => $act) {
+            switch($key){
+                case 'mail':
+                    PttUtil::sendMail($act['to'], $act['subject'], $act['render'], $act['data']);
+                break;
+            }
+        }
     }
 
     protected function flushCache($entity){
@@ -683,8 +691,6 @@ class PttController extends Controller
     }
 
     protected function _className(){
-
-
         if ($this->className == null) {
             $entityClassArr[] = $this->_bundle();
             $entityClassArr[] = 'Entity';
