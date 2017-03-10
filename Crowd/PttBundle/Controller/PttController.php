@@ -648,7 +648,7 @@ class PttController extends Controller
         try {
             $kernel = $this->container->get('kernel');
              $filePath = $kernel->locateResource('@' . $this->_bundle() . '/Resources/views/' . ucfirst($this->entityName) . '/' . $filename);
-            $template = $this->_repositoryName() . ':' . $action . '.html.twig';
+            $template = ucfirst($this->_repositoryName()) . ':' . $action . '.html.twig';
 
         } catch (\Exception $e) {
             $defaultFileDir = __DIR__ . '/../Resources/views/Default/';
