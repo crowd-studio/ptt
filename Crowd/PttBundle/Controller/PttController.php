@@ -370,7 +370,7 @@ class PttController extends Controller
         foreach ($action as $key => $act) {
             switch($key){
                 case 'mail':
-                    PttUtil::sendMail($act['to'], $act['subject'], $act['render'], $act['data']);
+                    PttUtil::sendMail($act['to'], $act['subject'], $this->render($act['render'], $act['data']));
                 break;
             }
         }

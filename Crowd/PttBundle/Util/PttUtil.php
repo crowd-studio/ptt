@@ -159,7 +159,7 @@ class PttUtil
         return $contents;
     }
 
-    static public function sendMail($to, $subject, $render, $data = []){
+    static public function sendMail($to, $subject, $render){
         $params = PttUtil::pttConfiguration('mailer');
         
         $transporter = \Swift_SmtpTransport::newInstance($params['host'], $params['port'])->setUsername($params['user'])->setPassword($params['password']);
@@ -169,7 +169,7 @@ class PttUtil
           ->setSubject($subject)
           ->setFrom($params['user'])
           ->setTo($to)
-          ->setBody($this->renderView($render, $data), 'text/html');
+          ->setBody($render, 'text/html');
         $mailer->send($message);   
 
         return true;
