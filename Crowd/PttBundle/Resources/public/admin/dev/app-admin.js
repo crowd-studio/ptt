@@ -1207,6 +1207,8 @@ define([
                         that.viewmode.find('.btn-download').attr('href', download);
                         that.$input.attr('value', that.name);
 
+                        that.uploadcontainer.find('input').remove();
+
                         that.viewmode.toggleClass('hidden', false);
                     }, function (reason){
                         // ERROR => SHOW ERROR LAYOUT
@@ -1227,14 +1229,14 @@ define([
         },
         delete : function(e){
             e.preventDefault();
-            this.uploadcontainer.find('input').val('');
+            var inputFile = $('<input>').attr('type', 'file').addClass('chooseFile');
+            this.uploadcontainer.append(inputFile);
             this.uploadcontainer.toggleClass('hidden', false);
             this.viewmode.toggleClass('hidden', true);
             this.$input.attr('value', '');
         },
         retry : function(e){
             e.preventDefault;
-            this.uploadcontainer.find('input').val('');
             this.uploadcontainer.toggleClass('hidden', false);
             this.result.toggleClass('hidden', true);
         },

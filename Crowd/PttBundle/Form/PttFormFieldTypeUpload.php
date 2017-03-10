@@ -29,8 +29,7 @@ class PttFormFieldTypeUpload extends PttFormFieldType
 
 		// DIV 1: UPLOAD BUTTON
 		$html .= '<div class="multipart-upload-container hidden">';
-			$html .= '<a class="fakeClick">' . $this->pttTrans->trans('pick_file') . '</a><input type="file" class="chooseFile" ';
-			$html .= $this->attributes() .'>';
+			$html .= '<a class="fakeClick">' . $this->pttTrans->trans('pick_file') . '</a><input type="file" class="chooseFile" />';
 		$html .= '</div>';
 		// DIV 2: BARRA DE CARREGA
 		$html .= '<div class="load-mode hidden">';
