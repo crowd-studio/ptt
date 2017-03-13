@@ -1205,7 +1205,7 @@ define([
 
                         that.viewmode.find('.btn-download').attr('href', download);
                         that.viewmode.find('input').attr('value', download);
-                        that.$input.attr('value', download);
+                        that.$input.attr('value', that.name);
 
                         that.uploadcontainer.find('input').remove();
 
