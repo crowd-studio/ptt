@@ -12,10 +12,15 @@
 	&.active{
 		left: 0px;
 	}
+
+	.display(flex);
+	.flex-direction(column);
 	.sidebar-inner{
+		.flex-grow(1);
 		.display(flex);
 		.flex-direction(column);
 		.menu-container{
+			.flex-grow(1);
 			h1,h2,h3,h4,h5,h6{
 				color: #eee;
 				padding: 5px (@grid-gutter-width / 2);
@@ -92,20 +97,21 @@
 				}*/
 			}
 		}
-		ul.options{
-			margin-top: auto;
-			margin-bottom:0;
+		span.copyright{
+			padding: (@grid-gutter-width / 2);
+			font-style: italic;
+			text-align: center;
+			font-size: .85em;
 		}
 	}
 }
 
 @media (min-width: @screen-md-min) {
 	.sidebar{
-		display:block;
 		position:relative;
 		left:auto;
 		top:0;
-		overflow-y: overlay;
+		overflow-y: visible;
 		.sidebar-inner{
 			.menu-container>ul,>ul{
 				li{

@@ -6,7 +6,6 @@
 	z-index:300;
 	.top-inner{
 		position:relative;
-		
 		>ul{
 			list-style: none;
 			margin:0;
@@ -17,10 +16,14 @@
 				a{
 					color: #eee;
 					font-weight: normal;
+					&:focus,
+					&:active,
+					&:hover{
+						text-decoration: none;
+					}
 					.svg{
 						display:inline-table;
 						margin-top: 5px;
-						//height: 20px;
 						svg{
 							.size(22px);
 							polyline,line{
@@ -56,7 +59,7 @@
 						}
 					}
 				}
-				&:hover{
+				&.hover{
 					background: #32373c;
 				}
 				.child{
@@ -93,7 +96,7 @@
 						}
 					}
 				}
-				&:hover{
+				&.hover{
 					.child{
 						display:block;
 					}

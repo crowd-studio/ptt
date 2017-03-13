@@ -3,7 +3,7 @@
 module.exports = /*@ngInject*/
 function menuMobileDirective() {
 	return {
-		restrict:'C',
+		restrict: 'C',
 		scope: true,
 		link: function(scope, element) {
 
