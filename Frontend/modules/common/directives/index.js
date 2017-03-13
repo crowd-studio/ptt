@@ -1,1 +1,1 @@
-'use strict';module.exports =    angular.module('app.common.directives', [])    .directive('alert', require('./alertDirective'));
+'use strict';module.exports =    angular.module('app.common.directives', [])	.directive('alert', require('./alertDirective'))	.directive('menuMobile', require('./menuMobileDirective'));

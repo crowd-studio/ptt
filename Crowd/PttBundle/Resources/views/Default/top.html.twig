@@ -1,0 +1,65 @@
+{% import 'PttBundle:Default:sprites.html.twig' as sprites %}
+
+<div class="top">
+	<div class="top-inner">
+		<ul class="homepage">
+			<li class="hidden-md hidden-lg">
+				<a class="menu-mobile button-menu">
+					<div class="toggle-menu" ng-class="{'active': sidebar}">
+						<span class="bar-icon"></span>
+						<span class="bar-icon"></span>
+						<span class="bar-icon"></span>
+					</div>
+				</a>
+			</li>
+			<li>
+				<a href="{{ path('homes') }}">
+					<div class="svg">
+						{{ sprites.link() }}
+					</div>
+					<span class="hidden-xs hidden-sm">{{ info('admin').title | trans }}</span>
+				</a>
+			</li>
+		</ul>
+		<ul class="options">
+			<li class="user">
+				<a href="{{ path('edit', {entity: 'user', id:app.user.id}) }}">
+					<span class="hidden-xs hidden-sm">{{ app.user }}</span>
+					<div class="img">
+						{% if app.user.publicimage is defined and app.user.publicimage != '' %}
+							<img class="img-circle" src="{{ asset(app.user.publicimage) }}"/>
+						{% else %}
+							<div class="img-container"></div>
+						{% endif %}
+					</div>
+				</a>
+				<div class="child">
+					<ul>
+						<li class="hidden-md hidden-lg title">
+							<a href="{{ path('edit', {entity: 'user', id:app.user.id}) }}">
+								<span>{{ app.user }}</span>
+							</a>
+						</li>
+						<li>
+							<a href="{{ path('edit', {entity: 'user', id:app.user.id}) }}">
+								<span>{{ 'editMyProfile' | trans }}</span>
+								<div class="img hidden-xs hidden-sm">
+									{% if app.user.publicimage is defined and app.user.publicimage != '' %}
+										<img class="img-circle" src="{{ asset(app.user.publicimage) }}"/>
+									{% else %}
+										<div class="img-container"></div>
+									{% endif %}
+								</div>
+							</a>
+						</li>
+						<li>
+							<a href="{{ path('logout') }}">
+								<span>{{ 'logout' | trans }}</span>
+							</a>
+						</li>
+					</ul>
+				</div>
+			</li>
+		</ul>
+	</div>
+</div>

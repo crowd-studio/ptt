@@ -1,0 +1,149 @@
+.top{
+	background: #23282d;
+	position:fixed;
+	left:0;
+	right:0;
+	z-index:300;
+	.top-inner{
+		position:relative;
+		
+		>ul{
+			list-style: none;
+			margin:0;
+			padding:0;
+			>li{
+				display:inline-block;
+				float:left;
+				a{
+					color: #eee;
+					font-weight: normal;
+					.svg{
+						display:inline-table;
+						margin-top: 5px;
+						//height: 20px;
+						svg{
+							.size(22px);
+							polyline,line{
+								stroke: #eee;
+							}
+						}
+					}
+					
+					&:hover{
+						color: @link-color;
+						text-decoration: none;
+						svg{
+							polyline,line{
+								stroke: @link-color;
+							}
+						}
+					}
+				}
+				
+				>a{
+					line-height: 50px;
+					display:inline-block;
+					height: 50px;
+					padding: 0px (@grid-gutter-width / 2) ;
+					span{
+						margin-right: 10px;
+						margin-left: 10px;
+					}
+					.img{
+						display: inline-block;
+						img{
+							.size(30px);
+						}
+					}
+				}
+				&:hover{
+					background: #32373c;
+				}
+				.child{
+					padding: 5px (@grid-gutter-width / 2);
+					display:none;
+					position:absolute;
+					top: 50px;
+					right:0;
+					background: #32373c;
+					width:100%;
+					z-index:100;
+					
+					ul{
+						list-style: none;
+						margin:0;
+						padding:0;
+						li{
+							a{
+								display:block;
+								padding: 3px 0px;
+								>.img{
+									.size(50px);
+									display:inline-block;
+									margin-right: 20px;
+									float:left;
+								}
+							}
+							&.title{
+								a{
+									font-style: italic;
+									color: #eee!important;
+								}
+							}
+						}
+					}
+				}
+				&:hover{
+					.child{
+						display:block;
+					}
+				}
+			}
+			&.homepage{
+				float: left;
+			}
+			&.options{
+				float: right;
+			}
+		}
+	}
+		
+	
+}
+
+@media (min-width: @screen-md-min) {
+	.top{
+		position: static;
+		.top-inner{
+			>ul{
+				>li{
+					position:relative;
+					a{
+						.svg{
+							margin-top: 0px;
+							svg{
+								.size(11px);
+							}
+						}
+					}
+					>a{
+						line-height: 30px;
+						height: 30px;
+
+						.img{
+							img{
+								.size(20px);
+							}
+						}
+					}
+					.child{
+						top:30px;
+						width: 200%;
+						padding-top: (@grid-gutter-width / 2);
+						padding-bottom: (@grid-gutter-width / 2);
+					}
+				}
+			}
+		}
+	}
+}

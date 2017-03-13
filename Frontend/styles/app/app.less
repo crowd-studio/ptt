@@ -132,9 +132,16 @@ div.well{
 
 .wrapper{
 	.display(flex);
-	.align-items(stretch);
-	.content-block{
+	.flex-direction(column);
+	.main-area{
+		margin-top: 50px;
 		.flex-grow(1);
+		.display(flex);
+		.align-items(stretch);
+		position:relative;
+		.content-block{
+			.flex-grow(1);
+		}
 	}
 }
 
@@ -169,9 +176,8 @@ div.well{
 
 @media (min-width: @screen-md-min) {
 	.wrapper{
-		.sidebar{
-			display:block;
-			width: 250px;
+		.main-area{
+			margin-top: 0px;
 		}
 	}
 }

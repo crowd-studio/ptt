@@ -1,6 +1,17 @@
 .sidebar{
 	background: #23282d;
 	//display:none;
+	position:fixed;
+	bottom:0;
+	top:50px;
+	z-index:200;
+	left: -200px;
+	width: 200px;
+	overflow-y: auto;
+	.transition(left 0.3s ease-out);
+	&.active{
+		left: 0px;
+	}
 	.sidebar-inner{
 		.display(flex);
 		.flex-direction(column);
@@ -47,26 +58,6 @@
 						.size(20px);
 						left: (@grid-gutter-width / 2) - 5px;
 					}
-					svg{
-						position:absolute;
-						left: (@grid-gutter-width / 2) - 5px;
-						.size(20px);
-						top: 7px;
-						&.link-svg{
-							.size(11px);
-							top: 10px;
-							margin-left: 5px;
-							polyline,line{
-								stroke: white;
-							}
-						}
-						&.logout-svg{
-							path{
-								fill: white;
-							}	
-						}
-						
-					}
 				}
 				ul{
 					background: #32373c;
@@ -110,6 +101,11 @@
 
 @media (min-width: @screen-md-min) {
 	.sidebar{
+		display:block;
+		position:relative;
+		left:auto;
+		top:0;
+		overflow-y: overlay;
 		.sidebar-inner{
 			.menu-container>ul,>ul{
 				li{
