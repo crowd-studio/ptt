@@ -1193,8 +1193,7 @@ define([
                     .then(function (awsKey) {
                         // COMPLETE => SET VALUE & SHOW VIEW MODE
                         that.loadmode.toggleClass('hidden', true);
-
-                        that.viewmode.find('input').attr('value', that.name);
+                        
                         var download = that.viewmode.find('.btn-download').attr('href');
 
                         if (download.slice(-1) != '/'){
@@ -1205,6 +1204,7 @@ define([
                         download = download + that.name;
 
                         that.viewmode.find('.btn-download').attr('href', download);
+                        that.viewmode.find('input').attr('value', download);
                         that.$input.attr('value', download);
 
                         that.uploadcontainer.find('input').remove();
