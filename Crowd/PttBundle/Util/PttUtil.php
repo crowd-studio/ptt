@@ -149,11 +149,11 @@ class PttUtil
 
     static public function getSVGContent($uploadsPath, $fileName){
         $finder = new Finder();
-        $finder->files()->in($uploadsPath)->name($fileName);
+        $finder->files()->in(trim($uploadsPath, '/'))->name($fileName);
         $contents ='';
         foreach ($finder as $file) {
             if ($file->getExtension() == 'svg'){
-                $contents = $file->getContents();    
+                $contents = $file->getContents();
             }
         }
         return $contents;
