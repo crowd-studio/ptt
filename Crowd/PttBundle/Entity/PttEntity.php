@@ -193,11 +193,11 @@ class PttEntity
     }
 
     public function beforeSave(){
-        
+
     }
 
     public function afterSave($entity = false){
-        
+        return [];
     }
 
     public function fieldsToFilter(){
@@ -235,7 +235,7 @@ class PttEntity
                 $yaml = new Parser();
                 $ptt = $yaml->parse(file_get_contents(__DIR__ . '/../../../../../../app/config/ptt.yml'));
                 $this->uploadUrl = (isset($ptt['s3']['force']) && $ptt['s3']['force']) ? $ptt['s3']['prodUrl'] . $ptt['s3']['dir'] . '/' : '/uploads/';
-                
+
             } catch (ParseException $e) {
                 printf("Unable to parse the YAML string: %s", $e->getMessage());
             }
@@ -265,7 +265,7 @@ class PttEntity
                 $exists = false;
                 foreach ($objects as $key => $obj) {
                     if(isset($obj['id'])){
-                        if($iterator->current()->getPttId() == $obj['id']){    
+                        if($iterator->current()->getPttId() == $obj['id']){
                             $exists = true;
                         }
                     }
@@ -286,7 +286,7 @@ class PttEntity
                         }
                     }
                 }
-                
+
                 $update = ($feat) ? true : false;
                 if(!$update){
                     $name = PttUtil::pttConfiguration('bundles')[0]["bundle"] . '\\Entity\\' . $entity;
@@ -318,7 +318,7 @@ class PttEntity
             return $array;
         }
         $array->add($new);
-        
+
         $setMethod = 'set' . $setMethod;
         if(method_exists($new, $setMethod)){
             $new->$setMethod($this);
@@ -337,9 +337,9 @@ class PttEntity
             $new->setUpdateObjectValues(1);
         }
 
-        
+
         if(method_exists($new, 'setSlug')){
-            $new->setSlug(PttUtil::slugify((string)$new));    
+            $new->setSlug(PttUtil::slugify((string)$new));
         }
 
         return $array;
