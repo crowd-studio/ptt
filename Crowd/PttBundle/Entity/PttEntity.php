@@ -229,20 +229,6 @@ class PttEntity
         $cache->removeAll();
     }
 
-    protected function getPttUploadUrl(){
-        if (!$this->uploadUrl){
-            try {
-                $yaml = new Parser();
-                $ptt = $yaml->parse(file_get_contents(__DIR__ . '/../../../../../../app/config/ptt.yml'));
-                $this->uploadUrl = (isset($ptt['s3']['force']) && $ptt['s3']['force']) ? $ptt['s3']['prodUrl'] . $ptt['s3']['dir'] . '/' : '/uploads/';
-
-            } catch (ParseException $e) {
-                printf("Unable to parse the YAML string: %s", $e->getMessage());
-            }
-        }
-        return $this->uploadUrl;
-    }
-
     public function setUpdateObjectValues($userId = -1)
     {
         $dateTime = new \DateTime();
