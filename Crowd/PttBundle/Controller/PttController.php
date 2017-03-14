@@ -50,16 +50,7 @@ class PttController extends Controller
             return $response;
         }
 
-        $em = $this->get('doctrine')->getManager();
-
-        if ($this->isSortable()) {
-            $order = [
-                '_order',
-                $this->orderList()
-            ];
-        } else {
-            $order = $this->_currentOrder($request);
-        }
+        $order = ($this->isSortable()) ? ['_order', $this->orderList()] : $this->_currentOrder($request);
 
         $filters = $this->_currentFilters($request);
 
@@ -75,10 +66,14 @@ class PttController extends Controller
             'filters' => $this->fieldsToFilter(),
             'activeFilters' => $filters,
             'page' => [
-                'title' => $this->listTitle()
+                'title' => $this->listTitle(),
+                'path' => 'list',
+                'parameters' => [
+                  'entity' => $entity,
+                  'page' => $page
+                ]
             ],
             'sortable' => $this->isSortable(),
-            'csvexport' => $this->isCsvExport(),
             'copy' => $this->isCopy()
         ]);
     }
@@ -111,32 +106,26 @@ class PttController extends Controller
                 $this->flushCache($saveEntity);
                 $this->get('session')->getFlashBag()->add('success', $pttForm->getSuccessMessage());
 
-                $this->self = $this->get('session')->get('self');
-                if($this->self == 1){
-                    return $this->redirect($this->generateUrl('edit', ['entity' => $entity, 'id' => $id, 'self' => 1]));
-                } else {
-                    if ($id == null && $request->get('another') != null) {
-                        return $this->redirect($this->generateUrl('edit', ['entity' => $entity, 'id' => $id]));
-                    } else {
-                        return $this->redirect($this->generateUrl('list', ['entity' => $entity]));
-                    }
-                }
+                $route = ($id == null && $request->get('another') != null) ? $this->generateUrl('edit', ['entity' => $entity, 'id' => $id]) : $this->generateUrl('list', ['entity' => $entity]);
+                return $this->redirect($route);
             } else {
                 $this->get('session')->getFlashBag()->add('error', $pttForm->getErrorMessage());
             }
-        } else {
-            $this->self = $request->query->get('self');
-            $this->get('session')->set('self', $this->self);
         }
 
         $this->deleteTemp();
         return $this->_renderTemplateForActionInfo('edit', [
             'entityInfo' => $this->entityInfo(),
             'form' => $pttForm,
-            'cancel' => $this->self,
+            // 'hasList' => $this->hasList(),
             'page' => [
-                'title' => $this->editTitle($id)
+                'title' => $this->editTitle($id),
+                'path' => $request->get('_route'),
+                'parameters' => [
+                  'entity' => $entity,
+                  'id' => $id
                 ]
+            ]
         ]);
     }
 
@@ -196,7 +185,6 @@ class PttController extends Controller
             $fields = JSON_decode($request->getContent());
             $em = $this->get('doctrine')->getManager();
             $response = [];
-
 
             $cache = new PttCache();
             $cache->removeAll();
@@ -274,7 +262,7 @@ class PttController extends Controller
      public function signAction(Request $request){
         $secret = PttUtil::pttConfiguration('s3')['secretKey'];
         $to_sign = $request->query->get('to_sign');
- 
+
         if(isset($to_sign)){
 
             $hmac_sha1 = hash_hmac('sha1',$to_sign,$secret,true);
@@ -356,10 +344,6 @@ class PttController extends Controller
     // Indica si la llista es pot ordenar mitjançant Drag&Drop
     protected function isSortable(){
         return method_exists($this->_initEntity(), "get_Order");
-    }
-
-    protected function isCsvExport(){
-        return method_exists($this->_initEntity(), "getCsvExport");
     }
 
     protected function isCopy(){
@@ -660,7 +644,7 @@ class PttController extends Controller
             $filePath = $defaultFileDir . $filename;
             if (file_exists($filePath) && is_file($filePath)) {
                 $template = 'PttBundle:' . ucfirst($action) . ':' . $filename;
-                
+
             } else {
                 throw new \Exception('The requested template does not exist');
             }
@@ -723,10 +707,6 @@ class PttController extends Controller
             return false;
         }
 
-        if ($field){
-            return $pttAnnotation->$field;
-        } else {
-            return $pttAnnotation;
-        }
+        return ($field) ? $pttAnnotation->$field : $pttAnnotation;
     }
 }
