@@ -30,7 +30,6 @@ class PttController extends Controller
     private $className;
     private $bundle;
     private $repositoryName;
-    private $self;
 
     /**
      * @Route("{entity}/list/{page}", name="list");
@@ -50,7 +49,16 @@ class PttController extends Controller
             return $response;
         }
 
-        $order = ($this->isSortable()) ? ['_order', $this->orderList()] : $this->_currentOrder($request);
+        $em = $this->get('doctrine')->getManager();
+
+        if ($this->isSortable()) {
+            $order = [
+                '_order',
+                $this->orderList()
+            ];
+        } else {
+            $order = $this->_currentOrder($request);
+        }
 
         $filters = $this->_currentFilters($request);
 
@@ -61,19 +69,13 @@ class PttController extends Controller
             'entityInfo' => $this->entityInfo(),
             'fields' => $this->fieldsToList(),
             'rows' => $entities,
-            'order' => $order,
             'pagination' => $pagination,
             'filters' => $this->fieldsToFilter(),
-            'activeFilters' => $filters,
             'page' => [
-                'title' => $this->listTitle(),
-                'path' => 'list',
-                'parameters' => [
-                  'entity' => $entity,
-                  'page' => $page
-                ]
+                'title' => $this->listTitle()
             ],
             'sortable' => $this->isSortable(),
+            'csvexport' => $this->isCsvExport(),
             'copy' => $this->isCopy()
         ]);
     }
@@ -106,26 +108,32 @@ class PttController extends Controller
                 $this->flushCache($saveEntity);
                 $this->get('session')->getFlashBag()->add('success', $pttForm->getSuccessMessage());
 
-                $route = ($id == null && $request->get('another') != null) ? $this->generateUrl('edit', ['entity' => $entity, 'id' => $id]) : $this->generateUrl('list', ['entity' => $entity]);
-                return $this->redirect($route);
+                $this->self = $this->get('session')->get('self');
+                if($this->self == 1){
+                    return $this->redirect($this->generateUrl('edit', ['entity' => $entity, 'id' => $id, 'self' => 1]));
+                } else {
+                    if ($id == null && $request->get('another') != null) {
+                        return $this->redirect($this->generateUrl('edit', ['entity' => $entity, 'id' => $id]));
+                    } else {
+                        return $this->redirect($this->generateUrl('list', ['entity' => $entity]));
+                    }
+                }
             } else {
                 $this->get('session')->getFlashBag()->add('error', $pttForm->getErrorMessage());
             }
+        } else {
+            $this->self = $request->query->get('self');
+            $this->get('session')->set('self', $this->self);
         }
 
         $this->deleteTemp();
         return $this->_renderTemplateForActionInfo('edit', [
             'entityInfo' => $this->entityInfo(),
             'form' => $pttForm,
-            // 'hasList' => $this->hasList(),
+            'cancel' => $this->self,
             'page' => [
-                'title' => $this->editTitle($id),
-                'path' => $request->get('_route'),
-                'parameters' => [
-                  'entity' => $entity,
-                  'id' => $id
+                'title' => $this->editTitle($id)
                 ]
-            ]
         ]);
     }
 
@@ -185,6 +193,7 @@ class PttController extends Controller
             $fields = JSON_decode($request->getContent());
             $em = $this->get('doctrine')->getManager();
             $response = [];
+
 
             $cache = new PttCache();
             $cache->removeAll();
@@ -304,7 +313,7 @@ class PttController extends Controller
             $route = $this->generateUrl('admin_login');
         }
 
-        return $route;
+        return $this->redirect($route);
     }
 
     //SHOULD CREATE DEFAULT METHODS
@@ -323,12 +332,12 @@ class PttController extends Controller
         return method_exists($this->_initEntity(), "get_Order");
     }
 
-    protected function isCopy(){
-        return method_exists($this->_initEntity(), "getCopy");
+    protected function isCsvExport(){
+        return method_exists($this->_initEntity(), "getCsvExport");
     }
 
-    protected function afterSave($entity){
-        $entity->afterSave($entity);
+    protected function isCopy(){
+        return method_exists($this->_initEntity(), "getCopy");
     }
 
     protected function flushCache($entity){
@@ -356,7 +365,7 @@ class PttController extends Controller
 
     protected function fieldsToList(){
         $fields = $this->_initEntity()->fieldsToList();
-        return ($fields) ? $fields : [['field' => 'title', 'label' => 'Title','primary' => true]];
+        return ($fields) ? $fields : ['title' => $this->get('pttTrans')->trans('title')];
     }
 
     protected function orderList(){
@@ -521,16 +530,13 @@ class PttController extends Controller
     protected function _currentOrder(Request $request){
         $cookies = $request->cookies;
         $fields = $this->fieldsToList();
-        $fieldsKeys = [];
-        foreach ($fields as $f) {
-            $field = $f['field'];
-            $label = $f['label'];
+        foreach ($fields as $field => $label) {
             $name = $this->entityName . '-' . $field;
-            array_push($fieldsKeys, $f['field']);
             if ($cookies->has($name)) {
                 return array($field, $cookies->get($name));
             }
         }
+        $fieldsKeys = array_keys($fields);
         return array($fieldsKeys[0], $this->orderList());
     }
 
@@ -612,15 +618,14 @@ class PttController extends Controller
 
         try {
             $kernel = $this->container->get('kernel');
-            $filePath = $kernel->locateResource('@' . $this->_bundle() . '/Resources/views/' . $this->entityName . '/' . $filename);
+             $filePath = $kernel->locateResource('@' . $this->_bundle() . '/Resources/views/' . ucfirst($this->entityName) . '/' . $filename);
             $template = $this->_repositoryName() . ':' . $action . '.html.twig';
 
         } catch (\Exception $e) {
-            $defaultFileDir = __DIR__ . '/../Resources/views/' . ucfirst($action) . '/';
+            $defaultFileDir = __DIR__ . '/../Resources/views/Default/';
             $filePath = $defaultFileDir . $filename;
             if (file_exists($filePath) && is_file($filePath)) {
-                $template = 'PttBundle:' . ucfirst($action) . ':' . $filename;
-
+                $template = 'PttBundle:Default:' . $filename;
             } else {
                 throw new \Exception('The requested template does not exist');
             }
@@ -655,7 +660,7 @@ class PttController extends Controller
 
     protected function _repositoryName(){
         if ($this->repositoryName == null) {
-            $this->repositoryName = $this->_bundle() . ':' . $this->entityName;
+            $this->repositoryName = $this->_bundle() . ':' . ucfirst($this->entityName);
         }
         return $this->repositoryName;
     }
@@ -669,6 +674,10 @@ class PttController extends Controller
             return false;
         }
 
-        return ($field) ? $pttAnnotation->$field : $pttAnnotation;
+        if ($field){
+            return $pttAnnotation->$field;
+        } else {
+            return $pttAnnotation;
+        }
     }
 }
