@@ -313,7 +313,7 @@ class PttController extends Controller
             $route = $this->generateUrl('admin_login');
         }
 
-        return $route;
+        return $this->redirect($route);
     }
 
     //SHOULD CREATE DEFAULT METHODS
