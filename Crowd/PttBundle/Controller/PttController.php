@@ -299,35 +299,13 @@ class PttController extends Controller
         if ($this->container->get('security.authorization_checker')->isGranted('IS_AUTHENTICATED_REMEMBERED')){
             $configuration = PttUtil::pttConfiguration('admin');
 
-            $route = (isset($configuration) && isset($configuration['sidebar']))
-              ? $this->generateUrl($configuration['default_url'], ['entity' => $configuration['default_entity']])
-              : $this->generateUrl('list', ['entity' => 'user']);
+            $route = (isset($configuration) && isset($configuration['sidebar'])) ? $this->generateUrl($configuration['default_url'], ['entity' => $configuration['default_entity']]) : $this->generateUrl('list', ['entity' => 'user']);
         } else {
             $route = $this->generateUrl('admin_login');
         }
 
         return $route;
     }
-
-    // public function generateCSV($query, $name){
-    //     $em = $this->container->get('doctrine')->getManager();
-    //     $query = $em->createQuery($query);
-    //     $data = $query->getResult();
-
-    //     $filename = $name . "_".date("Y_m_d_His").".csv";
-
-    //     $response = $this->render('PttBundle:Default:csv.html.twig', array('data' => $data));
-
-    //     $response->setStatusCode(200);
-    //     $response->headers->set('Content-Type', 'text/csv');
-    //     $response->headers->set('Content-Description', 'Submissions Export');
-    //     $response->headers->set('Content-Disposition', 'attachment; filename=' . $filename);
-    //     $response->headers->set('Content-Transfer-Encoding', 'binary');
-    //     $response->headers->set('Pragma', 'no-cache');
-    //     $response->headers->set('Expires', '0');
-
-    //     return $response;
-    // }
 
     //SHOULD CREATE DEFAULT METHODS
     //list, create, edit, delete
