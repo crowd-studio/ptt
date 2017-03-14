@@ -159,9 +159,27 @@ class PttUtil
         return $contents;
     }
 
+    static public function sendMail($to, $subject, $render){
+        $params = PttUtil::pttConfiguration('mailer');
+
+        $transporter = \Swift_SmtpTransport::newInstance($params['host'], $params['port'])->setUsername($params['user'])->setPassword($params['password']);
+        $mailer = \Swift_Mailer::newInstance($transporter);
+
+        $message = \Swift_Message::newInstance()
+          ->setSubject($subject)
+          ->setFrom($params['user'])
+          ->setTo($to)
+          ->setCC('pau@crowd-studio.com')
+          ->setBody($render, 'text/html');
+        $mailer->send($message);
+
+        return true;
+    }
+
     static public function image($img, $size){
         if($img != ''){
-            $size = (strtolower(end(explode('.', $img))) != 'svg') ? $size[0] . '-' . $size[1] . '-' : '';
+            $end = explode('.', $img);
+            $size = (strtolower(array_pop($end)) != 'svg') ? $size[0] . '-' . $size[1] . '-' : '';
             $img = PttUtil::uploadUrl() . $size . $img;
         }
 
