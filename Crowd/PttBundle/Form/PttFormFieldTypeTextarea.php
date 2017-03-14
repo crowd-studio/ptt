@@ -24,6 +24,8 @@ class PttFormFieldTypeTextarea extends PttFormFieldType
 					$extraHtml = '<p class="help-block">Learn the <a href="https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet" target="_blank">Markdown basics</a>.</p>';
 					break;
 			}
+		} else {
+			$extraAttr = 'style="resize: none;height:200px"';
 		}
 
 		$htmlField = '<textarea ' . $extraAttr . ' ';
