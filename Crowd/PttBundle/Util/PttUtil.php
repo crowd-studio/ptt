@@ -149,11 +149,11 @@ class PttUtil
 
     static public function getSVGContent($uploadsPath, $fileName){
         $finder = new Finder();
-        $finder->files()->in($uploadsPath)->name($fileName);
+        $finder->files()->in(trim($uploadsPath, '/'))->name($fileName);
         $contents ='';
         foreach ($finder as $file) {
             if ($file->getExtension() == 'svg'){
-                $contents = $file->getContents();    
+                $contents = $file->getContents();
             }
         }
         return $contents;
@@ -161,7 +161,7 @@ class PttUtil
 
     static public function sendMail($to, $subject, $render){
         $params = PttUtil::pttConfiguration('mailer');
-        
+
         $transporter = \Swift_SmtpTransport::newInstance($params['host'], $params['port'])->setUsername($params['user'])->setPassword($params['password']);
         $mailer = \Swift_Mailer::newInstance($transporter);
 
@@ -171,7 +171,7 @@ class PttUtil
           ->setTo($to)
           ->setCC('pau@crowd-studio.com')
           ->setBody($render, 'text/html');
-        $mailer->send($message);   
+        $mailer->send($message);
 
         return true;
     }
