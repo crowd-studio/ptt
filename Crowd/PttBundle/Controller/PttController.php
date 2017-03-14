@@ -8,7 +8,7 @@
 namespace Crowd\PttBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -16,6 +16,7 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Cookie;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Doctrine\Common\Annotations\AnnotationReader;
 
 use Crowd\PttBundle\Form\PttForm;
@@ -29,8 +30,6 @@ class PttController extends Controller
     private $className;
     private $bundle;
     private $repositoryName;
-    private $fields;
-    private $self;
 
     /**
      * @Route("{entity}/list/{page}", name="list");
@@ -203,7 +202,7 @@ class PttController extends Controller
                 foreach($fields as $field){
                     $entity = $em->getRepository($this->_repositoryName())->find($field->id);
                     $entity->set_Order($field->_order);
-                    $cache->remove($this->entityName.$field->id);
+                    $cache->remove($this->entityName . $field->id);
                 }
                 $em->flush();
                 $response['success'] = true;
@@ -272,7 +271,7 @@ class PttController extends Controller
      public function signAction(Request $request){
         $secret = PttUtil::pttConfiguration('s3')['secretKey'];
         $to_sign = $request->query->get('to_sign');
- 
+
         if(isset($to_sign)){
 
             $hmac_sha1 = hash_hmac('sha1',$to_sign,$secret,true);
@@ -306,39 +305,16 @@ class PttController extends Controller
      */
     public function routerAction(Request $request)
     {
-        $securityContext = $this->container->get('security.authorization_checker');
-        if ($securityContext->isGranted('IS_AUTHENTICATED_REMEMBERED')){
-            $user = $this->get('security.token_storage')->getToken()->getUser();
-            $configuration = PttUtil::pttConfiguration();
-            if (isset($configuration['admin']) && isset($configuration['admin']['sidebar'])) {
-                return $this->redirect($this->generateUrl($configuration['admin']['default_url'], ['entity' => $configuration['admin']['default_entity']]));
-            } else {
-                return $this->redirect($this->generateUrl('list', ['entity' => 'user']));
-            }
+        if ($this->container->get('security.authorization_checker')->isGranted('IS_AUTHENTICATED_REMEMBERED')){
+            $configuration = PttUtil::pttConfiguration('admin');
+
+            $route = (isset($configuration) && isset($configuration['sidebar'])) ? $this->generateUrl($configuration['default_url'], ['entity' => $configuration['default_entity']]) : $this->generateUrl('list', ['entity' => 'user']);
         } else {
-            return $this->redirect($this->generateUrl('admin_login'));
+            $route = $this->generateUrl('admin_login');
         }
+
+        return $route;
     }
-
-    // public function generateCSV($query, $name){
-    //     $em = $this->container->get('doctrine')->getManager();
-    //     $query = $em->createQuery($query);
-    //     $data = $query->getResult();
-
-    //     $filename = $name . "_".date("Y_m_d_His").".csv";
-
-    //     $response = $this->render('PttBundle:Default:csv.html.twig', array('data' => $data));
-
-    //     $response->setStatusCode(200);
-    //     $response->headers->set('Content-Type', 'text/csv');
-    //     $response->headers->set('Content-Description', 'Submissions Export');
-    //     $response->headers->set('Content-Disposition', 'attachment; filename=' . $filename);
-    //     $response->headers->set('Content-Transfer-Encoding', 'binary');
-    //     $response->headers->set('Pragma', 'no-cache');
-    //     $response->headers->set('Expires', '0');
-
-    //     return $response;
-    // }
 
     //SHOULD CREATE DEFAULT METHODS
     //list, create, edit, delete
@@ -506,15 +482,14 @@ class PttController extends Controller
     }
 
     protected function _paginationForPage($page, $repositoryName, $filters){
-        $fields = $this->_fields();
         $total = $this->_totalEntities($repositoryName, $filters);
 
         if($this->isSortable()) {
-            $offset = 0;
             $limit = 0;
+            $offset = 0;
         } else {
-            $offset = ceil($total / $fields['admin']['numberOfResultsPerPage']);
-            $limit = $fields['admin']['numberOfResultsPerPage'];
+            $limit =  PttUtil::pttConfiguration('admin')['numberOfResultsPerPage'];
+            $offset = ceil($total / $limit);
         }
 
         $pagination = [
@@ -664,26 +639,14 @@ class PttController extends Controller
         return $this->render($template, $info);
     }
 
-    protected function _fields(){
-        if ($this->fields == null) {
-            $this->fields = PttUtil::pttConfiguration();
-        }
-        return $this->fields;
-    }
-
     protected function _initEntity(){
         $className = $this->_className();
-
-        // var_dump($className);die();
         return new $className();
     }
 
     protected function _className(){
         if ($this->className == null) {
-            $entityClassArr[] = $this->_bundle();
-            $entityClassArr[] = 'Entity';
-            $entityClassArr[] = ucfirst($this->entityName);
-            $this->className = implode('\\', $entityClassArr);
+            $this->className = implode('\\', [$this->_bundle(), 'Entity', ucfirst($this->entityName)]);
         }
         return $this->className;
     }

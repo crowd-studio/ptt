@@ -175,4 +175,18 @@ class PttUtil
 
         return true;
     }
+
+    static public function image($img, $size){
+        if($img != ''){
+            $size = (strtolower(end(explode('.', $img))) != 'svg') ? $size[0] . '-' . $size[1] . '-' : '';
+            $img = PttUtil::uploadUrl . $size . $img;
+        }
+
+        return $img;
+    }
+
+    static public function uploadUrl(){
+      $s3 = PttUtil::pttConfiguration('s3');
+      return (isset($s3['force']) && $s3['force']) ? $s3['prodUrl'] . $s3['dir'] . '/' : '/uploads/';
+    }
 }
