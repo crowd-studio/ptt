@@ -179,7 +179,7 @@ class PttUtil
     static public function image($img, $size){
         if($img != ''){
             $end = explode('.', $img);
-            $size = (strtolower(array_pop($end)) != 'gif') ? $size[0] . '-' . $size[1] . '-' : '';
+            $size = (strtolower(array_pop($end)) != 'gif') ? $size[0] . '-' . $size[1] . '-' : '0-0-';
             $img = PttUtil::uploadUrl() . $size . $img;
         }
 
