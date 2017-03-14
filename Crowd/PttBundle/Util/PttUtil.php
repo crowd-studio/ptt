@@ -162,7 +162,7 @@ class PttUtil
     static public function image($img, $size){
         if($img != ''){
             $size = (strtolower(end(explode('.', $img))) != 'svg') ? $size[0] . '-' . $size[1] . '-' : '';
-            $img = PttUtil::uploadUrl . $size . $img;
+            $img = PttUtil::uploadUrl() . $size . $img;
         }
 
         return $img;
