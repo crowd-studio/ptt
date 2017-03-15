@@ -13,19 +13,59 @@
 {% macro menu(list, principal) %}
 	{% import _self as sidebar %}
     <ul{% if principal %} class="menu"{% endif %}>
-    	{% for key,info in list %}
-    		{% if isAllowed(info) %}
-    			{% if info.path is defined %}
-					{# li final #}
-					<li{% if info.class is defined %} class="{{ info.class }}"{% endif %}{% if app.request.uri|slice(app.request.getSchemeAndHttpHost()|length) == path(info.path, info.parameters|default({})) %} class="selected"{% endif %}>
-						<a href="{{ path(info.path, info.parameters|default({})) }}">
-							<span>{{info.label|trans}}</span>
+    	{% for key,item in list %}
+    		{% if isAllowed(item) %}
+    			{% if item.path is defined %}
+    				{# define classes #}
+					{% set class = "item" %}
+					{% if item.class is defined %}
+						{% set class = class ~ ' ' ~ item.class %}
+					{% endif %}
+					{% if app.request.uri | slice(app.request.getSchemeAndHttpHost() | length) == path(item.path, item.parameters | default({})) %}
+						{% set class = class ~ ' current-item-selected' %}
+					{% endif %}
+					
+					{# create submenu if list (list & create new ) #}
+					{% if item.path == 'list' and item.nobucle is not defined %}
+						{% set array = [{
+								path: 'list',
+								parameters: item.parameters,
+								label: 'viewAll' | trans ~ ' ' ~ item.label,
+								nobucle:true, 
+							},{
+								path: 'create',
+								parameters: item.parameters,
+								label: 'createNew' | trans,
+							}
+							] %}
+						{% set childs = sidebar.menu(array) %}
+					{% endif %}
+
+					<li{{class != '' ? (' class="' ~ class ~ '"') | raw }}>
+						<a href="{{ path(item.path, item.parameters|default({})) }}">
+							<span>{{item.label|trans}}</span>
 						</a>
+						{% if childs is defined %}
+							{{ childs }}
+						{% endif %}
 					</li>
-    			{% elseif info.subSections | length > 0 %}
-    				{% set childs = sidebar.menu(info.subSections) %}
-					<li class="subSections{% if 'class="selected"' in childs | trim %} selected{% endif %}">
-						<a href="#" >{{info.label|trans}}</a>
+    			{% elseif item.subSections | length > 0 %}
+    				{# create the childs string #}
+    				{% set childs = sidebar.menu(item.subSections) %}
+
+    				{# search the first url active #}
+    				{% set precondition = false %}
+					{% set itemWhile = item.subSections[0] %}
+					{% for i in 0..10000 if not precondition %}
+						{% if itemWhile.path is defined %}
+							{% set precondition = true %}
+						{% else %}
+							{% set itemWhile = itemWhile.subSections[0] %}
+						{% endif %}
+					{% endfor %}
+    				
+					<li class="subSections{% if 'current-item-selected' in childs | trim %} current-item-selected{% endif %}">
+						<a href="{{ path(itemWhile.path, itemWhile.parameters|default({})) }}" >{{item.label|trans}}</a>
 						{{ childs }}
 					</li>
     			{% endif %}

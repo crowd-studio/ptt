@@ -44,7 +44,7 @@
 						}
 					}
 				}
-				&.selected{
+				&.current-item-selected{
 					background: @link-color;
 					>a{
 						color: #eee;
@@ -61,6 +61,7 @@
 					background: #32373c;
 					list-style: none;
 					padding-left: 0;
+					padding-bottom: 5px;
 					li{
 						&:hover{
 							>a{
@@ -68,7 +69,7 @@
 								color: @link-color;
 							}
 						}
-						&.selected{
+						&.current-item-selected{
 							>a{
 								color: #eee;
 								font-weight: bold;
@@ -105,7 +106,7 @@
 		.sidebar-inner{
 			.menu-container>ul,>ul{
 				li{
-					&:not(.selected){
+					&:not(.current-item-selected){
 						position:relative;
 						>ul{
 							display:none;
@@ -113,6 +114,7 @@
 							top:0;
 							left: 100%;
 							z-index: 100;
+
 							//background: #23282d;
 							li{
 								position:relative;
