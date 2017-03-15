@@ -17,6 +17,7 @@
 	.content-inner{
 		table{
 			thead{
+				font-weight: bold;
 				svg{
 					margin-right: 5px;
 					.size(10px);
@@ -24,19 +25,37 @@
 						fill: @blue;
 					}
 				}
+
 			}
 			tbody{
+				tr.draggable{
+					cursor: move; /* fallback if grab cursor is unsupported */
+					cursor: grab;
+					cursor: -moz-grab;
+					cursor: -webkit-grab;
+				}
+				tr.draggable:hover,
+				.chosen{
+					background:#ddd;
+				}
+				.ghost {
+				  opacity: 0.4;
+				}
 				.actions{
 					text-align: right;
 					>*:not(:first-child){
 						margin-left: 5px;
 					}
-					svg{
-						.size(16px);
-						path{
-							fill: @text;
-						}
-					}
+					
+				}
+			}
+			.handle{
+				width:30px;
+			}
+			svg{
+				.size(18px);
+				path{
+					fill: @text;
 				}
 			}
 		}

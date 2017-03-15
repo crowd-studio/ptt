@@ -55,6 +55,14 @@ www.crowd.st
 		<!-- <script src="http://imsky.github.io/holder/holder.js"></script> -->
 		{% if keymap is defined and keymap != '' %}<script src="https://maps.googleapis.com/maps/api/js?key={{keymap}}"></script>{% endif %}
 
+    {% set baseUrl = app.environment == 'dev' ? '/app_dev.php/' : '/' %}
+
+    <script>
+		window.conf = {
+			baseURL:  '{{ baseUrl }}'
+		};
+    </script>
+
 		<!-- <script type="text/javascript" src="{{ asset('bundles/ptt/admin/scripts/require.js') }}" data-main="{{ asset('bundles/ptt/admin/dev/admin') }}"></script>-->
 
 		{% block javascripts %}{% endblock %}

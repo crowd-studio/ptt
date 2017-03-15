@@ -180,7 +180,7 @@ class PttController extends Controller
     }
 
     /**
-     * @Route("/{entity}/order/", name="order");
+     * @Route("/{entity}/order", name="order");
      * @Template()
      */
     public function orderAction(Request $request, $entity){
