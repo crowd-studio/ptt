@@ -4,32 +4,73 @@
 <div class="sidebar">
 	<div class="sidebar-inner">
 		<div class="menu-container">
-			{{ sidebar.menu(info('admin').sidebar, true) }}
+			{{ sidebar.menu(info('admin').sidebar, page, true) }}
 		</div>
 		<span class="copyright">Crowd Studio - 1.9.5</span>
 	</div>	
 </div>
 
-{% macro menu(list, principal) %}
+{% macro menu(list,page, principal) %}
 	{% import _self as sidebar %}
     <ul{% if principal %} class="menu"{% endif %}>
-    	{% for key,info in list %}
-    		{% if isAllowed(info) %}
-    			{% if info.path is defined %}
-					{# li final #}
-					<li{% if info.class is defined %} class="{{ info.class }}"{% endif %}>
-						<a{% if app.request.uri|slice(app.request.getSchemeAndHttpHost()|length) == path(info.path, info.parameters|default({})) %} class="selected"{% endif %} href="{{ path(info.path, info.parameters|default({})) }}">
-						{%- if info.path == 'homes' -%}
-							{% import 'PttBundle:Default:sprites.html.twig' as sprites %}
-							{{ sprites.link() }}
-						{%- endif -%}
-							<span>{{info.label|trans}}</span>
+    	{% for key,item in list %}
+    		{% if isAllowed(item) %}
+    			{% if item.path is defined %}			
+					{# create submenu if list (list & create new ) #}
+					{% set childs = false %}
+					{% if item.path == 'list' and item.cloned is not defined and item.noSubmenu is not defined %}
+						{% set array = [{
+								path: 'list',
+								parameters: item.parameters,
+								label: 'viewAll' | trans ~ ' ' ~ item.label,
+								cloned: true
+							},{
+								path: 'create',
+								parameters: item.parameters,
+								label: 'createNew' | trans,
+							}
+							] %}
+						{% set childs = sidebar.menu(array,page) %}
+					{% endif %}
+
+					{# define classes #}
+					{% set class = "item" %}
+					{% if item.class is defined %}
+						{% set class = class ~ ' ' ~ item.class %}
+					{% endif %}
+					{% if app.request.uri | slice(app.request.getSchemeAndHttpHost() | length) == path(item.path, item.parameters | default({})) %}
+						{% set class = class ~ ' current-item-selected' %}
+					{% endif %}
+					{% if ('current-item-selected' in childs | trim) or (item.path == 'list' and page.path in ['create', 'edit'] and page.parameters.entity == item.parameters.entity and item.cloned is not defined) %}
+						{% set class = class ~ ' current-item-selected' %}
+					{% endif %}
+
+					<li{{class != '' ? (' class="' ~ class ~ '"') | raw }}>
+						<a href="{{ path(item.path, item.parameters|default({})) }}">
+							<span>{{item.label|trans}}</span>
 						</a>
+						{% if childs %}
+							{{ childs }}
+						{% endif %}
 					</li>
-    			{% elseif info.subSections|length > 0 %}
-					<li class="subSections {{ info.class|default('') }}">
-						<a href="#">{{info.label|trans}}</a>
-						{{ sidebar.menu(info.subSections) }}
+    			{% elseif item.subSections | length > 0 %}
+    				{# create the childs string #}
+    				{% set childs = sidebar.menu(item.subSections,page) %}
+
+    				{# search the first url active #}
+    				{% set precondition = false %}
+					{% set itemWhile = item.subSections[0] %}
+					{% for i in 0..10000 if not precondition %}
+						{% if itemWhile.path is defined %}
+							{% set precondition = true %}
+						{% else %}
+							{% set itemWhile = itemWhile.subSections[0] %}
+						{% endif %}
+					{% endfor %}
+    				
+					<li class="item{% if 'current-item-selected' in childs | trim %} current-item-selected{% endif %}">
+						<a href="{{ path(itemWhile.path, itemWhile.parameters|default({})) }}" >{{item.label|trans}}</a>
+						{{ childs }}
 					</li>
     			{% endif %}
     		{% endif %}
