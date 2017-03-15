@@ -51,14 +51,7 @@ class PttController extends Controller
 
         $em = $this->get('doctrine')->getManager();
 
-        if ($this->isSortable()) {
-            $order = [
-                '_order',
-                $this->orderList()
-            ];
-        } else {
-            $order = $this->_currentOrder($request);
-        }
+        $order = ($this->isSortable()) ? ['_order', $this->orderList()] : $this->_currentOrder($request);
 
         $filters = $this->_currentFilters($request);
 
@@ -68,15 +61,20 @@ class PttController extends Controller
         return $this->_renderTemplateForActionInfo('list', [
             'entityInfo' => $this->entityInfo(),
             'fields' => $this->fieldsToList(),
+            'order' => $order,
             'rows' => $entities,
             'pagination' => $pagination,
             'activeFilters' => $filters,
             'filters' => $this->fieldsToFilter(),
             'page' => [
-                'title' => $this->listTitle()
+                'title' => $this->listTitle(),
+                'path' => 'list',
+                'parameters' => [
+                  'entity' => $entity,
+                  'page' => $page
+                ]
             ],
             'sortable' => $this->isSortable(),
-            'csvexport' => $this->isCsvExport(),
             'copy' => $this->isCopy()
         ]);
     }
@@ -109,32 +107,25 @@ class PttController extends Controller
                 $this->flushCache($saveEntity);
                 $this->get('session')->getFlashBag()->add('success', $pttForm->getSuccessMessage());
 
-                $this->self = $this->get('session')->get('self');
-                if($this->self == 1){
-                    return $this->redirect($this->generateUrl('edit', ['entity' => $entity, 'id' => $id, 'self' => 1]));
-                } else {
-                    if ($id == null && $request->get('another') != null) {
-                        return $this->redirect($this->generateUrl('edit', ['entity' => $entity, 'id' => $id]));
-                    } else {
-                        return $this->redirect($this->generateUrl('list', ['entity' => $entity]));
-                    }
-                }
+                $route = ($id == null && $request->get('another') != null) ? $this->generateUrl('edit', ['entity' => $entity, 'id' => $id]) : $this->generateUrl('list', ['entity' => $entity]);
+                return $this->redirect($route);
             } else {
                 $this->get('session')->getFlashBag()->add('error', $pttForm->getErrorMessage());
             }
-        } else {
-            $this->self = $request->query->get('self');
-            $this->get('session')->set('self', $this->self);
         }
 
         $this->deleteTemp();
         return $this->_renderTemplateForActionInfo('edit', [
             'entityInfo' => $this->entityInfo(),
             'form' => $pttForm,
-            'cancel' => $this->self,
             'page' => [
-                'title' => $this->editTitle($id)
+                'title' => $this->editTitle($id),
+                'path' => $request->get('_route'),
+                 'parameters' => [
+                   'entity' => $entity,
+                   'id' => $id
                 ]
+              ]
         ]);
     }
 
@@ -333,10 +324,6 @@ class PttController extends Controller
         return method_exists($this->_initEntity(), "get_Order");
     }
 
-    protected function isCsvExport(){
-        return method_exists($this->_initEntity(), "getCsvExport");
-    }
-
     protected function isCopy(){
         return method_exists($this->_initEntity(), "getCopy");
     }
@@ -365,8 +352,7 @@ class PttController extends Controller
     }
 
     protected function fieldsToList(){
-        $fields = $this->_initEntity()->fieldsToList();
-        return ($fields) ? $fields : ['title' => $this->get('pttTrans')->trans('title')];
+        return $this->_initEntity()->fieldsToList();
     }
 
     protected function orderList(){
@@ -378,22 +364,7 @@ class PttController extends Controller
     }
 
     protected function fieldsToFilter(){
-        if($this->enableFilters()){
-            $fields = $this->_initEntity()->fieldsToFilter();
-            if($fields){
-                return $fields;
-            } else {
-                return [
-                    'title' => [
-                        'label' => $this->get('pttTrans')->trans('title'),
-                        'type' => 'text'
-                    ]
-                ];
-            }
-        } else {
-            return [];
-        }
-
+        return $this->_initEntity()->fieldsToFilter();
     }
 
     protected function continueWithDeletion($entity){
@@ -531,8 +502,12 @@ class PttController extends Controller
     protected function _currentOrder(Request $request){
         $cookies = $request->cookies;
         $fields = $this->fieldsToList();
-        foreach ($fields as $field => $label) {
+        $fieldsKeys = [];
+        foreach ($fields as $f) {
+            $field = $f['field'];
+            $label = $f['label'];
             $name = $this->entityName . '-' . $field;
+            array_push($fieldsKeys, $f['field']);
             if ($cookies->has($name)) {
                 return array($field, $cookies->get($name));
             }
@@ -674,10 +649,6 @@ class PttController extends Controller
             return false;
         }
 
-        if ($field){
-            return $pttAnnotation->$field;
-        } else {
-            return $pttAnnotation;
-        }
+        return ($field) ? $pttAnnotation->$field : $pttAnnotation;
     }
 }

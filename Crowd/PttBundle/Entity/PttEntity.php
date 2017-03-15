@@ -201,7 +201,7 @@ class PttEntity
     }
 
     public function fieldsToFilter(){
-        return false;
+        return [];
     }
 
     public function enableFilters(){
