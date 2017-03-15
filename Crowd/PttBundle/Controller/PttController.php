@@ -129,12 +129,7 @@ class PttController extends Controller
 
         list($valid, $message) = $this->continueWithDeletion($deleteEntity);
         if ($valid) {
-            $this->beforeDeletion($deleteEntity);
-            $this->flushCache($deleteEntity);
-
-            $em->remove($deleteEntity);
-            $em->flush();
-
+            $this->getPttServices()->remove($deleteEntity);
             $this->get('session')->getFlashBag()->add('success', $this->get('pttTrans')->trans('the_entity_was_deleted', $this->_entityInfoValue('lowercase')));
         } else {
             $this->get('session')->getFlashBag()->add('error', $message);
@@ -149,15 +144,14 @@ class PttController extends Controller
      */
     public function copyAction(Request $request, $entity, $id){
         $this->entityName = ucfirst($entity);
-        $entity = $this->getPttServices()->getOne($entity, $id);
-        if ($entity == null) {
+        $entityObj = $this->getPttServices()->getOne($entity, $id);
+        if ($entityObj) {
+            $entityB = clone $entityObj;
+            $this->getPttServices()->create($entityB);
+            return $this->redirect($this->generateUrl('list', ['entity' => $entity]));
+        } else {
             throw $this->createNotFoundException('The ' . $this->_entityInfoValue('lowercase') . ' does not exist');
         }
-
-        $entityB = clone $entity;
-        $em->persist($entityB);
-        $em->flush();
-        return $this->redirect($this->generateUrl('list', ['entity' => $entity]));
     }
 
     /**
@@ -168,25 +162,7 @@ class PttController extends Controller
         $this->entityName = ucfirst($entity);
         if ($request->getMethod() == 'PUT') {
             $fields = JSON_decode($request->getContent());
-            $em = $this->get('doctrine')->getManager();
-            $response = [];
-
-
-            $cache = new PttCache();
-            $cache->removeAll();
-
-            try {
-                foreach($fields as $field){
-                    $entity = $em->getRepository($this->_repositoryName())->find($field->id);
-                    $entity->set_Order($field->_order);
-                    $cache->remove($this->entityName . $field->id);
-                }
-                $em->flush();
-                $response['success'] = true;
-             } catch (Exception $e) {
-                $response['success'] = false;
-             }
-            return new JsonResponse($response);
+            return new JsonResponse(['success' => $this->getPttServices()->order($entity, $fields)]);
         } else {
             return $this->redirect($this->generateUrl('list', ['entity' => $entity]));
         }
@@ -200,17 +176,16 @@ class PttController extends Controller
         $this->entityName = ucfirst($entity);
         $limit = $request->get('limit');
         $result = [];
-        try {
-            $objects = $this->_buildQueryLast($this->_repositoryName(), $limit);
-            foreach ($objects as $object) {
-                $result[] = [
-                    'id' => $object->getId(),
-                    'title' => $object->getTitle()
-                ];
-            }
 
-        } catch(Exception $e){
-            $result = ['results' => 'Fail ' . $e];
+        $objects = $this->getPttServices()->getByPag($entity, [
+            'order' => [['order' => 'updateDate', 'orderDir' => 'desc']],
+            'limit' => $limit
+          ])['content'];
+        foreach ($objects as $object) {
+            $result[] = [
+                'id' => $object->getId(),
+                'title' => $object->getTitle()
+            ];
         }
 
         return new JsonResponse($result);
@@ -225,8 +200,9 @@ class PttController extends Controller
         $limit = $request->get('page_limit');
         $query = $request->get('q');
         $result = [];
+
         try {
-            $objects = $this->_buildQuery($this->_repositoryName(), ['title' => $query], ['title', 'asc'], $limit, 0, 0);
+            $objects = $this->_buildQuery($entity, ['title' => $query], ['title', 'asc'], $limit, 0)['content'];
             foreach ($objects as $object) {
                 $result[] = [
                     'id' => $object->getId(),
@@ -366,12 +342,6 @@ class PttController extends Controller
         return $this->_initEntity()->entityInfo($this->entityName);
     }
 
-    protected function entityConfigurationInfo(){
-        return [
-            'entityName' => strtolower($this->entityName)
-        ];
-    }
-
     protected function userIsRole($role){
         return ($this->getUser()->getRole() == $role);
     }
@@ -381,17 +351,14 @@ class PttController extends Controller
     }
 
     protected function allowAccess($methodName, $entity = false){
-        return [
-            true,
-            $this->get('pttTrans')->trans('the_current_user_cant_access')
-        ];
+        return [true, $this->get('pttTrans')->trans('the_current_user_cant_access')];
     }
 
     protected function urlPath(){
         return strtolower($this->entityName);
     }
 
-    protected function _buildQuery($repositoryName, $filters, $order, $limit, $page){
+    protected function _buildQuery($entity, $filters, $order, $limit, $page){
         $params = [];
 
         if($filters){
@@ -416,19 +383,7 @@ class PttController extends Controller
         $params['page'] = $page;
         $params['limit'] = $limit;
 
-        return $this->getPttServices()->getByPag($repositoryName, $params);
-    }
-
-    protected function _buildQueryLast($repositoryName, $limit){
-        $em = $this->get('doctrine')->getManager();
-
-        $dql = 'select ptt FROM ' . $this->_repositoryName() . ' ptt ORDER BY ptt.updateDate DESC';
-
-        $query = $em->createQuery($dql);
-        $query->setMaxResults($limit);
-        $results = $query->getResult();
-
-        return $results;
+        return $this->getPttServices()->getByPag($entity, $params);
     }
 
     protected function _entityInfoValue($value){
@@ -520,7 +475,7 @@ class PttController extends Controller
         }
 
         if (!isset($info['entityConfigurationInfo'])) {
-            $info['entityConfigurationInfo'] = $this->entityConfigurationInfo();
+            $info['entityConfigurationInfo'] = ['entityName' => strtolower($this->entityName)];
         }
 
         $info["keymap"] = PttUtil::pttConfiguration('google')["key"];

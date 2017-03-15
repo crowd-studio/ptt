@@ -194,6 +194,19 @@ class PttServices
         return true;
     }
 
+    public function order($entity, $fields){
+      foreach($fields as $field){
+          $entity = $this->getOne($table, $field->id);
+          if($entity){
+              $entity->set_Order($field->_order);
+          }
+      }
+      $em->flush();
+
+       $this->_deleteCache();
+       return true;
+    }
+
     private function _parseObjects($array, $params){
         foreach ($array as $key => $obj) {
             $obj = (isset($params['language'])) ? $this->_parseLanguage($obj, $params['language']) : $obj;
