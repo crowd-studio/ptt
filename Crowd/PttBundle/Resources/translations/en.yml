@@ -1,9 +1,9 @@
-actions : Actions
+reaactions : Actions
 add : Add
 cancel : Cancel
 content_was_saved : The content was saved
 create : Create
-create : Create
+createNew : Create new
 delete : Delete
 delete_the_entity_name : Delete the %@ "%@"?
 download_file : Download file
