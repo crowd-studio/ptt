@@ -42,27 +42,20 @@
 						&:before{
 							border-left-color: @link-color!important;
 						}
-						svg{
-							polyline,line{
-								stroke: @link-color!important;
-							}
-							path{
-								fill: @link-color!important;
-							}
-						}
+					}
+				}
+				&.selected{
+					background: @link-color;
+					>a{
+						color: #eee;
 					}
 				}
 				a{
 					display:block;
-					padding: 6px (@grid-gutter-width / 2 + 10px) 6px (@grid-gutter-width + 10px);
+					padding: 6px (@grid-gutter-width / 2);
 					font-weight: normal;
 					text-decoration: none;
 					color: #eee;
-					.img{
-						position:absolute;
-						.size(20px);
-						left: (@grid-gutter-width / 2) - 5px;
-					}
 				}
 				ul{
 					background: #32373c;
@@ -70,31 +63,28 @@
 					padding-left: 0;
 					li{
 						&:hover{
-							a{
+							>a{
+
 								color: @link-color;
+							}
+						}
+						&.selected{
+							>a{
+								color: #eee;
+								font-weight: bold;
 							}
 						}
 						a{
 							font-size: .9em;
 							text-decoration: none;
-							//padding-left: @grid-gutter-width * 2;
+							padding-left: @grid-gutter-width;
+							color: #ddd;
+						}
+						>ul>li>a{
+							padding-left: @grid-gutter-width * 1.5;
 						}
 					}
 				} 
-				/*&.subSections{
-					
-					>a:before{
-					    content: '';
-						position: absolute;
-						width: 0;
-						height: 0;
-						border-style: solid;
-						border-width: 6px 0 6px 10px;
-						border-color: transparent transparent transparent #eee;
-						left: @grid-gutter-width / 2 + 5px;
-						top: 10px;
-					}
-				}*/
 			}
 		}
 		span.copyright{
@@ -115,22 +105,30 @@
 		.sidebar-inner{
 			.menu-container>ul,>ul{
 				li{
-					>ul{
-						display:none;
-						position:absolute;
-						top:0;
-						left: 100%;
-						z-index: 100;
-						//background: #23282d;
-						li a{
-							padding-left: @grid-gutter-width / 2;
-							padding-right: @grid-gutter-width / 2;
-							min-width: 150px;
-						}
-					}
-					&:hover{
+					&:not(.selected){
+						position:relative;
 						>ul{
-							display:block;
+							display:none;
+							position:absolute;
+							top:0;
+							left: 100%;
+							z-index: 100;
+							//background: #23282d;
+							li{
+								position:relative;
+								>a{
+									padding-left: @grid-gutter-width / 2;
+									min-width: 150px;
+								}
+								>ul>li>a{
+									padding-left: @grid-gutter-width / 2;
+								}
+							}
+						}
+						&:hover{
+							>ul{
+								display:block;
+							}
 						}
 					}
 				}
