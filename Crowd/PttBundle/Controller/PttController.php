@@ -30,6 +30,7 @@ class PttController extends Controller
     private $className;
     private $bundle;
     private $repositoryName;
+    private $pttServices;
 
     /**
      * @Route("{entity}/list/{page}", name="list");
@@ -49,20 +50,23 @@ class PttController extends Controller
             return $response;
         }
 
-        $em = $this->get('doctrine')->getManager();
-
         $order = ($this->isSortable()) ? ['_order', $this->orderList()] : $this->_currentOrder($request);
 
         $filters = $this->_currentFilters($request);
 
-        list($pagination, $offset, $limit) = $this->_paginationForPage($page, $this->_repositoryName(), $filters);
-        $entities = $this->_buildQuery($this->_repositoryName(), $filters, $order, $limit, $offset, $page);
+        $limit = PttUtil::pttConfiguration('admin')['numberOfResultsPerPage'];
+        $result = $this->_buildQuery($this->entityName, $filters, $order, $limit, $page);
+        
+        $pagination = [
+            'currentPage' => $page,
+            'numberOfPages' => $result['maxPages']
+        ];
 
         return $this->_renderTemplateForActionInfo('list', [
             'entityInfo' => $this->entityInfo(),
             'fields' => $this->fieldsToList(),
             'order' => $order,
-            'rows' => $entities,
+            'rows' => $result['content'],
             'pagination' => $pagination,
             'activeFilters' => $filters,
             'filters' => $this->fieldsToFilter(),
@@ -406,39 +410,30 @@ class PttController extends Controller
         return strtolower($this->entityName);
     }
 
-    protected function _buildQuery($repositoryName, $filters, $order, $limit, $offset, $page){
-        $em = $this->get('doctrine')->getManager();
+    protected function _buildQuery($repositoryName, $filters, $order, $limit, $page){
+        $params = [];
+        if($filters){
+            $where = [];
+            foreach ($filters as $key => $filter) {
+              $where[] = ['column' => $key, 'operator' => 'LIKE', 'value' => '%'.$filter.'%'];
+            }
 
-        $dql = 'select ptt from ' . $this->_repositoryName() . ' ptt';
-
-        if (count($filters)) {
-            $dql .= ' where ';
+             $params['where'] = [['and' => $where]];
         }
 
-        $filterDql = [];
-
-        foreach ($filters as $key => $value) {
-            $filterDql[] = 'ptt.' . $key . ' like :' . $key;
+        if($order){
+            $params['order'] = [['order' => $order[0], 'orderDir' => $order[1]]];
         }
 
-        $dql .= implode(' and ', $filterDql);
-
-        $dql .= ' order by ptt.' . $order[0] . ' ' . $order[1];
-
-        $query = $em->createQuery($dql);
-
-        foreach ($filters as $key => $value) {
-            $query->setParameter($key, '%' . $value . '%');
+        if($this->isSortable()) {
+            $limit = 0;
+            $page = 0;
         }
 
-        if($limit > 0){
-            if($offset > 0){$query->setFirstResult(($page - 1) * $limit);}
-            $query->setMaxResults($limit);
-        }
+        $params['page'] = $page;
+        $params['limit'] = $limit;
 
-        $results = $query->getResult();
-
-        return $results;
+        return $this->getPttServices()->getByPag($repositoryName, $params);
     }
 
     protected function _buildQueryLast($repositoryName, $limit){
@@ -451,47 +446,6 @@ class PttController extends Controller
         $results = $query->getResult();
 
         return $results;
-    }
-
-    protected function _paginationForPage($page, $repositoryName, $filters){
-        $total = $this->_totalEntities($repositoryName, $filters);
-
-        if($this->isSortable()) {
-            $limit = 0;
-            $offset = 0;
-        } else {
-            $limit =  PttUtil::pttConfiguration('admin')['numberOfResultsPerPage'];
-            $offset = ceil($total / $limit);
-        }
-
-        $pagination = [
-            'currentPage' => $page,
-            'numberOfPages' => $offset
-        ];
-
-        return [
-            $pagination,
-            ($page - 1) * $offset,
-            $limit
-        ];
-    }
-
-    protected function _totalEntities($repositoryName, $filters = null){
-        $em = $this->get('doctrine')->getManager();
-
-        $query = $em->createQueryBuilder()
-              ->select('count(p.id)')
-              ->from($repositoryName, 'p');
-
-        if ($filters){
-            foreach ($filters as $key => $value) {
-                $query->andWhere('p.' . $key . ' like :' . $key);
-                $query->setParameter($key, '%' . $value . '%');
-            }
-        }
-
-        $total = $query->getQuery()->getSingleScalarResult();
-        return $total;
     }
 
     protected function _entityInfoValue($value){
@@ -593,7 +547,7 @@ class PttController extends Controller
 
         try {
             $kernel = $this->container->get('kernel');
-             $filePath = $kernel->locateResource('@' . $this->_bundle() . '/Resources/views/' . ucfirst($this->entityName) . '/' . $filename);
+            $filePath = $kernel->locateResource('@' . $this->_bundle() . '/Resources/views/' . ucfirst($this->entityName) . '/' . $filename);
             $template = $this->_repositoryName() . ':' . $action . '.html.twig';
 
         } catch (\Exception $e) {
@@ -612,6 +566,13 @@ class PttController extends Controller
 
         $info["keymap"] = PttUtil::pttConfiguration('google')["key"];
         return $this->render($template, $info);
+    }
+
+    protected function getPttServices(){
+        if(!$this->pttServices){
+            $this->pttServices = $this->get('pttservices');
+        }
+        return $this->pttServices;
     }
 
     protected function _initEntity(){

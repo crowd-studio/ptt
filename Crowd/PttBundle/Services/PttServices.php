@@ -29,7 +29,7 @@ class PttServices
     public function __construct(\Doctrine\ORM\EntityManager $em, KernelInterface $kernel) {
         $this->em = $em;
         $this->kernel = $kernel;
-        
+
         $this->bundle = PttUtil::pttConfiguration('bundles')[0]['bundle'];
     }
 
@@ -44,7 +44,7 @@ class PttServices
 
         $qb->select(['t'])->from($tableBundle, 't');
 
-        if(isset($params['where'])){ 
+        if(isset($params['where'])){
             $qb = $this->_where($params['where'], $qb);
         }
 
@@ -52,7 +52,7 @@ class PttServices
         if(isset($params['order'])){
             foreach ($params['order'] as $key => $order) {
                 $qb->orderBy('t.' . $order['order'], $order['orderDir']);
-             } 
+             }
         } else {
             $col = $this->em->getClassMetadata($tableBundle)->getFieldNames();
             if(array_search('_order', $col)){
@@ -63,7 +63,7 @@ class PttServices
         if(isset($params['page'])){
             $limit = (isset($params['limit'])) ? $params['limit'] : $this->limit;
             $offset = $params['page'] * $limit;
-            
+
             $qb->setMaxResults($limit);
             $qb->setFirstResult($offset);
         }
@@ -94,10 +94,10 @@ class PttServices
     public function get($table, $params = []){
         $qb = $this->_sql($table, $params);
         $query = $qb->getQuery();
-        
-        if(isset($params['as_array']) && $params['as_array']){ 
-            $data = $query->getArrayResult();  
-        } elseif(isset($params['one']) && $params['one']){    
+
+        if(isset($params['as_array']) && $params['as_array']){
+            $data = $query->getArrayResult();
+        } elseif(isset($params['one']) && $params['one']){
             $data = $query->getSingleResult();
 
         } else {
@@ -142,23 +142,30 @@ class PttServices
         $qb = $this->_sql($table, $params);
         $query = $qb->getQuery();
 
-        $paginator = new Paginator($query);
+        if($limit > 0){
+          $paginator = new Paginator($query);
 
-        $paginator->getQuery()
-            ->setFirstResult($limit * $page) // Offset
-            ->setMaxResults($limit); // Limit
+          $paginator->getQuery()
+              ->setFirstResult($limit * $page) // Offset
+              ->setMaxResults($limit); // Limit
 
-        $maxPages = ceil($paginator->count() / $limit);
-        $hasNewPages = ($maxPages >= $page) ? false : true;
+          $maxPages = ceil($paginator->count() / $limit);
+          $hasNewPages = ($maxPages >= $page) ? false : true;
 
-        $data = [];
-        foreach ($paginator->getIterator() as $key => $row) {
-            $data[] = $row;
+          $data = [];
+          foreach ($paginator->getIterator() as $key => $row) {
+              $data[] = $row;
+          }
+
+        } else {
+            $data = $query->getResult();
+            $maxPages = 1;
+            $hasNewPages = false;
         }
 
         $data = $this->_parseObjects($data, $params);
-            
-        
+
+
         return ['content' => $data, 'newPage' => $hasNewPages, 'limit' => $limit, 'maxPages' => $maxPages];
     }
 
@@ -230,13 +237,13 @@ class PttServices
             }
 
             $mods = $this->_parseObjects($mods, $params);
-            
+
             foreach ($mods as $key => $row){
                 $order[$key] = $row->get_Order();
             }
 
-            array_multisort($order, SORT_ASC, $mods); 
-            $obj->setModules($mods);  
+            array_multisort($order, SORT_ASC, $mods);
+            $obj->setModules($mods);
         }
 
         return $obj;
