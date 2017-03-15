@@ -27,18 +27,19 @@
 							</div>
 						</div>
 						<div class="filters-content">
+
 							{% for key,filter in filters %}
 								{% if filter.type == 'text' %}
 									<div class="form-group">
-										<input class="form-control" type="text" name="filter-{{ entityConfigurationInfo.entityName }}-{{ key }}" placeholder="{{ filter.label }}" value="{{ filter(key, entityConfigurationInfo.entityName) }}">
+										<input class="form-control" type="text" name="filter-{{ entityConfigurationInfo.entityName }}-{{ filter.field }}" placeholder="{{ filter.label }}" value="{{ filter(filter.field, entityConfigurationInfo.entityName) }}">
 									</div>
 								{% elseif filter.type == 'select' %}
 									<div class="form-group">
-										<select class="form-control" type="select" name="filter-{{ entityConfigurationInfo.entityName }}-{{ key }}">
+										<select class="form-control" type="select" name="filter-{{ entityConfigurationInfo.entityName }}-{{ filter.field }}">
 											<option value="" selected="">{{ filter.label }}</option>
 											<option disabled="" value="---">---</option>
 											{% for value,label in filter.options %}
-												<option value="{{value}}" {{ value == filter(key, entityConfigurationInfo.entityName) ? ' selected' : '' }} >{{label}}</option>
+												<option value="{{value}}" {{ value == filter(filter.field, entityConfigurationInfo.entityName) ? ' selected' : '' }} >{{label}}</option>
 											{% endfor %}
 										</select>
 									</div>
@@ -60,7 +61,7 @@
 										{%- if sortable -%}
 											{{ field.label }}
 										{%- else -%}
-											<a href="{{ path('list', {entity : entityConfigurationInfo.entityName, order : field.field}) }}">{%- if order[0] == field.field -%}{{ attribute(sprites,order[1]) }}{%- endif -%}{{field.label}}</a>
+											<a href="{{ path('list', {entity : entityConfigurationInfo.entityName, order : field.field}) }}">{{field.label}}</a>
 										{%- endif -%}
 									</td>
 								{% endfor %}

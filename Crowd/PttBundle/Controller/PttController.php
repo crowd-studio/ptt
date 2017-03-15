@@ -70,6 +70,7 @@ class PttController extends Controller
             'fields' => $this->fieldsToList(),
             'rows' => $entities,
             'pagination' => $pagination,
+            'activeFilters' => $filters,
             'filters' => $this->fieldsToFilter(),
             'page' => [
                 'title' => $this->listTitle()
@@ -536,8 +537,7 @@ class PttController extends Controller
                 return array($field, $cookies->get($name));
             }
         }
-        $fieldsKeys = array_keys($fields);
-        return array($fieldsKeys[0], $this->orderList());
+        return array($fields[0]['field'], $this->orderList());
     }
 
     protected function _currentFilters(Request $request){
@@ -622,10 +622,10 @@ class PttController extends Controller
             $template = $this->_repositoryName() . ':' . $action . '.html.twig';
 
         } catch (\Exception $e) {
-            $defaultFileDir = __DIR__ . '/../Resources/views/Default/';
+            $defaultFileDir = __DIR__ . '/../Resources/views/'. ucfirst($action) . '/';
             $filePath = $defaultFileDir . $filename;
             if (file_exists($filePath) && is_file($filePath)) {
-                $template = 'PttBundle:Default:' . $filename;
+                $template = 'PttBundle:' . ucfirst($action) . ':' . $filename;
             } else {
                 throw new \Exception('The requested template does not exist');
             }

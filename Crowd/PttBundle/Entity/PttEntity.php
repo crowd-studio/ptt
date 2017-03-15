@@ -213,7 +213,7 @@ class PttEntity
     }
 
     public function fieldsToList(){
-        return false;
+        return  [['field' => 'id', 'label' => 'Id', 'primary' => true]];
     }
 
     public function entityInfo($entityName = false){
