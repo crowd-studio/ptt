@@ -9,12 +9,12 @@
 				{% if sortable %}
 					<a ng-show="!changeOrder" ng-click="activeOrderEvent($event)" class="btn btn-default btn-sm btn-sort">{{ 'order' | trans }}</a>
 					<a ng-show="changeOrder" ng-click="cancelOrderEvent($event)" class="btn btn-sm btn-danger">{{ 'cancel' | trans }}</a>
-					<a ng-show="changeOrder" ng-click="saveOrderEvent($event)" class="btn btn-sm btn-primary">{{ 'save' | trans }}</a>
+					<a ng-show="changeOrder" ng-click="saveOrderEvent($event)" class="btn btn-sm btn-success">{{ 'save' | trans }}</a>
 				{% endif %}
 				{% if filters|length > 0 %}
 					<a ng-click="showFilters = !showFilters" class="btn btn-default btn-sm btn-filter" ng-class="{'btn-primary': showFilters}">{{ 'filters' | trans }}</a>
 				{% endif %}
-				<a class="btn btn-default btn-sm" ng-show="!changeOrder" href="{{ path('create', {entity: entityConfigurationInfo.entityName}) }}">{{ 'createNew' | trans }} {{entityInfo.lowercase}}</a>
+				<a class="btn btn-success btn-sm" ng-show="!changeOrder" href="{{ path('create', {entity: entityConfigurationInfo.entityName}) }}">{{ 'createNew' | trans }} {{entityInfo.lowercase}}</a>
 			</div>
 		</div>
 		{% if filters|length > 0 %}
@@ -23,8 +23,8 @@
 					<div class="filters-header header-line">
 						<h3>Filters</h3>
 							<div class="actions">
-							<a href="{{ path('list', {entity : entityConfigurationInfo.entityName, filter:'reset'}) }}" class="btn btn-danger btn-cancel btn-xs">{{ 'clean_filters' | trans }}</a>
-							<button type="submit" class="btn btn-primary btn-save btn-xs">{{ 'apply_filters' | trans }}</button>
+							<a href="{{ path('list', {entity : entityConfigurationInfo.entityName, filter:'reset'}) }}" class="btn btn-danger btn-cancel btn-xs">{{ 'clean' | trans }}</a>
+							<button type="submit" class="btn btn-success btn-save btn-xs">{{ 'apply' | trans }}</button>
 						</div>
 					</div>
 					<div class="filters-content">

@@ -28,8 +28,8 @@ recover_the_saved_version_on : Recover the saved version on %@?
 remember_me : Remember me
 remove : Remove
 required_field : Required field
-clean_filters : Clean filters
-apply_filters : Apply filters
+clean : Clean
+apply : Apply
 save : Save
 save_and_create_another : Save and create another
 saved : Saved
