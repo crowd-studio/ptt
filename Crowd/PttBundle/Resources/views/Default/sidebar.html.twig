@@ -26,6 +26,7 @@
 					{% endif %}
 					
 					{# create submenu if list (list & create new ) #}
+					{% set childs = false %}
 					{% if item.path == 'list' and item.nobucle is not defined %}
 						{% set array = [{
 								path: 'list',
@@ -45,7 +46,7 @@
 						<a href="{{ path(item.path, item.parameters|default({})) }}">
 							<span>{{item.label|trans}}</span>
 						</a>
-						{% if childs is defined %}
+						{% if childs %}
 							{{ childs }}
 						{% endif %}
 					</li>
