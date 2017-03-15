@@ -36,7 +36,7 @@ class PttController extends Controller
      * @Route("{entity}/list/{page}", name="list");
      * @Template()
      */
-    public function listAction(Request $request, $entity, $page = null){
+    public function listAction(Request $request, $entity, $page = 1){
         $this->deleteTemp();
         $this->entityName = $entity;
 
@@ -56,20 +56,15 @@ class PttController extends Controller
 
         $limit = PttUtil::pttConfiguration('admin')['numberOfResultsPerPage'];
         $result = $this->_buildQuery($this->entityName, $filters, $order, $limit, $page);
-        
-        $pagination = [
-            'currentPage' => $page,
-            'numberOfPages' => $result['maxPages']
-        ];
 
         return $this->_renderTemplateForActionInfo('list', [
             'entityInfo' => $this->entityInfo(),
-            'fields' => $this->fieldsToList(),
-            'order' => $order,
             'rows' => $result['content'],
-            'pagination' => $pagination,
+            'fields' => $this->fieldsToList(),
+            'pagination' => $result['pagination'],
             'activeFilters' => $filters,
             'filters' => $this->fieldsToFilter(),
+            'order' => $order,
             'page' => [
                 'title' => $this->listTitle(),
                 'path' => 'list',
@@ -94,8 +89,7 @@ class PttController extends Controller
         if ($id == null) {
             $saveEntity = $this->_initEntity();
         } else {
-            $em = $this->get('doctrine')->getManager();
-            $saveEntity = $em->getRepository($this->_repositoryName())->find($id);
+            $saveEntity = $this->getPttServices()->getOne($entity, $id);
             if ($saveEntity == null) {
                 throw $this->createNotFoundException($this->get('pttTrans')->trans('the_entity_does_not_exist', $this->_entityInfoValue('lowercase')));
             }
@@ -139,8 +133,7 @@ class PttController extends Controller
      */
     public function deleteAction(Request $request, $entity, $id){
         $this->entityName = ucfirst($entity);
-        $em = $this->get('doctrine')->getManager();
-        $deleteEntity = $em->getRepository($this->_repositoryName())->find($id);
+        $deleteEntity = $this->getPttServices()->getOne($entity, $id);
         if ($deleteEntity == null) {
             throw $this->createNotFoundException('The ' . $this->_entityInfoValue('lowercase') . ' does not exist');
         }
@@ -167,8 +160,7 @@ class PttController extends Controller
      */
     public function copyAction(Request $request, $entity, $id){
         $this->entityName = ucfirst($entity);
-        $em = $this->get('doctrine')->getManager();
-        $entity = $em->getRepository($this->_repositoryName())->find($id);
+        $entity = $this->getPttServices()->getOne($entity, $id);
         if ($entity == null) {
             throw $this->createNotFoundException('The ' . $this->_entityInfoValue('lowercase') . ' does not exist');
         }
@@ -427,7 +419,7 @@ class PttController extends Controller
 
         if($this->isSortable()) {
             $limit = 0;
-            $page = 0;
+            $page = 1;
         }
 
         $params['page'] = $page;
@@ -512,26 +504,21 @@ class PttController extends Controller
     }
 
     protected function _filter(Request $request, $entity){
-        $filters = $this->fieldsToFilter();
-
         $url = $this->generateUrl('list', ['entity' => $entity]);
         $response = new RedirectResponse($url);
 
-        if ($request->getMethod() == 'POST' && count($filters)) {
-            $cookies = $request->cookies;
+        if ($request->getMethod() == 'POST'){
+            $filters = $request->request->all();
             foreach ($filters as $key => $filter) {
-                $fieldName = 'filter-' . strtolower($this->entityName) . '-' . $key;
-                $value = trim($request->get($fieldName, ''));
-                if ($value == '' && $cookies->has($fieldName)) {
-                    $response->headers->clearCookie($fieldName);
+                if($filter == ''){
+                    $response->headers->clearCookie($key);
                 } else {
-                    $response->headers->setCookie(new Cookie($fieldName, $value, time() + (315360000))); // 10 * 365 * 24 * 60 * 60 = 315360000
+                    $response->headers->setCookie(new Cookie($key, $filter, time() + (315360000)));
                 }
             }
-            return $response;
         } else {
-            if ($request->get('filter', false) == 'reset') {
-                foreach ($filters as $key => $filter) {
+            if ($request->request->get('filter', false) == 'reset') {
+                foreach ($this->fieldsToFilter() as $key => $filter) {
                     $fieldName = 'filter-' . strtolower($this->entityName) . '-' . $key;
                     $response->headers->clearCookie($fieldName);
                 }

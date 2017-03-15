@@ -60,14 +60,6 @@ class PttServices
             }
         }
 
-        if(isset($params['page'])){
-            $limit = (isset($params['limit'])) ? $params['limit'] : $this->limit;
-            $offset = $params['page'] * $limit;
-
-            $qb->setMaxResults($limit);
-            $qb->setFirstResult($offset);
-        }
-
         return $qb;
     }
 
@@ -136,26 +128,26 @@ class PttServices
     }
 
     public function getByPag($table, $params = []){
-        $page = (isset($params['page'])) ? $params['page'] : 0;
+        $page = (isset($params['page'])) ? $params['page'] : 1;
         $limit = (isset($params['limit'])) ? $params['limit'] : $this->limit;
 
         $qb = $this->_sql($table, $params);
         $query = $qb->getQuery();
 
         if($limit > 0){
-          $paginator = new Paginator($query);
+            $paginator = new Paginator($query);
 
-          $paginator->getQuery()
-              ->setFirstResult($limit * $page) // Offset
-              ->setMaxResults($limit); // Limit
+            $paginator->getQuery()
+                ->setFirstResult($limit * ($page-1)) // Offset
+                ->setMaxResults($limit); // Limit
 
-          $maxPages = ceil($paginator->count() / $limit);
-          $hasNewPages = ($maxPages >= $page) ? false : true;
+            $maxPages = ceil($paginator->count() / $limit);
+            $hasNewPages = ($maxPages >= ($page-1)) ? false : true;
 
-          $data = [];
-          foreach ($paginator->getIterator() as $key => $row) {
-              $data[] = $row;
-          }
+            $data = [];
+            foreach ($paginator->getIterator() as $key => $row) {
+                $data[] = $row;
+            }
 
         } else {
             $data = $query->getResult();
@@ -166,7 +158,7 @@ class PttServices
         $data = $this->_parseObjects($data, $params);
 
 
-        return ['content' => $data, 'newPage' => $hasNewPages, 'limit' => $limit, 'maxPages' => $maxPages];
+        return ['content' => $data, 'pagination' => ['currentPage' => $page, 'newPage' => $hasNewPages, 'limit' => $limit, 'maxPages' => $maxPages]];
     }
 
     public function update($table, $id, $data){

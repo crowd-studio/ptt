@@ -87,7 +87,7 @@
 						 {% endfor %}
 					 </tbody>
 				 </table>
-				{%- if pagination is defined and pagination.numberOfPages is defined and pagination.numberOfPages > 1 -%}
+				{%- if pagination is defined and pagination.maxPages is defined and pagination.maxPages > 1 -%}
 					<div class="pagination-block">
 						{% include 'PttBundle:Default:pagination.html.twig' %}
 					</div>

@@ -1,4 +1,4 @@
-{% if pagination.numberOfPages > 1 %}
+{% if pagination.maxPages > 1 %}
     {% if pagination.currentPage is null %}
         {% set pagination = {currentPage : 1} | extend(pagination) %}
     {% endif %}
@@ -18,22 +18,22 @@
         {% endif %}
 
         {% for i in pagination.currentPage - limitVisible .. pagination.currentPage + limitVisible %}
-            {% if i > 0 and i <= pagination.numberOfPages %}
+            {% if i > 0 and i <= pagination.maxPages %}
                 <li {{ pagination.currentPage == i ? 'class="active"' }}>
                     <a href="{{ path('list', {entity : entityConfigurationInfo.entityName, page : i }) }}">{{ i }}</a>
                 </li>
             {% endif %}
         {% endfor %}
 
-        {% if pagination.currentPage <= pagination.numberOfPages - ( limitVisible + 1 ) %}
-            {% if pagination.currentPage < pagination.numberOfPages - ( limitVisible + 1) %}
+        {% if pagination.currentPage <= pagination.maxPages - ( limitVisible + 1 ) %}
+            {% if pagination.currentPage < pagination.maxPages - ( limitVisible + 1) %}
                 <li class="disabled"><span>...</span></li>
             {% endif %}
-            <li><a href="{{ path('list', {entity : entityConfigurationInfo.entityName, page : pagination.numberOfPages }) }}">{{ pagination.numberOfPages }}</a></li>
+            <li><a href="{{ path('list', {entity : entityConfigurationInfo.entityName, page : pagination.maxPages }) }}">{{ pagination.maxPages }}</a></li>
         {% endif %}
 
-        <li {{ pagination.currentPage == pagination.numberOfPages ? 'class="disabled"' }}>
-            <a href="{{ path('list', {entity : entityConfigurationInfo.entityName, page: pagination.currentPage+1 <= pagination.numberOfPages ? pagination.currentPage+1 : pagination.currentPage}) }}">&raquo;</a>
+        <li {{ pagination.currentPage == pagination.maxPages ? 'class="disabled"' }}>
+            <a href="{{ path('list', {entity : entityConfigurationInfo.entityName, page: pagination.currentPage+1 <= pagination.maxPages ? pagination.currentPage+1 : pagination.currentPage}) }}">&raquo;</a>
         </li>
     </ul>
 
