@@ -40,21 +40,10 @@ class PttController extends Controller
         $this->deleteTemp();
         $this->entityName = $entity;
 
-        $response = $this->_order($request);
-        if ($response) {
-            return $response;
-        }
-
-        $response = $this->_filter($request, $entity);
-        if ($response) {
-            return $response;
-        }
-
-        $order = ($this->isSortable()) ? ['_order', $this->orderList()] : $this->_currentOrder($request);
-
+        $order = ($this->isSortable()) ? ['_order', 'asc'] : $this->_currentOrder($request);
         $filters = $this->_currentFilters($request);
-
         $limit = PttUtil::pttConfiguration('admin')['numberOfResultsPerPage'];
+
         $result = $this->_buildQuery($this->entityName, $filters, $order, $limit, $page);
 
         return $this->_renderTemplateForActionInfo('list', [
@@ -404,10 +393,12 @@ class PttController extends Controller
 
     protected function _buildQuery($repositoryName, $filters, $order, $limit, $page){
         $params = [];
+
         if($filters){
             $where = [];
             foreach ($filters as $key => $filter) {
-              $where[] = ['column' => $key, 'operator' => 'LIKE', 'value' => '%'.$filter.'%'];
+              $keyArr = explode('-', $key);
+              $where[] = ['column' => array_pop($keyArr), 'operator' => 'LIKE', 'value' => '%'.$filter.'%'];
             }
 
              $params['where'] = [['and' => $where]];
@@ -446,87 +437,68 @@ class PttController extends Controller
     }
 
     protected function _currentOrder(Request $request){
-        $cookies = $request->cookies;
-        $fields = $this->fieldsToList();
-        $fieldsKeys = [];
-        foreach ($fields as $f) {
-            $field = $f['field'];
-            $label = $f['label'];
-            $name = $this->entityName . '-' . $field;
-            array_push($fieldsKeys, $f['field']);
-            if ($cookies->has($name)) {
-                return array($field, $cookies->get($name));
-            }
+        $session = $this->get('session');
+        $orderName = $this->entityName . '-order';
+        $field = $request->query->get('order');
+        if($field != null){
+              $old = $session->get($orderName);
+              if($old){
+                  $direction = ($old[1] == 'asc') ? 'desc' : 'asc';
+              } else {
+                  $direction = $this->orderList();
+              }
+              $order = [$field, $direction];
+              $session->set($orderName, $order);
+        } else {
+              $order = $session->get($orderName);
         }
-        return array($fields[0]['field'], $this->orderList());
+
+        return $order;
     }
 
     protected function _currentFilters(Request $request){
-        $cookies = $request->cookies;
-        $fields = $this->fieldsToFilter();
-        $filters = [];
-        foreach ($fields as $key => $field) {
-            $name = 'filter-' . strtolower($this->entityName) . '-' . $key;
-            if ($cookies->has($name) && trim($cookies->get($name, '')) != '') {
-                $filters[$key] = $cookies->get($name);
-            }
+        $session = $this->get('session');
+        if($request->getMethod() == 'POST'){
+            $filters = $this->_setFilters($session, $request->request->all());
+        } elseif($request->query->get('filter', false) == 'reset') {
+            $filters = $this->_clearFilters($session, $this->fieldsToFilter());
+        } else {
+            $filters = $this->_getFilters($session, $this->fieldsToFilter());
         }
+
         return $filters;
     }
 
-    protected function _order(Request $request){
-        if ($request->get('order') != null) {
-
-            $cookies = $request->cookies;
-            $name = $this->entityName . '-' . $request->get('order');
-            if ($cookies->has($name)) {
-                $oldValue = $cookies->get($name);
-                $value = ($oldValue == 'asc') ? 'desc' : 'asc';
-            } else {
-                $value = $this->orderList();
+    protected function _setFilters($session, $filters){
+        $activeFilters = [];
+        foreach ($filters as $filter => $value) {
+            $session->set($filter, $value);
+            if($value != ''){
+                $activeFilters[$filter] = $value;
             }
-
-            $url = $this->generateUrl('list', ['entity' => strtolower($this->entityName)]);
-            $response = new RedirectResponse($url);
-
-            $allCookies = $cookies->all();
-            foreach ($allCookies as $cookie => $cookieValue) {
-                if (strpos($cookie, $this->entityName) !== false && $cookie != $name) {
-                    $response->headers->clearCookie($cookie);
-                }
-            }
-
-            $response->headers->setCookie(new Cookie($name, $value, time() + (315360000))); // 10 * 365 * 24 * 60 * 60 = 315360000
-            return $response;
-        } else {
-            return false;
         }
+
+        return $activeFilters;
     }
 
-    protected function _filter(Request $request, $entity){
-        $url = $this->generateUrl('list', ['entity' => $entity]);
-        $response = new RedirectResponse($url);
+    protected function _clearFilters($session, $fields){
+        foreach ($fields as $field) {
+            $session->clear('filter-' . $this->entityName . '-' . $field['field']);
+        }
 
-        if ($request->getMethod() == 'POST'){
-            $filters = $request->request->all();
-            foreach ($filters as $key => $filter) {
-                if($filter == ''){
-                    $response->headers->clearCookie($key);
-                } else {
-                    $response->headers->setCookie(new Cookie($key, $filter, time() + (315360000)));
-                }
-            }
-        } else {
-            if ($request->request->get('filter', false) == 'reset') {
-                foreach ($this->fieldsToFilter() as $key => $filter) {
-                    $fieldName = 'filter-' . strtolower($this->entityName) . '-' . $key;
-                    $response->headers->clearCookie($fieldName);
-                }
-                return $response;
-            } else {
-                return false;
+        return false;
+    }
+
+    protected function _getFilters($session, $fields){
+        $activeFilters = [];
+        foreach ($fields as $field) {
+            $value = $session->get('filter-' . $this->entityName . '-' . $field['field']);
+            if($value != ''){
+               $activeFilters[$field['field']] = $value;
             }
         }
+
+        return $activeFilters;
     }
 
     protected function _renderTemplateForActionInfo($action, $info = []){
