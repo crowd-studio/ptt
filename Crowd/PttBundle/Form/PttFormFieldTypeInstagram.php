@@ -46,7 +46,7 @@ class PttFormFieldTypeInstagram extends PttFormFieldType
 		    $ch = curl_init('https://api.instagram.com/v1/users/self/?access_token='.$this->value);
 
 			curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-			
+
 			$response = curl_exec($ch);
 			curl_close($ch);
 
@@ -57,7 +57,7 @@ class PttFormFieldTypeInstagram extends PttFormFieldType
 
 			$htmlField .= '</div>';
 		}
-		
+
 		$html .= $htmlField;
 		$html .= $this->end();
 

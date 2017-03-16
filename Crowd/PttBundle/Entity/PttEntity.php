@@ -315,6 +315,7 @@ class PttEntity
                 $new->set_Order(-1);
             }
         }
+        
         if(method_exists($new, 'set_Model')){
             $new->set_Model($this->getClassName());
         }
@@ -322,7 +323,6 @@ class PttEntity
         if(method_exists($new, 'setUpdateObjectValues')){
             $new->setUpdateObjectValues(1);
         }
-
 
         if(method_exists($new, 'setSlug')){
             $new->setSlug(PttUtil::slugify((string)$new));

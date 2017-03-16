@@ -29,9 +29,9 @@ class PttFormFieldTypeTwitter extends PttFormFieldType
 
 		$htmlField .= '>';
 
-		$twitterArray = PttUtil::pttConfiguration('twitter');	
+		$twitterArray = PttUtil::pttConfiguration('twitter');
 		if ($this->entityInfo->get('id')){
-			
+
 			$connection = new TwitterOAuth($twitterArray["apiKey"], $twitterArray["secretKey"]);
 	        $request_token = $connection->oauth('oauth/request_token', array('oauth_callback' => $twitterArray['callback']));
 	        $url = $connection->url('oauth/authorize', array('oauth_token' => $request_token['oauth_token']));
@@ -60,7 +60,7 @@ class PttFormFieldTypeTwitter extends PttFormFieldType
 
 			$htmlField .= '</div>';
 		}
-		
+
 		$html .= $htmlField;
 		$html .= $this->end();
 

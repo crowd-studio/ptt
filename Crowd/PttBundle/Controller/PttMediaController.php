@@ -23,6 +23,8 @@ use Crowd\PttBundle\Form\PttField;
 
 class PttMediaController extends Controller
 {
+    private $pttServices;
+
     /**
      * @Route("/ptt/media/upload/", name="upload");
      * @Template()
@@ -32,42 +34,34 @@ class PttMediaController extends Controller
         if($request->files->get('files') !== null) {
             $uploadUrl = PttUtil::pttConfiguration('images');
             $pttInfo = PttUtil::pttConfiguration('s3');
-            $uploadToS3 = (isset($pttInfo['force']) && $pttInfo['force']) ? true : false;
+            $uploadToS3 = (isset($pttInfo['force']) && $pttInfo['force']);
 
             if ($request->get('canvas') == 'yes') {
 
-                $sizes = $request->get('sizes', array(array('w' => 0, 'h' => 0)));
-
-                $width = $sizes[0]['w'];
-                $height = $sizes[0]['h'];
+                $sizes = $request->get('sizes', [['w' => 0, 'h' => 0]]);
 
                 $filename = PttUploadFile::uploadCanvas($request->get('imgBase64'), $sizes, $uploadToS3);
 
-                $url = (isset($pttInfo['force']) && $pttInfo['force']) ? $pttInfo['prodUrl'] . $pttInfo['dir'] . '/' : $uploadUrl;
+                $url = ($uploadToS3) ? $pttInfo['prodUrl'] . $pttInfo['dir'] . '/' : $uploadUrl;
 
-                $data = array(
+                $data = [
                     'filename' => $filename,
-                    'resized' => $url . $width . '-' . $height . '-' . $filename
-                    );
+                    'resized' => $url . $sizes[0]['w'] . '-' . $sizes[0]['h'] . '-' . $filename
+                ];
 
             } else {
 
                 $width = ($request->get('width', false)) ? $request->get('width') : 0;
                 $height = ($request->get('height', false)) ? $request->get('height') : 0;
 
-                $fieldData = array(
+                $fieldData = [
                     'name' => 'file',
                     'type' => 'file',
-                    'options' => array(
+                    'options' => [
                         'type' => 'image',
-                        'sizes' => array(
-                            array(
-                                'w' => $width,
-                                'h' => $height
-                                )
-                            )
-                        )
-                    );
+                        'sizes' => [['w' => $width, 'h' => $height]]
+                    ]
+                ];
 
                 if ($uploadToS3) {
                     $fieldData['options']['s3'] = true;
@@ -79,12 +73,12 @@ class PttMediaController extends Controller
 
                 $file = $files[0];
                 $filename = PttUploadFile::upload($file, $field);
-                $url = (isset($pttInfo['force']) && $pttInfo['force']) ? $pttInfo['prodUrl'] : $uploadUrl;
+                $url = ($uploadToS3) ? $pttInfo['prodUrl'] : $uploadUrl;
 
-                $data = array(
+                $data = [
                     'filename' => $filename,
                     'resized' => $url . $width . '-' . $height . '-' . $filename
-                    );
+                ];
             }
             return new JsonResponse($data);
         } else {
@@ -110,67 +104,80 @@ class PttMediaController extends Controller
         if ($request->get('type') == 'init') {
             $data = $this->_entity($field, $request->get('id'));
         } else {
-            $data = array('results' => $this->_entities($field, $request->get('query')));
+            $data = ['results' => $this->_entities($field, $request->get('query'))];
         }
         return new JsonResponse($data);
     }
 
-    private function _entities($field, $query)
-    {
-        $em = $this->get('doctrine')->getManager();
-        $sortBy = (isset($field['options']['sortBy']) && is_array($field['options']['sortBy'])) ? $field['options']['sortBy'] : array('id' => 'asc');
-        $filterBy = (isset($field['options']['filterBy']) && is_array($field['options']['filterBy'])) ? $field['options']['filterBy'] : array();
-
+    private function _entities($field, $query){
+        $sortBy = (isset($field['options']['sortBy']) && is_array($field['options']['sortBy'])) ? $field['options']['sortBy'] : ['id' => 'asc'];
+        $filterBy = (isset($field['options']['filterBy']) && is_array($field['options']['filterBy'])) ? $field['options']['filterBy'] : [];
         $search = $field['options']['searchfield'];
 
-        $sql = 'select e.id, e.'.$search.' text from ' . $field['options']['entity'] . ' e where ';
-        $wheres = array();
+        $params = [];
+
+        if($filterBy){
+            $where = [];
+            foreach ($filters as $key => $filter) {
+              $keyArr = explode('-', $key);
+              $where[] = ['column' => array_pop($keyArr), 'operator' => 'LIKE', 'value' => '%'.$filter.'%'];
+            }
+
+             $params['where'] = [['and' => $where]];
+        }
+
+        $where = [['column' => $search, 'operator' => 'LIKE', 'value' => '%'.$query.'%']];
         foreach ($filterBy as $key => $value) {
-            $wheres[] = 'e.' . $key . ' = :' . $key;
+            $where[] = ['column' => $key, 'operator' => '=', 'value' => $value];
+        }
+        $params['where'] = [['and' => $where]];
+
+        $params['order'] = [];
+        foreach ($sortBy as $key => $value) {
+          $params['order'][] = ['order' => $key, 'orderDir' => $value];
         }
 
-        $wheres[] = 'e.' . $search . ' like :search';
-        $sql .= implode(' and ', $wheres);
+        $result = $this->getPttServices()->get($field['options']['entity'], $params);
 
-        if (count($sortBy)) {
-            $sql .= ' order by ';
-            $orders = array();
-            foreach ($sortBy as $key => $value) {
-                $orders[] = 'e.' . $key . ' ' . $value;
-            }
-            $sql .= implode(', ', $orders);
+        $textArr = [];
+        $method = 'get' . ucfirst($search);
+        foreach ($result as $value) {
+          if(method_exists($value, $method)){
+              $textArr[] = [
+                  'id' => $value->getId(),
+                  'text' => $value->$method()
+              ];
+          }
         }
 
-        $stmt = $em->getConnection()->prepare($sql);
-        if (count($filterBy)) {
-            foreach ($filterBy as $key => $value) {
-                $stmt->bindValue($key, $value);
-            }
-        }
-        $stmt->bindValue('search', '%' . $query . '%');
-        $stmt->execute();
-        $results = $stmt->fetchAll();
-
-        return $results;
+        return $textArr;
     }
 
-    private function _entity($field, $id)
-    {
-        $em = $this->get('doctrine')->getManager();
+    private function _entity($field, $id){
+        $result = $this->getPttServices()->getOne($field['options']['entity'], $id);
 
-        $search = array_keys($field['options']['search']);
+        if($result){
+            $text = '';
+            foreach ($search as $key => $field) {
+                $method = 'get' . ucfirst($key);
+                if(method_exists($result, $method)){
+                    $text .= ', ' . $result->$method();
+                }
+            }
 
-        $sql = 'select e.id, concat(' . implode(', " ",', $search) . ') text from ' . $field['options']['entity'] . ' e where e.id = :id';
-
-        $stmt = $em->getConnection()->prepare($sql);
-        $stmt->bindValue('id', $id);
-        $stmt->execute();
-        $results = $stmt->fetchAll();
-
-        if (count($results)) {
-            return $results[0];
+            return [
+                'id' => $result->getId(),
+                'text' => $text
+            ];
         } else {
             return false;
         }
+    }
+
+    protected function getPttServices(){
+        if(!$this->pttServices){
+            $this->pttServices = $this->get('pttservices');
+        }
+        return $this->pttServices;
     }
 }
