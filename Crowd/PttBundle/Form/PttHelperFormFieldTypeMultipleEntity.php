@@ -15,16 +15,16 @@ class PttHelperFormFieldTypeMultipleEntity
     private $entityInfo;
     private $field;
     private $container;
-    private $em;
     private $entity;
+    private $pttServices;
 
-    public function __construct(PttEntityInfo $entityInfo, PttField $field, $container = false, $em = false, $entity)
+    public function __construct(PttEntityInfo $entityInfo, PttField $field, $container = false, $entity)
     {
         $this->entityInfo = $entityInfo;
         $this->field = $field;
         $this->container = $container;
+        $this->pttServices = $this->container->get('pttServices');
         $this->entity = $entity;
-        $this->em = $em;
     }
 
     public function classNameForRelatedEntity()
@@ -51,9 +51,9 @@ class PttHelperFormFieldTypeMultipleEntity
             $entity = new $className();
             $entity->setRelatedId($this->entityInfo->get('pttId'));
         } else {
-            $entity = $this->em->getRepository($this->entityInfo->getBundle() . ':' . $this->entity)->findOneBy(array('id' => $entityData['id']));
+            $entity = $this->pttServices->getOne($this->entity, $entityData['id']);
         }
-        
+
         foreach ($entityData as $key => $value) {
             if ($key != 'id') {
                 $methodName = 'set' . ucfirst($key);
@@ -74,7 +74,7 @@ class PttHelperFormFieldTypeMultipleEntity
                 $entity = new $className();
                 $entity->setRelatedId($this->entityInfo->get('pttId'));
             } else {
-                $entity = $this->em->getRepository($this->entityInfo->getBundle() . ':' . $this->entity)->findOneBy(array('id' => $entityData->getId()));
+                $entity = $this->pttServices->getOne($this->entity, $entityData->getId());
             }
         } else {
             return $this->entityForDataArray($entityData);

@@ -18,19 +18,17 @@ class PttFormSaveFile extends PttFormSave
         $files = $this->_files();
 
         if ($this->languageCode) {
-             $file = (isset($files["Trans"][$this->languageCode][$this->field->name])) ? $files["Trans"][$this->languageCode][$this->field->name] : false;
+            $file = (isset($files["Trans"][$this->languageCode][$this->field->name])) ? $files["Trans"][$this->languageCode][$this->field->name] : false;
         } else {
             $file = (isset($files[$this->field->name])) ? $files[$this->field->name] : false;
         }
         if ($file) {
             $value = PttUploadFile::upload($file, $this->field);
         } else {
-
-            // $sentData = $this->request->get($this->entityInfo->getFormName());
             $value = $this->entityInfo->get($this->field->name, $this->languageCode);
             if ($this->languageCode) {
                 if (isset($this->sentData[$this->languageCode][$this->field->name . '-delete']) && $this->sentData[$this->languageCode][$this->field->name . '-delete'] != '0') {
-                    $this->_deleteFile($this->sentData[$this->languageCode][$this->field->name . '-delete']);
+                    $this->_deleteFile($this->field, $this->sentData[$this->languageCode][$this->field->name . '-delete']);
                     $value = '';
                 }
                 if (isset($this->sentData[$this->languageCode][$this->field->name . '-webcam']) && $this->sentData[$this->languageCode][$this->field->name . '-webcam'] != '') {
@@ -38,7 +36,7 @@ class PttFormSaveFile extends PttFormSave
                 }
             } else {
                 if (isset($this->sentData[$this->field->name . '-delete']) && $this->sentData[$this->field->name . '-delete'] != '0') {
-                    $this->_deleteFile($this->sentData[$this->field->name . '-delete']);
+                    PttUploadFile::deleteFile($this->field, $this->sentData[$this->field->name . '-delete']);
                     $value = '';
                 }
                 if (isset($this->sentData[$this->field->name . '-webcam']) && $this->sentData[$this->field->name . '-webcam'] != '') {
@@ -46,36 +44,30 @@ class PttFormSaveFile extends PttFormSave
                 }
             }
         }
-        
+
         if ($value != '' && $this->field->options['type'] == 'gallery') {
             if ($this->languageCode) {
                 $path = (isset($this->sentData[$this->languageCode][$this->field->name])) ? $this->sentData[$this->languageCode][$this->field->name] : false;
             } else {
                 $path = (isset($this->sentData[$this->field->name])) ? $this->sentData[$this->field->name] : false;
-            } 
+            }
             if($path){
                 $nameArray = explode('/', $path);
                 $originalName = end($nameArray);
 
                 $uploadFile = new UploadedFile($path, $originalName, mime_content_type($path), filesize($path));
-                $value = PttUploadFile::upload($uploadFile, $this->field);    
+                $value = PttUploadFile::upload($uploadFile, $this->field);
             }
         }
 
         if ($value == null) {
                 $value = '';
         }
-        
+
         return $value;
     }
 
-    private function _deleteFile($name)
-    {
-        PttUploadFile::deleteFile($name);
-    }
-
-    private function _files()
-    {
+    private function _files(){
         if (strpos($this->entityInfo->getFormName(), '[') !== false) {
 
             $cleanName = str_replace(']', '', $this->entityInfo->getFormName());

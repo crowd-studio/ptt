@@ -16,7 +16,6 @@ class PttFormFieldType
 	private $sentData;
 	private $errors;
 
-	protected $em;
 	protected $field;
 	protected $value;
 	protected $entityInfo;
@@ -31,7 +30,6 @@ class PttFormFieldType
 	public function __construct(PttForm $pttForm, PttField $field, $languageCode = false)
 	{
 		$this->entityInfo = $pttForm->getEntityInfo();
-		$this->em = $pttForm->getEntityManager();
 		$this->request = $pttForm->getRequest();
 		$this->field = $field;
 		$this->errors = $pttForm->getErrors($this->field->name, $this->languageCode);
@@ -200,7 +198,7 @@ class PttFormFieldType
 		if (isset($this->field->options['master']) && $this->field->options['master'] === true) {
 			$extraAttrs['master'] = $this->field->name;
 		}
-		
+
 		$attrs = '';
 		if ($extraAttrs) {
 			foreach ($extraAttrs as $extraAttrKey => $extraAttrValue) {

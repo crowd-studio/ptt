@@ -7,33 +7,22 @@
 
 namespace Crowd\PttBundle\Form;
 
-class PttFormValidationPassword extends PttFormValidation
-{
-	public function isValid()
-	{
+class PttFormValidationPassword extends PttFormValidation {
+		public function isValid(){
+				$value = (isset($this->sentData['first'])) ? $this->sentData['first'] : '';
+		    $repeatedValue = (isset($this->sentData['repeat'])) ? $this->sentData['repeat'] : '';
 
-        $value = (isset($this->sentData['first'])) ? $this->sentData['first'] : '';
-        $repeatedValue = (isset($this->sentData['repeat'])) ? $this->sentData['repeat'] : '';
-
-		$originalValue = $this->entityInfo->get($this->field->name);
+				$originalValue = $this->entityInfo->get($this->field->name);
 
 
-        if (trim($value) != '') {
-            if (strlen(trim($value)) < 6) {
-                return false;
-            } else {
-                if (trim($value) == trim($repeatedValue)) {
-                    return true;
-                } else {
-                    return false;
-                }
-            }
-        } else {
-            if ($originalValue != '') {
-                return true;
-            } else {
-                return false;
-            }
-        }
-	}
+		    if (trim($value) != '') {
+		        if (strlen(trim($value)) < 6) {
+		            return false;
+		        } else {
+		            return (trim($value) == trim($repeatedValue));
+		        }
+		    } else {
+		        return ($originalValue != '');
+		    }
+		}
 }

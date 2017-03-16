@@ -21,13 +21,12 @@ class PttEntityInfo
 	private $repositoryName;
 	private $className;
 	private $fields;
-	private $em;
 	private $formName;
 	private $container;
 	private $pttTrans;
 	private $pttEntityMetadata;
 
-	public function __construct($entity, EntityManager $entityManager, ContainerInterface $container, $languages = false, $pttTrans)
+	public function __construct($entity, ContainerInterface $container, $languages = false, $pttTrans)
 	{
 		$this->container = $container;
 		$this->pttEntityMetadata = $this->container->get('pttEntityMetadata');
@@ -40,21 +39,19 @@ class PttEntityInfo
 
 		$this->repositoryName = $this->pttEntityMetadata->respositoryName($entity);
 
-		$this->em = $entityManager;
-
 		$this->entity = $entity;
 
 		$this->formName = $this->entityName;
+
 		$this->transEntities = [];
+
 		if(method_exists($entity, 'getTrans')){
 			$trans = $entity->getTrans();
-
 			if(!count($trans)){
-
 				foreach ($languages as $language) {
-
 					$this->entity->createTrans($language);
 				}
+
 				$trans = $entity->getTrans();
 			}
 
@@ -71,7 +68,7 @@ class PttEntityInfo
 		}
 
 		$this->pttTrans = $pttTrans;
-		
+
 		$this->fields = false;
 
 		$this->_fetchFields();
@@ -126,11 +123,6 @@ class PttEntityInfo
 		return $this->fields;
 	}
 
-	public function getEntityManager()
-	{
-		return $this->em;
-	}
-
 	public function hasMethod($methodName, $languageCode = false)
 	{
 		if ($languageCode) {
@@ -183,7 +175,7 @@ class PttEntityInfo
 	}
 
 	private function _value($method, $languageCode){
-		
+
 	}
 
 	public function appendField($field)

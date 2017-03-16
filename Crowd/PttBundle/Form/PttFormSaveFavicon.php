@@ -26,7 +26,7 @@ class PttFormSaveFavicon extends PttFormSave
             $this->field->options['sizes'] = [['h' => 512, 'w' => 512]];
             $value = PttUploadFile::upload($file, $this->field);
             PttUploadFile::generateFavicon(
-                $value, 
+                $value,
                 $this->container->getParameter('favicon'),
                 $this->request->getSchemeAndHttpHost()
             );
@@ -34,7 +34,7 @@ class PttFormSaveFavicon extends PttFormSave
             $value = $this->entityInfo->get($this->field->name, $this->languageCode);
             if ($this->languageCode) {
                 if (isset($this->sentData[$this->languageCode][$this->field->name . '-delete']) && $this->sentData[$this->languageCode][$this->field->name . '-delete'] != '0') {
-                    $this->_deleteFile($this->sentData[$this->languageCode][$this->field->name . '-delete']);
+                    PttUploadFile::deleteFile($this->field, $this->sentData[$this->languageCode][$this->field->name . '-delete']);
                     $value = '';
 
                     PttUploadFile::deleteFavicons();
@@ -48,15 +48,10 @@ class PttFormSaveFavicon extends PttFormSave
         }
 
         if ($value == null) {
-                $value = '';
+            $value = '';
         }
-        
-        return $value;
-    }
 
-    private function _deleteFile($name)
-    {
-        PttUploadFile::deleteFile($name);
+        return $value;
     }
 
     private function _files()

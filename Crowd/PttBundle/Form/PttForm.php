@@ -17,8 +17,7 @@ use Crowd\PttBundle\Util\PttTrans;
 
 class PttForm
 {
-
-	private $em;
+	
 	private $securityContext;
 	private $container;
 	private $entityInfo;
@@ -34,7 +33,6 @@ class PttForm
 
 	public function __construct(EntityManager $entityManager, TokenStorage $securityContext, ContainerInterface $serviceContainer)
 	{
-		$this->em = $entityManager;
 		$this->securityContext = $securityContext;
 		$this->container = $serviceContainer;
 
@@ -72,7 +70,7 @@ class PttForm
 
 	public function setEntity($entity)
 	{
-		$this->entityInfo = new PttEntityInfo($entity, $this->em, $this->container, $this->languages, $this->pttTrans);
+		$this->entityInfo = new PttEntityInfo($entity, $this->container, $this->languages, $this->pttTrans);
 	}
 
 	public function setFormName($formName)
@@ -83,11 +81,6 @@ class PttForm
 	public function getEntityInfo()
 	{
 		return $this->entityInfo;
-	}
-
-	public function getEntityManager()
-	{
-		return $this->em;
 	}
 
 	public function getSentData($fieldName = false, $languageCode = false)
@@ -165,9 +158,9 @@ class PttForm
 
 	public function save()
 	{
-		$this->_performFieldsLoopAndCallMethodNamed('_saveForField');	
+		$this->_performFieldsLoopAndCallMethodNamed('_saveForField');
 
-		
+
 		if ($this->entityInfo->hasMethod('setTitle') && $this->entityInfo->hasMethod('getTitle')) {
 			if(isset($this->sentData['Trans'][$this->preferredLanguage->getCode()]['title'])){
 				$this->entityInfo->set('title', $this->getSentData('title', $this->preferredLanguage->getCode()));
@@ -177,7 +170,7 @@ class PttForm
 		if ($this->entityInfo->hasMethod('setSlug') && $this->entityInfo->hasMethod('getSlug')) {
 			$this->entityInfo->set('slug', PttUtil::slugify((string)$this->entityInfo->getEntity()));
 		}
-		
+
 		if (is_subclass_of($this->entityInfo->getEntity(), 'Crowd\PttBundle\Entity\PttEntity')) {
 			$userId = -1;
 			if ($this->securityContext->getToken() != null && method_exists($this->securityContext->getToken()->getUser(), 'getId')) {
@@ -187,7 +180,7 @@ class PttForm
 		}
 
 		$entityPrincipal = $this->entityInfo->getEntity();
-		
+
 		if(!$entityPrincipal->getPttId()){
 			if(method_exists($entityPrincipal, 'set_Order')){
 				if(!$entityPrincipal->get_Order()){
@@ -200,22 +193,17 @@ class PttForm
 			$entityPrincipal->updateTrans($this->sentData['Trans']);
 		}
 
-		$this->em->persist($entityPrincipal);
-		$this->em->flush();
+		$this->container->get('pttServices')->persist($entityPrincipal);
 
 		$entityPrincipal->afterSave($this->sentData);
 		$this->_performFieldsLoopAndCallMethodNamed('_afterSaveForField');
 	}
 
-	//PRIVATE
-
-	private function _createSingleView($key)
-	{
+	private function _createSingleView($key){
 		return (isset($this->htmlFields[$key])) ? $this->htmlFields[$key] : 'Input ' . $key . ' not found';
 	}
 
-	private function _createGlobalView($key)
-	{
+	private function _createGlobalView($key){
 		$html = '';
 		$entityName = $this->entityInfo->getEntityName();
 		$fields = $this->entityInfo->getFields();
@@ -226,7 +214,7 @@ class PttForm
 			} else {
 				$html .= '<div><div>';
 			}
-			
+
 			if($fields->static[$i]){
 				foreach ($fields->static[$i] as $field) {
 					$html .= $this->htmlFields[$field->name];
@@ -260,7 +248,7 @@ class PttForm
 			}
 			$html .= '</div></div>';
 		}
-		
+
 
 		return $html;
 	}
@@ -300,7 +288,7 @@ class PttForm
 					}
 				}
 			}
-			
+
 		}
 	}
 
@@ -339,7 +327,7 @@ class PttForm
 			$transEntity = [];
 		}
 	}
-	
+
 	private function _performFieldsLoopAndCallMethodNamed($nameOfMethod)
 	{
 		$fields = $this->entityInfo->getFields();
@@ -350,7 +338,7 @@ class PttForm
 					$this->$nameOfMethod($field);
 				}
 			}
-			
+
 			if ($this->languages && isset($fields->trans[$key])) {
 				foreach ($this->languages as $language) {
 					if($fields->trans[$key]){
@@ -407,7 +395,7 @@ class PttForm
 
 			$this->entityInfo->set($field->name, $value, $languageCode);
 		}
-		
+
 	}
 
 	private function _afterSaveForField(PttField $field, $languageCode = false)
@@ -422,7 +410,7 @@ class PttForm
 			} else {
 				$afterFormSave = new $afterSaveClassName($field, $this->entityInfo, $this->getSentData($field->name . '_model', $languageCode), $this->container, $languageCode);
 			}
-			
+
 			$afterFormSave->perform();
 		}
 	}

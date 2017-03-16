@@ -84,27 +84,23 @@ class PttFormFieldTypeSelectMultiple extends PttFormFieldType
 		$htmlField .= '<option value="-1">' . $this->field->options['empty'] . '</option>';
 
 		if(count($this->field->options['entities']) == 1){
-			$model = $this->field->options['entities'][0]['entity'];
+				$model = $this->field->options['entities'][0]['entity'];
 		}
 
 		if($model){
-			$dql = 'select ptt from AdminBundle:' . $model . ' ptt';
+				$result = $this->container->get('pttServices')->getByPag($model, ['limit' => $this->field->options['limit']])['content'];
 
-	        $query = $this->em->createQuery($dql);
-	        $query->setMaxResults($this->field->options['limit']);
-	        $results = $query->getResult();
+        foreach ($results as $result) {
 
-	        foreach ($results as $result) {
-	        	
-	        	if($id == $result->getId()){
-	        		$selected = 'selected="selected"';
-	        	} else {
-	        		$selected = "";
-	        	}
-	        	$htmlField .= '<option '. $selected .' value="' . $result->getId() . '">' . $result->getTitle() . '</option>';	
-	        }
+        	if($id == $result->getId()){
+        		$selected = 'selected="selected"';
+        	} else {
+        		$selected = "";
+        	}
+        	$htmlField .= '<option '. $selected .' value="' . $result->getId() . '">' . $result->getTitle() . '</option>';
+        }
 		}
-		
+
 		$htmlField .= '</select>';
 
 		$html .= $htmlField;
@@ -141,7 +137,7 @@ class PttFormFieldTypeSelectMultiple extends PttFormFieldType
 					$html .= '<option' . $selected . ' value="' . $option['entity'] . '">' . $option['label'] . '</option>';
 				}
 			}
-			
+
 		}
 		return $html;
 	}
@@ -186,11 +182,10 @@ class PttFormFieldTypeSelectMultiple extends PttFormFieldType
 
 	private function _entities()
 	{
-		$sortBy = (isset($this->field->options['sortBy']) && is_array($this->field->options['sortBy'])) ? $this->field->options['sortBy'] : array('id' => 'asc');
-		$filterBy = (isset($this->field->options['filterBy']) && is_array($this->field->options['filterBy'])) ? $this->field->options['filterBy'] : array();
-
-		$entities = $this->em->getRepository($this->container->get('pttEntityMetadata')->respositoryName($this->field->options['entity']))->findBy($filterBy, $sortBy);
-		return $entities;
+		return $this->container->get('pttServices')->getSimpleFilter($this->field->options['entity'], [
+				'where' => (isset($this->field->options['filterBy']) && is_array($this->field->options['filterBy'])) ? $this->field->options['filterBy'] : [],
+				'orderBy' => (isset($this->field->options['sortBy']) && is_array($this->field->options['sortBy'])) ? $this->field->options['sortBy'] : ['id' => 'asc']
+		]);
 	}
 
 	protected function extraClassesForFieldContainer()

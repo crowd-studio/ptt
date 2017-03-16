@@ -17,15 +17,15 @@ class PttFormValidation
 
 	public function __construct(PttForm $pttForm, PttField $field, $languageCode = false)
 	{
-		$this->pttForm = $pttForm;
-		$this->entityInfo = $pttForm->getEntityInfo();
-		$this->field = $field;
-		$this->languageCode = $languageCode;
-		$this->sentData = $pttForm->getSentData($this->field->name, $this->languageCode);
+			$this->pttForm = $pttForm;
+			$this->entityInfo = $pttForm->getEntityInfo();
+			$this->field = $field;
+			$this->languageCode = $languageCode;
+			$this->sentData = $pttForm->getSentData($this->field->name, $this->languageCode);
 	}
 
 	protected function _sentValue($default = '')
 	{
-		return ($this->sentData != false) ? $this->sentData : $default;
+			return ($this->sentData != false) ? $this->sentData : $default;
 	}
 }

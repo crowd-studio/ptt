@@ -9,7 +9,7 @@ namespace Crowd\PttBundle\Form;
 
 use Crowd\PttBundle\Util\PttUtil;
 
-class PttFormFieldTypeMultipleEntity extends PttFormFieldType 
+class PttFormFieldTypeMultipleEntity extends PttFormFieldType
 {
 	public function field() {
 		$name = false;
@@ -44,7 +44,7 @@ class PttFormFieldTypeMultipleEntity extends PttFormFieldType
 		$sortableList = '';
 		if (isset($this->field->options['modules'])) {
 			foreach ($this->field->options['modules'] as $key => $value) {
-				$pttHelper = new PttHelperFormFieldTypeMultipleEntity($this->entityInfo, $this->field, $this->container, $this->em, $value['entity'], $value['label']);
+				$pttHelper = new PttHelperFormFieldTypeMultipleEntity($this->entityInfo, $this->field, $this->container, $value['entity'], $value['label']);
         		$form = $pttHelper->formForEntity($pttHelper->cleanRelatedEntity());
 
                 $htmlField .= '<script type="text/template" class="template" data-type="' . $value['entity'] . '"><div class="collapse-head"><span class="handle hidden"></span><span class="title-triangle"><a class="triangle-open triangle"></a><a class="title title-open">'. $value['label'] .'</a></span><a class="remove list-eliminar"></a></div><div class="collapse-body">' . $form->createView('multi');
@@ -83,8 +83,8 @@ class PttFormFieldTypeMultipleEntity extends PttFormFieldType
             	$data = $this->value;
             }
             usort($data, array($this, "moduleSort"));
-            
-            $size = count($data);	
+
+            $size = count($data);
             $moduleTitles = array();
             foreach($this->field->options['modules'] as $key => $value){
             	$moduleTitles[$value['entity']] = $value['label'];
@@ -95,12 +95,12 @@ class PttFormFieldTypeMultipleEntity extends PttFormFieldType
                 	if(!is_array($data[$i])){
 						$class = explode('\\', (string)get_class($data[$i]));
                 		$entity = array_pop($class);
-                	} else {	
+                	} else {
                 		$entity = $data[$i]['type'];
 
                 	}
-                	
-                    $pttHelper = new PttHelperFormFieldTypeMultipleEntity($this->entityInfo, $this->field, $this->container, $this->em, $entity);
+
+                    $pttHelper = new PttHelperFormFieldTypeMultipleEntity($this->entityInfo, $this->field, $this->container, $entity);
                     $errors = (isset($formErrors[$key])) ? $formErrors[$key] : false;
                     $form = $pttHelper->formForEntity($pttHelper->entityWithData($data[$i]), $index, $errors);
                     $formName = $moduleTitles[$form->getEntityInfo()->getEntityName()];
@@ -114,7 +114,7 @@ class PttFormFieldTypeMultipleEntity extends PttFormFieldType
                     $htmlField .= '<div class="collapse-body hidden">' . $form->createView('multi') . '<input type="hidden" id="'. $this->field->getFormName() . '-' . $index .'-type" name="'. $this->field->getFormName() . '[' . $index . ']' .'[type]" data-required="false" class="form-control" value="'. $entity .'">';
                     $htmlField .= '<input type="hidden" id="'. $this->field->getFormName() . '-' . $index .'-_order" name="'. $this->field->getFormName() . '[' . $index . ']' .'[_order]" data-required="false" class="form-control field-order" value="'. $index .'">';
                     $htmlField .= '<input type="hidden" id="'. $this->field->getFormName() . '-' . $index .'-_model" name="'. $this->field->getFormName() . '[' . $index . ']' .'[_model]" data-required="false" class="form-control" value="'. $this->pttForm->getEntityInfo()->getEntityName() .'"></div></li>';
-                    
+
                     $index++;
                 }
             }

@@ -11,7 +11,7 @@ use Crowd\PttBundle\Util\PttUtil;
 
 class PttErrors
 {
-    public $errors = array();
+    public $errors = [];
     private $pttTrans;
 
     public function __construct($pttTrans)
@@ -24,7 +24,7 @@ class PttErrors
         if ($languageCode) {
             if (!is_array($message)) {
                 if(!isset($this->errors[$languageCode][$key])) {
-                    $this->errors[$languageCode][$key] = array();
+                    $this->errors[$languageCode][$key] = [];
                 }
                 $this->errors[$languageCode][$key][] = $this->pttTrans->trans($message);
             } else {
@@ -33,7 +33,7 @@ class PttErrors
         } else {
             if (!is_array($message)) {
                 if(!isset($this->errors[$key])) {
-                    $this->errors['static'][$key] = array();
+                    $this->errors['static'][$key] = [];
                 }
                 $this->errors['static'][$key][] = $this->pttTrans->trans($message);
             } else {

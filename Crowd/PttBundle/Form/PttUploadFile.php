@@ -62,17 +62,14 @@ class PttUploadFile
         $s3 = PttUtil::pttConfiguration('s3');
         $uploadUrl = (isset($s3['force']) && $s3['force']) ? $s3['prodUrl'] . $s3['dir'] . '/' : $url . '/uploads/';
 
-        // $filename = 'nyhaty2y2aganu4a8usunademe9e2e4avejajupabyryhy9a8eba9ypuje5uny4umu4e2ujuty7yva3ajevy2uqahevetahuguhu1487667309.png';
-        // $prefix = '740-400-';
         $prefix = '512-512-';
         $file = $uploadUrl . $prefix . $fileName;
-        
+
         $generator = new PttFaviconGenerator($favicon['key']);
         $options = $favicon['options'];
         $options['general']['src'] = $file;
         $response = $generator->generateFavicon($options);
         PttUploadFile::deleteFavicons();
-        
 
         $response->downloadAndUnpack('_/', 'favicon');
         unlink(__DIR__ . '/../../../../../../web/_/favicon.zip'); //delete zip file
@@ -138,12 +135,10 @@ class PttUploadFile
         $file = $file->getPathName();
         $token = PttUtil::token(100);
         $uploadName = $token . '.' . $extension;
-        $uploadToS3 = (isset($field->options['s3']) && $field->options['s3']) ? true : false;
-        $uploadToCDN = (isset($field->options['cdn']) && $field->options['cdn']) ? true : false;
         $uploadsUrl = PttUtil::pttConfiguration('images');
 
         if ($extension != 'gif') {
-            $sizes = ($file && isset($field->options['sizes'])) ? $field->options['sizes'] : array(array('h' => 0, 'w' => 0));
+            $sizes = ($file && isset($field->options['sizes'])) ? $field->options['sizes'] : [['h' => 0, 'w' => 0]];
 
             $realSize = getimagesize($file);
 
@@ -178,7 +173,7 @@ class PttUploadFile
                         \WideImage\WideImage::load($file)->resize($width, $height, 'outside')->saveToFile($saveThumbPath, $level);
                         \WideImage\WideImage::load($saveThumbPath)->crop('center', 'center', $width, $height)->saveToFile($saveThumbPath);
                     }
-                    if ($uploadToS3 || $uploadToCDN) {
+                    if (PttUploadFile::toS3($field)) {
                         PttUploadFile::_uploadToS3($saveThumbPath, $filename);
                     }
 
@@ -203,12 +198,9 @@ class PttUploadFile
         $uploadsUrl = PttUtil::pttConfiguration('images');
         $uploadName = $token . PttUtil::extension($file->getClientOriginalName());
 
-        $uploadToS3 = (isset($field->options['s3']) && $field->options['s3']) ? true : false;
-        $uploadToCDN = (isset($field->options['cdn']) && $field->options['cdn']) ? true : false;
-
         $file->move(WEB_DIR . $uploadsUrl, $uploadName);
 
-        if ($uploadToS3 || $uploadToCDN) {
+        if (PttUploadFile::toS3($field)) {
             PttUploadFile::_uploadToS3(WEB_DIR . $uploadsUrl . $uploadName, $uploadName);
         }
 
@@ -229,12 +221,9 @@ class PttUploadFile
         unlink($filepath);
     }
 
-    public static function deleteFile($name)
+    public static function deleteFile($field, $name)
     {
-        $uploadToS3 = (isset($field->options['s3']) && $field->options['s3']) ? true : false;
-        $uploadToCDN = (isset($field->options['cdn']) && $field->options['cdn']) ? true : false;
-
-        if ($uploadToS3 || $uploadToCDN) {
+        if (PttUploadFile::toS3($field)) {
             PttUploadFile::_deleteS3($name);
         } else {
             PttUploadFile::_delete($name);
@@ -248,7 +237,7 @@ class PttUploadFile
                 unlink($filename);
             }
         } catch (Exception $e) {
-            
+
         }
     }
 
@@ -257,5 +246,9 @@ class PttUploadFile
 
         // \S3::setAuth($s3['accessKey'], $s3['secretKey']);
         // \S3::deleteObject($s3['bucket'], $s3['dir'] . '/' . $filename);
+    }
+
+    private static function _toS3($field){
+        return ((isset($field->options['s3']) && $field->options['s3']) || (isset($field->options['cdn']) && $field->options['cdn']));
     }
 }

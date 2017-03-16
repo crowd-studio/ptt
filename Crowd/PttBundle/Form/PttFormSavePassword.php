@@ -9,10 +9,8 @@ namespace Crowd\PttBundle\Form;
 
 use Crowd\PttBundle\Form\PttFormSave;
 
-class PttFormSavePassword extends PttFormSave
-{
-    public function value()
-    {
+class PttFormSavePassword extends PttFormSave  {
+    public function value(){
         $factory = $this->container->get('security.encoder_factory');
         $entity = $this->entityInfo->getEntity();
         $encoder = $factory->getEncoder($entity);

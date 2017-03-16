@@ -9,32 +9,24 @@ namespace Crowd\PttBundle\Form;
 
 use Crowd\PttBundle\Util\PttUtil;
 
-class PttFormValidationUnique extends PttFormValidation
-{
-	private $em;
+class PttFormValidationUnique extends PttFormValidation {
+	private $pttServices;
 
-	public function __construct(PttForm $pttForm, $entity)
-	{
-		parent::__construct($pttForm, $entity);
-
-		$this->em = $pttForm->getEntityManager();
+	public function __construct(PttForm $pttForm, $entity){
+			parent::__construct($pttForm, $entity);
+			$this->pttServices = $pttForm->getContainer()->get('pttServices');
 	}
 
-	public function isValid()
-	{
-		$dql = 'select count(e) from ' . $this->entityInfo->getRepositoryName() . ' e where e.id != :id and e.' . $this->field->name . ' = :' . $this->field->name;
+	public function isValid(){
+			$exists = $this->pttServices->get($this->entityInfo->getEntityName(), [
+					'one' => true,
+					'where' => [
+							['and' => [
+									['column' => 'id', 'operator' => '!=', 'value' => ($this->entityInfo->get('id')) ? $this->entityInfo->get('id') : -1],
+									['column' => $this->field->name, 'operator' => '=', 'value' => $this->_sentValue()]
+							]]
+				]]);
 
-		$id = $this->entityInfo->get('id');
-		if ($id == null) {
-			$id = -1;
-		}
-
-		$query = $this->em->createQuery($dql)
-				 ->setParameter('id', $id)
-				 ->setParameter($this->field->name, $this->_sentValue());
-
-		$count = $query->getSingleScalarResult();
-
-		return ($count == 0);
+				return ($exists);
 	}
 }

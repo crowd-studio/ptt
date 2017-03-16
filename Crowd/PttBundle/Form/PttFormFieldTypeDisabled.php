@@ -20,21 +20,20 @@ class PttFormFieldTypeDisabled extends PttFormFieldType
 		$htmlField .= $this->attributes();
 
 		if ($this->entityInfo->getEntity()->getPttId() || !isset($this->field->options['editable']) || !$this->field->options['editable']){
-			
+
 			if(isset($this->field->options['entity'])){
 				if(is_object($this->value)){
 					$method = 'get' . ucfirst($this->field->options['column']);
 					$value = (method_exists($this->value, $method)) ? $this->value->$method() : '';
 				} else {
 					// Una entitat diferent
-					$repository = $this->container->get('pttEntityMetadata')->respositoryName($this->field->options['entity']);
-					$entity = $this->em->getRepository($repository)->findById($this->value);
+					$entity = $this->container->get('pttServices')->getOne($this->field->options['entity'], $this->value);
 
 					$method = 'get' . ucfirst($this->field->options['column']);
 					$value = (method_exists($entity, $method)) ? $entity->$method() : '';
 				}
-				
-				
+
+
 			} elseif(isset($this->field->options['column'])){
 				// De l'entitat una columna
 				$method = 'get' . ucfirst($this->field->options['column']);

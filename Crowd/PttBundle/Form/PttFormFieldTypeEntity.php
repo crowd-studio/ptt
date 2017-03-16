@@ -28,7 +28,7 @@ class PttFormFieldTypeEntity extends PttFormFieldType
     }
 
     private function _hiddenDiv() {
-        $pttHelper = new PttHelperFormFieldTypeEntity($this->entityInfo, $this->field, $this->container, $this->em);
+        $pttHelper = new PttHelperFormFieldTypeEntity($this->entityInfo, $this->field, $this->container);
         $htmlField = '<script type="text/template" class="template">'. $this->_getHtml('{{index}}', $this->field->options['label'], $pttHelper->formForEntity($pttHelper->cleanRelatedEntity())) .'</script>';
 
         return $htmlField;
@@ -38,14 +38,14 @@ class PttFormFieldTypeEntity extends PttFormFieldType
     {
         $htmlField = '';
         if($this->value && !is_array($this->value)){
-            $pttHelper = new PttHelperFormFieldTypeEntity($this->entityInfo, $this->field, $this->container, $this->em);
-            for ($i=0; $i < count($this->value); $i++) { 
+            $pttHelper = new PttHelperFormFieldTypeEntity($this->entityInfo, $this->field, $this->container);
+            for ($i=0; $i < count($this->value); $i++) {
                 $ent = $this->value->get($i);
 
                 $htmlField .= '<li class="entity">' . $this->_getHtml($i+1, $this->field->options['label'], $pttHelper->formForEntity($ent, $i+1, (isset($formErrors[$i])) ? $formErrors[$i] : false)) . '</li>';
             }
         }
-        
+
         return $htmlField;
     }
 

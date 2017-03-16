@@ -13,14 +13,14 @@ class PttHelperFormFieldTypeEntity
     private $entityInfo;
     private $field;
     private $container;
-    private $em;
+    private $pttServices;
 
-    public function __construct(PttEntityInfo $entityInfo, PttField $field, $container = false, $em = false)
+    public function __construct(PttEntityInfo $entityInfo, PttField $field, $container = false)
     {
         $this->entityInfo = $entityInfo;
         $this->field = $field;
         $this->container = $container;
-        $this->em = $em;
+        $this->pttServices = $this->container->get('pttServices');
     }
 
     public function classNameForRelatedEntity()
@@ -44,9 +44,9 @@ class PttHelperFormFieldTypeEntity
         if (!isset($entityData['id']) || $entityData['id'] == '') {
             $entity = new $className();
         } else {
-            $entity = $this->em->getRepository($this->entityInfo->getBundle() . ':' . $this->field->options['entity'])->findOneBy(array('id' => $entityData['id']));
+            $entity = $this->pttServices->getOne($this->field->options['entity'], $entityData['id']);
         }
-        
+
         foreach ($entityData as $key => $value) {
             if ($key != 'id') {
                 $methodName = 'set' . ucfirst($key);
@@ -66,7 +66,7 @@ class PttHelperFormFieldTypeEntity
             if ($entityData->getPttId() == null) {
                 $entity = new $className();
             } else {
-                $entity = $this->em->getRepository($this->entityInfo->getBundle() . ':' . $this->field->options['entity'])->findOneBy(array('id' => $entityData->getId()));
+                $entity = $this->pttServices->getOne($this->field->options['entity'], $entityData->getId());
             }
         } else {
             return $this->entityForDataArray($entityData);
@@ -87,7 +87,7 @@ class PttHelperFormFieldTypeEntity
         if ($key === false) {
             $key = ($entity->getPttId() != null) ? $entity->getPttId() : '{{index}}';
         }
-        
+
         $pttForm->setFormName($this->field->getFormName() . '[' . $key . ']');
         return $pttForm;
     }

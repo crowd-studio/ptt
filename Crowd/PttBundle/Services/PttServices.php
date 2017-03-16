@@ -179,6 +179,12 @@ class PttServices
         $this->_deleteCache();
         return true;
     }
+    public function persist($object){
+        $this->em->persist($object);
+        $this->em->flush();
+        $this->_deleteCache();
+        return true;
+    }
 
     public function create($object){
         $this->em->persist($object);

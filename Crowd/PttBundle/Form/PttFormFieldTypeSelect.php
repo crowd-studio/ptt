@@ -15,7 +15,7 @@ class PttFormFieldTypeSelect extends PttFormFieldType
 	private $search;
 
 	public function field()
-	{	
+	{
 		$this->search = (isset($this->field->options['search']) && $this->field->options['search']);
 		if ($this->search){
 			$this->field->options['attr'] = [];
@@ -36,7 +36,7 @@ class PttFormFieldTypeSelect extends PttFormFieldType
 			if ($this->value > 0) {
 				$htmlField .= ' data-title="' . $entity[0]->getTitle() . '"';
 			}
-			
+
 			$htmlField .= ' value="' . $this->value . '"';
 		}
 		$htmlField .= '>';
@@ -143,11 +143,10 @@ class PttFormFieldTypeSelect extends PttFormFieldType
 
 	private function _entities()
 	{
-		$sortBy = (isset($this->field->options['sortBy']) && is_array($this->field->options['sortBy'])) ? $this->field->options['sortBy'] : array('id' => 'asc');
-		$filterBy = (isset($this->field->options['filterBy']) && is_array($this->field->options['filterBy'])) ? $this->field->options['filterBy'] : array();
-
-		$entities = $this->em->getRepository($this->container->get('pttEntityMetadata')->respositoryName($this->field->options['entity']))->findBy($filterBy, $sortBy);
-		return $entities;
+		return $this->container->get('pttServices')->getSimpleFilter($this->field->options['entity'], [
+				'where' => (isset($this->field->options['filterBy']) && is_array($this->field->options['filterBy'])) ? $this->field->options['filterBy'] : [],
+				'orderBy' => (isset($this->field->options['sortBy']) && is_array($this->field->options['sortBy'])) ? $this->field->options['sortBy'] : ['id' => 'asc']
+		]);
 	}
 
 	protected function extraClassesForFieldContainer()
