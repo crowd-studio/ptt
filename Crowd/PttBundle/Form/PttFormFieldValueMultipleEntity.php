@@ -23,14 +23,9 @@ class PttFormFieldValueMultipleEntity extends PttFormFieldValue
     private function _valueForRelatedEntities()
     {
         if (isset($this->field->options['modules'])) {
-            $array = array();
+            $array = [];
             foreach ($this->field->options['modules'] as $key => $value) {
-                $dql = 'select e from ' . $this->entityInfo->getBundle() . ':' . $value['entity'] . ' e where e.relatedid = :id and e._model = :model';
-                $em = $this->entityInfo->getEntityManager();
-                $query = $em->createQuery($dql);
-                $query->setParameter('id', $this->entityInfo->get('pttId'));
-                $query->setParameter('model', $this->field->getSimpleFormName());
-                array_push($array, $query->getResult());
+                array_push($array, $this->entityInfo->getPttServices()->getSimpleFilter($value['entity'], ['where' => ['relatedid' => $this->entityInfo->get('pttId'), 'model' => $this->field->getSimpleFormName()]]));
             }
 
             return $array;

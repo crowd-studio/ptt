@@ -17,7 +17,7 @@ use Crowd\PttBundle\Util\PttTrans;
 
 class PttForm
 {
-	
+
 	private $securityContext;
 	private $container;
 	private $entityInfo;
@@ -402,16 +402,13 @@ class PttForm
 	{
 		$afterSaveClassName = PttClassNameGenerator::afterSave($field->type);
 		if ($afterSaveClassName) {
-			$fieldClassName = PttClassNameGenerator::field($field->type);
-			$formField = new $fieldClassName($this, $field);
+				$fieldClassName = PttClassNameGenerator::field($field->type);
+				$formField = new $fieldClassName($this, $field);
 
-			if (strpos($fieldClassName, 'PttFormFieldTypeSelectMultiple') === false) {
-				$afterFormSave = new $afterSaveClassName($field, $this->entityInfo, $this->getSentData($field->name, $languageCode), $this->container, $languageCode);
-			} else {
-				$afterFormSave = new $afterSaveClassName($field, $this->entityInfo, $this->getSentData($field->name . '_model', $languageCode), $this->container, $languageCode);
-			}
+				$name =  (strpos($fieldClassName, 'PttFormFieldTypeSelectMultiple') === false) ? $field->name : $field->name '_model';
+				$afterFormSave = new $afterSaveClassName($field, $this->entityInfo, $this->getSentData($name, $languageCode), $this->container, $languageCode);
 
-			$afterFormSave->perform();
+				$afterFormSave->perform();
 		}
 	}
 }

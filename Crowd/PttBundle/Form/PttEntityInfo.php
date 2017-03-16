@@ -25,10 +25,12 @@ class PttEntityInfo
 	private $container;
 	private $pttTrans;
 	private $pttEntityMetadata;
+	private $pttServices;
 
 	public function __construct($entity, ContainerInterface $container, $languages = false, $pttTrans)
 	{
 		$this->container = $container;
+		$this->pttServices = $this->container->get('pttServices');
 		$this->pttEntityMetadata = $this->container->get('pttEntityMetadata');
 
 		$this->className = $this->pttEntityMetadata->className($entity);
@@ -72,6 +74,10 @@ class PttEntityInfo
 		$this->fields = false;
 
 		$this->_fetchFields();
+	}
+
+	public function getPttServices(){
+		return $this->pttServices;
 	}
 
 	public function setFormName($formName)
