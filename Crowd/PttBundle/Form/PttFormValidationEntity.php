@@ -21,7 +21,7 @@ class PttFormValidationEntity extends PttFormValidation {
 
 	public function isValid()
 	{
-        $pttHelper = new PttHelperFormFieldTypeEntity($this->entityInfo, $this->field, $this->container, $this->entityInfo->getEntityManager());
+        $pttHelper = new PttHelperFormFieldTypeEntity($this->entityInfo, $this->field, $this->container);
 
         $sentData = $this->_sentValue();
         $errors = array();

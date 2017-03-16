@@ -7,8 +7,6 @@
 
 namespace Crowd\PttBundle\Form;
 
-use Symfony\Component\HttpFoundation\Request;
-
 class PttFormFieldSentValueFavicon extends PttFormFieldSentValue
 {
     public function value()

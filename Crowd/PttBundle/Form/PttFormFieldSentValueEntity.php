@@ -7,8 +7,6 @@
 
 namespace Crowd\PttBundle\Form;
 
-use Symfony\Component\HttpFoundation\Request;
-
 class PttFormFieldSentValueEntity extends PttFormFieldSentValue
 {
     public function value()

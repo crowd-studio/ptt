@@ -18,7 +18,7 @@ class PttHelperFormFieldTypeMultipleEntity
     private $entity;
     private $pttServices;
 
-    public function __construct(PttEntityInfo $entityInfo, PttField $field, $container = false, $entity)
+    public function __construct(PttEntityInfo $entityInfo, PttField $field, $container, $entity)
     {
         $this->entityInfo = $entityInfo;
         $this->field = $field;

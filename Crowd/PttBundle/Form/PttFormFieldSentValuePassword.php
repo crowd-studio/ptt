@@ -7,8 +7,6 @@
 
 namespace Crowd\PttBundle\Form;
 
-use Symfony\Component\HttpFoundation\Request;
-
 class PttFormFieldSentValuePassword extends PttFormFieldSentValue
 {
     public function value()
@@ -18,8 +16,7 @@ class PttFormFieldSentValuePassword extends PttFormFieldSentValue
         if ($value == null) {
             $value = $this->entityInfo->get($this->field->name, $this->languageCode);
         } else if (!$this->errors) {
-            $encoder = $this->container->get('security.encoder_factory')->getEncoder($this->entityInfo->getEntity());
-            $value = $encoder->encodePassword($value, $this->entityInfo->get('salt'));
+            $value = $this->encoder->encodePassword($value, $this->entityInfo->get('salt'));
         }
 
         return $value;

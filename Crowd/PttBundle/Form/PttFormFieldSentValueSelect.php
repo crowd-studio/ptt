@@ -7,8 +7,6 @@
 
 namespace Crowd\PttBundle\Form;
 
-use Symfony\Component\HttpFoundation\Request;
-
 class PttFormFieldSentValueSelect extends PttFormFieldSentValue
 {
     public function value()
@@ -17,14 +15,12 @@ class PttFormFieldSentValueSelect extends PttFormFieldSentValue
             $result = [];
             if ($this->sentData){
                 foreach ($this->sentData as $value) {
-                    $result[] = $this->entityInfo->getEntityManager()->getRepository($this->entityInfo->getBundle() . ':' . $this->field->options['entity'])
-                    ->find($value);
+                    $result[] = $this->entityInfo->getPttServices()->getOne($this->field->options['entity'], $value);
                 }
             }
             return $result;
         } elseif ($this->field->options['type'] == 'entity') {
-            return $this->entityInfo->getEntityManager()->getRepository($this->entityInfo->getBundle() . ':' . $this->field->options['entity'])
-                ->find($this->sentData);
+            return $this->entityInfo->getPttServices()->getOne($this->field->options['entity'], $this->sentData);
         } else {
             return (isset($this->sentData)) ? $this->sentData : null;
         }
