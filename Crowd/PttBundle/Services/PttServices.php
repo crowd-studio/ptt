@@ -72,7 +72,7 @@ class PttServices
                     if ($whereLine['column'] == 'direct-sql-injection'){
                         $columns[] = $whereLine['value'];
                     } else {
-                        $value = (strtolower($whereLine['operator']) == 'in') ?  '('.$whereLine['value'].') ' : "'".$whereLine['value']."'";
+                        $value = ((strtolower($whereLine['operator']) == 'in') || (strtolower($whereLine['operator']) == 'not in')) ?  '('.$whereLine['value'].') ' : "'".$whereLine['value']."'";
                         $columns[] = 't.'.$whereLine['column'].' '.$whereLine['operator'].' '. $value;
                     }
                     $qb->andWhere(implode(' ' . $key . ' ', $columns));
@@ -195,6 +195,16 @@ class PttServices
 
     public function remove($object){
         $this->em->remove($object);
+        $this->em->flush();
+        $this->_deleteCache();
+        return true;
+    }
+
+    public function removeAll($objects){
+        foreach ($objects as $object) {
+            $this->em->remove($object);
+        }
+
         $this->em->flush();
         $this->_deleteCache();
         return true;

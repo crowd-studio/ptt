@@ -27,7 +27,7 @@ class PttFields
         try {
             $yaml = new Parser();
             $fields = $yaml->parse(file_get_contents($filePath));
-            
+
             $this->_parse($fields, $entityName, $formName);
 
             if (!isset($fields['block'])){
@@ -58,12 +58,12 @@ class PttFields
             } else {
                 $this->static[] = false;
             }
-            
         }
+
         if (isset($fields['trans'])) {
             if(!isset($this->trans)) {
                 $this->trans = [];
-            } 
+            }
             $transFields = [];
             if($fields['trans']){
                 foreach ($fields['trans'] as $field) {
@@ -74,26 +74,13 @@ class PttFields
             } else {
                 $this->trans[] = false;
             }
-            
         }
-        if (isset($fields['errorMessage'])) {
-            $this->errorMessage = $fields['errorMessage'];
-        } else {
-            $this->errorMessage = $this->pttTrans->trans('validation_errors_were_found');
-        }
-        if (isset($fields['successMessage'])) {
-            $this->successMessage = $fields['successMessage'];
-        } else {
-            $this->successMessage = $this->pttTrans->trans('content_was_saved');
-        }
-        if (isset($fields['table'])) {
-            $this->table = $fields['table'];
-        } else {
-            $this->table = $entityName;
-        }
+
+        $this->errorMessage = (isset($fields['errorMessage'])) ? $fields['errorMessage'] : $this->errorMessage = $this->pttTrans->trans('validation_errors_were_found')
+        $this->successMessage = (isset($fields['successMessage'])) ? $fields['successMessage'] : $this->pttTrans->trans('content_was_saved');
+        $this->table  = (isset($fields['table'])) ? $fields['table'] : $entityName;
 
         if (isset($fields['block'])) {
-
             $this->block = [];
             $index = 0;
             foreach ($fields['block'] as $block) {
