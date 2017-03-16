@@ -269,17 +269,6 @@ class PttController extends Controller
         return $this->redirect($route);
     }
 
-    //SHOULD CREATE DEFAULT METHODS
-    //list, create, edit, delete
-    public function shouldCreateDefaultMethods(){
-        return true;
-    }
-
-    //THE CONTROLLER USES ENTITY
-    public function usesEntityWithSameName(){
-        return true;
-    }
-
     // Indica si la llista es pot ordenar mitjançant Drag&Drop
     protected function isSortable(){
         return method_exists($this->_initEntity(), "get_Order");
@@ -335,27 +324,8 @@ class PttController extends Controller
         ];
     }
 
-    protected function beforeDeletion($entity){
-    }
-
     protected function entityInfo(){
         return $this->_initEntity()->entityInfo($this->entityName);
-    }
-
-    protected function userIsRole($role){
-        return ($this->getUser()->getRole() == $role);
-    }
-
-    protected function userRole(){
-        return $this->getUser()->getRole();
-    }
-
-    protected function allowAccess($methodName, $entity = false){
-        return [true, $this->get('pttTrans')->trans('the_current_user_cant_access')];
-    }
-
-    protected function urlPath(){
-        return strtolower($this->entityName);
     }
 
     protected function _buildQuery($entity, $filters, $order, $limit, $page){
@@ -513,17 +483,5 @@ class PttController extends Controller
             $this->repositoryName = $this->_bundle() . ':' . ucfirst($this->entityName);
         }
         return $this->repositoryName;
-    }
-
-    private function _getAnnotation($field = false){
-        $reader = new AnnotationReader();
-        $class = $this->_className();
-
-        $pttAnnotation = $reader->getClassAnnotation(new \ReflectionClass(new $class), PttAnnotation::class);
-        if(!$pttAnnotation) {
-            return false;
-        }
-
-        return ($field) ? $pttAnnotation->$field : $pttAnnotation;
     }
 }
