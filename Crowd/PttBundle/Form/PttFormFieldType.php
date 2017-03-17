@@ -213,9 +213,8 @@ class PttFormFieldType
 		return (isset($this->field->options[$value])) ? $this->field->options[$value] : $default;
 	}
 
-	private function _formValueClassName($type)
-	{
-		$className = 'Crowd\PttBundle\Form\PttFormFieldValue' . ucfirst($type);
-		return (!class_exists($className)) ? 'Crowd\PttBundle\Form\PttFormFieldValueDefault' : $className;
+	private function _formValueClassName($type) {
+			$className = 'Crowd\PttBundle\Form\PttFormFieldValue' . ucfirst($type);
+			return (!class_exists($className)) ? 'Crowd\PttBundle\Form\PttFormFieldValueDefault' : $className;
 	}
 }
