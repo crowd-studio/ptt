@@ -9,8 +9,16 @@ namespace Crowd\PttBundle\Form;
 
 class PttFormValidationSelectMultiple extends PttFormValidation
 {
+    private $sentDataTitle;
+
+    public function __construct(PttForm $pttForm, PttField $field, $languageCode = false)
+    {
+        parent::__construct(PttForm $pttForm, PttField $field, $languageCode);
+        $this->sentDataTitle = $this->pttForm->getSentData($this->field->name . '_title', $this->languageCode);
+    }
+
     public function isValid()
     {
-        return ($this->_sentValue() !== '' && $this->pttForm->getSentData($this->field->name . '_title', $this->languageCode) !== '');
+        return ($this->_sentValue() !== '' && $this->sentDataTitle !== '');
     }
 }
