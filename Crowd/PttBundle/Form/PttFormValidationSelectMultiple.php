@@ -14,7 +14,7 @@ class PttFormValidationSelectMultiple extends PttFormValidation
     public function __construct(PttForm $pttForm, PttField $field, $languageCode = false)
     {
         parent::__construct(PttForm $pttForm, PttField $field, $languageCode);
-        $this->sentDataTitle = $this->pttForm->getSentData($this->field->name . '_title', $this->languageCode);
+        $this->sentDataTitle = $this->pttForm->getSentData($this->field->name . '_title', $languageCode);
     }
 
     public function isValid()
