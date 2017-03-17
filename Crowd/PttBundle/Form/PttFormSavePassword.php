@@ -13,10 +13,14 @@ class PttFormSavePassword extends PttFormSave
 {
     public function value()
     {
-        $factory = $this->container->get('security.encoder_factory');
         $entity = $this->entityInfo->getEntity();
-        $encoder = $factory->getEncoder($entity);
-        $password = $encoder->encodePassword($this->sentData[$this->field->name]["first"], $entity->getSalt());
+        if ($this->sentData[$this->field->name]["first"] != '') {
+            $factory = $this->container->get('security.encoder_factory');
+            $encoder = $factory->getEncoder($entity);
+            $password = $encoder->encodePassword($this->sentData[$this->field->name]["first"], $entity->getSalt());
+        } else {
+            $password = $entity->getPassword();
+        }
 
         return $password;
     }
