@@ -7,8 +7,10 @@
 
 namespace Crowd\PttBundle\Form;
 
-class PttFormValidationSelectMultiple extends PttFormValidation {
-		public function isValid(){
-				return ($this->_sentValue() !== '' && $this->pttForm->getSentData($this->field->name . '_title', $this->languageCode) !== '');
-		}
+class PttFormValidationSelectMultiple extends PttFormValidation
+{
+    public function isValid()
+    {
+        return ($this->_sentValue() !== '' && $this->pttForm->getSentData($this->field->name . '_title', $this->languageCode) !== '');
+    }
 }

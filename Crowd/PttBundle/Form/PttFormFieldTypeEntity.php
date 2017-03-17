@@ -16,7 +16,7 @@ class PttFormFieldTypeEntity extends PttFormFieldType
         $html = $this->start();
         $html .= $this->label();
 
-        $htmlField = '<div class="multi-selector-container"><div class="col-sm-6 nopadding"><a class="btn btn-md btn-primary add">' . $this->pttTrans->trans('add') . '</a></div><div class="col-sm-6 nopadding"><a class="btn btn-md btn-primary btn-collapse btn-danger" data-expand="'. $this->pttTrans->trans('expand') .'" data-collapse="'. $this->pttTrans->trans('collapse') .'">' . $this->pttTrans->trans('expand') . '</a><a class="btn btn-md btn-primary btn-sort" data-order="' . $this->pttTrans->trans('order') . '" data-edit="' . $this->pttTrans->trans('edit') . '">' . $this->pttTrans->trans('order') . '</a></div></div><div class="related-multiple-entities"><ul class="multi-sortable"><li class="head"><span class="handle">Order</span><span class="hidden-xs">Entity</span><span class="actions"></span></li>';
+        $htmlField = '<div class="multi-selector-container"><div class="col-sm-6 nopadding"><a class="btn btn-md btn-primary add">' . $this->pttTrans->trans('add') . '</a></div><div class="col-sm-6 nopadding"><a class="btn btn-md btn-primary btn-collapse btn-danger" data-expand="'. $this->pttTrans->trans('expand') .'" data-collapse="'. $this->pttTrans->trans('collapse') .'">' . $this->pttTrans->trans('expand') . '</a><a class="btn btn-md btn-primary btn-sort" data-order="' . $this->pttTrans->trans('order') . '" data-edit="' . $this->pttTrans->trans('edit') . '">' . $this->pttTrans->trans('order') . '</a></div></div><div class="related-multiple-entities"><ul class="multi-sortable" sortable><li class="head"><span class="handle">Order</span><span class="hidden-xs">Entity</span><span class="actions"></span></li>';
         $htmlField .= $this->_hiddenDiv();
         $htmlField .= $this->_fillData();
         $htmlField  .= '</ul></div>';
@@ -27,7 +27,8 @@ class PttFormFieldTypeEntity extends PttFormFieldType
         return $html;
     }
 
-    private function _hiddenDiv() {
+    private function _hiddenDiv()
+    {
         $pttHelper = new PttHelperFormFieldTypeEntity($this->entityInfo, $this->field, $this->container);
         $htmlField = '<script type="text/template" class="template">'. $this->_getHtml('{{index}}', $this->field->options['label'], $pttHelper->formForEntity($pttHelper->cleanRelatedEntity())) .'</script>';
 
@@ -37,7 +38,7 @@ class PttFormFieldTypeEntity extends PttFormFieldType
     private function _fillData()
     {
         $htmlField = '';
-        if($this->value && !is_array($this->value)){
+        if ($this->value && !is_array($this->value)) {
             $pttHelper = new PttHelperFormFieldTypeEntity($this->entityInfo, $this->field, $this->container);
             for ($i=0; $i < count($this->value); $i++) {
                 $ent = $this->value->get($i);
@@ -49,7 +50,8 @@ class PttFormFieldTypeEntity extends PttFormFieldType
         return $htmlField;
     }
 
-    private function _getHtml($key, $formName, $form){
+    private function _getHtml($key, $formName, $form)
+    {
         $htmlField = '<div class="collapse-head"><span class="handle hidden"></span><span class="title-triangle"><a class="triangle-closed triangle"></a><a class="title title-closed">'. $formName .' '. $key .'</a></span><a class="remove list-eliminar"></a></div><div class="collapse-body hidden">' . $form->createView('multi');
         $htmlField .= '<input type="hidden" id="'. $this->field->getFormName() . '-' . $key .'-_order" name="'. $this->field->getFormName() . '[' . $key . ']' .'[_order]" data-required="false" class="form-control field-order" value="'. $key .'">';
         $htmlField .= '<input type="hidden" id="'. $this->field->getFormName() . '-' . $key .'-_model" name="'. $this->field->getFormName() . '[' . $key . ']' .'[_model]" data-required="false" class="form-control" value="'. $this->pttForm->getEntityInfo()->getEntityName() .'">';

@@ -6,6 +6,7 @@
  */
 
 namespace Crowd\PttBundle\Util;
+
 use Symfony\Component\Yaml\Parser;
 use Symfony\Component\Yaml\Exception\ParseException;
 use Doctrine\ORM\EntityManager;
@@ -41,14 +42,14 @@ class PttTrans
                 $filePath = __DIR__ . '/../Resources/translations/' . $code . '.yml';
 
 
-                if(!file_exists($filePath)){
+                if (!file_exists($filePath)) {
                     $filePath = __DIR__ . '/../Resources/translations/' . $this->preferredLanguage->getCode() . '.yml';
                     $code = $this->preferredLanguage->getCode();
                 }
-                
+
                 $transStrings = $yaml->parse(file_get_contents($filePath));
-                    $extendedFilePath = __DIR__ . "/../../../../../../app/config/ptt/translations/" . $code . '.yml';
-                
+                $extendedFilePath = __DIR__ . "/../../../../../../app/config/ptt/translations/" . $code . '.yml';
+
                 if (file_exists($extendedFilePath) && is_file($extendedFilePath)) {
                     try {
                         $extendedTransStrings = $yaml->parse(file_get_contents($extendedFilePath));
@@ -62,7 +63,6 @@ class PttTrans
                 throw new \Exception('Unable to parse the ' . $code . '.yml file');
             }
         }
-
     }
 
     public function setRequest(RequestStack $requestStack)
@@ -72,20 +72,19 @@ class PttTrans
 
     public function trans($key, $strings = false)
     {
-
-        if($this->request){
-            $language = (strpos($this->request->get('_route'),'-')) ? substr($this->request->get('_route'), -2) : $this->preferredLanguage->getCode();
+        if ($this->request) {
+            $language = (strpos($this->request->get('_route'), '-')) ? substr($this->request->get('_route'), -2) : $this->preferredLanguage->getCode();
         } else {
             $language = $this->preferredLanguage->getCode();
         }
-        
+
         $transStrings = $this->languages[$language];
 
         if (is_string($key) && isset($transStrings[$key])) {
             $value = $transStrings[$key];
             if (is_string($strings)) {
                 $value = str_replace('%@', (string)$strings, $value);
-            } else if (is_array($strings)) {
+            } elseif (is_array($strings)) {
                 foreach ($strings as $string) {
                     $string = (string)$string;
                     $pos = strpos($value, '%@');
@@ -98,6 +97,5 @@ class PttTrans
         } else {
             return $key;
         }
-
     }
 }

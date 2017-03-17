@@ -1,6 +1,8 @@
 <?php
 namespace Crowd\PttBundle\Util;
+
 use Symfony\Component\OptionsResolver\OptionsResolver;
+
 /**
  * Favicon Generator.
  *
@@ -201,8 +203,8 @@ class PttFaviconGenerator
      */
     private function startsWith($haystack, $needle)
     {
-         $length = strlen($needle);
-         return (substr($haystack, 0, $length) === $needle);
+        $length = strlen($needle);
+        return (substr($haystack, 0, $length) === $needle);
     }
     /**
      * Checks if a value is a url.

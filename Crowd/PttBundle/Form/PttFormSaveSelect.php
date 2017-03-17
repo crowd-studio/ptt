@@ -11,11 +11,12 @@ use Crowd\PttBundle\Form\PttFormSave;
 
 class PttFormSaveSelect extends PttFormSave
 {
-    public function value(){
-      $pttServices = $this->container->get('pttServices');
-    	if (isset($this->field->options['multiple'])) {
+    public function value()
+    {
+        $pttServices = $this->container->get('pttServices');
+        if (isset($this->field->options['multiple'])) {
             $result = [];
-            if (isset($this->sentData[$this->field->name])){
+            if (isset($this->sentData[$this->field->name])) {
                 foreach ($this->sentData[$this->field->name] as $value) {
                     $result[] = $pttServices->getOne($this->field->options['entity'], $value);
                 }

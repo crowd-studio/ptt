@@ -9,26 +9,26 @@ namespace Crowd\PttBundle\Form;
 
 class PttFormFieldTypeText extends PttFormFieldType
 {
-	public function field()
-	{
-		$html = $this->start();
-		$html .= $this->label();
+    public function field()
+    {
+        $html = $this->start();
+        $html .= $this->label();
 
-		$htmlField = '<input type="text" ';
-		if (isset($this->field->options['maxLength'])){
-			$htmlField .= 'maxlength="'.$this->field->options['maxLength'].'" ';
-		}
-		$htmlField .= $this->attributes();
-		$htmlField .= 'value=\'' . str_replace('\'', '&#039;', $this->value) . '\'';
-		$htmlField .= '>';
+        $htmlField = '<input type="text" ';
+        if (isset($this->field->options['maxLength'])) {
+            $htmlField .= 'maxlength="'.$this->field->options['maxLength'].'" ';
+        }
+        $htmlField .= $this->attributes();
+        $htmlField .= 'value=\'' . str_replace('\'', '&#039;', $this->value) . '\'';
+        $htmlField .= '>';
 
-		$html .= $htmlField;
-		$html .= $this->end();
+        $html .= $htmlField;
+        $html .= $this->end();
 
-		return $html;
-	}
+        return $html;
+    }
 
-	protected function extraClassesForFieldContainer()
+    protected function extraClassesForFieldContainer()
     {
         return 'form-group text col-sm-' . $this->getWidth();
     }

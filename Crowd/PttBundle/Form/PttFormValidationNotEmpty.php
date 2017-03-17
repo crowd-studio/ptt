@@ -7,13 +7,15 @@
 
 namespace Crowd\PttBundle\Form;
 
-class PttFormValidationNotEmpty extends PttFormValidation {
-		public function isValid(){
-	        $multiple = (isset($this->field->options['multiple']));
-	        if ($multiple) {
-	            return (count($this->_sentValue(array())));
-	        } else {
-	            return ($this->_sentValue(-1) != -1);
-	        }
-		}
+class PttFormValidationNotEmpty extends PttFormValidation
+{
+    public function isValid()
+    {
+        $multiple = (isset($this->field->options['multiple']));
+        if ($multiple) {
+            return (count($this->_sentValue(array())));
+        } else {
+            return ($this->_sentValue(-1) != -1);
+        }
+    }
 }

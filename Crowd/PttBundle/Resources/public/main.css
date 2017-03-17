@@ -7292,9 +7292,9 @@ button.close {
 /*@font-face {
 	font-family: 'fontName';
 	src: url('@{path-fonts}/fontName.ttf');
-	src: url('@{path-fonts}/fontName.eot?#iefix') format('embedded-opentype'),  
-		 url('@{path-fonts}/fontName.woff') format('woff'), 
-		 url('@{path-fonts}/fontName.ttf')  format('truetype'), 
+	src: url('@{path-fonts}/fontName.eot?#iefix') format('embedded-opentype'),
+		 url('@{path-fonts}/fontName.woff') format('woff'),
+		 url('@{path-fonts}/fontName.ttf')  format('truetype'),
 		 url('@{path-fonts}/fontName.svg#fontName') format('svg');
 }*/
 /* WEL */
@@ -7520,7 +7520,7 @@ div.well {
 .sidebar .sidebar-inner > ul > li {
   position: relative;
   /*&.subSections{
-					
+
 					>a:before{
 					    content: '';
 						position: absolute;

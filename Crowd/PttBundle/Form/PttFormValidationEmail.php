@@ -9,12 +9,14 @@ namespace Crowd\PttBundle\Form;
 
 use Crowd\PttBundle\Util\PttUtil;
 
-class PttFormValidationEmail extends PttFormValidation {
-		public function isValid(){
+class PttFormValidationEmail extends PttFormValidation
+{
+    public function isValid()
+    {
         if ($this->_sentValue() == '') {
             return true;
         } else {
             return (filter_var($this->_sentValue(), FILTER_VALIDATE_EMAIL));
         }
-		}
+    }
 }

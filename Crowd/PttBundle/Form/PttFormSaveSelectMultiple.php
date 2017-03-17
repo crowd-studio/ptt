@@ -12,10 +12,11 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 class PttFormSaveSelectMultiple extends PttFormSave
 {
-    public function value(){
+    public function value()
+    {
         $pttServices = $this->container->get('pttServices');
         $entityModel = null;
-        if($this->languageCode){
+        if ($this->languageCode) {
             $model = $this->sentData[$this->languageCode][$this->field->name . '_model'];
             $id = $this->sentData[$this->languageCode][$this->field->name];
             $entityModel = $pttServices->getSimpleFilter($model . 'Trans', ['where' => ['relatedid' => $id, 'language' => $this->languageCode]]);
@@ -26,8 +27,8 @@ class PttFormSaveSelectMultiple extends PttFormSave
             $entityModel = $pttServices->getOne($model, $id);
         }
 
-        if($entityModel){
-            if(method_exists($entityModel, 'getTitle')){
+        if ($entityModel) {
+            if (method_exists($entityModel, 'getTitle')) {
                 $this->entityInfo->set($this->field->name . '_title', $entityModel->getTitle(), $this->languageCode);
             } else {
                 $this->entityInfo->set($this->field->name . '_title', '', $this->languageCode);

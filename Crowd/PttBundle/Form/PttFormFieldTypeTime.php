@@ -9,23 +9,23 @@ namespace Crowd\PttBundle\Form;
 
 class PttFormFieldTypeTime extends PttFormFieldType
 {
-	public function field()
-	{
-		$html = $this->start();
-		$html .= $this->label();
+    public function field()
+    {
+        $html = $this->start();
+        $html .= $this->label();
 
-		$htmlField = '<input type="time" ';
-		$htmlField .= $this->attributes();
-		$htmlField .= 'value="' . $this->value . '"';
-		$htmlField .= '>';
+        $htmlField = '<input type="time" ';
+        $htmlField .= $this->attributes();
+        $htmlField .= 'value="' . $this->value . '"';
+        $htmlField .= '>';
 
-		$html .= $htmlField;
-		$html .= $this->end();
+        $html .= $htmlField;
+        $html .= $this->end();
 
-		return $html;
-	}
+        return $html;
+    }
 
-	protected function extraClassesForFieldContainer()
+    protected function extraClassesForFieldContainer()
     {
         return 'form-group time col-sm-' . $this->getWidth(6);
     }

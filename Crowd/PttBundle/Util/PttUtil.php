@@ -6,13 +6,13 @@
  */
 
 namespace Crowd\PttBundle\Util;
+
 use Symfony\Component\Yaml\Parser;
 use Symfony\Component\Yaml\Exception\ParseException;
 use Symfony\Component\Finder\Finder;
 
 class PttUtil
 {
-
     public static function pttConfiguration($sub = false, $required = true)
     {
         $yaml = new Parser();
@@ -44,7 +44,8 @@ class PttUtil
         return $fields;
     }
 
-    public static function splitAtUpperCase($s) {
+    public static function splitAtUpperCase($s)
+    {
         return preg_split('/(?=[A-Z])/', $s, -1, PREG_SPLIT_NO_EMPTY);
     }
 
@@ -89,12 +90,14 @@ class PttUtil
             }
         }
 
-        if($stamp == true) $password .= time();
+        if ($stamp == true) {
+            $password .= time();
+        }
 
         return $password;
     }
 
-    static public function slugify($text)
+    public static function slugify($text)
     {
         if (strpos($text, '&')) {
             $text = str_replace('&', 'and', $text);
@@ -105,22 +108,24 @@ class PttUtil
         $text = iconv('utf-8', 'us-ascii//TRANSLIT', $text);
         $text = strtolower($text);
         $text = preg_replace('~[^-\w]+~', '', $text);
-        if (empty($text)){return 'n-a';}
+        if (empty($text)) {
+            return 'n-a';
+        }
         return $text;
     }
 
-    static public function textify($string)
+    public static function textify($string)
     {
-        return strtolower(trim(preg_replace('~[^0-9a-z]+~i','-',preg_replace('~&([a-z]{1,2})(acute|cedil|circ|grave|lig|orn|ring|slash|th|tilde|uml);~i', '$1', htmlentities($string, ENT_QUOTES, 'UTF-8'))),' '));
+        return strtolower(trim(preg_replace('~[^0-9a-z]+~i', '-', preg_replace('~&([a-z]{1,2})(acute|cedil|circ|grave|lig|orn|ring|slash|th|tilde|uml);~i', '$1', htmlentities($string, ENT_QUOTES, 'UTF-8'))), ' '));
     }
 
-    static public function extension($filename)
+    public static function extension($filename)
     {
         $ext = strtolower(strrchr($filename, '.'));
         return $ext;
     }
 
-    static public function checkTypeForFile($filename, $type = 'image')
+    public static function checkTypeForFile($filename, $type = 'image')
     {
         $ext = PttUtil::extension($filename);
 
@@ -130,7 +135,7 @@ class PttUtil
             } else {
                 return $filename;
             }
-        } else if ($type == 'pdf') {
+        } elseif ($type == 'pdf') {
             if (!in_array(strtolower($ext), array('.pdf'))) {
                 return false;
             } else {
@@ -141,25 +146,27 @@ class PttUtil
         }
     }
 
-    static public function extractControllerName($filename)
+    public static function extractControllerName($filename)
     {
         $controllerStringPos = strpos($filename, 'Controller');
         return substr($filename, 0, $controllerStringPos);
     }
 
-    static public function getSVGContent($uploadsPath, $fileName){
+    public static function getSVGContent($uploadsPath, $fileName)
+    {
         $finder = new Finder();
         $finder->files()->in(trim($uploadsPath, '/'))->name($fileName);
         $contents ='';
         foreach ($finder as $file) {
-            if ($file->getExtension() == 'svg'){
+            if ($file->getExtension() == 'svg') {
                 $contents = $file->getContents();
             }
         }
         return $contents;
     }
 
-    static public function sendMail($to, $subject, $render){
+    public static function sendMail($to, $subject, $render)
+    {
         $params = PttUtil::pttConfiguration('mailer');
 
         $transporter = \Swift_SmtpTransport::newInstance($params['host'], $params['port'])->setUsername($params['user'])->setPassword($params['password']);
@@ -176,8 +183,9 @@ class PttUtil
         return true;
     }
 
-    static public function image($img, $size){
-        if($img != ''){
+    public static function image($img, $size)
+    {
+        if ($img != '') {
             $end = explode('.', $img);
             $size = (strtolower(array_pop($end)) != 'gif') ? $size[0] . '-' . $size[1] . '-' : '0-0-';
             $img = PttUtil::uploadUrl() . $size . $img;
@@ -186,8 +194,9 @@ class PttUtil
         return $img;
     }
 
-    static public function uploadUrl(){
-      $s3 = PttUtil::pttConfiguration('s3');
-      return (isset($s3['force']) && $s3['force']) ? $s3['prodUrl'] . $s3['dir'] . '/' : '/uploads/';
+    public static function uploadUrl()
+    {
+        $s3 = PttUtil::pttConfiguration('s3');
+        return (isset($s3['force']) && $s3['force']) ? $s3['prodUrl'] . $s3['dir'] . '/' : '/uploads/';
     }
 }

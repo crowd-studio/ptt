@@ -1,6 +1,8 @@
 <?php
 namespace Crowd\PttBundle\Util;
+
 use \InvalidArgumentException;
+
 /**
  * Parses the API response and abstracts the result.
  *

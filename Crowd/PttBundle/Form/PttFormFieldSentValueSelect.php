@@ -13,7 +13,7 @@ class PttFormFieldSentValueSelect extends PttFormFieldSentValue
     {
         if (isset($this->field->options['multiple'])) {
             $result = [];
-            if ($this->sentData){
+            if ($this->sentData) {
                 foreach ($this->sentData as $value) {
                     $result[] = $this->entityInfo->getPttServices()->getOne($this->field->options['entity'], $value);
                 }

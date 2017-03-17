@@ -9,9 +9,9 @@ use Doctrine\Common\Annotations\Annotation;
 */
 final class PttAnnotation extends Annotation
 {
-	public $defaultField;
-	public $cache;
-	public $listTitle;
-	public $createTitle;
-	public $editTitle;
+    public $defaultField;
+    public $cache;
+    public $listTitle;
+    public $createTitle;
+    public $editTitle;
 }

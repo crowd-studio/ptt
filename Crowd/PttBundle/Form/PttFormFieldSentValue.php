@@ -9,7 +9,8 @@ namespace Crowd\PttBundle\Form;
 
 use Symfony\Component\HttpFoundation\Request;
 
-class PttFormFieldSentValue {
+class PttFormFieldSentValue
+{
     protected $field;
     protected $entityInfo;
     protected $sentData;
@@ -17,7 +18,8 @@ class PttFormFieldSentValue {
     protected $errors;
     protected $encoder;
 
-    public function __construct(PttField $field, PttForm $pttForm, $languageCode = false){
+    public function __construct(PttField $field, PttForm $pttForm, $languageCode = false)
+    {
         $this->field = $field;
         $this->languageCode = $languageCode;
         $this->entityInfo = $pttForm->getEntityInfo();

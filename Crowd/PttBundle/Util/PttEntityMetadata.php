@@ -20,7 +20,7 @@ class PttEntityMetadata
     {
         if (is_string($entity)) {
             return $this->_stringClassName($entity);
-        } else if (is_object($entity)) {
+        } elseif (is_object($entity)) {
             return $this->_objectClassName($entity);
         }
     }
@@ -46,7 +46,7 @@ class PttEntityMetadata
     {
         if (is_string($entity)) {
             return $this->_stringEntityName($entity);
-        } else if (is_object($entity)) {
+        } elseif (is_object($entity)) {
             return $this->_objectEntityName($entity);
         }
     }
@@ -74,7 +74,7 @@ class PttEntityMetadata
     {
         if (is_string($entity)) {
             return $this->_stringRepositoryName($entity);
-        } else if (is_object($entity)) {
+        } elseif (is_object($entity)) {
             return $this->_objectRepositoryName($entity);
         }
     }
@@ -125,7 +125,7 @@ class PttEntityMetadata
     {
         if (is_string($entity)) {
             return $this->_stringBundle($entity);
-        } else if (is_object($entity)) {
+        } elseif (is_object($entity)) {
             return $this->_objectBundle($entity);
         }
     }
@@ -155,7 +155,8 @@ class PttEntityMetadata
         return false;
     }
 
-    public function getLanguages(){
+    public function getLanguages()
+    {
         $pttCache = new PttCache('getLanguages');
         $data = $pttCache->retrieve();
         if (!$data) {
@@ -166,7 +167,8 @@ class PttEntityMetadata
         return $data;
     }
 
-    public function getPreferredLanguage(){
+    public function getPreferredLanguage()
+    {
         $pttCache = new PttCache('getPreferredLanguage');
         $data = $pttCache->retrieve();
         if (!$data) {
@@ -179,7 +181,8 @@ class PttEntityMetadata
     }
 
 
-    private function _getLanguageBundle(){
+    private function _getLanguageBundle()
+    {
         return PttUtil::pttConfiguration('bundles')[0]['bundle'] . ':Language';
     }
 }

@@ -10,7 +10,8 @@ namespace Crowd\PttBundle\Form;
 use Crowd\PttBundle\Form\PttFormAfterSave;
 use Crowd\PttBundle\Util\PttUtil;
 
-class PttFormAfterSaveMultipleEntity extends PttFormAfterSave {
+class PttFormAfterSaveMultipleEntity extends PttFormAfterSave
+{
     private $pttServices;
 
     public function perform()
@@ -36,7 +37,7 @@ class PttFormAfterSaveMultipleEntity extends PttFormAfterSave {
                     $form->isValid();
                     $form->save();
                     $index += 1;
-                    if (isset($entityRemains[$type])){
+                    if (isset($entityRemains[$type])) {
                         $entityRemains[$type] = $entityRemains[$type] . ',' . $entity->getPttId();
                     } else {
                         $entityRemains[$type] = $entity->getPttId();
@@ -49,8 +50,7 @@ class PttFormAfterSaveMultipleEntity extends PttFormAfterSave {
 
     private function _deleteUnnecessaryRelations($entityRemains)
     {
-        foreach ($this->field->options['modules'] as $key => $value){
-
+        foreach ($this->field->options['modules'] as $key => $value) {
             $where = [
                 ['column' => 'relatedid', 'operator' => '=', 'value' => $this->entityInfo->get('pttId')],
                 ['column' => 'model', 'operator' => '=', 'value' => $this->entityInfo->getEntityName()]

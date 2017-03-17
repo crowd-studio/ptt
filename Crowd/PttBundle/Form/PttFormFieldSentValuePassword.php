@@ -15,7 +15,7 @@ class PttFormFieldSentValuePassword extends PttFormFieldSentValue
 
         if ($value == null) {
             $value = $this->entityInfo->get($this->field->name, $this->languageCode);
-        } else if (!$this->errors) {
+        } elseif (!$this->errors) {
             $value = $this->encoder->encodePassword($value, $this->entityInfo->get('salt'));
         }
 

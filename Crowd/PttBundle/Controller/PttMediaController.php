@@ -31,13 +31,12 @@ class PttMediaController extends Controller
      */
     public function uploadAction(Request $request)
     {
-        if($request->files->get('files') !== null) {
+        if ($request->files->get('files') !== null) {
             $uploadUrl = PttUtil::pttConfiguration('images');
             $pttInfo = PttUtil::pttConfiguration('s3');
             $uploadToS3 = (isset($pttInfo['force']) && $pttInfo['force']);
 
             if ($request->get('canvas') == 'yes') {
-
                 $sizes = $request->get('sizes', [['w' => 0, 'h' => 0]]);
 
                 $filename = PttUploadFile::uploadCanvas($request->get('imgBase64'), $sizes, $uploadToS3);
@@ -48,9 +47,7 @@ class PttMediaController extends Controller
                     'filename' => $filename,
                     'resized' => $url . $sizes[0]['w'] . '-' . $sizes[0]['h'] . '-' . $filename
                 ];
-
             } else {
-
                 $width = ($request->get('width', false)) ? $request->get('width') : 0;
                 $height = ($request->get('height', false)) ? $request->get('height') : 0;
 
@@ -109,21 +106,22 @@ class PttMediaController extends Controller
         return new JsonResponse($data);
     }
 
-    private function _entities($field, $query){
+    private function _entities($field, $query)
+    {
         $sortBy = (isset($field['options']['sortBy']) && is_array($field['options']['sortBy'])) ? $field['options']['sortBy'] : ['id' => 'asc'];
         $filterBy = (isset($field['options']['filterBy']) && is_array($field['options']['filterBy'])) ? $field['options']['filterBy'] : [];
         $search = $field['options']['searchfield'];
 
         $params = [];
 
-        if($filterBy){
+        if ($filterBy) {
             $where = [];
             foreach ($filters as $key => $filter) {
-              $keyArr = explode('-', $key);
-              $where[] = ['column' => array_pop($keyArr), 'operator' => 'LIKE', 'value' => '%'.$filter.'%'];
+                $keyArr = explode('-', $key);
+                $where[] = ['column' => array_pop($keyArr), 'operator' => 'LIKE', 'value' => '%'.$filter.'%'];
             }
 
-             $params['where'] = [['and' => $where]];
+            $params['where'] = [['and' => $where]];
         }
 
         $where = [['column' => $search, 'operator' => 'LIKE', 'value' => '%'.$query.'%']];
@@ -134,7 +132,7 @@ class PttMediaController extends Controller
 
         $params['order'] = [];
         foreach ($sortBy as $key => $value) {
-          $params['order'][] = ['order' => $key, 'orderDir' => $value];
+            $params['order'][] = ['order' => $key, 'orderDir' => $value];
         }
 
         $result = $this->getPttServices()->get($field['options']['entity'], $params);
@@ -142,25 +140,26 @@ class PttMediaController extends Controller
         $textArr = [];
         $method = 'get' . ucfirst($search);
         foreach ($result as $value) {
-          if(method_exists($value, $method)){
-              $textArr[] = [
+            if (method_exists($value, $method)) {
+                $textArr[] = [
                   'id' => $value->getId(),
                   'text' => $value->$method()
               ];
-          }
+            }
         }
 
         return $textArr;
     }
 
-    private function _entity($field, $id){
+    private function _entity($field, $id)
+    {
         $result = $this->getPttServices()->getOne($field['options']['entity'], $id);
 
-        if($result){
+        if ($result) {
             $text = '';
             foreach ($search as $key => $field) {
                 $method = 'get' . ucfirst($key);
-                if(method_exists($result, $method)){
+                if (method_exists($result, $method)) {
                     $text .= ', ' . $result->$method();
                 }
             }
@@ -174,8 +173,9 @@ class PttMediaController extends Controller
         }
     }
 
-    protected function getPttServices(){
-        if(!$this->pttServices){
+    protected function getPttServices()
+    {
+        if (!$this->pttServices) {
             $this->pttServices = $this->get('pttservices');
         }
         return $this->pttServices;

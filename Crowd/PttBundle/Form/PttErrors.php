@@ -23,7 +23,7 @@ class PttErrors
     {
         if ($languageCode) {
             if (!is_array($message)) {
-                if(!isset($this->errors[$languageCode][$key])) {
+                if (!isset($this->errors[$languageCode][$key])) {
                     $this->errors[$languageCode][$key] = [];
                 }
                 $this->errors[$languageCode][$key][] = $this->pttTrans->trans($message);
@@ -32,7 +32,7 @@ class PttErrors
             }
         } else {
             if (!is_array($message)) {
-                if(!isset($this->errors[$key])) {
+                if (!isset($this->errors[$key])) {
                     $this->errors['static'][$key] = [];
                 }
                 $this->errors['static'][$key][] = $this->pttTrans->trans($message);
@@ -67,5 +67,4 @@ class PttErrors
             return (count($this->errors) > 0);
         }
     }
-
 }

@@ -11,7 +11,6 @@ use Crowd\PttBundle\Util\PttUtil;
 
 class PttHelperFormFieldTypeMultipleEntity
 {
-
     private $entityInfo;
     private $field;
     private $container;
@@ -32,7 +31,6 @@ class PttHelperFormFieldTypeMultipleEntity
         $classNameArr = explode('\\', $this->entityInfo->getClassName());
         array_pop($classNameArr);
         return implode('\\', $classNameArr) . '\\' . $this->entity;
-
     }
 
     public function cleanRelatedEntity()

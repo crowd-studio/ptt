@@ -9,7 +9,6 @@ namespace Crowd\PttBundle\Form;
 
 class PttHelperFormFieldTypeEntity
 {
-
     private $entityInfo;
     private $field;
     private $container;
@@ -77,7 +76,6 @@ class PttHelperFormFieldTypeEntity
 
     public function formForEntity($entity, $key = false, $errors = false)
     {
-
         $pttForm = $this->container->get('pttForm');
         $pttForm->setEntity($entity);
 
@@ -91,5 +89,4 @@ class PttHelperFormFieldTypeEntity
         $pttForm->setFormName($this->field->getFormName() . '[' . $key . ']');
         return $pttForm;
     }
-
 }

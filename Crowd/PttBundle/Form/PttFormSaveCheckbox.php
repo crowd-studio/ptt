@@ -13,7 +13,7 @@ class PttFormSaveCheckbox extends PttFormSave
 {
     public function value()
     {
-      	$return = $this->entityInfo->get($this->field->name, $this->languageCode);
-      	return ($return) ? $return : false;
+        $return = $this->entityInfo->get($this->field->name, $this->languageCode);
+        return ($return) ? $return : false;
     }
 }

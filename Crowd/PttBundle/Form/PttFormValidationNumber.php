@@ -7,8 +7,10 @@
 
 namespace Crowd\PttBundle\Form;
 
-class PttFormValidationNumber extends PttFormValidation {
-		public function isValid(){
-				return is_numeric($this->_sentValue());
-		}
+class PttFormValidationNumber extends PttFormValidation
+{
+    public function isValid()
+    {
+        return is_numeric($this->_sentValue());
+    }
 }

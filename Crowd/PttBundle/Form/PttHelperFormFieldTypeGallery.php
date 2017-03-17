@@ -9,7 +9,6 @@ namespace Crowd\PttBundle\Form;
 
 class PttHelperFormFieldTypeGallery
 {
-
     private $entityInfo;
     private $field;
     private $container;
@@ -92,5 +91,4 @@ class PttHelperFormFieldTypeGallery
         $pttForm->setFormName($this->field->getFormName() . '[' . $key . ']');
         return $pttForm;
     }
-
 }

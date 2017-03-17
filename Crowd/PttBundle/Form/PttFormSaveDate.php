@@ -16,7 +16,7 @@ class PttFormSaveDate extends PttFormSave
         $value = $this->entityInfo->get($this->field->name, $this->languageCode);
         $date = null;
         if (is_string($value)) {
-            try{
+            try {
                 $date = str_replace('/', '-', $value);
                 $date = $date != '' ? new \DateTime(date($date)) : null;
             } catch (\Exception $ex) {

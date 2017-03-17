@@ -9,12 +9,14 @@ namespace Crowd\PttBundle\Form;
 
 use Crowd\PttBundle\Form\PttFormSave;
 
-class PttFormSaveHour extends PttFormSave {
-    public function value(){
+class PttFormSaveHour extends PttFormSave
+{
+    public function value()
+    {
         $value = $this->entityInfo->get($this->field->name, $this->languageCode);
         $date = null;
         if (is_string($value)) {
-            try{
+            try {
                 $date = str_replace('/', ':', $value);
                 $date = $date != '' ? new \DateTime(date($date)) : null;
             } catch (\Exception $ex) {

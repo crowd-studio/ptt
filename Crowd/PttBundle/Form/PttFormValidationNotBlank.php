@@ -7,8 +7,10 @@
 
 namespace Crowd\PttBundle\Form;
 
-class PttFormValidationNotBlank extends PttFormValidation {
-		public function isValid(){
-				return ($this->_sentValue() != '');
-		}
+class PttFormValidationNotBlank extends PttFormValidation
+{
+    public function isValid()
+    {
+        return ($this->_sentValue() != '');
+    }
 }

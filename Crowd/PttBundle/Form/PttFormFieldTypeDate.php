@@ -9,30 +9,30 @@ namespace Crowd\PttBundle\Form;
 
 class PttFormFieldTypeDate extends PttFormFieldType
 {
-	public function field()
-	{
-		$html = $this->start();
-		$html .= $this->label();
+    public function field()
+    {
+        $html = $this->start();
+        $html .= $this->label();
 
 
-		if ($this->value instanceof \DateTime) {
-			$this->value = ($this->value->format('Y') > -1) ? $this->value->format('d/m/Y') : null;
-		}
+        if ($this->value instanceof \DateTime) {
+            $this->value = ($this->value->format('Y') > -1) ? $this->value->format('d/m/Y') : null;
+        }
 
-		$html .= '<input type="text" data-language="' . $this->preferredLanguage . '" ' . $this->attributes() . 'value="' . $this->value . '">';
-		
-		$html .= $this->end();
+        $html .= '<input type="text" data-language="' . $this->preferredLanguage . '" ' . $this->attributes() . 'value="' . $this->value . '">';
 
-		return $html;
-	}
+        $html .= $this->end();
 
-	protected function extraClassesForField()
-	{
-		return 'form-control datepicker';
-	}
+        return $html;
+    }
 
-	protected function extraClassesForFieldContainer()
-	{
-		return 'form-group col-sm-' . $this->getWidth(6);
-	}
+    protected function extraClassesForField()
+    {
+        return 'form-control datepicker';
+    }
+
+    protected function extraClassesForFieldContainer()
+    {
+        return 'form-group col-sm-' . $this->getWidth(6);
+    }
 }

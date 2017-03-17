@@ -9,29 +9,29 @@ namespace Crowd\PttBundle\Form;
 
 class PttFormFieldTypeUrl extends PttFormFieldType
 {
-	public function field()
-	{
-		$html = $this->start();
-		$html .= $this->label();
+    public function field()
+    {
+        $html = $this->start();
+        $html .= $this->label();
 
-		$htmlField = '<div class="picker-body"><input class="url-text form-control" type="text" ';
-		$htmlField .= $this->attributes();
-		$htmlField .= 'value="' . $this->value . '"';
-		$htmlField .= '>';
-		
-		if (isset($this->field->options['button']) && $this->field->options['button'] == 'true') {
-			$htmlField .= '<a class="btn btn-md btn-primary open-link">' . $this->pttTrans->trans('open') . '</a>';
-		}
+        $htmlField = '<div class="picker-body"><input class="url-text form-control" type="text" ';
+        $htmlField .= $this->attributes();
+        $htmlField .= 'value="' . $this->value . '"';
+        $htmlField .= '>';
 
-		$htmlField .= '</div><p class="help-block">Remember to add <strong>http://</strong> or <strong>https://</strong></p>';
+        if (isset($this->field->options['button']) && $this->field->options['button'] == 'true') {
+            $htmlField .= '<a class="btn btn-md btn-primary open-link">' . $this->pttTrans->trans('open') . '</a>';
+        }
 
-		$html .= $htmlField;
-		$html .= $this->end();
+        $htmlField .= '</div><p class="help-block">Remember to add <strong>http://</strong> or <strong>https://</strong></p>';
 
-		return $html;
-	}
+        $html .= $htmlField;
+        $html .= $this->end();
 
-	protected function extraClassesForFieldContainer()
+        return $html;
+    }
+
+    protected function extraClassesForFieldContainer()
     {
         return 'form-group url col-sm-' . $this->getWidth();
     }

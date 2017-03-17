@@ -15,7 +15,7 @@ class PttTransEntity
     {
         if (method_exists($this, 'getTitle')) {
             return (string)$this->getTitle();
-        } else if (method_exists($this, 'getReference')) {
+        } elseif (method_exists($this, 'getReference')) {
             return (string)$this->getReference();
         } else {
             return (string)$this->getId();

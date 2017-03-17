@@ -11,35 +11,38 @@ use Crowd\PttBundle\Util\PttUtil;
 
 class PttFormFieldTypeGallery extends PttFormFieldType
 {
-	public function field() {
-		$html = $this->start();
-		$html .= $this->label();
+    public function field()
+    {
+        $html = $this->start();
+        $html .= $this->label();
 
-		$htmlField = '<div class="gallery-header"><div class="dropzone col-sm-12"></div><div class="col-sm-12 mg-btm-20 nopadding"><a class="btn btn-md btn-primary btn-collapse btn-danger" data-expand="'. $this->pttTrans->trans('expand') .'" data-collapse="'. $this->pttTrans->trans('collapse') .'">' . $this->pttTrans->trans('expand') . '</a>';
+        $htmlField = '<div class="gallery-header"><div class="dropzone col-sm-12"></div><div class="col-sm-12 mg-btm-20 nopadding"><a class="btn btn-md btn-primary btn-collapse btn-danger" data-expand="'. $this->pttTrans->trans('expand') .'" data-collapse="'. $this->pttTrans->trans('collapse') .'">' . $this->pttTrans->trans('expand') . '</a>';
         $htmlField .= '<a class="btn btn-md btn-primary btn-sort" data-order="' . $this->pttTrans->trans('order') . '" data-edit="' . $this->pttTrans->trans('edit') . '">' . $this->pttTrans->trans('order') . '</a>';
         $htmlField .= '</div></div><div class="related-multiple-entities">';
 
-        $htmlField .= '<ul class="multi-sortable"><li class="head"><span class="handle">Order</span><span class="hidden-xs">Entity</span><span class="actions"></span></li>';
+        $htmlField .= '<ul class="multi-sortable" sortable><li class="head"><span class="handle">Order</span><span class="hidden-xs">Entity</span><span class="actions"></span></li>';
         $htmlField .= $this->_hiddenDiv();
         $htmlField .= $this->_fillData();
         $htmlField  .= '</ul></div>';
 
-		$html .= $htmlField;
-		$html .= $this->end();
+        $html .= $htmlField;
+        $html .= $this->end();
 
-		return $html;
-	}
+        return $html;
+    }
 
-	private function _hiddenDiv() {
+    private function _hiddenDiv()
+    {
         $pttHelper = new PttHelperFormFieldTypeGallery($this->entityInfo, $this->field, $this->container);
         $htmlField = '<script type="text/template" class="template">'. $this->_getHtml('{{index}}', $this->field->options['label'], $pttHelper->formForEntity($pttHelper->cleanRelatedEntity())) .'</script>';
 
         return $htmlField;
     }
 
-    private function _fillData() {
+    private function _fillData()
+    {
         $htmlField = '';
-        if($this->value && !is_array($this->value)){
+        if ($this->value && !is_array($this->value)) {
             $pttHelper = new PttHelperFormFieldTypeEntity($this->entityInfo, $this->field, $this->container);
             for ($i=0; $i < count($this->value); $i++) {
                 $ent = $this->value->get($i);
@@ -51,7 +54,8 @@ class PttFormFieldTypeGallery extends PttFormFieldType
         return $htmlField;
     }
 
-    private function _getHtml($key, $formName, $form) {
+    private function _getHtml($key, $formName, $form)
+    {
         $htmlField = '<div class="collapse-head"><span class="handle hidden"></span><span class="title-triangle"><a class="triangle-closed triangle"></a><a class="title title-closed">'. $formName .' '. $key .'</a></span><a class="remove list-eliminar"></a></div><div class="collapse-body hidden">' . $form->createView('multi');
         $htmlField .= '<input type="hidden" id="'. $this->field->getFormName() . '-' . $key .'-_order" name="'. $this->field->getFormName() . '[' . $key . ']' .'[_order]" data-required="false" class="form-control field-order" value="'. $key .'">';
         $htmlField .= '<input type="hidden" id="'. $this->field->getFormName() . '-' . $key .'-_model" name="'. $this->field->getFormName() . '[' . $key . ']' .'[_model]" data-required="false" class="form-control" value="'. $this->pttForm->getEntityInfo()->getEntityName() .'">';
@@ -60,12 +64,13 @@ class PttFormFieldTypeGallery extends PttFormFieldType
         return $htmlField;
     }
 
-	protected function extraClassesForFieldContainer() {
+    protected function extraClassesForFieldContainer()
+    {
         return 'form-group entity col-sm-' . $this->getWidth();
     }
 
-    protected function extraAttrsForContainer() {
+    protected function extraAttrsForContainer()
+    {
         return ['data-prefix' => PttUtil::pttConfiguration('prefix')];
     }
-
 }

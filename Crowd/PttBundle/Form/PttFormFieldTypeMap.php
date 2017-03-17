@@ -9,17 +9,17 @@ namespace Crowd\PttBundle\Form;
 
 class PttFormFieldTypeMap extends PttFormFieldType
 {
-	public function field()
-	{
-		$html = $this->start();
-		$html .= $this->label();
+    public function field()
+    {
+        $html = $this->start();
+        $html .= $this->label();
 
-		$htmlFieldInput = '<input type="hidden" ';
-		$htmlFieldInput .= $this->attributes();
-		$htmlFieldInput .= 'value="' . $this->value . '"';
-		$htmlFieldInput .= '>';
+        $htmlFieldInput = '<input type="hidden" ';
+        $htmlFieldInput .= $this->attributes();
+        $htmlFieldInput .= 'value="' . $this->value . '"';
+        $htmlFieldInput .= '>';
 
-		$htmlField = '
+        $htmlField = '
 		<div class="map">
 			' . $htmlFieldInput . '
 			<div class="panel">
@@ -34,18 +34,18 @@ class PttFormFieldTypeMap extends PttFormFieldType
 		</div>
 		';
 
-		$html .= $htmlField;
-		$html .= $this->end();
+        $html .= $htmlField;
+        $html .= $this->end();
 
-		return $html;
-	}
+        return $html;
+    }
 
-	protected function extraClassesForField()
-	{
-		return 'coordinates';
-	}
+    protected function extraClassesForField()
+    {
+        return 'coordinates';
+    }
 
-	protected function extraClassesForFieldContainer()
+    protected function extraClassesForFieldContainer()
     {
         return 'form-group map col-sm-' . $this->getWidth();
     }

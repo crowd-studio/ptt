@@ -23,7 +23,8 @@ class PttTwigExtension extends Twig_Extension
     private $kernel;
     private $pttTrans;
 
-    public function __construct(\Doctrine\ORM\EntityManager $em, $securityContext, KernelInterface $kernel) {
+    public function __construct(\Doctrine\ORM\EntityManager $em, $securityContext, KernelInterface $kernel)
+    {
         $this->em = $em;
         $this->securityContext = $securityContext;
         $this->kernel = $kernel;
@@ -67,29 +68,29 @@ class PttTwigExtension extends Twig_Extension
     public function getFunctions()
     {
         return array(
-            'info' => new Twig_SimpleFunction('info', function($key, $key2 = null){
+            'info' => new Twig_SimpleFunction('info', function ($key, $key2 = null) {
                 return $this->info($key, $key2);
             }),
-            'isDebug' => new Twig_SimpleFunction('isDebug', function(){
-                    return $this->isDebug();
-                }, array(
+            'isDebug' => new Twig_SimpleFunction('isDebug', function () {
+                return $this->isDebug();
+            }, array(
                 'is_safe' => array('html')
             )),
-            'userIsRole' => new Twig_SimpleFunction('userIsRole', function($role){
+            'userIsRole' => new Twig_SimpleFunction('userIsRole', function ($role) {
                 return $this->userIsRole($role);
             }),
-            'userRole' => new Twig_SimpleFunction('userRole', function(){
+            'userRole' => new Twig_SimpleFunction('userRole', function () {
                 return $this->userRole();
             }),
-            'isAllowed' => new Twig_SimpleFunction('isAllowed', function($info){
+            'isAllowed' => new Twig_SimpleFunction('isAllowed', function ($info) {
                 return $this->isAllowed($info);
             }),
-            'filter' => new Twig_SimpleFunction('filter', function($key, $entityName){
+            'filter' => new Twig_SimpleFunction('filter', function ($key, $entityName) {
                 return $this->filter($key, $entityName);
             }, array(
                 'is_safe' => array('html')
             )),
-            'asset_exists' => new \Twig_SimpleFunction('asset_exists', function($path){
+            'asset_exists' => new \Twig_SimpleFunction('asset_exists', function ($path) {
                 return $this->asset_exists($path);
             }),
         );
@@ -141,7 +142,7 @@ class PttTwigExtension extends Twig_Extension
             $value = $cookies->get($name);
             if ($value == 'asc') {
                 return $text . ' &darr;';
-            } else if ($value == 'desc') {
+            } elseif ($value == 'desc') {
                 return $text . ' &uarr;';
             }
         } else {
@@ -199,14 +200,12 @@ class PttTwigExtension extends Twig_Extension
         $toCheck = $webRoot . $path;
 
         // check if the file exists
-        if (!is_file($toCheck))
-        {
+        if (!is_file($toCheck)) {
             return false;
         }
 
         // check if file is well contained in web/ directory (prevents ../ in paths)
-        if (strncmp($webRoot, $toCheck, strlen($webRoot)) !== 0)
-        {
+        if (strncmp($webRoot, $toCheck, strlen($webRoot)) !== 0) {
             return false;
         }
 

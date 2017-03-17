@@ -17,7 +17,7 @@ class PttFormSaveFavicon extends PttFormSave
         $files = $this->_files();
 
         if ($this->languageCode) {
-             $file = (isset($files["Trans"][$this->languageCode][$this->field->name])) ? $files["Trans"][$this->languageCode][$this->field->name] : false;
+            $file = (isset($files["Trans"][$this->languageCode][$this->field->name])) ? $files["Trans"][$this->languageCode][$this->field->name] : false;
         } else {
             $file = (isset($files[$this->field->name])) ? $files[$this->field->name] : false;
         }
@@ -57,7 +57,6 @@ class PttFormSaveFavicon extends PttFormSave
     private function _files()
     {
         if (strpos($this->entityInfo->getFormName(), '[') !== false) {
-
             $cleanName = str_replace(']', '', $this->entityInfo->getFormName());
             $cleanNameArr = explode('[', $cleanName);
             $i = 0;

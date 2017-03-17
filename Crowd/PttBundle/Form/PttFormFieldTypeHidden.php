@@ -9,13 +9,13 @@ namespace Crowd\PttBundle\Form;
 
 class PttFormFieldTypeHidden extends PttFormFieldType
 {
-	public function field()
-	{
-		$htmlField = '<input type="hidden" ';
-		$htmlField .= $this->attributes();
-		$htmlField .= 'value="' . $this->value . '"';
-		$htmlField .= '>';
+    public function field()
+    {
+        $htmlField = '<input type="hidden" ';
+        $htmlField .= $this->attributes();
+        $htmlField .= 'value="' . $this->value . '"';
+        $htmlField .= '>';
 
-		return $htmlField;
-	}
+        return $htmlField;
+    }
 }

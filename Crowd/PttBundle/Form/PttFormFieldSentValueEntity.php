@@ -11,6 +11,6 @@ class PttFormFieldSentValueEntity extends PttFormFieldSentValue
 {
     public function value()
     {
-    	return (isset($this->sentData)) ? $this->sentData : [];
+        return (isset($this->sentData)) ? $this->sentData : [];
     }
 }

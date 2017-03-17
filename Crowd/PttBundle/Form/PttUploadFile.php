@@ -31,9 +31,9 @@ class PttUploadFile
                 $saveThumbPath = WEB_DIR . $uploadsUrl . $filename;
 
                 $realSize = getimagesize($file);
-                if($height == 'm'){
-                   $height = $width;
-                    if($realSize[0] > $realSize[1]){ // Més ample
+                if ($height == 'm') {
+                    $height = $width;
+                    if ($realSize[0] > $realSize[1]) { // Més ample
                         $height = round(($size['w'] * $realSize[1]) / $realSize[0]);
                     } else { // Més alta o igual
                         $width = round(($size['w'] * $realSize[0]) / $realSize[1]);
@@ -58,7 +58,8 @@ class PttUploadFile
         return $uploadName;
     }
 
-    public static function generateFavicon($fileName, $favicon, $url){
+    public static function generateFavicon($fileName, $favicon, $url)
+    {
         $s3 = PttUtil::pttConfiguration('s3');
         $uploadUrl = (isset($s3['force']) && $s3['force']) ? $s3['prodUrl'] . $s3['dir'] . '/' : $url . '/uploads/';
 
@@ -75,10 +76,11 @@ class PttUploadFile
         unlink(__DIR__ . '/../../../../../../web/_/favicon.zip'); //delete zip file
     }
 
-    public static function deleteFavicons(){
+    public static function deleteFavicons()
+    {
         $files = glob(__DIR__ . '/../../../../../../web/_/favicon/*'); // get all file names
-        foreach($files as $file){ // iterate files
-            if(is_file($file)) {
+        foreach ($files as $file) { // iterate files
+            if (is_file($file)) {
                 unlink($file); // delete file
             }
         }
@@ -147,10 +149,10 @@ class PttUploadFile
                     $height = $size['h'];
                     $width = $size['w'];
 
-                    if ($height == 'm'){
+                    if ($height == 'm') {
                         $height = $width;
-                        if($realSize[0] > $width || $realSize[1] > $height){
-                            if($realSize[0] > $realSize[1]){
+                        if ($realSize[0] > $width || $realSize[1] > $height) {
+                            if ($realSize[0] > $realSize[1]) {
                                 // Més ample
                                 $height = round(($size['w'] * $realSize[1]) / $realSize[0]);
                             } else {
@@ -158,9 +160,9 @@ class PttUploadFile
                                 $width = round(($size['w'] * $realSize[0]) / $realSize[1]);
                             }
                         }
-                    } elseif ($size['w'] == 0){
+                    } elseif ($size['w'] == 0) {
                         $width = round(($size['h'] * $realSize[0]) / $realSize[1]);
-                    } elseif ($size['h'] == 0){
+                    } elseif ($size['h'] == 0) {
                         $height = round(($size['w'] * $realSize[1]) / $realSize[0]);
                     }
 
@@ -176,7 +178,6 @@ class PttUploadFile
                     if (PttUploadFile::toS3($field)) {
                         PttUploadFile::_uploadToS3($saveThumbPath, $filename);
                     }
-
                 }
             }
         } else {
@@ -230,25 +231,27 @@ class PttUploadFile
         }
     }
 
-    private static function _delete($name){
+    private static function _delete($name)
+    {
         try {
             $uploadsUrl = PttUtil::pttConfiguration('images');
             foreach (glob(WEB_DIR . "*-". $name) as $filename) {
                 unlink($filename);
             }
         } catch (Exception $e) {
-
         }
     }
 
-    private static function _deleteS3($name){
+    private static function _deleteS3($name)
+    {
         // $s3 = PttUtil::pttConfiguration('s3');
 
         // \S3::setAuth($s3['accessKey'], $s3['secretKey']);
         // \S3::deleteObject($s3['bucket'], $s3['dir'] . '/' . $filename);
     }
 
-    private static function _toS3($field){
+    private static function _toS3($field)
+    {
         return ((isset($field->options['s3']) && $field->options['s3']) || (isset($field->options['cdn']) && $field->options['cdn']));
     }
 }

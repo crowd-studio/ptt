@@ -11,6 +11,6 @@ class PttFormFieldSentValueCheckbox extends PttFormFieldSentValue
 {
     public function value()
     {
-    	return ($this->sentData) ? 1 : 0;
+        return ($this->sentData) ? 1 : 0;
     }
 }

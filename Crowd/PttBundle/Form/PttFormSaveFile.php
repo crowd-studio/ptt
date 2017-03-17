@@ -14,7 +14,6 @@ class PttFormSaveFile extends PttFormSave
 {
     public function value()
     {
-
         $files = $this->_files();
 
         if ($this->languageCode) {
@@ -51,7 +50,7 @@ class PttFormSaveFile extends PttFormSave
             } else {
                 $path = (isset($this->sentData[$this->field->name])) ? $this->sentData[$this->field->name] : false;
             }
-            if($path){
+            if ($path) {
                 $nameArray = explode('/', $path);
                 $originalName = end($nameArray);
 
@@ -61,15 +60,15 @@ class PttFormSaveFile extends PttFormSave
         }
 
         if ($value == null) {
-                $value = '';
+            $value = '';
         }
 
         return $value;
     }
 
-    private function _files(){
+    private function _files()
+    {
         if (strpos($this->entityInfo->getFormName(), '[') !== false) {
-
             $cleanName = str_replace(']', '', $this->entityInfo->getFormName());
             $cleanNameArr = explode('[', $cleanName);
             $i = 0;

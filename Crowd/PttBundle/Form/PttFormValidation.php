@@ -9,23 +9,23 @@ namespace Crowd\PttBundle\Form;
 
 class PttFormValidation
 {
-	protected $entityInfo;
-	protected $sentData;
-	protected $field;
-	protected $languageCode;
-	protected $pttForm;
+    protected $entityInfo;
+    protected $sentData;
+    protected $field;
+    protected $languageCode;
+    protected $pttForm;
 
-	public function __construct(PttForm $pttForm, PttField $field, $languageCode = false)
-	{
-			$this->pttForm = $pttForm;
-			$this->entityInfo = $pttForm->getEntityInfo();
-			$this->field = $field;
-			$this->languageCode = $languageCode;
-			$this->sentData = $pttForm->getSentData($this->field->name, $this->languageCode);
-	}
+    public function __construct(PttForm $pttForm, PttField $field, $languageCode = false)
+    {
+        $this->pttForm = $pttForm;
+        $this->entityInfo = $pttForm->getEntityInfo();
+        $this->field = $field;
+        $this->languageCode = $languageCode;
+        $this->sentData = $pttForm->getSentData($this->field->name, $this->languageCode);
+    }
 
-	protected function _sentValue($default = '')
-	{
-			return ($this->sentData != false) ? $this->sentData : $default;
-	}
+    protected function _sentValue($default = '')
+    {
+        return ($this->sentData != false) ? $this->sentData : $default;
+    }
 }

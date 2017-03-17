@@ -7,26 +7,27 @@
 
 namespace Crowd\PttBundle\Form;
 
-class PttFormValidationEntity extends PttFormValidation {
-
+class PttFormValidationEntity extends PttFormValidation
+{
     protected $pttForm;
     protected $container;
 
-    public function __construct(PttForm $pttForm, PttField $field, $languageCode = false){
+    public function __construct(PttForm $pttForm, PttField $field, $languageCode = false)
+    {
         parent::__construct($pttForm, $field, $languageCode);
 
         $this->pttForm = $pttForm;
         $this->container = $pttForm->getContainer();
     }
 
-	public function isValid()
-	{
+    public function isValid()
+    {
         $pttHelper = new PttHelperFormFieldTypeEntity($this->entityInfo, $this->field, $this->container);
 
         $sentData = $this->_sentValue();
         $errors = array();
 
-		    if (is_array($sentData) && count($sentData)) {
+        if (is_array($sentData) && count($sentData)) {
             foreach ($sentData as $key => $entityData) {
                 if ($key != -1) {
                     $entity = $pttHelper->entityForDataArray($entityData);
@@ -44,5 +45,5 @@ class PttFormValidationEntity extends PttFormValidation {
         }
 
         return true;
-	}
+    }
 }

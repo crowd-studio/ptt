@@ -30,7 +30,7 @@ class PttFields
 
             $this->_parse($fields, $entityName, $formName);
 
-            if (!isset($fields['block'])){
+            if (!isset($fields['block'])) {
                 $this->block = ["title" => ""];
             }
             $this->_addAdditionFields($formName);
@@ -48,7 +48,7 @@ class PttFields
     private function _parse($fields, $entityName, $formName, $block = 0)
     {
         if (isset($fields['static'])) {
-            if ($fields['static']){
+            if ($fields['static']) {
                 $staticFields = [];
                 foreach ($fields['static'] as $field) {
                     $pttField = new PttField($field, $formName);
@@ -61,11 +61,11 @@ class PttFields
         }
 
         if (isset($fields['trans'])) {
-            if(!isset($this->trans)) {
+            if (!isset($this->trans)) {
                 $this->trans = [];
             }
             $transFields = [];
-            if($fields['trans']){
+            if ($fields['trans']) {
                 foreach ($fields['trans'] as $field) {
                     $pttField = new PttField($field, $formName, true);
                     $transFields[] = $pttField;
@@ -76,7 +76,7 @@ class PttFields
             }
         }
 
-        $this->errorMessage = (isset($fields['errorMessage'])) ? $fields['errorMessage'] : $this->errorMessage = $this->pttTrans->trans('validation_errors_were_found')
+        $this->errorMessage = (isset($fields['errorMessage'])) ? $fields['errorMessage'] : $this->errorMessage = $this->pttTrans->trans('validation_errors_were_found');
         $this->successMessage = (isset($fields['successMessage'])) ? $fields['successMessage'] : $this->pttTrans->trans('content_was_saved');
         $this->table  = (isset($fields['table'])) ? $fields['table'] : $entityName;
 
