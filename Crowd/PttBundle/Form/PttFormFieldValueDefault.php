@@ -11,10 +11,6 @@ class PttFormFieldValueDefault extends PttFormFieldValue
 {
     public function value()
     {
-        if ($this->entityInfo->hasMethod('get' . ucfirst($this->field->name), $this->languageCode)) {
-            return $this->entityInfo->get($this->field->name, $this->languageCode);
-        } else {
-            return null;
-        }
+        return $this->_get();
     }
 }

@@ -18,19 +18,14 @@ class PttFormFieldValueSelect extends PttFormFieldValue
             if ($this->request->getMethod() == 'POST') {
                 return ($this->sentData != null) ? $this->sentData : [];
             } else {
-                $method = 'get' . ucfirst($this->field->name);
-                return $this->entityInfo->getEntity()->$method();
+                return $this->_get('get' . ucfirst($this->field->name));
             }
         } else {
             if ($this->field->mapped) {
                 if (isset($this->field->options['search']) && $this->field->options['search']) {
-                    if ($this->entityInfo->get($this->field->name, $this->languageCode) != '') {
-                        return $this->entityInfo->get($this->field->name, $this->languageCode);
-                    } else {
-                        return null;
-                    }
+                    return ($this->_get() != '') ? $this->_get() : null;
                 } else {
-                    return $this->entityInfo->get($this->field->name, $this->languageCode);
+                    return $this->_get();
                 }
             } else {
                 return null;

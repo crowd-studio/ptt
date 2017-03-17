@@ -16,8 +16,7 @@ class PttFormFieldValueEntity extends PttFormFieldValue
         if ($this->request->getMethod() == 'POST') {
             return ($this->sentData != null) ? $this->sentData : [];
         } else {
-            $method = 'get' . ucfirst($this->field->name);
-            return $this->entityInfo->getEntity()->$method();
+            return $this->_get('get' . ucfirst($this->field->name));
         }
     }
 }

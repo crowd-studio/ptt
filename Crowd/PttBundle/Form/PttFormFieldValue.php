@@ -13,16 +13,22 @@ class PttFormFieldValue
 {
     protected $field;
     protected $entityInfo;
-    protected $sentData;
     protected $languageCode;
+    protected $sentData;
     protected $request;
 
     public function __construct(PttField $field, PttEntityInfo $entityInfo, $sentData, Request $request, $languageCode)
     {
         $this->field = $field;
-        $this->entityInfo = $entityInfo;
         $this->sentData = $sentData;
         $this->request = $request;
+        $this->entityInfo = $entityInfo;
         $this->languageCode = $languageCode;
+    }
+
+    protected function _get($name = null)
+    {
+        $name = ($name) ? $name : $this->field->name;
+        return ($this->entityInfo->hasMethod($name, $this->languageCode)) ? $this->entityInfo->get($name, $this->languageCode) : null;
     }
 }
