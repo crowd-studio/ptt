@@ -13,7 +13,7 @@ class PttFormSaveSelect extends PttFormSave
 {
     public function value()
     {
-        $pttServices = $this->container->get('pttServices');
+        $pttServices = $this->entityInfo->getPttServices();
         if (isset($this->field->options['multiple'])) {
             $result = [];
             if ($this->_sentValue(false)) {

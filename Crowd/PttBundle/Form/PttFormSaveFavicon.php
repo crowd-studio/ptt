@@ -12,6 +12,14 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 class PttFormSaveFavicon extends PttFormSave
 {
+    private $faviconPath;
+    
+    public function __construct(PttField $field, PttEntityInfo $entityInfo, Request $request, $sentData, $container, $languageCode = false)
+    {
+        parent::__construct(PttField $field, PttEntityInfo $entityInfo, Request $request, $sentData, $container, $languageCode = false)
+        $this->$faviconPath = $container->getParameter('favicon');
+    }
+
     public function value()
     {
         $files = $this->_files();
@@ -27,7 +35,7 @@ class PttFormSaveFavicon extends PttFormSave
             $value = PttUploadFile::upload($file, $this->field);
             PttUploadFile::generateFavicon(
                 $value,
-                $this->container->getParameter('favicon'),
+                $this->faviconPath,
                 $this->request->getSchemeAndHttpHost()
             );
         } else {

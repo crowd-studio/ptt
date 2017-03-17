@@ -14,7 +14,7 @@ class PttFormSaveSelectMultiple extends PttFormSave
 {
     public function value()
     {
-        $pttServices = $this->container->get('pttServices');
+        $pttServices = $this->entityInfo->getPttServices();
         $entityModel = null;
 
         $id = $this->_sentValue(0);
