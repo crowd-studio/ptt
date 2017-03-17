@@ -9,17 +9,6 @@ namespace Crowd\PttBundle\Form;
 
 class PttFormValidationEntity extends PttFormValidation
 {
-    protected $pttForm;
-    protected $container;
-
-    public function __construct(PttForm $pttForm, PttField $field, $languageCode = false)
-    {
-        parent::__construct($pttForm, $field, $languageCode);
-
-        $this->pttForm = $pttForm;
-        $this->container = $pttForm->getContainer();
-    }
-
     public function isValid()
     {
         $pttHelper = new PttHelperFormFieldTypeEntity($this->entityInfo, $this->field, $this->container);

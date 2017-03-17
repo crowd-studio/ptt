@@ -12,17 +12,12 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Cookie;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
-use Doctrine\Common\Annotations\AnnotationReader;
 
-use Crowd\PttBundle\Form\PttForm;
 use Crowd\PttBundle\Util\PttUtil;
-use Crowd\PttBundle\Util\PttCache;
-use Crowd\PttBundle\Annotations\PttAnnotation;
 
 class PttController extends Controller
 {

@@ -92,6 +92,11 @@ class PttEntityInfo
         return $this->formName;
     }
 
+    public function getForm()
+    {
+        return $this->container->get('pttForm');
+    }
+
     public function getEntity()
     {
         return $this->entity;

@@ -33,7 +33,7 @@ class PttFormFieldTypeGallery extends PttFormFieldType
 
     private function _hiddenDiv()
     {
-        $pttHelper = new PttHelperFormFieldTypeGallery($this->entityInfo, $this->field, $this->container);
+        $pttHelper = new PttHelperFormFieldTypeGallery($this->entityInfo, $this->field->options['entity']);
         $htmlField = '<script type="text/template" class="template">'. $this->_getHtml('{{index}}', $this->field->options['label'], $pttHelper->formForEntity($pttHelper->cleanRelatedEntity())) .'</script>';
 
         return $htmlField;
@@ -43,7 +43,7 @@ class PttFormFieldTypeGallery extends PttFormFieldType
     {
         $htmlField = '';
         if ($this->value && !is_array($this->value)) {
-            $pttHelper = new PttHelperFormFieldTypeEntity($this->entityInfo, $this->field, $this->container);
+            $pttHelper = new PttHelperFormFieldTypeGallery($this->entityInfo, $this->field->options['entity']);
             for ($i=0; $i < count($this->value); $i++) {
                 $ent = $this->value->get($i);
 

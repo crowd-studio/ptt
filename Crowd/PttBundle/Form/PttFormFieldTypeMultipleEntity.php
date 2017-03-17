@@ -46,7 +46,7 @@ class PttFormFieldTypeMultipleEntity extends PttFormFieldType
         $sortableList = '';
         if (isset($this->field->options['modules'])) {
             foreach ($this->field->options['modules'] as $key => $value) {
-                $pttHelper = new PttHelperFormFieldTypeMultipleEntity($this->entityInfo, $this->field, $this->container, $value['entity'], $value['label']);
+                $pttHelper = new PttHelperFormFieldTypeMultipleEntity($this->entityInfo, $value['label']);
                 $form = $pttHelper->formForEntity($pttHelper->cleanRelatedEntity());
 
                 $htmlField .= '<script type="text/template" class="template" data-type="' . $value['entity'] . '"><div class="collapse-head"><span class="handle hidden"></span><span class="title-triangle"><a class="triangle-open triangle"></a><a class="title title-open">'. $value['label'] .'</a></span><a class="remove list-eliminar"></a></div><div class="collapse-body">' . $form->createView('multi');
@@ -102,7 +102,7 @@ class PttFormFieldTypeMultipleEntity extends PttFormFieldType
                         $entity = $data[$i]['type'];
                     }
 
-                    $pttHelper = new PttHelperFormFieldTypeMultipleEntity($this->entityInfo, $this->field, $this->container, $entity);
+                    $pttHelper = new PttHelperFormFieldTypeMultipleEntity($this->entityInfo, $entity);
                     $errors = (isset($formErrors[$key])) ? $formErrors[$key] : false;
                     $form = $pttHelper->formForEntity($pttHelper->entityWithData($data[$i]), $index, $errors);
                     $formName = $moduleTitles[$form->getEntityInfo()->getEntityName()];

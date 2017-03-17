@@ -29,7 +29,7 @@ class PttFormAfterSaveMultipleEntity extends PttFormAfterSave
             foreach ($this->sentData as $key => $entityData) {
                 if ($key != -1) {
                     $type = $entityData["type"];
-                    $pttHelper = new PttHelperFormFieldTypeMultipleEntity($this->entityInfo, $this->field, $this->container, $type);
+                    $pttHelper = new PttHelperFormFieldTypeMultipleEntity($this->entityInfo, $type);
 
                     $entity = $pttHelper->entityForDataArray($entityData);
                     $form = $pttHelper->formForEntity($entity, $key);

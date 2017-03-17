@@ -12,12 +12,14 @@ class PttFormValidation
     protected $entityInfo;
     protected $sentData;
     protected $field;
+    protected $container;
     protected $languageCode;
     protected $pttForm;
 
     public function __construct(PttForm $pttForm, PttField $field, $languageCode = false)
     {
         $this->pttForm = $pttForm;
+        $this->container = $pttForm->getContainer();
         $this->entityInfo = $pttForm->getEntityInfo();
         $this->field = $field;
         $this->languageCode = $languageCode;

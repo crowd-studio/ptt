@@ -7,49 +7,35 @@
 
 namespace Crowd\PttBundle\Form;
 
-use Crowd\PttBundle\Util\PttUtil;
-
 class PttHelperFormFieldTypeMultipleEntity
 {
     private $entityInfo;
-    private $field;
-    private $container;
+    private $relatedClassName;
     private $entity;
-    private $pttServices;
 
-    public function __construct(PttEntityInfo $entityInfo, PttField $field, $container, $entity)
+    public function __construct(PttEntityInfo $entityInfo, $entity)
     {
         $this->entityInfo = $entityInfo;
-        $this->field = $field;
-        $this->container = $container;
-        $this->pttServices = $this->container->get('pttServices');
         $this->entity = $entity;
-    }
 
-    public function classNameForRelatedEntity()
-    {
         $classNameArr = explode('\\', $this->entityInfo->getClassName());
         array_pop($classNameArr);
-        return implode('\\', $classNameArr) . '\\' . $this->entity;
+        $this->relatedClassName = implode('\\', $classNameArr) . '\\' . $this->entity;
     }
 
     public function cleanRelatedEntity()
     {
-        $className = $this->classNameForRelatedEntity();
-        $entity = new $className();
+        $entity = new $this->relatedClassName;
         $entity->setRelatedId($this->entityInfo->get('pttId'));
         return $entity;
     }
 
     public function entityForDataArray($entityData)
     {
-        $className = $this->classNameForRelatedEntity();
-
         if (!isset($entityData['id']) || $entityData['id'] == '') {
-            $entity = new $className();
-            $entity->setRelatedId($this->entityInfo->get('pttId'));
+            $entity = $this->cleanRelatedEntity();
         } else {
-            $entity = $this->pttServices->getOne($this->entity, $entityData['id']);
+            $entity = $this->entityInfo->getPttServices()->getOne($this->entity, $entityData['id']);
         }
 
         foreach ($entityData as $key => $value) {
@@ -60,19 +46,17 @@ class PttHelperFormFieldTypeMultipleEntity
                 }
             }
         }
+
         return $entity;
     }
 
     public function entityWithData($entityData)
     {
-        $className = $this->classNameForRelatedEntity();
-
         if (is_object($entityData)) {
             if ($entityData->getPttId() == null) {
-                $entity = new $className();
-                $entity->setRelatedId($this->entityInfo->get('pttId'));
+                $entity = $this->cleanRelatedEntity();
             } else {
-                $entity = $this->pttServices->getOne($this->entity, $entityData->getId());
+                $entity = $this->entityInfo->getPttServices()->getOne($this->entity, $entityData->getId());
             }
         } else {
             return $this->entityForDataArray($entityData);
@@ -83,15 +67,14 @@ class PttHelperFormFieldTypeMultipleEntity
 
     public function formForEntity($entity, $key = false, $errors = false)
     {
-        $pttForm = $this->container->get('pttForm');
-
+        $pttForm = $this->entityInfo->getForm();
         $pttForm->setEntity($entity);
 
         if ($errors != false) {
             $pttForm->setErrors($errors);
         }
 
-        if ($key == false) {
+        if ($key === false) {
             $key = ($entity->getPttId() != null) ? $entity->getPttId() : '{{index}}';
         }
 

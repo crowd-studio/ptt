@@ -10,40 +10,32 @@ namespace Crowd\PttBundle\Form;
 class PttHelperFormFieldTypeEntity
 {
     private $entityInfo;
-    private $field;
-    private $container;
-    private $pttServices;
+    private $relatedClassName;
+    private $fieldEntity;
 
-    public function __construct(PttEntityInfo $entityInfo, PttField $field, $container)
+    public function __construct(PttEntityInfo $entityInfo, $fieldEntity)
     {
-        $this->entityInfo = $entityInfo;
-        $this->field = $field;
-        $this->container = $container;
-        $this->pttServices = $this->container->get('pttServices');
-    }
+        $this->fieldEntity = $fieldEntity;
 
-    public function classNameForRelatedEntity()
-    {
-        $classNameArr = explode('\\', $this->entityInfo->getClassName());
+        $classNameArr = explode('\\', $entityInfo->getClassName());
         array_pop($classNameArr);
-        return implode('\\', $classNameArr) . '\\' . $this->field->options['entity'];
+        $this->$relatedClassName =  implode('\\', $classNameArr) . '\\' . $this->fieldEntity;
+
+        $this->entityInfo = $entityInfo;
     }
 
     public function cleanRelatedEntity()
     {
-        $className = $this->classNameForRelatedEntity();
-        $entity = new $className();
+        $entity = new $this->relatedClassName();
         return $entity;
     }
 
     public function entityForDataArray($entityData)
     {
-        $className = $this->classNameForRelatedEntity();
-
         if (!isset($entityData['id']) || $entityData['id'] == '') {
-            $entity = new $className();
+            $entity = $this->cleanRelatedEntity();
         } else {
-            $entity = $this->pttServices->getOne($this->field->options['entity'], $entityData['id']);
+            $entity = $this->entityInfo->getPttServices()->getOne($this->fieldEntity, $entityData['id']);
         }
 
         foreach ($entityData as $key => $value) {
@@ -59,13 +51,11 @@ class PttHelperFormFieldTypeEntity
 
     public function entityWithData($entityData)
     {
-        $className = $this->classNameForRelatedEntity();
-
         if (is_object($entityData)) {
             if ($entityData->getPttId() == null) {
-                $entity = new $className();
+                $entity = $this->cleanRelatedEntity();
             } else {
-                $entity = $this->pttServices->getOne($this->field->options['entity'], $entityData->getId());
+                $entity = $this->entityInfo->getPttServices()->getOne($this->fieldEntity, $entityData->getId());
             }
         } else {
             return $this->entityForDataArray($entityData);
@@ -76,7 +66,7 @@ class PttHelperFormFieldTypeEntity
 
     public function formForEntity($entity, $key = false, $errors = false)
     {
-        $pttForm = $this->container->get('pttForm');
+        $pttForm = $this->entityInfo->getForm();
         $pttForm->setEntity($entity);
 
         if ($errors != false) {
