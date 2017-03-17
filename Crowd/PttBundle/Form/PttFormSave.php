@@ -16,7 +16,6 @@ class PttFormSave
     protected $request;
     protected $languageCode;
     protected $sentData;
-    protected $container;
 
     public function __construct(PttField $field, PttEntityInfo $entityInfo, Request $request, $sentData, $container, $languageCode = false)
     {
@@ -25,7 +24,6 @@ class PttFormSave
         $this->request = $request;
         $this->languageCode = $languageCode;
         $this->sentData = $sentData;
-        $this->container = $container;
     }
 
     protected function _value()
@@ -35,10 +33,10 @@ class PttFormSave
 
     protected function _sentValue($default = '')
     {
-        if (isset($this->sentData[$this->field->name])) {
-            return ($this->languageCode) ? $this->sentData[$this->languageCode][$this->field->name] : $this->sentData[$this->field->name];
+        if ($this->languageCode) {
+            return (isset($this->sentData[$this->field->name])) ? $this->sentData[$this->field->name] : $default;
         } else {
-            return $default;
+            return (isset($this->sentData[$this->languageCode][$this->field->name])) ? $this->sentData[$this->languageCode][$this->field->name] : $default;
         }
     }
 }

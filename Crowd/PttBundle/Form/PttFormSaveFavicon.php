@@ -13,7 +13,7 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 class PttFormSaveFavicon extends PttFormSave
 {
     private $faviconPath;
-    
+
     public function __construct(PttField $field, PttEntityInfo $entityInfo, Request $request, $sentData, $container, $languageCode = false)
     {
         parent::__construct(PttField $field, PttEntityInfo $entityInfo, Request $request, $sentData, $container, $languageCode = false)
@@ -41,25 +41,19 @@ class PttFormSaveFavicon extends PttFormSave
         } else {
             $value = $this->_value();
             if ($this->languageCode) {
-                if (isset($this->sentData[$this->languageCode][$this->field->name . '-delete']) && $this->sentData[$this->languageCode][$this->field->name . '-delete'] != '0') {
-                    PttUploadFile::deleteFile($this->field, $this->sentData[$this->languageCode][$this->field->name . '-delete']);
-                    $value = '';
+                $deleteValue = (isset($this->sentData[$this->languageCode][$this->field->name . '-delete']) ? $this->sentData[$this->languageCode][$this->field->name . '-delete'] : null;
+            else {
+                $deleteValue = (isset($this->sentData[$this->field->name . '-delete']) ? $this->sentData[$this->field->name . '-delete'] : null;
+            }
 
-                    PttUploadFile::deleteFavicons();
-                }
-            } else {
-                if (isset($this->sentData[$this->field->name . '-delete']) && $this->sentData[$this->field->name . '-delete'] != '0') {
-                    $this->_deleteFile($this->sentData[$this->field->name . '-delete']);
-                    $value = '';
-                }
+            if($deleteValue && $deleteValue != 0) {
+                PttUploadFile::deleteFile($deleteValue);
+                PttUploadFile::deleteFavicons();
+                $value = '';
             }
         }
 
-        if ($value == null) {
-            $value = '';
-        }
-
-        return $value;
+        return ($value == null) ? $value : '';
     }
 
     private function _files()
@@ -67,18 +61,14 @@ class PttFormSaveFavicon extends PttFormSave
         if (strpos($this->entityInfo->getFormName(), '[') !== false) {
             $cleanName = str_replace(']', '', $this->entityInfo->getFormName());
             $cleanNameArr = explode('[', $cleanName);
-            $i = 0;
-            $files = array();
-            foreach ($cleanNameArr as $key) {
-                if ($i == 0) {
-                    $files = $this->request->files->get($key);
-                } else {
-                    if (isset($files[$key])) {
-                        $files = $files[$key];
-                    }
+            $files = $this->request->files->get($cleanNameArr[0]);
+
+            for ($i=1; $i < count($cleanNameArr); $i++) {
+                if (isset($files[$cleanNameArr[$i])) {
+                    $files = $files[$cleanNameArr[$i];
                 }
-                $i++;
             }
+            
             return $files;
         } else {
             return $this->request->files->get($this->entityInfo->getEntityName());

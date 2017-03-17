@@ -18,7 +18,7 @@ class PttFormSaveDate extends PttFormSave
         if (is_string($value)) {
             try {
                 $date = str_replace('/', '-', $value);
-                $date = $date != '' ? new \DateTime(date($date)) : null;
+                $date = ($date != '') ? new \DateTime(date($date)) : null;
             } catch (\Exception $ex) {
                 $date = null;
             }

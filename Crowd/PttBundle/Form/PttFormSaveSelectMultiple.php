@@ -29,11 +29,8 @@ class PttFormSaveSelectMultiple extends PttFormSave
         }
 
         if ($entityModel) {
-            if (method_exists($entityModel, 'getTitle')) {
-                $this->entityInfo->set($this->field->name . '_title', $entityModel->getTitle(), $this->languageCode);
-            } else {
-                $this->entityInfo->set($this->field->name . '_title', '', $this->languageCode);
-            }
+            $title = (method_exists($entityModel, 'getTitle')) ? $entityModel->getTitle() : '';
+            $this->entityInfo->set($this->field->name . '_title', $title, $this->languageCode);
         }
 
         return $this->_value();

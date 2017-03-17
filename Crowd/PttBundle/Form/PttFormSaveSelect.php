@@ -16,10 +16,8 @@ class PttFormSaveSelect extends PttFormSave
         $pttServices = $this->entityInfo->getPttServices();
         if (isset($this->field->options['multiple'])) {
             $result = [];
-            if ($this->_sentValue(false)) {
-                foreach ($this->_sentValue([]) as $value) {
-                    $result[] = $pttServices->getOne($this->field->options['entity'], $value);
-                }
+            foreach ($this->_sentValue([]) as $value) {
+                $result[] = $pttServices->getOne($this->field->options['entity'], $value);
             }
             return $result;
         } elseif ($this->field->options['type'] == 'entity') {
