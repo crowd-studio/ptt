@@ -16,14 +16,15 @@ class PttFormSaveSelectMultiple extends PttFormSave
     {
         $pttServices = $this->container->get('pttServices');
         $entityModel = null;
+
+        $id = $this->_sentValue(0);
+
         if ($this->languageCode) {
             $model = $this->sentData[$this->languageCode][$this->field->name . '_model'];
-            $id = $this->sentData[$this->languageCode][$this->field->name];
             $entityModel = $pttServices->getSimpleFilter($model . 'Trans', ['where' => ['relatedid' => $id, 'language' => $this->languageCode]]);
             $entityModel = (isset($entityModel[0])) ? $entityModel[0] : null;
         } else {
             $model = $this->sentData[$this->field->name . '_model'];
-            $id = $this->sentData[$this->field->name];
             $entityModel = $pttServices->getOne($model, $id);
         }
 
@@ -35,6 +36,6 @@ class PttFormSaveSelectMultiple extends PttFormSave
             }
         }
 
-        return $this->entityInfo->get($this->field->name, $this->languageCode);
+        return $this->_value();
     }
 }

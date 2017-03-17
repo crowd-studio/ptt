@@ -16,16 +16,16 @@ class PttFormSaveSelect extends PttFormSave
         $pttServices = $this->container->get('pttServices');
         if (isset($this->field->options['multiple'])) {
             $result = [];
-            if (isset($this->sentData[$this->field->name])) {
-                foreach ($this->sentData[$this->field->name] as $value) {
+            if ($this->_sentValue(false)) {
+                foreach ($this->_sentValue([]) as $value) {
                     $result[] = $pttServices->getOne($this->field->options['entity'], $value);
                 }
             }
             return $result;
         } elseif ($this->field->options['type'] == 'entity') {
-            return $pttServices->getOne($this->field->options['entity'], $this->sentData[$this->field->name]);
+            return $pttServices->getOne($this->field->options['entity'], $this->_sentValue(0));
         } else {
-            return (isset($this->sentData[$this->field->name])) ? $this->sentData[$this->field->name] : null;
+            return $this->_sentValue(null);
         }
     }
 }

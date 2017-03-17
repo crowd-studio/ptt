@@ -13,10 +13,6 @@ class PttFormSaveEntity extends PttFormSave
 {
     public function value()
     {
-        if (isset($this->sentData[$this->field->name])) {
-            return ($this->languageCode) ? $this->sentData[$this->languageCode][$this->field->name] : $this->sentData[$this->field->name];
-        } else {
-            return [];
-        }
+        return $this->_sentValue([]);
     }
 }

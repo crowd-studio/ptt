@@ -13,7 +13,7 @@ class PttFormSaveHour extends PttFormSave
 {
     public function value()
     {
-        $value = $this->entityInfo->get($this->field->name, $this->languageCode);
+        $value = $this->_value();
         $date = null;
         if (is_string($value)) {
             try {

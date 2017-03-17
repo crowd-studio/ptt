@@ -24,7 +24,7 @@ class PttFormSaveFile extends PttFormSave
         if ($file) {
             $value = PttUploadFile::upload($file, $this->field);
         } else {
-            $value = $this->entityInfo->get($this->field->name, $this->languageCode);
+            $value = $this->_value();
             if ($this->languageCode) {
                 if (isset($this->sentData[$this->languageCode][$this->field->name . '-delete']) && $this->sentData[$this->languageCode][$this->field->name . '-delete'] != '0') {
                     $this->_deleteFile($this->field, $this->sentData[$this->languageCode][$this->field->name . '-delete']);

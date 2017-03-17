@@ -31,7 +31,7 @@ class PttFormSaveFavicon extends PttFormSave
                 $this->request->getSchemeAndHttpHost()
             );
         } else {
-            $value = $this->entityInfo->get($this->field->name, $this->languageCode);
+            $value = $this->_value();
             if ($this->languageCode) {
                 if (isset($this->sentData[$this->languageCode][$this->field->name . '-delete']) && $this->sentData[$this->languageCode][$this->field->name . '-delete'] != '0') {
                     PttUploadFile::deleteFile($this->field, $this->sentData[$this->languageCode][$this->field->name . '-delete']);

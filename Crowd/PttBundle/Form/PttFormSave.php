@@ -27,4 +27,18 @@ class PttFormSave
         $this->sentData = $sentData;
         $this->container = $container;
     }
+
+    protected function _value()
+    {
+        return $this->entityInfo->get($this->field->name, $this->languageCode);
+    }
+
+    protected function _sentValue($default = '')
+    {
+        if (isset($this->sentData[$this->field->name])) {
+            return ($this->languageCode) ? $this->sentData[$this->languageCode][$this->field->name] : $this->sentData[$this->field->name];
+        } else {
+            return $default;
+        }
+    }
 }
