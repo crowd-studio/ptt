@@ -7,57 +7,12 @@
 
 namespace Crowd\PttBundle\Form;
 
-use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Crowd\PttBundle\Util\PttUtil;
 use Crowd\PttBundle\Util\PttFaviconGenerator;
 use WideImage;
 
 class PttUploadFile
 {
-    public static function uploadCanvas($fileData, $sizes, $uploadToS3 = false)
-    {
-        $fileData = base64_decode(str_replace('data:image/png;base64,', '', $fileData));
-        $uploadsUrl = PttUtil::pttConfiguration('images');
-        $uploadName = 'webcam-' . PttUtil::token(100) . '.jpg';
-        $tmpSaveThumbPath = WEB_DIR . $uploadsUrl . $uploadName;
-
-        file_put_contents($tmpSaveThumbPath, $fileData);
-
-        if (count($sizes)) {
-            foreach ($sizes as $size) {
-                $height = $size['h'];
-                $width = $size['w'];
-                $filename = $width . '-' . $height . '-' . $uploadName;
-                $saveThumbPath = WEB_DIR . $uploadsUrl . $filename;
-
-                $realSize = getimagesize($file);
-                if ($height == 'm') {
-                    $height = $width;
-                    if ($realSize[0] > $realSize[1]) { // Més ample
-                        $height = round(($size['w'] * $realSize[1]) / $realSize[0]);
-                    } else { // Més alta o igual
-                        $width = round(($size['w'] * $realSize[0]) / $realSize[1]);
-                    }
-                    \WideImage\WideImage::load($tmpSaveThumbPath)->resize($width, $height, 'outside')->saveToFile($saveThumbPath, 100);
-                    \WideImage\WideImage::load($saveThumbPath)->crop('center', 'center', $width, $height)->saveToFile($saveThumbPath);
-                } elseif ($width != 0 && $height != 0) {
-                    \WideImage\WideImage::load($tmpSaveThumbPath)->resize($width, $height, 'outside')->saveToFile($saveThumbPath, 100);
-                    \WideImage\WideImage::load($saveThumbPath)->crop('center', 'center', $width, $height)->saveToFile($saveThumbPath);
-                }
-
-                if ($uploadToS3) {
-                    PttUploadFile::_uploadToS3($saveThumbPath, $filename);
-                }
-            }
-        }
-
-        if ($uploadToS3) {
-            PttUploadFile::_uploadToS3($tmpSaveThumbPath, $uploadName);
-        }
-
-        return $uploadName;
-    }
-
     public static function generateFavicon($fileName, $favicon, $url)
     {
         $s3 = PttUtil::pttConfiguration('s3');
@@ -250,8 +205,13 @@ class PttUploadFile
         // \S3::deleteObject($s3['bucket'], $s3['dir'] . '/' . $filename);
     }
 
-    private static function _toS3($field)
+    public static function _toS3($field)
     {
         return ((isset($field->options['s3']) && $field->options['s3']) || (isset($field->options['cdn']) && $field->options['cdn']));
+    }
+
+    public static function _toCDN($field)
+    {
+        return (isset($field->options['cdn']) && $field->options['cdn']);
     }
 }

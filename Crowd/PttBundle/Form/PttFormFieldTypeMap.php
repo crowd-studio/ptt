@@ -20,19 +20,19 @@ class PttFormFieldTypeMap extends PttFormFieldType
         $htmlFieldInput .= '>';
 
         $htmlField = '
-		<div class="map">
-			' . $htmlFieldInput . '
-			<div class="panel">
-				<div class="input-group input-group-sm">
-					<input type="text" class="address form-control" placeholder="Address">
-					<span class="input-group-btn">
-				        <button class="btn btn-primary search" type="button">Search</button>
-				    </span>
-				</div>
-			</div>
-			<div class="map-canvas"></div>
-		</div>
-		';
+      		<div class="map">
+      			' . $htmlFieldInput . '
+      			<div class="panel">
+      				<div class="input-group input-group-sm">
+      					<input type="text" class="address form-control" placeholder="Address">
+      					<span class="input-group-btn">
+      				        <button class="btn btn-primary search" type="button">Search</button>
+      				    </span>
+      				</div>
+      			</div>
+      			<div class="map-canvas"></div>
+      		</div>
+      		';
 
         $html .= $htmlField;
         $html .= $this->end();

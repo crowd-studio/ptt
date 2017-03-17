@@ -36,47 +36,35 @@ class PttMediaController extends Controller
             $pttInfo = PttUtil::pttConfiguration('s3');
             $uploadToS3 = (isset($pttInfo['force']) && $pttInfo['force']);
 
-            if ($request->get('canvas') == 'yes') {
-                $sizes = $request->get('sizes', [['w' => 0, 'h' => 0]]);
+            $width = ($request->get('width', false)) ? $request->get('width') : 0;
+            $height = ($request->get('height', false)) ? $request->get('height') : 0;
 
-                $filename = PttUploadFile::uploadCanvas($request->get('imgBase64'), $sizes, $uploadToS3);
+            $fieldData = [
+                'name' => 'file',
+                'type' => 'file',
+                'options' => [
+                    'type' => 'image',
+                    'sizes' => [['w' => $width, 'h' => $height]]
+                ]
+            ];
 
-                $url = ($uploadToS3) ? $pttInfo['prodUrl'] . $pttInfo['dir'] . '/' : $uploadUrl;
-
-                $data = [
-                    'filename' => $filename,
-                    'resized' => $url . $sizes[0]['w'] . '-' . $sizes[0]['h'] . '-' . $filename
-                ];
-            } else {
-                $width = ($request->get('width', false)) ? $request->get('width') : 0;
-                $height = ($request->get('height', false)) ? $request->get('height') : 0;
-
-                $fieldData = [
-                    'name' => 'file',
-                    'type' => 'file',
-                    'options' => [
-                        'type' => 'image',
-                        'sizes' => [['w' => $width, 'h' => $height]]
-                    ]
-                ];
-
-                if ($uploadToS3) {
-                    $fieldData['options']['s3'] = true;
-                }
-
-                $field = new PttField($fieldData, 'upload-file');
-
-                $files = $request->files->get('files');
-
-                $file = $files[0];
-                $filename = PttUploadFile::upload($file, $field);
-                $url = ($uploadToS3) ? $pttInfo['prodUrl'] : $uploadUrl;
-
-                $data = [
-                    'filename' => $filename,
-                    'resized' => $url . $width . '-' . $height . '-' . $filename
-                ];
+            if ($uploadToS3) {
+                $fieldData['options']['s3'] = true;
             }
+
+            $field = new PttField($fieldData, 'upload-file');
+
+            $files = $request->files->get('files');
+
+            $file = $files[0];
+            $filename = PttUploadFile::upload($file, $field);
+            $url = ($uploadToS3) ? $pttInfo['prodUrl'] : $uploadUrl;
+
+            $data = [
+                'filename' => $filename,
+                'resized' => $url . $width . '-' . $height . '-' . $filename
+            ];
+            
             return new JsonResponse($data);
         } else {
             $originalNameArray = explode('.', $_FILES['file']['name']);

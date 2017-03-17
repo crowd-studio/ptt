@@ -85,23 +85,6 @@ class PttFormFieldTypeFile extends PttFormFieldType
 
         $htmlField .= '</div></div>';
 
-        $camera = (isset($this->field->options['camera']) && $this->field->options['camera']) ? true : false;
-        if ($camera) {
-            $name = $this->field->getFormName($this->languageCode);
-            $name = substr($name, 0, strlen($name) - 1) . '-webcam]';
-
-            $htmlField .= '
-			<div class="camera" data-sizes=\'' . json_encode($this->field->options['sizes']) . '\' data-url="ptt/media/upload/">
-				<input type="hidden" name="' . $name . '" value="">
-				<a class="showWebcam btn btn-primary btn-sm">' . $this->pttTrans->trans('toggle_webcam_viewer') . '</a>
-				<div class="camera-preview">
-					<video height="600" width="800" autoplay></video>
-					<canvas class="hidden" height="600" width="800"></canvas>
-					<a class="snapPicture btn btn-success btn-sm">' . $this->pttTrans->trans('span_picture') . '</a>
-				</div>
-			</div>';
-        }
-
         if ($this->value != '') {
             if ($this->field->options['type'] == 'gallery') {
                 $type = '_image';
@@ -123,27 +106,15 @@ class PttFormFieldTypeFile extends PttFormFieldType
         $fileNameArray = explode('.', $this->value);
         $extension = end($fileNameArray);
 
-        $uploadToCDN = (isset($this->field->options['cdn']) && $this->field->options['cdn']) ? true : false;
-        if ($uploadToCDN) {
+        if (PttUploadFile::_toCDN($this->field)) {
             $largeName = $this->_urlPrefix() . $this->value;
             $smallName = $this->_urlPrefix() . $this->value;
         } else {
-            if ($extension != 'gif') {
-                $size = $this->field->options['sizes'][0];
-                $size2 = end($this->field->options['sizes']);
-                if (isset($this->field->options['camera']) && $this->field->options['camera']) {
-                    $largeName = $this->_urlPrefix() . $size2['w'] . '-' . $size2['h'] . '-' . $this->value;
-                    $smallName = $this->_urlPrefix() . $size['w'] . '-' . $size['h'] . '-' . $this->value;
-                } else {
-                    $largeName = $this->_urlPrefix() . $size2['w'] . '-' . $size2['h'] . '-' . $this->value;
-                    $smallName = $this->_urlPrefix() . $size['w'] . '-' . $size['h'] . '-' . $this->value;
-                }
-            } else {
-                $size = array('w' => 0, 'h' => 0);
-                $size2 = array('w' => 0, 'h' => 0);
-                $largeName = $this->_urlPrefix() . $size2['w'] . '-' . $size2['h'] . '-' . $this->value;
-                $smallName = $this->_urlPrefix() . $size['w'] . '-' . $size['h'] . '-' . $this->value;
-            }
+            $size = ($extension != 'gif') ? $this->field->options['sizes'][0] : ['w' => 0, 'h' => 0];
+            $size2 = ($extension != 'gif') ? end($this->field->options['sizes']) : ['w' => 0, 'h' => 0];
+
+            $largeName = $this->_urlPrefix() . $size2['w'] . '-' . $size2['h'] . '-' . $this->value;
+            $smallName = $this->_urlPrefix() . $size['w'] . '-' . $size['h'] . '-' . $this->value;
         }
 
         $name = $this->field->getFormName($this->languageCode);
@@ -155,13 +126,13 @@ class PttFormFieldTypeFile extends PttFormFieldType
         }
 
         $html = '
-		<div class="preview image col-sm-12">
-			<a title="' . $this->pttTrans->trans('view_in_larger_size') . '" href="' . $largeName . '" target="_blank">
-				<img src="' . $smallName . '">
-			</a>
-			<input type="hidden" name="' . $name . '" value="0" data-id="'. $this->value .'">
-			'.$delete.'
-		</div>';
+      		<div class="preview image col-sm-12">
+      			<a title="' . $this->pttTrans->trans('view_in_larger_size') . '" href="' . $largeName . '" target="_blank">
+      				<img src="' . $smallName . '">
+      			</a>
+      			<input type="hidden" name="' . $name . '" value="0" data-id="'. $this->value .'">
+      			'.$delete.'
+      		</div>';
         return $html;
     }
 
