@@ -441,7 +441,7 @@ class PttController extends Controller
         foreach ($fields as $field) {
             $value = $session->get('filter-' . $this->entityName . '-' . $field['field']);
             if ($value != '') {
-                $activeFilters[$field['field']] = $value;
+                $activeFilters['filter-' . $this->entityName . '-' . $field['field']] = $value;
             }
         }
 
