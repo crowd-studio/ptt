@@ -301,13 +301,17 @@ class PttForm
     private function _getFieldType($field)
     {
         switch ($field['type']) {
-        case 'text': case 'disabled': case 'email': case 'hidden':
-          return 'input';
-          break;
-        default:
-          return $field['type'];
-          break;
-      }
+            case 'text': 
+            case 'disabled': 
+            case 'email': 
+            case 'hidden': 
+            case 'password':
+                return 'input';
+                break;
+            default:
+                return $field['type'];
+                break;
+        }
     }
 
     private function _updateSentData()
