@@ -17,7 +17,7 @@ class PttFormFieldValue
     protected $sentData;
     protected $request;
 
-    public function __construct(PttField $field, PttEntityInfo $entityInfo, $sentData, Request $request, $languageCode)
+    public function __construct($field, PttEntityInfo $entityInfo, $sentData, Request $request, $languageCode)
     {
         $this->field = $field;
         $this->sentData = $sentData;
@@ -28,7 +28,7 @@ class PttFormFieldValue
 
     protected function _get($name = null)
     {
-        $name = ($name) ? $name : $this->field->name;
-        return ($this->entityInfo->hasMethod($name, $this->languageCode)) ? $this->entityInfo->get($name, $this->languageCode) : null;
+        $name = ($name) ? $name : $this->field['name'];
+        return ($this->entityInfo->hasMethod('get' . $name, $this->languageCode)) ? $this->entityInfo->get($name, $this->languageCode) : null;
     }
 }

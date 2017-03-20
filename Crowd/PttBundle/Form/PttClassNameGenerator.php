@@ -48,4 +48,10 @@ class PttClassNameGenerator
         }
         return 'Crowd\PttBundle\Form\PttFormValidation' . $capitalizedType;
     }
+
+    public static function value($type)
+    {
+        $className = 'Crowd\PttBundle\Form\PttFormFieldValue' . ucfirst($type);
+        return (!class_exists($className)) ? 'Crowd\PttBundle\Form\PttFormFieldValueDefault' : $className;
+    }
 }

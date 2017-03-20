@@ -219,9 +219,9 @@ class PttForm
 
             if ($fields->static[$i]) {
                 foreach ($fields->static[$i] as $field) {
-                    if(isset($this->htmlFields[$field->name])){
+                    if (isset($this->htmlFields[$field->name])) {
                         $html .= $this->htmlFields[$field->name];
-                    }else{
+                    } else {
                         $html .= 'pending to do ' . $field->name ;
                     }
                 }
@@ -265,13 +265,14 @@ class PttForm
                         //$fieldClassName = PttClassNameGenerator::field($field->type);
                         //$formField = new $fieldClassName($this, $field);
                         //$this->htmlFields[$field->name] = $formField->field();
-                        if($field['type'] == 'text'){
+                        if ($field['type'] == 'text') {
+                            $field['value'] = $this->_newValueForField($field);
                             $info = [
                                 'type' => 'input',
                                 'params' => $field
-                                ];
-                                
-                            $this->htmlFields[$field['name']] = $this->twig->render('PttBundle:Form:factory.html.twig',$info);
+                            ];
+
+                            $this->htmlFields[$field['name']] = $this->twig->render('PttBundle:Form:factory.html.twig', $info);
                         }
                     }
                 }
@@ -360,9 +361,9 @@ class PttForm
         }
     }
 
-    private function _valueForField(PttField $field, $languageCode = false)
+    private function _valueForField($type, $languageCode = false)
     {
-        $sentValueClassName = PttClassNameGenerator::sentValue($field->type);
+        $sentValueClassName = PttClassNameGenerator::sentValue($type);
         $sentValue = new $sentValueClassName($field, $this, $languageCode);
         $value = $sentValue->value();
 
@@ -396,5 +397,12 @@ class PttForm
 
             $afterFormSave->perform();
         }
+    }
+
+    private function _newValueForField($field, $languageCode = false)
+    {
+        $className = PttClassNameGenerator::value($field['type']);
+        $formValue = new $className($field, $this->entityInfo, $this->sentData, $this->request, $languageCode);
+        return $formValue->value();
     }
 }
