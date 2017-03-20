@@ -60,7 +60,7 @@
 									{%- if sortable -%}
 										{{ field.label }}
 									{%- else -%}
-										<a href="{{ path('list', {entity : entityConfigurationInfo.entityName, order : field.field}) }}">{%- if order[0] == field.field -%}{{ attribute(sprites,order[1]) }}{%- endif -%}{{field.label}}</a>
+										<a href="{{ path('list', {entity : entityConfigurationInfo.entityName, order : field.field}) }}">{%- if order is not null and order[0] == field.field -%}{{ attribute(sprites,order[1]) }}{%- endif -%}{{field.label}}</a>
 									{%- endif -%}
 								</td>
 							{% endfor %}
