@@ -20,10 +20,10 @@
 	{% set validations = {
 		mapped: true,
 		required: false,
-		minlength: 6,
+		minlength: false,
 		maxlength: false,
 		equal: false,
-	} | merge (params.validations | default({}) )  %}
+	} | merge (validations | default({}) )  %}
 
 	{%- if params.type != 'hidden' -%}
 	<div class="form-group col-xs-12 {{utilities.getSize(params.size)}}{{ params.outterClass ? ' ' ~ params.outterClass : '' }}">
