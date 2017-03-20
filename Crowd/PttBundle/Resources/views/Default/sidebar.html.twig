@@ -6,7 +6,7 @@
 		<div class="menu-container">
 			{{ sidebar.menu(info('admin').sidebar, page, true) }}
 		</div>
-		<span class="copyright">Crowd Studio - 1.9.5</span>
+		<span class="copyright">Crowd Studio - {{ pttVersion }}</span>
 	</div>	
 </div>
 
@@ -69,7 +69,7 @@
 					{% endfor %}
     				
 					<li class="item{% if 'current-item-selected' in childs | trim %} current-item-selected{% endif %}">
-						<a href="{{ path(itemWhile.path, itemWhile.parameters|default({})) }}" >{{item.label|trans}}</a>
+						<a href="{{ path(itemWhile.path, itemWhile.parameters|default({})) }}" >{{ item.label | trans }}</a>
 						{{ childs }}
 					</li>
     			{% endif %}
