@@ -259,6 +259,9 @@ class PttForm
     {
         if (!count($this->htmlFields)) {
             $fields = $this->entityInfo->getFieldsNew();
+
+            $this->htmlFields = $this->_getExtraFields();
+
             foreach ($fields['block'] as $key => $block) {
                 if ($block['static']) {
                     foreach ($block['static'] as $field) {
@@ -275,10 +278,30 @@ class PttForm
         }
     }
 
+    private function _getExtraFields()
+    {
+        $field = [
+        "name" => "id",
+        "type" => "hidden",
+        "disabled" => true,
+        "options" => [],
+        "validations" => []
+      ];
+
+        $field['value'] = $this->_newValueForField($field);
+
+        $info = [
+          'type' => $this->_getFieldType($field),
+          'params' => $field
+      ];
+
+        return ['id' => $this->twig->render('PttBundle:Form:factory.html.twig', $info)];
+    }
+
     private function _getFieldType($field)
     {
         switch ($field['type']) {
-        case 'text': case 'disabled': case 'email':
+        case 'text': case 'disabled': case 'email': case 'hidden':
           return 'input';
           break;
         default:
