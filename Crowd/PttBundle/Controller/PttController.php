@@ -58,6 +58,7 @@ class PttController extends Controller
                   'page' => $page
                 ]
             ],
+            'pttVersion' => '3.0.10',
             'sortable' => $this->isSortable(),
             'copy' => $this->isCopy()
         ]);

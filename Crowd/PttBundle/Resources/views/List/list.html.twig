@@ -56,11 +56,11 @@
 						<tr>
 							{% if sortable %}<td class="handle" ng-show="changeOrder"></td>{% endif %}
 							{% for field in fields %}
-								<td class="{{ field.primary is defined and field.primary ? '' : 'hidden-xs'}}">
+								<td{{ field.primary is defined and field.primary ? '' : ' class="hidden-xs"' | raw}}>
 									{%- if sortable -%}
 										{{ field.label }}
 									{%- else -%}
-										<a href="{{ path('list', {entity : entityConfigurationInfo.entityName, order : field.field}) }}">{{field.label}}</a>
+										<a href="{{ path('list', {entity : entityConfigurationInfo.entityName, order : field.field}) }}">{%- if order[0] == field.field -%}{{ attribute(sprites,order[1]) }}{%- endif -%}{{field.label}}</a>
 									{%- endif -%}
 								</td>
 							{% endfor %}
