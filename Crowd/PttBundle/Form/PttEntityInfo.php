@@ -183,10 +183,6 @@ class PttEntityInfo
         }
     }
 
-    private function _value($method, $languageCode)
-    {
-    }
-
     public function appendField($field)
     {
         $this->fields->addField($this->formName, $field);

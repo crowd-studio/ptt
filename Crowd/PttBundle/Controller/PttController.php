@@ -58,7 +58,7 @@ class PttController extends Controller
                   'page' => $page
                 ]
             ],
-            'pttVersion' => '3.0.10',
+            'pttVersion' => PttUtil::pttVersion(),
             'sortable' => $this->isSortable(),
             'copy' => $this->isCopy()
         ]);
@@ -109,7 +109,8 @@ class PttController extends Controller
                    'entity' => $entity,
                    'id' => $id
                 ]
-              ]
+              ],
+            'pttVersion' => PttUtil::pttVersion(),
         ]);
     }
 

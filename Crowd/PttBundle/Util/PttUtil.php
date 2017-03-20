@@ -199,4 +199,13 @@ class PttUtil
         $s3 = PttUtil::pttConfiguration('s3');
         return (isset($s3['force']) && $s3['force']) ? $s3['prodUrl'] . $s3['dir'] . '/' : '/uploads/';
     }
+
+    public static function pttVersion()
+    {
+        $filePath = __DIR__ . "/../../../package.json";
+        $string = file_get_contents($filePath);
+        $json = json_decode($string, true);
+
+        return $json['version'];
+    }
 }

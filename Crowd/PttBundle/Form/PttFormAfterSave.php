@@ -15,14 +15,12 @@ class PttFormAfterSave
     protected $entityInfo;
     protected $sentData;
     protected $languageCode;
-    protected $container;
 
-    public function __construct(PttField $field, PttEntityInfo $entityInfo, $sentData, $container, $languageCode = false)
+    public function __construct(PttField $field, PttEntityInfo $entityInfo, $sentData, $languageCode = false)
     {
         $this->field = $field;
         $this->entityInfo = $entityInfo;
         $this->sentData = $sentData;
         $this->languageCode = $languageCode;
-        $this->container = $container;
     }
 }

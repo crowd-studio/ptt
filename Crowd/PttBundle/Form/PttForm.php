@@ -223,25 +223,21 @@ class PttForm
 
             if ($this->languages && isset($fields->trans[$i]) && $fields->trans[$i]) {
                 $html .= '<ul class="nav nav-tabs col-sm-12">';
-                $lang = 0;
 
-                foreach ($this->languages as $language) {
-                    $active = ($lang == 0) ? 'active' : '';
+                foreach ($this->languages as $k => $language) {
+                    $active = ($k == 0) ? 'active' : '';
                     $error = ($this->errors->hasErrors($language->getCode())) ? ' error' : '';
                     $html .= '<li class="' . $active . $error . ' language-'. $language->getCode() .'"><a href="language-' . $language->getCode() . '" >' . $language->getTitle() . '</a></li>';
-                    $lang++;
                 }
 
                 $html .= '</ul><div class="tab-content col-sm-12">';
-                $lang = 0;
-                foreach ($this->languages as $language) {
-                    $active = ($lang == 0) ? ' active' : '';
+                foreach ($this->languages as $k => $language) {
+                    $active = ($k == 0) ? ' active' : '';
                     $html .= '<div class="tab-pane' . $active . ' language-' .$language->getCode()  . '">';
                     foreach ($fields->trans[$i] as $field) {
                         $html .= $this->htmlFields[$language->getCode()][$field->name];
                     }
                     $html .= '</div>';
-                    $lang++;
                 }
 
                 $html .= '</div>';
@@ -402,7 +398,7 @@ class PttForm
             $formField = new $fieldClassName($this, $field);
 
             $name =  (strpos($fieldClassName, 'PttFormFieldTypeSelectMultiple') === false) ? $field->name : $field->name . '_model';
-            $afterFormSave = new $afterSaveClassName($field, $this->entityInfo, $this->getSentData($name, $languageCode), $this->container, $languageCode);
+            $afterFormSave = new $afterSaveClassName($field, $this->entityInfo, $this->getSentData($name, $languageCode), $languageCode);
 
             $afterFormSave->perform();
         }

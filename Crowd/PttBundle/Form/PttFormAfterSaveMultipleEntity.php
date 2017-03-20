@@ -22,7 +22,7 @@ class PttFormAfterSaveMultipleEntity extends PttFormAfterSave
     private function _saveRelatedEntities()
     {
         $entityRemains = [];
-        $this->pttServices = $this->container->get('pttServices');
+        $this->pttServices = $this->entityInfo->getPttServices();
 
         if (is_array($this->sentData) && count($this->sentData)) {
             $index = 0;
