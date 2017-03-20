@@ -21,6 +21,18 @@
 	{%- endif -%}
 {% endmacro %}
 
+{# getSize#}
+{% macro getSize(string) %}
+	{%- if string == 'long' -%}
+	    col-md-12
+	{%- elseif string == 'medium' -%}
+	    col-md-6
+	{%- elseif string == 'short' -%}
+	    col-md-3
+	{%- endif -%}
+{% endmacro %}
+
+
 {# attrGroup#}
 {% macro attrGroup(list) %}
 	{% import _self as utilities %}

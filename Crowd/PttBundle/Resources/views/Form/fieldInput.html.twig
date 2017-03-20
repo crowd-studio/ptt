@@ -1,4 +1,3 @@
-
 {%- if params -%}
 	{% import 'PttBundle:Default:utilities.html.twig' as utilities %}
 
@@ -6,32 +5,36 @@
 		type: "text",
 		name: false,
 		value: false,
-	} | merge (params) %}
-
-	{% set options = {
-		outterClass: false,
-		elementClass: false,
-
+		
 		label: false,
 		placeholder: false,
 		errors: true,
+		disabled: false,
 
+		outterClass: false,
+		elementClass: false,
+		size: 'long',
+
+	} | merge (params) %}
+
+	{% set options = {
+		mapped: true,
 		required: false,
-		maxlength: 255,
-		minlength: false,
+		minlength: 6,
+		maxlength: false,
 		equal: false,
 	} | merge (params.options) %}
 
 	{%- if params.type != 'hidden' -%}
-	<div class="form-group col-xs-12{{ options.outterClass ? ' ' ~ options.outterClass : '' }}">
+	<div class="form-group col-xs-12 {{utilities.getSize(params.size)}}{{ params.outterClass ? ' ' ~ params.outterClass : '' }}">
 	{%- endif -%}
-		{%- if options.label and options.label != "" -%}
-			<label{{ utilities.attr('for', params.name) }}>{{ options.label }}{{ options.required ? ' *' : '' }}</label>
+		{%- if params.label and params.label != "" -%}
+			<label{{ utilities.attr('for', params.name) }}>{{ params.label }}{{ options.required ? ' *' : '' }}</label>
 		{%- endif -%}
-		{%- if params.type != 'hidden' and options.errors -%}
+		{%- if params.type != 'hidden' and params.errors -%}
 		<div class="errors" {{- ( params.name is defined ? ' id="error-' ~ params.name ~ '"' : '' ) | raw -}}></div>
 		{%- endif -%}
-			<input class="form-control{{ options.elementClass ? ' ' ~ options.elementClass : '' }}"{{ utilities.attrGroup([ ['type', params.type], ['name', params.name], ['placeholder', options.placeholder], ['value', params.value], ['id', params.name], ['data-parsley-errors-container', options.errors ? '#error-' ~ params.name : false ],['maxlength', options.maxlength],['minlength', options.minlength] ]) }}{{ ( options.equal ? ' data-parsley-equalto="#' ~ options.equal ~ '"' : '') | raw }}{{ options.required ? ' required' : '' }}>
+			<input class="form-control{{ params.elementClass ? ' ' ~ params.elementClass : '' }}"{{ utilities.attrGroup([ ['type', params.type], ['name', params.name], ['placeholder', params.placeholder], ['value', params.value], ['id', params.name], ['data-parsley-errors-container', params.errors ? '#error-' ~ params.name : false ],['maxlength', options.maxlength],['minlength', options.minlength], ['disabled', params.disabled] ]) }}{{ ( options.equal ? ' data-parsley-equalto="#' ~ options.equal ~ '"' : '') | raw }}{{ options.required ? ' required' : '' }}>
 	{%- if params.type != 'hidden' -%}
 	</div>
 	{%- endif -%}
