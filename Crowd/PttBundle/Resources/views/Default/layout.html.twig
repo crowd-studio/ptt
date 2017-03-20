@@ -64,7 +64,11 @@ www.crowd.st
 
     <script>
 		window.conf = {
-			baseURL:  '{{ baseUrl }}'
+			baseURL:  '{{ baseUrl }}',
+            {% if trans is defined %}
+                trans: {{ trans | raw }}
+            {% endif %}
+            
 		};
     </script>
 

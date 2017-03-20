@@ -1,0 +1,48 @@
+{%- if params -%}
+	{% import 'PttBundle:Default:utilities.html.twig' as utilities %}
+	{% import 'PttBundle:Default:sprites.html.twig' as sprites %}
+	{% set params = params | extend({
+		outterClass: false,
+		restoreBtnClass: 'btn-default btn-block',
+		btnClass: false,
+		imageClass: false,
+		name: false,
+		id: false,
+		value: false,
+		label: false,
+		action: 'update' | trans,
+		size: 'medium',
+	}) %}
+
+	{% set validations = {
+		mimetype: false,
+		mapped: true,
+		required: false,
+	} | merge (validations | default({}) )  %}
+
+	<div class="form-group file-upload loading col-xs-12 {{utilities.getSize(params.size)}}{{ params.outterClass ? ' ' ~ params.outterClass : '' }}">
+		{%- if params.label and params.label != "" -%}
+			<label{{ utilities.attr('for', params.name) }}>{{ params.label }}{{ validations.required ? ' *' : '' }}</label>
+		{%- endif -%}
+		
+		<a ng-show="initial && !loaded" class="restore-click btn{{ params.restoreBtnClass ? ' ' ~ params.restoreBtnClass : '' }}" ng-click="restoreClickFunction($event)">{{ 'restoreImage' | trans }}</a>
+		<div class="fake-click drop-box{{ params.btnClass ? ' ' ~ params.btnClass : '' }}" ng-show="!loaded || !withPreview" ng-click="fakeClickFunction($event)" ngf-drop-available="dropAvaible">
+			<a class="btn btn-xs btn-danger remove-file" ng-click="removeFileFunction($event)" ng-show="loaded">{{ 'remove' | trans }}</a>
+			<div class="drop-box-inner">
+				<div ng-show="!loaded">{{ sprites.upload() }}</div>
+				<div ng-show="loaded">{{ sprites.uploaded() }}</div>
+				<span ng-show="!loaded">{{params.action}}{{ validations.required ? ' *' : '' }}</span>
+				<span ng-show="loaded">{[{ filenameName }]}</span>
+				<div class="errors" {{- ( params.id is defined ? ' id="error-' ~ params.id ~ '"' : '' ) | raw -}}></div>
+				<div class="warnings" {{- ( params.id is defined ? ' id="warning-' ~ params.id ~ '"' : '' ) | raw -}}></div>
+			</div>
+		</div>
+		<div class="preview-block" ng-show="withPreview && loaded">
+			<div class="preview-file{{params.imageClass ? ' ' ~ params.imageClass : '' }}" init-file="{{ params.value }}"></div>
+			<a class="btn btn-xs btn-danger remove-file" ng-click="removeFileFunction($event)">{{ 'remove' | trans }}</a>
+		</div>
+		
+		<input type="file"{{ utilities.attrGroup([ ['name', params.name], ['id', params.id], ['data-parsley-errors-container', '#error-' ~ params.id], ['filemimetypes', validations.mimetype] ]) }}{{validations.required ? ' data-parsley-uploadrequired data-parsley-validate-if-empty' : '' }} onchange="angular.element(this).scope().inputFileFunction(this)">
+		<input type="text" name="check[{{params.name}}]" value="{[{changed}]}" >
+	</div>
+{%- endif -%}

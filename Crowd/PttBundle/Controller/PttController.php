@@ -14,6 +14,8 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Cookie;
 
+use Symfony\Component\Yaml\Parser;
+
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 
@@ -100,6 +102,9 @@ class PttController extends Controller
             }
         }
 
+        $yaml = new Parser();
+        $trans = $yaml->parse(file_get_contents(__DIR__ . '/../Resources/translations/en.yml'));
+
         $this->deleteTemp();
         return $this->_renderTemplateForActionInfo('edit', [
             'entityInfo' => $this->entityInfo(),
@@ -113,6 +118,7 @@ class PttController extends Controller
                 ]
               ],
             'pttVersion' => PttUtil::pttVersion(),
+            'trans' => json_encode($trans)
         ]);
     }
 
