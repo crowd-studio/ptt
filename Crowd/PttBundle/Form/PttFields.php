@@ -13,7 +13,7 @@ use Crowd\PttBundle\Util\PttUtil;
 
 class PttFields
 {
-    public $static = array();
+    public $static = [];
     public $block = false;
     public $trans = false;
     public $errorMessage;
