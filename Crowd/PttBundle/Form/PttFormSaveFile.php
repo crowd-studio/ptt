@@ -17,9 +17,9 @@ class PttFormSaveFile extends PttFormSave
         $files = $this->_files();
 
         if ($this->languageCode) {
-            $file = (isset($files["Trans"][$this->languageCode][$this->field->name])) ? $files["Trans"][$this->languageCode][$this->field->name] : false;
+            $file = (isset($files["Trans"][$this->languageCode][$this->field['name']])) ? $files["Trans"][$this->languageCode][$this->field['name']] : false;
         } else {
-            $file = (isset($files[$this->field->name])) ? $files[$this->field->name] : false;
+            $file = (isset($files[$this->field['name']])) ? $files[$this->field['name']] : false;
         }
 
         if ($file) {
@@ -28,9 +28,9 @@ class PttFormSaveFile extends PttFormSave
             $value = $this->_value();
 
             if ($this->languageCode) {
-                $deleteValue = (isset($this->sentData[$this->languageCode][$this->field->name . '-delete'])) ? $this->sentData[$this->languageCode][$this->field->name . '-delete'] : null;
+                $deleteValue = (isset($this->sentData[$this->languageCode][$this->field['name'] . '-delete'])) ? $this->sentData[$this->languageCode][$this->field['name'] . '-delete'] : null;
             } else {
-                $deleteValue = (isset($this->sentData[$this->field->name . '-delete'])) ? $this->sentData[$this->field->name . '-delete'] : null;
+                $deleteValue = (isset($this->sentData[$this->field['name'] . '-delete'])) ? $this->sentData[$this->field['name'] . '-delete'] : null;
             }
 
             if ($deleteValue && $deleteValue != '0') {
@@ -39,7 +39,7 @@ class PttFormSaveFile extends PttFormSave
             }
         }
 
-        if ($value != '' && $this->field->options['type'] == 'gallery') {
+        if ($value != '' && $this->field['type'] == 'gallery') {
             $path = $this->_sentValue(false);
             if ($path) {
                 $nameArray = explode('/', $path);
@@ -61,8 +61,8 @@ class PttFormSaveFile extends PttFormSave
             $files = $this->request->files->get($cleanNameArr[0]);
 
             for ($i=1; $i < count($cleanNameArr); $i++) {
-                if (isset($files[$cleanNameArr[$i])) {
-                    $files = $files[$cleanNameArr[$i];
+                if (isset($files[$cleanNameArr[$i]])) {
+                    $files = $files[$cleanNameArr[$i]];
                 }
             }
 

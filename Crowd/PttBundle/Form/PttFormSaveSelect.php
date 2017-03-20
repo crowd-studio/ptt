@@ -13,15 +13,14 @@ class PttFormSaveSelect extends PttFormSave
 {
     public function value()
     {
-        $pttServices = $this->entityInfo->getPttServices();
         if (isset($this->field['multiple'])) {
             $result = [];
             foreach ($this->_sentValue([]) as $value) {
-                $result[] = $pttServices->getOne($this->field['entity'], $value);
+                $result[] = $this->entityInfo->getPttServices()->getOne($this->field['entity'], $value);
             }
             return $result;
         } elseif (isset($this->field['entity'])) {
-            return $pttServices->getOne($this->field['entity'], $this->_sentValue(0));
+            return $this->entityInfo->getPttServices()->getOne($this->field['entity'], $this->_sentValue(0));
         } else {
             return $this->_sentValue(null);
         }

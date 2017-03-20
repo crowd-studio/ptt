@@ -33,7 +33,7 @@ class PttFormSave
 
     protected function _sentValue($default = '')
     {
-        if ($this->languageCode) {
+        if (!$this->languageCode) {
             return (isset($this->sentData[$this->field['name']])) ? $this->sentData[$this->field['name']] : $default;
         } else {
             return (isset($this->sentData[$this->languageCode][$this->field['name']])) ? $this->sentData[$this->languageCode][$this->field['name']] : $default;
