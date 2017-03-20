@@ -265,7 +265,7 @@ class PttForm
                         //$fieldClassName = PttClassNameGenerator::field($field->type);
                         //$formField = new $fieldClassName($this, $field);
                         //$this->htmlFields[$field->name] = $formField->field();
-                        if ($field['type'] == 'text') {
+                        if(in_array($field['type'],['text','disabled','email'])){
                             $field['value'] = $this->_newValueForField($field);
                             $info = [
                                 'type' => 'input',
