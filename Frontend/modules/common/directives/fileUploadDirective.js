@@ -26,10 +26,18 @@ function fileUploadDirective(fileInput) {
 			scope.fakeText = 'Upload File';
 			scope.filenameName = 'File Uploaded';
 
+			if(scope.img.attr('max-width')){
+				scope.img.css('max-width', scope.img.attr('max-width') + 'px');
+			}
+			if(scope.img.attr('max-height')){
+				scope.img.css('max-height', scope.img.attr('max-height') + 'px');
+			}
+
 			if(scope.loaded){
 				//scope.inputFile.disabled = true;
 				scope.img.css('background-image','url("' + scope.initial + '")');
 			}
+
 			scope.fakeClickFunction = function(e){
 				e.preventDefault();
 				//scope.inputFile.click();
@@ -78,6 +86,7 @@ function fileUploadDirective(fileInput) {
 						}
 						
 					}else{
+						console.log(conf.trans.fileMimeError);
 						scope.warnings.append(conf.trans.fileMimeError);
 						scope.inputFile.val('').change();
 						scope.$apply();

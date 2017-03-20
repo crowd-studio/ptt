@@ -49,7 +49,7 @@ form,
 			display:block;
 			cursor:pointer;
 			background: @white;
-			border: 2px solid @gray-light;
+			border: 2px solid #ccc;
 			padding:20px;
 			.border-radius(15px);
 			position:relative;
@@ -98,17 +98,14 @@ form,
 			text-align:center;
 			position:relative;
 			.remove-file{
-				right:0;
-				top:0;
+				right:10px;
+				top:10px;
 			}
 			.preview-file{
-				.size(100%, 200px);
+				.size(100%,1000px);
 				display:inline-block;
 				background-size: cover;
 	    		background-position: center;
-	    		&.user-image{
-	    			.size(170px);
-	    		}
 			}
 		}
 		ul.parsley-errors-list{
