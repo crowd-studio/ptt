@@ -224,7 +224,7 @@ class PttServices
     public function order($entity, $fields)
     {
         foreach ($fields as $field) {
-            $entity = $this->getOne($table, $field->id);
+            $entity = $this->getOne($entity, $field->id);
             if ($entity) {
                 $entity->set_Order($field->_order);
             }
