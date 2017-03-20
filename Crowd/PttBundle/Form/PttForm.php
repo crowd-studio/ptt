@@ -222,7 +222,7 @@ class PttForm
                     if (isset($this->htmlFields[$field->name])) {
                         $html .= $this->htmlFields[$field->name];
                     } else {
-                        $html .= 'pending to do ' . $field->name ;
+                        $html .= 'pending to do ' . $field->type ;
                     }
                 }
             }

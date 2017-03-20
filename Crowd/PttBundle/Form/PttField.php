@@ -42,12 +42,12 @@ class PttField
         }
 
         if (!isset($field['options'])) {
-            throw new \Exception('The property options was not found');
+            //throw new \Exception('The property options was not found');
         }
 
         $this->name = $field['name'];
         $this->type = $field['type'];
-        $this->options = $field['options'];
+        //$this->options = $field['options'];
         $this->validations = (isset($field['validations'])) ? $field['validations'] : false;
         $this->mapped = (isset($field['mapped'])) ? $field['mapped'] : true;
         $this->showErrors = (isset($field['showErrors'])) ? $field['showErrors'] : true;

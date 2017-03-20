@@ -17,24 +17,24 @@
 
 	} | merge (params) %}
 
-	{% set options = {
+	{% set validations = {
 		mapped: true,
 		required: false,
 		minlength: 6,
 		maxlength: false,
 		equal: false,
-	} | merge (params.options) %}
+	} | merge (params.validations | default({}) )  %}
 
 	{%- if params.type != 'hidden' -%}
 	<div class="form-group col-xs-12 {{utilities.getSize(params.size)}}{{ params.outterClass ? ' ' ~ params.outterClass : '' }}">
 	{%- endif -%}
 		{%- if params.label and params.label != "" -%}
-			<label{{ utilities.attr('for', params.name) }}>{{ params.label }}{{ options.required ? ' *' : '' }}</label>
+			<label{{ utilities.attr('for', params.name) }}>{{ params.label }}{{ validations.required ? ' *' : '' }}</label>
 		{%- endif -%}
 		{%- if params.type != 'hidden' and params.errors -%}
 		<div class="errors" {{- ( params.name is defined ? ' id="error-' ~ params.name ~ '"' : '' ) | raw -}}></div>
 		{%- endif -%}
-			<input class="form-control{{ params.elementClass ? ' ' ~ params.elementClass : '' }}"{{ utilities.attrGroup([ ['type', params.type], ['name', params.name], ['placeholder', params.placeholder], ['value', params.value], ['id', params.name], ['data-parsley-errors-container', params.errors ? '#error-' ~ params.name : false ],['maxlength', options.maxlength],['minlength', options.minlength], ['disabled', params.disabled] ]) }}{{ ( options.equal ? ' data-parsley-equalto="#' ~ options.equal ~ '"' : '') | raw }}{{ options.required ? ' required' : '' }}>
+			<input class="form-control{{ params.elementClass ? ' ' ~ params.elementClass : '' }}"{{ utilities.attrGroup([ ['type', params.type], ['name', params.name], ['placeholder', params.placeholder], ['value', params.value], ['id', params.name], ['data-parsley-errors-container', params.errors ? '#error-' ~ params.name : false ],['maxlength', validations.maxlength],['minlength', validations.minlength], ['disabled', params.disabled] ]) }}{{ ( validations.equal ? ' data-parsley-equalto="#' ~ validations.equal ~ '"' : '') | raw }}{{ validations.required ? ' required' : '' }}>
 	{%- if params.type != 'hidden' -%}
 	</div>
 	{%- endif -%}
