@@ -304,8 +304,7 @@ class PttForm
             case 'text': 
             case 'disabled': 
             case 'email': 
-            case 'hidden': 
-            case 'password':
+            case 'hidden':
                 return 'input';
                 break;
             default:
