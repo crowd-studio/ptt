@@ -28,18 +28,19 @@
 						</div>
 					</div>
 					<div class="filters-content">
-						{% for key,filter in filters %}
-							{% if filter.type == 'text' %}
+						{% for key,f in filters %}
+							{% set name = 'filter-' ~ entityConfigurationInfo.entityName ~ '-' ~ f.field %}
+							{% if f.type == 'text' %}
 								<div class="form-group">
-									<input class="form-control" type="text" name="filter-{{ entityConfigurationInfo.entityName }}-{{ filter.field }}" placeholder="{{ filter.label }}" value="{{ filter(filter.field, entityConfigurationInfo.entityName) }}">
+									<input class="form-control" type="text" name="{{ name }}" placeholder="{{ f.label }}"{{ attribute(activeFilters, name) is defined ? (' value="' ~ attribute(activeFilters, name) ~ '"') | raw : '' }}>
 								</div>
-							{% elseif filter.type == 'select' %}
+							{% elseif f.type == 'select' %}
 								<div class="form-group">
-									<select class="form-control" type="select" name="filter-{{ entityConfigurationInfo.entityName }}-{{ filter.field }}">
-										<option value="" selected="">{{ filter.label }}</option>
+									<select class="form-control" type="select" name="{{ name }}">
+										<option value="" selected="">{{ f.label }}</option>
 										<option disabled="" value="---">---</option>
-										{% for value,label in filter.options %}
-											<option value="{{value}}" {{ value == filter(filter.field, entityConfigurationInfo.entityName) ? ' selected' : '' }} >{{label}}</option>
+										{% for value,label in f.options %}
+											<option value="{{ value }}"{{ attribute(activeFilters, name) is defined and attribute(activeFilters, name) == value ? (' selected') | raw : '' }}>{{ label }}</option>
 										{% endfor %}
 									</select>
 								</div>

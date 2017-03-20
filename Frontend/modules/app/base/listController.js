@@ -6,6 +6,8 @@ module.exports = /*@ngInject*/
 function listController($scope, $element, $http, loader) {
 	$scope.showFilters = ( angular.element(document.querySelector('.filters')).attr('active-filters') != "[]" );
 	$scope.changeOrder = false;
+
+	history.pushState("", document.title, window.location.pathname);
 	
 	if( angular.element(document.querySelector('.btn-sort')).length > 0){	
 		$scope.sortable = Sortable.create(document.getElementById('items'),{

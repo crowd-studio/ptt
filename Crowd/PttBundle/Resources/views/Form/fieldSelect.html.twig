@@ -35,8 +35,8 @@
 				<option value{{ params.value == false or params.value == "" ? ' selected' : '' }}>{{ params.placeholder | trans }}</option>
 				<option disabled>---</option>
 			{%- endif -%}
-			{% for itemKey, itemValue in params.list %}
-				<option value="{{ itemKey }}">{{ itemValue }}</option>
+			{% for itemValue, itemLabel in params.list %}
+				<option value="{{ itemValue }}"{{ params.value == itemValue ? ' selected' : '' }}>{{ itemLabel }}</option>
 			{% endfor %}
 		</select>
 	</div>
