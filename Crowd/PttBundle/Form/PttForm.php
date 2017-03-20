@@ -281,9 +281,15 @@ class PttForm
                             $field['url'] = $this->_urlPrefix($field) . $w . '-' . $h . '-' . $field['value'];
                         }
 
-                        if ($field['type'] == 'select' && isset($field['entity'])) {
-                            $field['list'] = $this->_selectEntity($field);
+                        if ($field['type'] == 'select') {
+                            if (isset($field['entity'])) {
+                                $field['list'] = $this->_selectEntity($field);
+                            } else {
+                                $method = 'getList' . ucfirst($field['name']);
+                                $field['list'] = $this->entityInfo->getEntity()->$method();
+                            }
                         }
+
 
                         $info = [
                             'type' => $this->_getFieldType($field),
