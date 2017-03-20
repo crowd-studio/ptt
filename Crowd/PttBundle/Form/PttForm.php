@@ -271,12 +271,24 @@ class PttForm
                 if ($block['static']) {
                     foreach ($block['static'] as $field) {
                         $field['value'] = $this->_newValueForField($field);
+                        if ($field['type'] == 'image') {
+                            if (isset($field['options']['sizes'][0])) {
+                                $w = $field['options']['sizes'][0]['w'];
+                                $h = $field['options']['sizes'][0]['h'];
+                            } else {
+                                $w = $h = 0;
+                            }
+                            $field['url'] = $this->_urlPrefix($field) . $w . '-' . $h . '-' . $field['value'];
+                        }
+
                         $info = [
                             'type' => $this->_getFieldType($field),
                             'params' => $field
                         ];
 
-                        if(isset($field['validations'])){
+
+
+                        if (isset($field['validations'])) {
                             $info['validations'] = $field['validations'];
                             unset($field['validations']);
                         }
@@ -285,6 +297,15 @@ class PttForm
                     }
                 }
             }
+        }
+    }
+
+    private function _urlPrefix($field)
+    {
+        if (isset($field['options']['s3']) && $field['options']['s3']) {
+            return PttUtil::pttConfiguration('s3')['prodUrl'] . PttUtil::pttConfiguration('s3')['dir'] . '/';
+        } else {
+            return (isset($field['options']['cdn']) && $field['options']['cdn']) ? PttUtil::pttConfiguration('cdn')['prodUrl'] : PttUtil::pttConfiguration('prefix') . PttUtil::pttConfiguration('images');
         }
     }
 
