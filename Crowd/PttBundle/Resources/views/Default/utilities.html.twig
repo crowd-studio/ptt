@@ -1,0 +1,48 @@
+{# cutter#}
+{% macro cutter(text, params) %}
+	{% set params = params | extend ({
+		length: 120,
+		markdown: true
+	}) %}
+	{%- if text -%}
+		{% if params.markdown %}
+			{% if text | length > params.length %}
+				{{ (text | slice(0, params.length) ~ '…')  | md2html }}
+			{% else %}
+				{{ (text | slice(0, params.length)) | md2html }}
+			{% endif %}
+		{% else %}
+			{% if text | length > params.length %}
+				{{ (text | slice(0, params.length) ~ '…') }}
+			{% else %}
+				{{ (text | slice(0, params.length)) }}
+			{% endif %}
+		{% endif %}
+	{%- endif -%}
+{% endmacro %}
+
+{# attrGroup#}
+{% macro attrGroup(list) %}
+	{% import _self as utilities %}
+	{%- for item in list -%}
+	    {{ utilities.attr(item[0], item[1]) }}
+	{%- endfor -%}
+{% endmacro %}
+
+{# attr#}
+{% macro attr(name, value) %}
+	{{- value != false and value != "" ? (' ' ~ name ~ '="' ~ value ~ '"') | raw : '' -}}
+{% endmacro %}
+
+{# embed #}
+{% macro embed(data, params) %}
+	{% if params == NULL %}{% set params = {} %}{% endif %}
+	{% set params = params | extend ({
+		'key': 'video',
+	}) %}
+	<div class="embed-block">
+		<div class='embed-container'>
+			<iframe src='https://hypermediavideo.com/embed/{{attribute(data, params.key)}}' frameborder='0' allowfullscreen></iframe>
+		</div>
+	</div>
+{% endmacro %}

@@ -29,11 +29,13 @@ class PttForm
     private $htmlFields;
     private $pttTrans;
     private $totalData = 0;
+    private $twig;
 
     public function __construct(EntityManager $entityManager, TokenStorage $securityContext, ContainerInterface $serviceContainer)
     {
         $this->securityContext = $securityContext;
         $this->container = $serviceContainer;
+        $this->twig = $this->container->get('twig');
 
         $metadata = $this->container->get('pttEntityMetadata');
         $this->languages = $metadata->getLanguages();
@@ -217,7 +219,11 @@ class PttForm
 
             if ($fields->static[$i]) {
                 foreach ($fields->static[$i] as $field) {
-                    $html .= $this->htmlFields[$field->name];
+                    if(isset($this->htmlFields[$field->name])){
+                        $html .= $this->htmlFields[$field->name];
+                    }else{
+                        $html .= 'pending to do ' . $field->name ;
+                    }
                 }
             }
 
@@ -252,32 +258,20 @@ class PttForm
     private function _makeHtmlFields()
     {
         if (!count($this->htmlFields)) {
-            $fields = $this->entityInfo->getFields();
-
-            foreach ($fields->block as $key => $block) {
-                if ($fields->static[$key]) {
-                    foreach ($fields->static[$key] as $field) {
-                        $fieldClassName = PttClassNameGenerator::field($field->type);
-                        $formField = new $fieldClassName($this, $field);
-                        $this->htmlFields[$field->name] = $formField->field();
-                    }
-                }
-
-                if ($this->languages && $fields->trans) {
-                    foreach ($this->languages as $language) {
-                        if ($fields->trans[$key]) {
-                            foreach ($fields->trans[$key] as $field) {
-                                if (strpos($field->getFormNameSec(), '[Trans]') === false) {
-                                    $field->setFormName($field->getFormNameSec() . '[Trans]');
-                                }
-
-                                $fieldClassName = PttClassNameGenerator::field($field->type);
-                                $formField = new $fieldClassName($this, $field, $language->getCode());
-                                if (!isset($this->htmlFields[$language->getCode()]) || !is_array($this->htmlFields[$language->getCode()])) {
-                                    $this->htmlFields[$language->getCode()] = [];
-                                }
-                                $this->htmlFields[$language->getCode()][$field->name] = $formField->field();
-                            }
+            $fields = $this->entityInfo->getFieldsNew();
+            foreach ($fields['block'] as $key => $block) {
+                if ($block['static']) {
+                    foreach ($block['static'] as $field) {
+                        //$fieldClassName = PttClassNameGenerator::field($field->type);
+                        //$formField = new $fieldClassName($this, $field);
+                        //$this->htmlFields[$field->name] = $formField->field();
+                        if($field['type'] == 'text'){
+                            $info = [
+                                'type' => 'input',
+                                'params' => $field
+                                ];
+                                
+                            $this->htmlFields[$field['name']] = $this->twig->render('PttBundle:Form:factory.html.twig',$info);
                         }
                     }
                 }

@@ -10,6 +10,8 @@ namespace Crowd\PttBundle\Form;
 use Doctrine\ORM\EntityManager;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
+use Symfony\Component\Yaml\Parser;
+
 use Crowd\PttBundle\Util\PttUtil;
 
 class PttEntityInfo
@@ -198,5 +200,14 @@ class PttEntityInfo
         $kernel = $this->container->get('kernel');
         $filePath = $kernel->locateResource('@' . $this->bundle . '/Form/' . $this->entityName . '.yml');
         $this->fields = new PttFields($filePath, $this->entity, $this->entityName, $this->formName, $this->pttTrans);
+    }
+
+    public function getFieldsNew()
+    {
+        $kernel = $this->container->get('kernel');
+        $filePath = $kernel->locateResource('@' . $this->bundle . '/Form/' . $this->entityName . '.yml');
+        $yaml = new Parser();
+
+        return $yaml->parse(file_get_contents($filePath));
     }
 }

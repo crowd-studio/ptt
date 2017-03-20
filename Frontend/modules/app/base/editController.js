@@ -5,15 +5,12 @@ var simpleMDE = require('simplemde');
 
 module.exports = /*@ngInject*/
 function editController($scope, $element) {
-	console.log("EDITCONTROLLER");
 
-
-	/*$($element).find('form'.parsley().on('field:validated', function() {
-
-	})
-	.on('form:submit', function() {
-		return false; // Don't submit form for this demo
-	});*/
+	let form = $($element).find('form').parsley();
+	form.on('form:submit', function() {
+		return false;
+		return form.isValid();
+	});
 
 	$element.removeClass('ng-hide');
 };
