@@ -281,6 +281,10 @@ class PttForm
                             $field['url'] = $this->_urlPrefix($field) . $w . '-' . $h . '-' . $field['value'];
                         }
 
+                        if ($field['type'] == 'select' && isset($field['entity'])) {
+                            $field['list'] = $this->_selectEntity($field);
+                        }
+
                         $info = [
                             'type' => $this->_getFieldType($field),
                             'params' => $field
@@ -298,6 +302,23 @@ class PttForm
                 }
             }
         }
+    }
+
+    private function _selectEntity($field)
+    {
+        $options = [];
+        $entities = $this->container->get('pttServices')->getSimpleFilter($field['entity'], [
+                'where' => (isset($field['options']['filterBy']) && is_array($field['options']['filterBy'])) ? $field['options']['filterBy'] : [],
+                'orderBy' => (isset($field['options']['sortBy']) && is_array($field['options']['sortBy'])) ? $field['options']['sortBy'] : ['id' => 'asc']
+        ]);
+
+        $methodKey = (isset($field['identifier'])) ? 'get' . $field['identifier'] : 'getId';
+        $methodValue = 'get' . $field['field'];
+        foreach ($entities as $entity) {
+            $options[$entity->$methodKey()] = $entity->$methodValue();
+        }
+
+        return $options;
     }
 
     private function _urlPrefix($field)
