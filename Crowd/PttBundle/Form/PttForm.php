@@ -262,22 +262,29 @@ class PttForm
             foreach ($fields['block'] as $key => $block) {
                 if ($block['static']) {
                     foreach ($block['static'] as $field) {
-                        //$fieldClassName = PttClassNameGenerator::field($field->type);
-                        //$formField = new $fieldClassName($this, $field);
-                        //$this->htmlFields[$field->name] = $formField->field();
-                        if(in_array($field['type'],['text','disabled','email'])){
-                            $field['value'] = $this->_newValueForField($field);
-                            $info = [
-                                'type' => 'input',
-                                'params' => $field
-                            ];
+                        $field['value'] = $this->_newValueForField($field);
+                        $info = [
+                            'type' => $this->_getFieldType($field),
+                            'params' => $field
+                        ];
 
-                            $this->htmlFields[$field['name']] = $this->twig->render('PttBundle:Form:factory.html.twig', $info);
-                        }
+                        $this->htmlFields[$field['name']] = $this->twig->render('PttBundle:Form:factory.html.twig', $info);
                     }
                 }
             }
         }
+    }
+
+    private function _getFieldType($field)
+    {
+        switch ($field['type']) {
+        case 'text': case 'disabled': case 'email':
+          return 'input';
+          break;
+        default:
+          return $field['type'];
+          break;
+      }
     }
 
     private function _updateSentData()

@@ -83,6 +83,7 @@ class PttController extends Controller
 
         $pttForm = $this->get('pttForm');
         $pttForm->setEntity($saveEntity); // on es crea el ppttEntityInfo
+        $pttForm->createView();
 
         if ($request->getMethod() == 'POST') {
             if ($pttForm->isValid()) {
