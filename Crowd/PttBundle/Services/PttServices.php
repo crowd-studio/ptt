@@ -221,16 +221,16 @@ class PttServices
         return true;
     }
 
-    public function order($entity, $fields)
+    public function order($table, $fields)
     {
         foreach ($fields as $field) {
-            $entity = $this->getOne($entity, $field->id);
+            $entity = $this->getOne($table, $field->id);
             if ($entity) {
                 $entity->set_Order($field->_order);
             }
         }
-        $em->flush();
 
+        $this->em->flush();
         $this->_deleteCache();
         return true;
     }
