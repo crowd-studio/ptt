@@ -1,1 +1,43 @@
-NOT CREATED
+
+{% if params %}
+	{% import 'PttBundle:Default:utilities.html.twig' as utilities %}
+
+	{% set params = {
+		type: "text",
+		name: false,
+		value: false,
+		placeholder: false,
+		
+		label: false,
+		placeholder: false,
+		errors: true,
+
+		outterClass: false,
+		elementClass: false,
+		size: 'long',
+
+	} | merge (params) %}
+
+	{% set validations = {
+		mapped: true,
+		required: false,
+	} | merge (params.validations | default({}) )  %}
+
+	<div class="form-group col-xs-12 {{utilities.getSize(params.size)}}{{ params.outterClass ? ' ' ~ params.outterClass : '' }}">
+		{%- if params.label and params.label != "" -%}
+			<label{{ utilities.attr('for', params.name) }}>{{ params.label }}{{ validations.required ? ' *' : '' }}</label>
+		{%- endif -%}
+		{%- if params.type != 'hidden' and params.errors -%}
+		<div class="errors" {{- ( params.name is defined ? ' id="error-' ~ params.name ~ '"' : '' ) | raw -}}></div>
+		{%- endif -%}
+		<select class="form-control{{ params.elementClass ? ' ' ~ params.elementClass : '' }}"{{ utilities.attrGroup([ ['name', params.name], ['id', params.name], ['data-parsley-errors-container', params.errors ? '#error-' ~ params.name : false] ]) }}{{ validations.required ? ' required' : '' }}>
+			{%- if params.placeholder -%}
+				<option value{{ params.value == false or params.value == "" ? ' selected' : '' }}>{{ params.placeholder | trans }}</option>
+				<option disabled>---</option>
+			{%- endif -%}
+			{% for itemKey, itemValue in params.list %}
+				<option value="{{ itemKey }}">{{ itemValue }}</option>
+			{% endfor %}
+		</select>
+	</div>
+{% endif %}
