@@ -73,9 +73,7 @@ class PttEntityInfo
 
         $this->pttTrans = $pttTrans;
 
-        $this->fields = false;
-
-        $this->_fetchFields();
+        $this->fields = $this->getFieldsNew();
     }
 
     public function getPttServices()
@@ -131,7 +129,7 @@ class PttEntityInfo
 
     public function getFields($property = false)
     {
-        return ($property != false) ? $this->fields->{$property} : $this->fields;
+        return ($property != false) ? $this->fields[$property] : $this->fields;
     }
 
     public function hasMethod($methodName, $languageCode = false)
@@ -193,13 +191,6 @@ class PttEntityInfo
     private function _entityForLanguageCode($languageCode)
     {
         return $this->transEntities[$languageCode];
-    }
-
-    private function _fetchFields()
-    {
-        $kernel = $this->container->get('kernel');
-        $filePath = $kernel->locateResource('@' . $this->bundle . '/Form/' . $this->entityName . '.yml');
-        $this->fields = new PttFields($filePath, $this->entity, $this->entityName, $this->formName, $this->pttTrans);
     }
 
     public function getFieldsNew()

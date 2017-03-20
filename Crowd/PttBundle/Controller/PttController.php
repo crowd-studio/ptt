@@ -90,12 +90,13 @@ class PttController extends Controller
                 $pttForm->save();
 
                 $this->flushCache($saveEntity);
-                $this->get('session')->getFlashBag()->add('success', $pttForm->getSuccessMessage());
+                // $this->get('session')->getFlashBag()->add('success', $pttForm->getSuccessMessage());
 
                 $route = ($id == null && $request->get('another') != null) ? $this->generateUrl('edit', ['entity' => $entity, 'id' => $id]) : $this->generateUrl('list', ['entity' => $entity]);
                 return $this->redirect($route);
             } else {
-                $this->get('session')->getFlashBag()->add('error', $pttForm->getErrorMessage());
+                var_dump('Validation Error');
+                die();
             }
         }
 

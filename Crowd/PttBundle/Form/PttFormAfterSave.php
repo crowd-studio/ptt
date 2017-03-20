@@ -16,7 +16,7 @@ class PttFormAfterSave
     protected $sentData;
     protected $languageCode;
 
-    public function __construct(PttField $field, PttEntityInfo $entityInfo, $sentData, $languageCode = false)
+    public function __construct($field, PttEntityInfo $entityInfo, $sentData, $languageCode = false)
     {
         $this->field = $field;
         $this->entityInfo = $entityInfo;

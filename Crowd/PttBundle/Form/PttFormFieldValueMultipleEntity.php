@@ -13,7 +13,7 @@ class PttFormFieldValueMultipleEntity extends PttFormFieldValue
 {
     private pttServices;
 
-    public function __construct(PttField $field, PttEntityInfo $entityInfo, $sentData, Request $request, $languageCode)
+    public function __construct($field, PttEntityInfo $entityInfo, $sentData, Request $request, $languageCode)
     {
         parent::__construct($field, $entityInfo, $sentData, $request, $languageCode);
         $this->pttServices = $entityInfo->getPttServices();
@@ -30,10 +30,10 @@ class PttFormFieldValueMultipleEntity extends PttFormFieldValue
 
     private function _valueForRelatedEntities()
     {
-        if (isset($this->field->options['modules'])) {
+        if (isset($this->field['options']['modules'])) {
             $array = [];
-            foreach ($this->field->options['modules'] as $key => $value) {
-                array_push($array, $this->pttServices->getSimpleFilter($value['entity'], ['where' => ['relatedid' => $this->_get('pttId'), 'model' => $this->field->getSimpleFormName()]]));
+            foreach ($this->field['options']['modules'] as $key => $value) {
+                array_push($array, $this->pttServices->getSimpleFilter($value['entity'], ['where' => ['relatedid' => $this->_get('pttId'), 'model' => $this->entityInfo->getFormName()]]));
             }
 
             return $array;

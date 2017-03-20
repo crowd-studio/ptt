@@ -17,12 +17,12 @@ class PttFormFieldSentValue
     protected $languageCode;
     protected $errors;
 
-    public function __construct(PttField $field, PttForm $pttForm, $languageCode = false)
+    public function __construct($field, PttForm $pttForm, $languageCode = false)
     {
         $this->field = $field;
         $this->languageCode = $languageCode;
         $this->entityInfo = $pttForm->getEntityInfo();
-        $this->sentData = $pttForm->getSentData($this->field->name, $this->languageCode);
-        $this->errors = $pttForm->getErrors($this->field->name, $this->languageCode);
+        $this->sentData = $pttForm->getSentData($field['name'], $this->languageCode);
+        $this->errors = $pttForm->getErrors($field['name'], $this->languageCode);
     }
 }

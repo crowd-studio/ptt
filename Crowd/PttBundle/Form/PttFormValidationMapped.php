@@ -7,10 +7,10 @@
 
 namespace Crowd\PttBundle\Form;
 
-class PttFormFieldSentValueFile extends PttFormFieldSentValue
+class PttFormValidationMapped extends PttFormValidation
 {
-    public function value()
+    public function isValid()
     {
-        return $this->entityInfo->get($this->field['name'], $this->languageCode);
+        return true;
     }
 }

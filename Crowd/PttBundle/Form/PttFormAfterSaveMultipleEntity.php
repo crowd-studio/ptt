@@ -50,7 +50,7 @@ class PttFormAfterSaveMultipleEntity extends PttFormAfterSave
 
     private function _deleteUnnecessaryRelations($entityRemains)
     {
-        foreach ($this->field->options['modules'] as $key => $value) {
+        foreach ($this->field['options']['modules'] as $key => $value) {
             $where = [
                 ['column' => 'relatedid', 'operator' => '=', 'value' => $this->entityInfo->get('pttId')],
                 ['column' => 'model', 'operator' => '=', 'value' => $this->entityInfo->getEntityName()]

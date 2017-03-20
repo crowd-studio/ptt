@@ -27,13 +27,13 @@ class PttFormFieldType
     protected $pttForm;
     protected $preferredLanguage;
 
-    public function __construct(PttForm $pttForm, PttField $field, $languageCode = false)
+    public function __construct(PttForm $pttForm, $field, $languageCode = false)
     {
         $this->entityInfo = $pttForm->getEntityInfo();
         $this->request = $pttForm->getRequest();
         $this->field = $field;
-        $this->errors = $pttForm->getErrors($this->field->name, $this->languageCode);
-        $this->sentData = $pttForm->getSentData($this->field->name, $this->languageCode);
+        $this->errors = $pttForm->getErrors($this->field['name'], $this->languageCode);
+        $this->sentData = $pttForm->getSentData($this->field['name'], $this->languageCode);
         $this->languageCode = $languageCode;
         $this->pttTrans = $pttForm->getPttTrans();
         $this->container = $pttForm->getContainer();
@@ -45,10 +45,10 @@ class PttFormFieldType
 
     public function start()
     {
-        $errorClass = ($this->errors && $this->field->showErrors) ? ' has-error': '';
+        $errorClass = ($this->errors && $this->field['showErrors']) ? ' has-error': '';
 
         return '
-		<div class="' . $this->extraClassesForFieldContainer() . $errorClass . '" data-fieldName="' . $this->field->getFormName($this->languageCode) . '" data-fieldType="' . $this->field->type . '" '. $this->_addExtraAttrsToContainer().'>
+		<div class="' . $this->extraClassesForFieldContainer() . $errorClass . '" data-fieldName="' . $this->pttForm->getFormName($this->field['name'], $this->languageCode) . '" data-fieldType="' . $this->field['type'] . '" '. $this->_addExtraAttrsToContainer().'>
 		';
     }
 

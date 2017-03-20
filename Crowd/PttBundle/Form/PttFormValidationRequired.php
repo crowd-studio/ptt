@@ -7,7 +7,7 @@
 
 namespace Crowd\PttBundle\Form;
 
-class PttFormValidationNotBlank extends PttFormValidation
+class PttFormValidationRequired extends PttFormValidation
 {
     public function isValid()
     {

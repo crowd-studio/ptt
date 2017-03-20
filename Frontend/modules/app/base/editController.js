@@ -8,7 +8,7 @@ function editController($scope, $element) {
 
 	let form = $($element).find('form').parsley();
 	form.on('form:submit', function() {
-		return false;
+		// return false;
 		return form.isValid();
 	});
 

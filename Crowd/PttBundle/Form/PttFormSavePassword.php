@@ -8,23 +8,25 @@
 namespace Crowd\PttBundle\Form;
 
 use Crowd\PttBundle\Form\PttFormSave;
+use Symfony\Component\HttpFoundation\Request;
 
 class PttFormSavePassword extends PttFormSave
 {
     private $factory;
 
-    public function __construct(PttField $field, PttEntityInfo $entityInfo, Request $request, $sentData, $container, $languageCode = false)
+    public function __construct($field, PttEntityInfo $entityInfo, Request $request, $sentData, $container, $languageCode = false)
     {
-        parent::__construct(PttField $field, PttEntityInfo $entityInfo, Request $request, $sentData, $container, $languageCode = false)
+        parent::__construct($field, $entityInfo, $request, $sentData, $container, $languageCode);
         $this->factory = $container->get('security.encoder_factory');
     }
 
     public function value()
     {
         $entity = $this->entityInfo->getEntity();
-        if (isset($this->_sentValue([])["first"]) && $this->_sentValue()["first"] != '') {
+        $sentValue = $this->_sentValue([]);
+        if (isset($sentValue["first"]) && $sentValue["first"] != '') {
             $encoder = $this->factory->getEncoder($entity);
-            $password = $encoder->encodePassword($this->_sentValue([])["first"], $entity->getSalt());
+            $password = $encoder->encodePassword($sentValue["first"], $entity->getSalt());
         } else {
             $password = $entity->getPassword();
         }

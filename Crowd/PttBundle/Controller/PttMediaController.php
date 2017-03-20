@@ -19,7 +19,6 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 
 use Crowd\PttBundle\Util\PttUtil;
 use Crowd\PttBundle\Form\PttUploadFile;
-use Crowd\PttBundle\Form\PttField;
 
 class PttMediaController extends Controller
 {
@@ -39,7 +38,7 @@ class PttMediaController extends Controller
             $width = ($request->get('width', false)) ? $request->get('width') : 0;
             $height = ($request->get('height', false)) ? $request->get('height') : 0;
 
-            $fieldData = [
+            $field = [
                 'name' => 'file',
                 'type' => 'file',
                 'options' => [
@@ -49,10 +48,8 @@ class PttMediaController extends Controller
             ];
 
             if ($uploadToS3) {
-                $fieldData['options']['s3'] = true;
+                $field['options']['s3'] = true;
             }
-
-            $field = new PttField($fieldData, 'upload-file');
 
             $files = $request->files->get('files');
 
@@ -64,7 +61,7 @@ class PttMediaController extends Controller
                 'filename' => $filename,
                 'resized' => $url . $width . '-' . $height . '-' . $filename
             ];
-            
+
             return new JsonResponse($data);
         } else {
             $originalNameArray = explode('.', $_FILES['file']['name']);

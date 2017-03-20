@@ -7,7 +7,7 @@
 					<h2 class="title">{{ page.title }}</h2>
 				{% endif %}
 				<div class="actions">
-					<input type="submit" class="btn btn-sm btn-success" name="save" value="{{'save' | trans}}" />
+					<input type="submit" class="btn btn-sm btn-success" value="{{'save' | trans}}" />
 					{% if app.request.get('id') == null %}
 						<input type="submit" class="btn btn-info btn-sm" value="{{ 'save_and_create_another' | trans }}" />
 					{% endif %}
