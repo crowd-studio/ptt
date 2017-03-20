@@ -276,6 +276,11 @@ class PttForm
                             'params' => $field
                         ];
 
+                        if(isset($field['validations'])){
+                            $info['validations'] = $field['validations'];
+                            unset($field['validations']);
+                        }
+
                         $this->htmlFields[$field['name']] = $this->twig->render('PttBundle:Form:factory.html.twig', $info);
                     }
                 }
