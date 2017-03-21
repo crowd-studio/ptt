@@ -9,10 +9,17 @@ namespace Crowd\PttBundle\Form;
 
 class PttFormValidationPassword extends PttFormValidation
 {
+    private $sentDataRepeated;
+    public function __construct(PttForm $pttForm, $field, $languageCode = false)
+    {
+        parent::__construct($pttForm, $field, $languageCode);
+        $this->sentDataRepeated = $pttForm->getSentData($this->field['name'] '_repeated', $languageCode);
+    }
+
     public function isValid()
     {
-        $value = (isset($this->sentData['first'])) ? $this->sentData['first'] : '';
-        $repeatedValue = (isset($this->sentData['repeat'])) ? $this->sentData['repeat'] : '';
+        $value = (isset($this->sentData)) ? $this->sentData : '';
+        $repeatedValue = (isset($this->sentDataRepeated)) ? $this->sentDataRepeated : '';
 
         $originalValue = $this->entityInfo->get($this->field->name);
 

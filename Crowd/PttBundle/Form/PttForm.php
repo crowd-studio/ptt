@@ -30,6 +30,7 @@ class PttForm
     private $pttTrans;
     private $totalData = 0;
     private $twig;
+    private $formName;
 
     public function __construct(EntityManager $entityManager, TokenStorage $securityContext, ContainerInterface $serviceContainer)
     {
@@ -40,6 +41,7 @@ class PttForm
         $metadata = $this->container->get('pttEntityMetadata');
         $this->languages = $metadata->getLanguages();
         $this->preferredLanguage = $metadata->getPreferredLanguage();
+
 
         $this->htmlFields = [];
     }
@@ -72,6 +74,7 @@ class PttForm
     public function setEntity($entity)
     {
         $this->entityInfo = new PttEntityInfo($entity, $this->container, $this->languages, $this->pttTrans);
+        $this->formName = $this->entityInfo->getEntityName();
     }
 
     public function setFormName($formName)
@@ -79,15 +82,15 @@ class PttForm
         $this->entityInfo->setFormName($formName);
     }
 
-    public function getFormName($fieldName, $languageCode = false, $append = '')
-    {
-        return ($languageCode) ? $this->entityInfo->getFormName() . '[' . $languageCode . '][' . $fieldName . ']' . $append : $this->entityInfo->getFormName() . '[' . $fieldName . ']' . $append;
-    }
-
-    public function getFormId($fieldName, $languageCode = false, $append = '')
-    {
-        return str_replace('--', '-', str_replace('[', '-', str_replace(']', '', $this->getCompleteFormName($fieldName, $languageCode, $append))));
-    }
+    // public function getFormName($fieldName, $languageCode = false, $append = '')
+    // {
+    //     return ($languageCode) ? $this->entityInfo->getFormName() . '[' . $languageCode . '][' . $fieldName . ']' . $append : $this->entityInfo->getFormName() . '[' . $fieldName . ']' . $append;
+    // }
+    //
+    // public function getFormId($fieldName, $languageCode = false, $append = '')
+    // {
+    //     return str_replace('--', '-', str_replace('[', '-', str_replace(']', '', $this->getCompleteFormName($fieldName, $languageCode, $append))));
+    // }
 
     public function getEntityInfo()
     {
@@ -97,19 +100,7 @@ class PttForm
     public function getSentData($fieldName = false, $languageCode = false)
     {
         if ($fieldName != false) {
-            if ($languageCode) {
-                if (isset($this->sentData['Trans'][$languageCode][$fieldName])) {
-                    return $this->sentData['Trans'][$languageCode][$fieldName];
-                } elseif (isset($this->sentDataTrans['Trans'][$languageCode][$fieldName])) {
-                    return $this->sentDataTrans['Trans'][$languageCode][$fieldName];
-                } else {
-                    return null;
-                }
-            } else {
-                return (isset($this->sentData[$fieldName])) ? $this->sentData[$fieldName] : null;
-            }
-        } elseif ($languageCode) {
-            return $this->sentData['Trans'][$languageCode];
+            return (isset($this->sentData[PttUtil::fieldName($this->formName, $fieldName, $languageCode)])) ? $this->sentData[PttUtil::fieldName($this->formName, $fieldName, $languageCode)] : null;
         } else {
             return $this->sentData;
         }
@@ -167,7 +158,7 @@ class PttForm
 
 
         if ($this->entityInfo->hasMethod('setTitle') && $this->entityInfo->hasMethod('getTitle')) {
-            if (isset($this->sentData['Trans'][$this->preferredLanguage->getCode()]['title'])) {
+            if ($this->getSentData('title', $this->preferredLanguage->getCode())) {
                 $this->entityInfo->set('title', $this->getSentData('title', $this->preferredLanguage->getCode()));
             }
         }
@@ -195,7 +186,7 @@ class PttForm
         }
 
         if (method_exists($entityPrincipal, 'updateTrans')) {
-            $entityPrincipal->updateTrans($this->sentData['Trans']);
+            $entityPrincipal->updateTrans($this->sentData);
         }
 
         $this->container->get('pttServices')->persist($entityPrincipal);
@@ -276,7 +267,7 @@ class PttForm
                 if (isset($block['trans'])) {
                     foreach ($this->languages as $k => $language) {
                         foreach ($block['trans'] as $field) {
-                            $this->htmlFields['Trans'][$language->getCode()][$field['name']] = $this->_renderField($field);
+                            $this->htmlFields['Trans'][$language->getCode()][$field['name']] = $this->_renderField($field, $language->getCode());
                         }
                     }
                 }
@@ -284,7 +275,7 @@ class PttForm
         }
     }
 
-    private function _renderField($field)
+    private function _renderField($field, $language = false)
     {
         $field['value'] = $this->_newValueForField($field);
         if ($field['type'] == 'image') {
@@ -304,6 +295,15 @@ class PttForm
                 $method = 'getList' . ucfirst($field['name']);
                 $field['list'] = $this->entityInfo->getEntity()->$method();
             }
+        }
+
+        $entityName = $this->entityInfo->getEntityName();
+        if ($language) {
+            $field['name'] = $entityName . '-Trans-'.$language.'-' . $field['name'];
+            // $field['id'] = $entityName . '[Trans]['.$language.']['.$field['name'].']';
+        } else {
+            $field['name'] = $entityName . '-' . $field['name'];
+            // $field['id'] = $entityName . '['.$field['name'].']';
         }
 
         $info = [
@@ -450,7 +450,7 @@ class PttForm
             $formSave = new $saveClassName($field, $this->entityInfo, $this->request, $this->sentData, $this->container, $languageCode);
             $value = $formSave->value();
             if (strtolower($field['type']) == 'selectmultiple') {
-                $this->entityInfo->set($field['name'] . '_model', $this->sentData[$field['name'] . '_model'], $languageCode);
+                $this->entityInfo->set($field['name'] . '_model', $this->sentData[PttUtil::fieldName($this->formName, $field['name'] . '_model', $languageCode)]);
             }
 
             $this->entityInfo->set($field['name'], $value, $languageCode);

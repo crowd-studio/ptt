@@ -208,4 +208,9 @@ class PttUtil
 
         return $json['version'];
     }
+
+    public static function fieldName($formName, $fieldName, $languageCode = false)
+    {
+        return ($languageCode) ? $formName . '-Trans-' . $languageCode . '-' . $fieldName : $formName . '-' . $fieldName;
+    }
 }

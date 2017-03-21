@@ -8,6 +8,7 @@
 namespace Crowd\PttBundle\Form;
 
 use Symfony\Component\HttpFoundation\Request;
+use Crowd\PttBundle\Util\PttUtil;
 
 class PttFormSave
 {
@@ -33,10 +34,6 @@ class PttFormSave
 
     protected function _sentValue($default = '')
     {
-        if (!$this->languageCode) {
-            return (isset($this->sentData[$this->field['name']])) ? $this->sentData[$this->field['name']] : $default;
-        } else {
-            return (isset($this->sentData[$this->languageCode][$this->field['name']])) ? $this->sentData[$this->languageCode][$this->field['name']] : $default;
-        }
+        return (isset($this->sentData[PttUtil::fieldName($this->entityInfo->getFormName(), $this->field['name'], $this->languageCode)])) ? $this->sentData[PttUtil::fieldName($this->entityInfo->getFormName(), $this->field['name'], $this->languageCode)] : $default;
     }
 }

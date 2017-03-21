@@ -24,9 +24,9 @@ class PttFormSavePassword extends PttFormSave
     {
         $entity = $this->entityInfo->getEntity();
         $sentValue = $this->_sentValue([]);
-        if (isset($sentValue["first"]) && $sentValue["first"] != '') {
+        if (isset($sentValue) && $sentValue != '') {
             $encoder = $this->factory->getEncoder($entity);
-            $password = $encoder->encodePassword($sentValue["first"], $entity->getSalt());
+            $password = $encoder->encodePassword($sentValue, $entity->getSalt());
         } else {
             $password = $entity->getPassword();
         }
