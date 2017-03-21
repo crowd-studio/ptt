@@ -41,7 +41,7 @@
 					{% if app.request.uri | slice(app.request.getSchemeAndHttpHost() | length) == path(item.path, item.parameters | default({})) %}
 						{% set class = class ~ ' current-item-selected' %}
 					{% endif %}
-					{% if ('current-item-selected' in childs | trim) or (item.path == 'list' and page.path in ['create', 'edit'] and page.parameters.entity == item.parameters.entity and item.cloned is not defined) %}
+					{% if ('current-item-selected' in childs | trim) or (item.path == 'list' and page.path in ['edit'] and page.parameters.entity == item.parameters.entity) %}
 						{% set class = class ~ ' current-item-selected' %}
 					{% endif %}
 

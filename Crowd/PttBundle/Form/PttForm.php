@@ -342,15 +342,15 @@ class PttForm
         "name" => "id",
         "type" => "hidden",
         "disabled" => true,
-        "options" => [],
-        "validations" => []
+        "options" => []
       ];
 
         $field['value'] = $this->_newValueForField($field);
 
         $info = [
           'type' => $this->_getFieldType($field),
-          'params' => $field
+          'params' => $field,
+          "validations" => []
       ];
 
         return ['id' => $this->twig->render('PttBundle:Form:factory.html.twig', $info)];
