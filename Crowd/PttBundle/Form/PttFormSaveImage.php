@@ -10,7 +10,7 @@ namespace Crowd\PttBundle\Form;
 use Crowd\PttBundle\Form\PttFormSave;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
-class PttFormSaveFile extends PttFormSave
+class PttFormSaveImage extends PttFormSave
 {
     public function value()
     {
