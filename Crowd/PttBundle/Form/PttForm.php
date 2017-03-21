@@ -233,25 +233,24 @@ class PttForm
             }
 
             if ($this->languages && isset($this->htmlFields['Trans'])) {
-                $html .= '<ul class="nav nav-tabs col-sm-12">';
+                $html .= '<div class="form-group col-xs-12"><div class="tabs"><ul class="tab-nav list-inline">';
 
                 foreach ($this->languages as $k => $language) {
-                    $active = ($k == 0) ? 'active' : '';
                     $error = ($this->errors->hasErrors($language->getCode())) ? ' error' : '';
-                    $html .= '<li class="' . $active . $error . ' language-'. $language->getCode() .'"><a href="language-' . $language->getCode() . '" >' . $language->getTitle() . '</a></li>';
+                    $html .= '<li class="' . $error . '"><a data-toggle="#' . strtolower($block['title']) . '-' . $language->getCode() . '" ng-click="changeTabEvent($event)">' . $language->getTitle() . '</a></li>';
                 }
 
-                $html .= '</ul><div class="tab-content col-sm-12">';
+                $html .= '</ul><div class="tab-content">';
                 foreach ($this->languages as $k => $language) {
-                    $active = ($k == 0) ? ' active' : '';
-                    $html .= '<div class="tab-pane' . $active . ' language-' .$language->getCode()  . '">';
+                    $id = strtolower($block['title']) . '-' . $language->getCode();
+                    $html .= '<div id="' . $id . '" class="tab-pane"><div class="container-fluid"><div class="row">';
                     foreach ($this->htmlFields['Trans'][$language->getCode()] as $fields) {
                         $html .= $fields;
                     }
-                    $html .= '</div>';
+                    $html .= '</div></div></div>';
                 }
 
-                $html .= '</div>';
+                $html .= '</div></div></div>';
             }
             $html .= '</div></div>';
         }

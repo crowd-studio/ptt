@@ -1,0 +1,28 @@
+body.edit{
+	.tabs{
+		margin-top: 15px;
+		margin-bottom: 15px;
+		background: #f1f1f1;
+		ul.tab-nav{
+			margin-left:0;
+			li a{
+				color: #999;
+				cursor:pointer;
+				&:hover,
+				&:focus,
+				&.active{
+					color: @blue;
+					text-decoration: underline;
+				}
+
+				&.with-errors{
+					color: @brand-danger!important;
+				}
+			}
+			padding: 10px 0px;
+			border-bottom: 1px solid #d0d0d0;
+		}
+		div.tab-content{
+		}
+	}
+}

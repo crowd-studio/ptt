@@ -18,9 +18,20 @@ function editController($scope, $element) {
 	});
 
 	let form = $($element).find('form').parsley();
-	form.on('form:submit', function() {
-		// return false;
-		return form.isValid();
+	form.on('form:error', function() {
+		angular.forEach($($element).find('form .tabs'), function(tab) {
+			let withErrors = [];
+			angular.forEach($(tab).find('.tab-pane'), function(pane, index) {
+				withErrors[index] = $(pane).find('.parsley-error').length > 0;
+			});
+			angular.forEach($(tab).find('.tab-nav li a'), function(title, index) {
+				if(withErrors[index]){
+					$(title).addClass('with-errors');
+				}else{
+					$(title).removeClass('with-errors');
+				}
+			});
+		});
 	});
 
 	$element.removeClass('ng-hide');
