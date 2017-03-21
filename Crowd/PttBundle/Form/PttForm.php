@@ -157,6 +157,7 @@ class PttForm
 
         $this->entityInfo->getEntity()->beforeSave($this->sentData);
         $this->_performFieldsLoopAndCallMethodNamed('_validateField');
+
         return !$this->errors->hasErrors();
     }
 
@@ -289,13 +290,10 @@ class PttForm
                             }
                         }
 
-
                         $info = [
                             'type' => $this->_getFieldType($field),
                             'params' => $field
                         ];
-
-
 
                         if (isset($field['validations'])) {
                             $info['validations'] = $field['validations'];
@@ -407,8 +405,8 @@ class PttForm
                 }
             }
         }
-        $value = $this->_valueForField($field, $languageCode);
 
+        $value = $this->_valueForField($field, $languageCode);
 
         $mapped = true;
         if (isset($field['validations']['mapped']) && $field['validations']['mapped'] == false) {

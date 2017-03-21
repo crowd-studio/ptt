@@ -15,6 +15,7 @@ class PttFormSaveFile extends PttFormSave
     public function value()
     {
         $file = $this->_files();
+
         if ($file) {
             $value = PttUploadFile::upload($file, $this->field);
         } else {
@@ -29,17 +30,6 @@ class PttFormSaveFile extends PttFormSave
             if ($deleteValue && $deleteValue != '0') {
                 PttUploadFile::deleteFile($deleteValue);
                 $value = '';
-            }
-        }
-
-        if ($value != '' && $this->field['type'] == 'gallery') {
-            $path = $this->_sentValue(false);
-            if ($path) {
-                $nameArray = explode('/', $path);
-                $originalName = end($nameArray);
-
-                $uploadFile = new UploadedFile($path, $originalName, mime_content_type($path), filesize($path));
-                $value = PttUploadFile::upload($uploadFile, $this->field);
             }
         }
 

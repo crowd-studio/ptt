@@ -82,7 +82,7 @@ class PttController extends Controller
                 throw $this->createNotFoundException($this->get('pttTrans')->trans('the_entity_does_not_exist', $this->_entityInfoValue('lowercase')));
             }
         }
-
+        
         $pttForm = $this->get('pttForm');
         $pttForm->setEntity($saveEntity); // on es crea el ppttEntityInfo
         $pttForm->createView();

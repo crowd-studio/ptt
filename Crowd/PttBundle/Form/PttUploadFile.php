@@ -43,7 +43,7 @@ class PttUploadFile
 
     public static function upload($file, $field = false)
     {
-        $type = (isset($field['options']['type'])) ? $field['options']['type'] : 'image';
+        $type = (isset($field['type'])) ? $field['type'] : 'image';
         $validFilename = PttUtil::checkTypeForFile($file->getClientOriginalName(), $type);
         if (!$validFilename) {
             return '';
@@ -156,7 +156,7 @@ class PttUploadFile
 
         $file->move(WEB_DIR . $uploadsUrl, $uploadName);
 
-        if (PttUploadFile::toS3($field)) {
+        if (PttUploadFile::_toS3($field)) {
             PttUploadFile::_uploadToS3(WEB_DIR . $uploadsUrl . $uploadName, $uploadName);
         }
 
@@ -179,8 +179,8 @@ class PttUploadFile
 
     public static function deleteFile($field, $name)
     {
-        if (PttUploadFile::toS3($field)) {
-            PttUploadFile::_deleteS3($name);
+        if (PttUploadFile::_toS3($field)) {
+            PttUploadFile::_deleteS3($field, $name);
         } else {
             PttUploadFile::_delete($name);
         }
@@ -190,19 +190,31 @@ class PttUploadFile
     {
         try {
             $uploadsUrl = PttUtil::pttConfiguration('images');
-            foreach (glob(WEB_DIR . "*-". $name) as $filename) {
+            foreach (glob(WEB_DIR . $uploadsUrl . "*". $name) as $filename) {
                 unlink($filename);
             }
         } catch (Exception $e) {
         }
     }
 
-    private static function _deleteS3($name)
+    private static function _deleteS3($field, $name)
     {
-        // $s3 = PttUtil::pttConfiguration('s3');
+        $s3 = PttUtil::pttConfiguration('s3');
+        \S3::setAuth($s3['accessKey'], $s3['secretKey']);
 
-        // \S3::setAuth($s3['accessKey'], $s3['secretKey']);
-        // \S3::deleteObject($s3['bucket'], $s3['dir'] . '/' . $filename);
+        if ($field['type'] == 'image') {
+            if (isset($field['options']) && isset($field['options']['sizes'])) {
+                $sizes = $field['options']['sizes'];
+            } else {
+                $sizes = [['w' => 0, 'h' => 0]];
+            }
+
+            foreach ($sizes as $key => $size) {
+                \S3::deleteObject($s3['bucket'], $s3['dir'] . '/' . $size['w'] . '-' . $size['h'] . '-' . $name);
+            }
+        } else {
+            \S3::deleteObject($s3['bucket'], $s3['dir'] . '/' . $name);
+        }
     }
 
     public static function _toS3($field)

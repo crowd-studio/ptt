@@ -29,6 +29,6 @@ class PttFormFieldValue
     protected function _get($name = null)
     {
         $name = ($name) ? $name : $this->field['name'];
-        return ($this->entityInfo->hasMethod('get' . $name, $this->languageCode)) ? $this->entityInfo->get($name, $this->languageCode) : null;
+        return ($this->entityInfo->hasMethod('get' . ucfirst($name), $this->languageCode)) ? $this->entityInfo->get($name, $this->languageCode) : null;
     }
 }
