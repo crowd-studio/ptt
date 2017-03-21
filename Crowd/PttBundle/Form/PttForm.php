@@ -157,7 +157,6 @@ class PttForm
 
         $this->entityInfo->getEntity()->beforeSave($this->sentData);
         $this->_performFieldsLoopAndCallMethodNamed('_validateField');
-
         return !$this->errors->hasErrors();
     }
 
@@ -374,39 +373,6 @@ class PttForm
     private function _updateSentData()
     {
         $this->sentData = $this->request->request->all();
-        // die();
-        // if (strpos($this->entityInfo->getFormName(), '[') !== false) {
-        //     $cleanName = str_replace(']', '', $this->entityInfo->getFormName());
-        //
-        //     $cleanNameArr = explode('[', $cleanName);
-        //     $sentData = [];
-        //
-        //     foreach ($cleanNameArr as $i => $key) {
-        //         if ($i == 0) {
-        //             $sentData = $this->request->get($key);
-        //         } else {
-        //             if (isset($sentData[$key])) {
-        //                 $sentData = $sentData[$key];
-        //             }
-        //         }
-        //     }
-        //     $this->sentData = $sentData;
-        //
-        //     $transEntity = [];
-        //     if ($this->languages) {
-        //         foreach ($this->languages as $language) {
-        //             $entityTrans = $this->entityInfo->getFormName() . '[Trans]';
-        //             $aux = $this->request->get($entityTrans);
-        //             if (isset($aux)) {
-        //                 $transEntity[$language->getCode()] = reset($aux);
-        //             }
-        //         }
-        //     }
-        //     $this->sentDataTrans = $transEntity;
-        // } else {
-        //     $this->sentData = $this->request->get($this->entityInfo->getFormName());
-        //     $transEntity = [];
-        // }
     }
 
     private function _performFieldsLoopAndCallMethodNamed($nameOfMethod)
@@ -441,8 +407,8 @@ class PttForm
                 }
             }
         }
-
         $value = $this->_valueForField($field, $languageCode);
+
 
         $mapped = true;
         if (isset($field['validations']['mapped']) && $field['validations']['mapped'] == false) {

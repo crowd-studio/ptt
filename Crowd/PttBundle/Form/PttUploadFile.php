@@ -43,7 +43,7 @@ class PttUploadFile
 
     public static function upload($file, $field = false)
     {
-        $type = (isset($field->options['type'])) ? $field->options['type'] : 'image';
+        $type = (isset($field['options']['type'])) ? $field['options']['type'] : 'image';
         $validFilename = PttUtil::checkTypeForFile($file->getClientOriginalName(), $type);
         if (!$validFilename) {
             return '';
@@ -95,7 +95,7 @@ class PttUploadFile
         $uploadsUrl = PttUtil::pttConfiguration('images');
 
         if ($extension != 'gif') {
-            $sizes = ($file && isset($field->options['sizes'])) ? $field->options['sizes'] : [['h' => 0, 'w' => 0]];
+            $sizes = ($file && isset($field['options']['sizes'])) ? $field['options']['sizes'] : [['h' => 0, 'w' => 0]];
 
             $realSize = getimagesize($file);
 
@@ -130,7 +130,7 @@ class PttUploadFile
                         \WideImage\WideImage::load($file)->resize($width, $height, 'outside')->saveToFile($saveThumbPath, $level);
                         \WideImage\WideImage::load($saveThumbPath)->crop('center', 'center', $width, $height)->saveToFile($saveThumbPath);
                     }
-                    if (PttUploadFile::toS3($field)) {
+                    if (PttUploadFile::_toS3($field)) {
                         PttUploadFile::_uploadToS3($saveThumbPath, $filename);
                     }
                 }
@@ -207,11 +207,11 @@ class PttUploadFile
 
     public static function _toS3($field)
     {
-        return ((isset($field->options['s3']) && $field->options['s3']) || (isset($field->options['cdn']) && $field->options['cdn']));
+        return ((isset($field['options']['s3']) && $field['options']['s3']) || (isset($field['options']['cdn']) && $field['options']['cdn']));
     }
 
     public static function _toCDN($field)
     {
-        return (isset($field->options['cdn']) && $field->options['cdn']);
+        return (isset($field['options']['cdn']) && $field['options']['cdn']);
     }
 }
