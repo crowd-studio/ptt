@@ -21,13 +21,13 @@ class PttFormSaveImage extends PttFormSave
             $value = $this->_value();
 
             if ($this->languageCode) {
-                $deleteValue = (isset($this->sentData[$this->languageCode][$this->field['name'] . '-delete'])) ? $this->sentData[$this->languageCode][$this->field['name'] . '-delete'] : null;
+                $deleteValue = (isset($this->sentData['check'][$this->languageCode][$this->field['name']])) ? $this->sentData['check'][$this->languageCode][$this->field['name']] : null;
             } else {
-                $deleteValue = (isset($this->sentData[$this->field['name'] . '-delete'])) ? $this->sentData[$this->field['name'] . '-delete'] : null;
+                $deleteValue = (isset($this->sentData['check'][$this->field['name']])) ? $this->sentData['check'][$this->field['name']] : null;
             }
 
-            if ($deleteValue && $deleteValue != '0') {
-                PttUploadFile::deleteFile($deleteValue);
+            if ($deleteValue === 'true') {
+                PttUploadFile::deleteFile($this->field, $value);
                 $value = '';
             }
         }
