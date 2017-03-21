@@ -232,7 +232,7 @@ class PttForm
                 }
             }
 
-            if ($this->languages && isset($fields->trans[$i]) && $fields->trans[$i]) {
+            if ($this->languages && isset($this->htmlFields['Trans'])) {
                 $html .= '<ul class="nav nav-tabs col-sm-12">';
 
                 foreach ($this->languages as $k => $language) {
@@ -245,8 +245,8 @@ class PttForm
                 foreach ($this->languages as $k => $language) {
                     $active = ($k == 0) ? ' active' : '';
                     $html .= '<div class="tab-pane' . $active . ' language-' .$language->getCode()  . '">';
-                    foreach ($fields->trans[$i] as $field) {
-                        $html .= $this->htmlFields[$language->getCode()][$field->name];
+                    foreach ($this->htmlFields['Trans'][$language->getCode()] as $fields) {
+                        $html .= $fields;
                     }
                     $html .= '</div>';
                 }
@@ -270,41 +270,53 @@ class PttForm
             foreach ($fields['block'] as $key => $block) {
                 if ($block['static']) {
                     foreach ($block['static'] as $field) {
-                        $field['value'] = $this->_newValueForField($field);
-                        if ($field['type'] == 'image') {
-                            if (isset($field['options']['sizes'][0])) {
-                                $w = $field['options']['sizes'][0]['w'];
-                                $h = $field['options']['sizes'][0]['h'];
-                            } else {
-                                $w = $h = 0;
-                            }
-                            $field['url'] = $this->_urlPrefix($field) . $w . '-' . $h . '-' . $field['value'];
+                        $this->htmlFields[$field['name']] = $this->_renderField($field);
+                    }
+                }
+
+                if (isset($block['trans'])) {
+                    foreach ($this->languages as $k => $language) {
+                        foreach ($block['trans'] as $field) {
+                            $this->htmlFields['Trans'][$language->getCode()][$field['name']] = $this->_renderField($field);
                         }
-
-                        if ($field['type'] == 'select') {
-                            if (isset($field['entity'])) {
-                                $field['list'] = $this->_selectEntity($field);
-                            } else {
-                                $method = 'getList' . ucfirst($field['name']);
-                                $field['list'] = $this->entityInfo->getEntity()->$method();
-                            }
-                        }
-
-                        $info = [
-                            'type' => $this->_getFieldType($field),
-                            'params' => $field
-                        ];
-
-                        if (isset($field['validations'])) {
-                            $info['validations'] = $field['validations'];
-                            unset($field['validations']);
-                        }
-
-                        $this->htmlFields[$field['name']] = $this->twig->render('PttBundle:Form:factory.html.twig', $info);
                     }
                 }
             }
         }
+    }
+
+    private function _renderField($field)
+    {
+        $field['value'] = $this->_newValueForField($field);
+        if ($field['type'] == 'image') {
+            if (isset($field['options']['sizes'][0])) {
+                $w = $field['options']['sizes'][0]['w'];
+                $h = $field['options']['sizes'][0]['h'];
+            } else {
+                $w = $h = 0;
+            }
+            $field['url'] = ($field['value'] != '') ? $this->_urlPrefix($field) . $w . '-' . $h . '-' . $field['value'] : null;
+        }
+
+        if ($field['type'] == 'select') {
+            if (isset($field['entity'])) {
+                $field['list'] = $this->_selectEntity($field);
+            } else {
+                $method = 'getList' . ucfirst($field['name']);
+                $field['list'] = $this->entityInfo->getEntity()->$method();
+            }
+        }
+
+        $info = [
+            'type' => $this->_getFieldType($field),
+            'params' => $field
+        ];
+
+        if (isset($field['validations'])) {
+            $info['validations'] = $field['validations'];
+            unset($field['validations']);
+        }
+        return $this->twig->render('PttBundle:Form:factory.html.twig', $info);
     }
 
     private function _selectEntity($field)
