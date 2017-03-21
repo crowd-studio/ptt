@@ -41,7 +41,7 @@
 			</div>
 		</div>
 		<div class="preview-block" ng-show="withPreview && loaded">
-			<div {{ utilities.attrGroup([['max-width', params.maxWidth], ['max-height', params.maxHeight]]) }} class="preview-file{{params.imageClass ? ' ' ~ params.imageClass : '' }}" init-file="{{ params.url }}"></div>
+			<div {{ utilities.attrGroup([['max-width', params.maxWidth], ['max-height', params.maxHeight]]) }} class="preview-file{{params.imageClass ? ' ' ~ params.imageClass : '' }}" init-file="{{ params.url ? params.url : params.value }}"></div>
 			<a class="btn btn-xs btn-danger remove-file" ng-click="removeFileFunction($event)">{{ 'remove' | trans }}</a>
 		</div>
 		
