@@ -1,0 +1,36 @@
+{%- if params -%}
+	{% import 'PttBundle:Default:utilities.html.twig' as utilities %}
+	{% set params = params | extend({
+		elementClass: false,
+		outterClass: false,
+		name: false,
+		id: false,
+		value: false,
+		label: false,
+		placeholder: false,
+		rows: 6,
+		size: 'long',
+		markdown: false
+	}) %}
+
+	{% set validations = {
+		mapped: true,
+		required: false,
+		minlength: false,
+		maxlength: false,
+		equal: false,
+	} | merge (validations | default({}) )  %}
+
+	<div class="form-group {{utilities.getSize(params.size)}}{{ params.outterClass ? ' ' ~ params.outterClass : '' }}">
+		{%- if params.label and params.label != "" -%}
+			<label{{ utilities.attr('for', params.id) }}>{{ params.label }}{{ validations.required ? ' *' : '' }}</label>
+		{%- endif -%}
+		<div class="errors" {{- ( params.name is defined ? ' id="error-' ~ params.name ~ '"' : '' ) | raw -}}></div>
+		<textarea class="form-control{{ params.elementClass ? ' ' ~ params.elementClass : '' }}"{{ utilities.attrGroup([ ['name', params.name], ['placeholder', params.placeholder], ['id', params.id], ['rows', params.rows], ['data-parsley-errors-container', '#error-' ~ params.id ],['maxlength', validations.maxlength],['minlength', validations.minlength], ['markdown-directive', params.markdown] ]) }}{{ ( validations.equal ? ' data-parsley-equalto="#' ~ validations.equal ~ '"' : '') | raw }}{{ validations.required ? ' required' : '' }}>
+		{{ params.value ? params.value : '' }}
+		</textarea>
+		{%- if params.markdown -%}
+		<div class="markdown-help">{{ 'markdownHelp' | trans }}</div>
+		{%- endif -%}
+	</div>
+{%- endif -%}
