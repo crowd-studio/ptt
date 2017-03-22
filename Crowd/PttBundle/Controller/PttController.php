@@ -256,7 +256,7 @@ class PttController extends Controller
     {
         $helper = $this->get('security.authentication_utils');
 
-        return $this->render('AdminBundle:Login:login.html.twig', [
+        return $this->render('PttBundle:Login:login.html.twig', [
             'last_username' => $helper->getLastUsername(),
             'error'         => $helper->getLastAuthenticationError(),
             'keymap'        => ''
