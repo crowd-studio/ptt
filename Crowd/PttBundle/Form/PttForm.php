@@ -82,16 +82,6 @@ class PttForm
         $this->entityInfo->setFormName($formName);
     }
 
-    // public function getFormName($fieldName, $languageCode = false, $append = '')
-    // {
-    //     return ($languageCode) ? $this->entityInfo->getFormName() . '[' . $languageCode . '][' . $fieldName . ']' . $append : $this->entityInfo->getFormName() . '[' . $fieldName . ']' . $append;
-    // }
-    //
-    // public function getFormId($fieldName, $languageCode = false, $append = '')
-    // {
-    //     return str_replace('--', '-', str_replace('[', '-', str_replace(']', '', $this->getCompleteFormName($fieldName, $languageCode, $append))));
-    // }
-
     public function getEntityInfo()
     {
         return $this->entityInfo;

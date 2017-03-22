@@ -11,20 +11,24 @@ class PttHelperFormFieldTypeEntity
 {
     private $entityInfo;
     private $relatedClassName;
-    private $fieldEntity;
+    private $entity;
 
-    public function __construct(PttEntityInfo $entityInfo, $fieldEntity)
+    public function __construct(PttEntityInfo $entityInfo, $entity)
     {
-        $this->fieldEntity = $fieldEntity;
-
-        $classNameArr = explode('\\', $entityInfo->getClassName());
-        array_pop($classNameArr);
-        $this->$relatedClassName =  implode('\\', $classNameArr) . '\\' . $this->fieldEntity;
-
         $this->entityInfo = $entityInfo;
+        $this->entity = $entity;
+
+        $classNameArr = explode('\\', $this->entityInfo->getClassName());
+        array_pop($classNameArr);
+        $this->relatedClassName =  implode('\\', $classNameArr) . '\\' . $this->entity;
     }
 
     public function cleanRelatedEntity()
+    {
+        $this->getRelatedEntity();
+    }
+
+    protected function getCleanRelatedEntity()
     {
         $entity = new $this->relatedClassName();
         return $entity;
@@ -35,7 +39,7 @@ class PttHelperFormFieldTypeEntity
         if (!isset($entityData['id']) || $entityData['id'] == '') {
             $entity = $this->cleanRelatedEntity();
         } else {
-            $entity = $this->entityInfo->getPttServices()->getOne($this->fieldEntity, $entityData['id']);
+            $entity = $this->entityInfo->getPttServices()->getOne($this->entity, $entityData['id']);
         }
 
         foreach ($entityData as $key => $value) {
@@ -55,7 +59,7 @@ class PttHelperFormFieldTypeEntity
             if ($entityData->getPttId() == null) {
                 $entity = $this->cleanRelatedEntity();
             } else {
-                $entity = $this->entityInfo->getPttServices()->getOne($this->fieldEntity, $entityData->getId());
+                $entity = $this->entityInfo->getPttServices()->getOne($this->entity, $entityData->getId());
             }
         } else {
             return $this->entityForDataArray($entityData);

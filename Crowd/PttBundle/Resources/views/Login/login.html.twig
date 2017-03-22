@@ -37,26 +37,13 @@
 														{% include 'PttBundle:Form:fieldInput.html.twig' %}
 
 														{% set params = {
-															id : "_remember_me",
-															name: "remember_me",
+															id : "remember_me",
+															name: "_remember_me",
 															label: "Remember me"
 														} %}
 
 														{% include 'PttBundle:Form:fieldCheckbox.html.twig' %}
-
-					                	<!-- div class="form-group col-xs-12">
-						                    <input type="text" class="form-control" id="username" placeholder="{{'username'|trans}}" name="_username" value="{{ last_username }}">
-						                </div >
-						                <div class="form-group col-xs-12">
-						                    <input type="password" class="form-control" id="password" name="_password" placeholder="{{'password'|trans}}">
-						                </div>
-						                <div class="form-group col-xs-12">
-						                    <div>
-						                        <div class="checkbox">
-						                            <input type="checkbox" anem="_remember_me"> <label>{{'remember_me'|trans}}</label>
-						                        </div>
-						                    </div>
-						                </div-->
+														
 						                <div class="form-group col-xs-12">
 						                    <div class="button">
 						                        <button type="submit" class="btn btn-default">{{'sign_in'|trans}}</button>
