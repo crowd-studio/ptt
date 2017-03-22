@@ -278,6 +278,7 @@ class PttForm
     private function _renderField($field, $language = false)
     {
         $field['value'] = $this->_newValueForField($field, $language);
+
         if ($field['type'] == 'image') {
             if (isset($field['options']['sizes'][0])) {
                 $w = $field['options']['sizes'][0]['w'];
@@ -298,13 +299,9 @@ class PttForm
         }
 
         $entityName = $this->entityInfo->getEntityName();
-        if ($language) {
-            $field['name'] = $entityName . '-Trans-'.$language.'-' . $field['name'];
-            // $field['id'] = $entityName . '[Trans]['.$language.']['.$field['name'].']';
-        } else {
-            $field['name'] = $entityName . '-' . $field['name'];
-            // $field['id'] = $entityName . '['.$field['name'].']';
-        }
+        $field['name'] = PttUtil::fieldName($entityName, $field['name'], $language);
+
+        $field['id'] = $field['name'];
 
         $info = [
             'type' => $this->_getFieldType($field),
