@@ -65,5 +65,5 @@ function listController($scope, $element, $http, loader) {
 
 	
 
-	$element.removeClass('ng-hide');
+	$element.removeClass('hide');
 };

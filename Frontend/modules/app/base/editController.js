@@ -17,9 +17,9 @@ function editController($scope, $element) {
 		}
 	});
 
-	let form = $($element).find('form').parsley();
-	form.on('form:error', function() {
-		angular.forEach($($element).find('form .tabs'), function(tab) {
+	$scope.form = $($element).find('form');
+	$scope.form.parsley().on('form:error', function() {
+		angular.forEach($scope.form.find('.tabs'), function(tab) {
 			let withErrors = [];
 			angular.forEach($(tab).find('.tab-pane'), function(pane, index) {
 				withErrors[index] = $(pane).find('.parsley-error').length > 0;
@@ -33,6 +33,11 @@ function editController($scope, $element) {
 			});
 		});
 	});
+	$scope.saveEvent = function(ev,action){
+		ev.preventDefault();
+		$scope.action = action;
+		$scope.form.submit();
+	}
 
-	$element.removeClass('ng-hide');
+	$element.removeClass('hide');
 };
