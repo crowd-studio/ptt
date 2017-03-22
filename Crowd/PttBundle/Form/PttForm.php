@@ -100,7 +100,7 @@ class PttForm
     public function getSentData($fieldName = false, $languageCode = false)
     {
         if ($fieldName != false) {
-            return (isset($this->sentData[PttUtil::fieldName($this->formName, $fieldName, $languageCode)])) ? $this->sentData[PttUtil::fieldName($this->formName, $fieldName, $languageCode)] : null;
+            return PttUtil::getFieldData($this->sentData, $this->formName, $fieldName, null, $languageCode);
         } else {
             return $this->sentData;
         }
@@ -300,7 +300,11 @@ class PttForm
 
         $entityName = $this->entityInfo->getEntityName();
         $field['id'] = PttUtil::fieldId($entityName, $field['name'], $language);
+        if ($field['type'] == 'image' || $field['type'] == 'file') {
+            $field['check'] = PttUtil::fieldCheck($entityName, $field['name'], $language);
+        }
         $field['name'] = PttUtil::fieldName($entityName, $field['name'], $language);
+
 
 
         $info = [
@@ -379,8 +383,6 @@ class PttForm
     private function _updateSentData()
     {
         $this->sentData = $this->request->request->all();
-        var_dump($this->sentData);
-        die();
     }
 
     private function _performFieldsLoopAndCallMethodNamed($nameOfMethod)

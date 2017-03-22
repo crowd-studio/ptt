@@ -34,6 +34,6 @@ class PttFormSave
 
     protected function _sentValue($default = '')
     {
-        return (isset($this->sentData[PttUtil::fieldName($this->entityInfo->getFormName(), $this->field['name'], $this->languageCode)])) ? $this->sentData[PttUtil::fieldName($this->entityInfo->getFormName(), $this->field['name'], $this->languageCode)] : $default;
+        return PttUtil::getFieldData($this->sentData, $this->entityInfo->getFormName(), $this->field['name'], $default, $this->languageCode);
     }
 }

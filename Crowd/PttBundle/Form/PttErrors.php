@@ -21,8 +21,6 @@ class PttErrors
 
     public function add($key, $message, $languageCode = false)
     {
-        var_dump($key, $message);
-        die();
         if ($languageCode) {
             if (!is_array($message)) {
                 if (!isset($this->errors[$languageCode][$key])) {

@@ -22,7 +22,7 @@ class PttFormSaveFavicon extends PttFormSave
 
     public function value()
     {
-        $files = $this->_files();
+        $file = $this->request->files->get($this->entityInfo->getFormName())[$this->field['name']];
 
         if ($this->languageCode) {
             $file = (isset($files["Trans"][$this->languageCode][$this->field['name']])) ? $files["Trans"][$this->languageCode][$this->field['name']] : false;
@@ -39,39 +39,19 @@ class PttFormSaveFavicon extends PttFormSave
                 $this->request->getSchemeAndHttpHost()
             );
         } else {
-            $value = $this->_value();
-            if ($this->languageCode) {
-                $deleteValue = (isset($this->sentData[$this->languageCode][$this->field['name'] . '-delete']) ? $this->sentData[$this->languageCode][$this->field['name'] . '-delete'] : null;
-            else {
-                $deleteValue = (isset($this->sentData[$this->field['name'] . '-delete']) ? $this->sentData[$this->field['name'] . '-delete'] : null;
-            }
+          if ($this->languageCode) {
+              $deleteValue = (isset($this->sentData['check'][$this->entityInfo->getFormName()][$this->languageCode][$this->field['name']])) ? $this->sentData['check'][$this->entityInfo->getFormName()][$this->languageCode][$this->field['name']] : null;
+          } else {
+              $deleteValue = (isset($this->sentData['check'][$this->entityInfo->getFormName()][$this->field['name']])) ? $this->sentData['check'][$this->entityInfo->getFormName()][$this->field['name']] : null;
+          }
 
-            if($deleteValue && $deleteValue != 0) {
-                PttUploadFile::deleteFile($deleteValue);
-                PttUploadFile::deleteFavicons();
-                $value = '';
-            }
+          if ($deleteValue === 'true') {
+              PttUploadFile::deleteFile($this->field, $value);
+              PttUploadFile::deleteFavicons();
+              $value = '';
+          }
         }
 
         return ($value == null) ? $value : '';
-    }
-
-    private function _files()
-    {
-        if (strpos($this->entityInfo->getFormName(), '[') !== false) {
-            $cleanName = str_replace(']', '', $this->entityInfo->getFormName());
-            $cleanNameArr = explode('[', $cleanName);
-            $files = $this->request->files->get($cleanNameArr[0]);
-
-            for ($i=1; $i < count($cleanNameArr); $i++) {
-                if (isset($files[$cleanNameArr[$i])) {
-                    $files = $files[$cleanNameArr[$i];
-                }
-            }
-
-            return $files;
-        } else {
-            return $this->request->files->get($this->entityInfo->getEntityName());
-        }
     }
 }

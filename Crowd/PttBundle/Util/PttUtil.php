@@ -218,4 +218,19 @@ class PttUtil
     {
         return ($languageCode) ? $formName . '[Trans][' . $languageCode . '][' . $fieldName  . ']': $formName . '[' . $fieldName . ']';
     }
+
+    public static function fieldCheck($formName, $fieldName, $languageCode = false)
+    {
+        return ($languageCode) ? 'check[' . $formName . '][Trans][' . $languageCode . '][' . $fieldName  . ']': 'check[' . $formName . '][' . $fieldName . ']';
+    }
+
+    public static function getFieldData($sentData, $formName, $fieldName, $default = null, $languageCode = false)
+    {
+        $exists = ($languageCode) ? isset($sentData[$formName]['Trans'][$languageCode][$fieldName]) : isset($sentData[$formName][$fieldName]);
+        if ($exists) {
+            return ($languageCode) ? $sentData[$formName]['Trans'][$languageCode][$fieldName] : $sentData[$formName][$fieldName];
+        } else {
+            return $default;
+        }
+    }
 }
