@@ -51,6 +51,7 @@ class PttEntityInfo
 
         if (method_exists($entity, 'getTrans')) {
             $trans = $entity->getTrans();
+
             if (!count($trans)) {
                 foreach ($languages as $language) {
                     $this->entity->createTrans($language);
@@ -59,15 +60,15 @@ class PttEntityInfo
                 $trans = $entity->getTrans();
             }
 
-            for ($iterator = $trans->getIterator(); $iterator->valid(); $iterator->next()) {
-                if ($iterator->current()->getLanguage()) {
-                    $lang = $iterator->current()->getLanguage()->getCode();
+            foreach ($trans as $key => $value) {
+                if ($value->getLanguage()) {
+                    $lang = $value->getLanguage()->getCode();
                 } else {
-                    $lang = $languages[$iterator->key() % 2]->getCode();
-                    $iterator->current()->setLanguage($languages[$iterator->key() % 2]);
-                    $iterator->current()->setRelatedid($this->entity);
+                    $lang = $languages[$key % 2]->getCode();
+                    $value->setLanguage($languages[$key % 2]);
+                    $value->setRelatedid($this->entity);
                 }
-                $this->transEntities[$lang] = $iterator->current();
+                $this->transEntities[$lang] = $value;
             }
         }
 

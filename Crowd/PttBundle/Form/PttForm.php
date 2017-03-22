@@ -185,9 +185,9 @@ class PttForm
             }
         }
 
-        if (method_exists($entityPrincipal, 'updateTrans')) {
-            $entityPrincipal->updateTrans($this->sentData);
-        }
+        // if (method_exists($entityPrincipal, 'updateTrans')) {
+        //     $entityPrincipal->updateTrans($this->sentData);
+        // }
 
         $this->container->get('pttServices')->persist($entityPrincipal);
 
@@ -277,7 +277,7 @@ class PttForm
 
     private function _renderField($field, $language = false)
     {
-        $field['value'] = $this->_newValueForField($field);
+        $field['value'] = $this->_newValueForField($field, $language);
         if ($field['type'] == 'image') {
             if (isset($field['options']['sizes'][0])) {
                 $w = $field['options']['sizes'][0]['w'];

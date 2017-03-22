@@ -157,29 +157,14 @@ class PttEntityMetadata
 
     public function getLanguages()
     {
-        $pttCache = new PttCache('getLanguages');
-        $data = $pttCache->retrieve();
-        if (!$data) {
-            $data = $this->em->getRepository($this->_getLanguageBundle())->findAll();
-            $pttCache->store($data);
-        }
-
-        return $data;
+        return $this->em->getRepository($this->_getLanguageBundle())->findAll();
     }
 
     public function getPreferredLanguage()
     {
-        $pttCache = new PttCache('getPreferredLanguage');
-        $data = $pttCache->retrieve();
-        if (!$data) {
-            $data = $this->em->getRepository($this->_getLanguageBundle())->findBy(['preferred' => 1]);
-            $data = (isset($data[0])) ? $data[0] : null;
-            $pttCache->store($data);
-        }
-
-        return $data;
+        $data = $this->em->getRepository($this->_getLanguageBundle())->findBy(['preferred' => 1]);
+        return (isset($data[0])) ? $data[0] : null;
     }
-
 
     private function _getLanguageBundle()
     {
