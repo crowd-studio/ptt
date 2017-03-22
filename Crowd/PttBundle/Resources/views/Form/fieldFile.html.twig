@@ -23,7 +23,7 @@
 		required: false,
 	} | merge (validations | default({}) )  %}
 
-	<div class="form-group file-upload loading col-xs-12 {{utilities.getSize(params.size)}}{{ params.outterClass ? ' ' ~ params.outterClass : '' }}">
+	<div class="form-group file-upload loading {{utilities.getSize(params.size)}}{{ params.outterClass ? ' ' ~ params.outterClass : '' }}">
 		{%- if params.label and params.label != "" -%}
 			<label{{ utilities.attr('for', params.id) }}>{{ params.label }}{{ validations.required ? ' *' : '' }}</label>
 		{%- endif -%}
