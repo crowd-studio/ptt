@@ -82,7 +82,7 @@ class PttController extends Controller
                 throw $this->createNotFoundException($this->get('pttTrans')->trans('the_entity_does_not_exist', $this->_entityInfoValue('lowercase')));
             }
         }
-        
+
         $pttForm = $this->get('pttForm');
         $pttForm->setEntity($saveEntity); // on es crea el ppttEntityInfo
         $pttForm->createView();
@@ -93,8 +93,26 @@ class PttController extends Controller
 
                 $this->flushCache($saveEntity);
                 // $this->get('session')->getFlashBag()->add('success', $pttForm->getSuccessMessage());
+                switch ($request->request->get('_action')) {
+                  case 'edit':
+                    $route = $this->generateUrl($request->get('_route'), $request->query->all());
+                    break;
+                  case 'list':
+                    $route = $this->generateUrl('list', ['entity' => $entity]);
+                    break;
+                  case 'create':
+                    $route = $this->generateUrl('create', ['entity' => $entity]);
+                    break;
+                  case 'copy':
+                    $this->copyAction($request, $entity, $saveEntity->getId());
+                    $route = $this->generateUrl($request->get('_route'), $request->query->all());
+                    break;
+                  default:
+                    $route = $this->generateUrl('list', ['entity' => $entity]);
+                    break;
+                }
 
-                $route = ($id == null && $request->get('another') != null) ? $this->generateUrl('edit', ['entity' => $entity, 'id' => $id]) : $this->generateUrl('list', ['entity' => $entity]);
+
                 return $this->redirect($route);
             } else {
                 var_dump('Validation Error');

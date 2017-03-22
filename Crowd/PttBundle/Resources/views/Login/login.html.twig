@@ -18,9 +18,35 @@
 					                	<h2>{{'login'|trans}}</h2>
 					                </div>
 					                <div class="row login-body">
-					                	<div class="form-group col-xs-12">
+														{% set params = {
+															id : "username",
+															name: "_username",
+															placeholder: 'Username',
+															value : last_username
+														} %}
+
+														{% include 'PttBundle:Form:fieldInput.html.twig' %}
+
+														{% set params = {
+															type: "password",
+															id : "password",
+															name: "_password",
+															placeholder: 'password' | trans,
+														} %}
+
+														{% include 'PttBundle:Form:fieldInput.html.twig' %}
+
+														{% set params = {
+															id : "_remember_me",
+															name: "remember_me",
+															label: "Remember me"
+														} %}
+
+														{% include 'PttBundle:Form:fieldCheckbox.html.twig' %}
+
+					                	<!-- div class="form-group col-xs-12">
 						                    <input type="text" class="form-control" id="username" placeholder="{{'username'|trans}}" name="_username" value="{{ last_username }}">
-						                </div>
+						                </div >
 						                <div class="form-group col-xs-12">
 						                    <input type="password" class="form-control" id="password" name="_password" placeholder="{{'password'|trans}}">
 						                </div>
@@ -30,23 +56,23 @@
 						                            <input type="checkbox" anem="_remember_me"> <label>{{'remember_me'|trans}}</label>
 						                        </div>
 						                    </div>
-						                </div>
-						                <div class="form-group">
+						                </div-->
+						                <div class="form-group col-xs-12">
 						                    <div class="button">
 						                        <button type="submit" class="btn btn-default">{{'sign_in'|trans}}</button>
 						                    </div>
 						                </div>
 					                </div>
-						                
+
 					            </form>
 					        </div>
 				    	</div>
-					        
+
 				    </div>
 			    </div>
 			</div>
 		</div>
 	</div>
-		
+
 
 {% endblock %}
