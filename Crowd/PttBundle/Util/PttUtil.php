@@ -209,8 +209,13 @@ class PttUtil
         return $json['version'];
     }
 
+    public static function fieldId($formName, $fieldName, $languageCode = false)
+    {
+        return ($languageCode) ? $formName . '_Trans_' . $languageCode . '_' . $fieldName : $formName . '_' . $fieldName;
+    }
+
     public static function fieldName($formName, $fieldName, $languageCode = false)
     {
-        return ($languageCode) ? $formName . '-Trans-' . $languageCode . '-' . $fieldName : $formName . '-' . $fieldName;
+        return ($languageCode) ? $formName . '[Trans][' . $languageCode . '][' . $fieldName  . ']': $formName . '[' . $fieldName . ']';
     }
 }

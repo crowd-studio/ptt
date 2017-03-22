@@ -299,9 +299,9 @@ class PttForm
         }
 
         $entityName = $this->entityInfo->getEntityName();
+        $field['id'] = PttUtil::fieldId($entityName, $field['name'], $language);
         $field['name'] = PttUtil::fieldName($entityName, $field['name'], $language);
 
-        $field['id'] = $field['name'];
 
         $info = [
             'type' => $this->_getFieldType($field),
@@ -379,6 +379,8 @@ class PttForm
     private function _updateSentData()
     {
         $this->sentData = $this->request->request->all();
+        var_dump($this->sentData);
+        die();
     }
 
     private function _performFieldsLoopAndCallMethodNamed($nameOfMethod)
