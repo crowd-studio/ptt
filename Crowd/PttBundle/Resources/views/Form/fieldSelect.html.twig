@@ -5,6 +5,7 @@
 	{% set params = {
 		type: "text",
 		name: false,
+		id: false,
 		value: false,
 		placeholder: false,
 		
@@ -23,14 +24,14 @@
 		required: false,
 	} | merge (params.validations | default({}) )  %}
 
+	{{dump(params)}}
+
 	<div class="form-group col-xs-12 {{utilities.getSize(params.size)}}{{ params.outterClass ? ' ' ~ params.outterClass : '' }}">
 		{%- if params.label and params.label != "" -%}
-			<label{{ utilities.attr('for', params.name) }}>{{ params.label }}{{ validations.required ? ' *' : '' }}</label>
+			<label{{ utilities.attr('for', params.id) }}>{{ params.label }}{{ validations.required ? ' *' : '' }}</label>
 		{%- endif -%}
-		{%- if params.type != 'hidden' and params.errors -%}
-		<div class="errors" {{- ( params.name is defined ? ' id="error-' ~ params.name ~ '"' : '' ) | raw -}}></div>
-		{%- endif -%}
-		<select class="form-control{{ params.elementClass ? ' ' ~ params.elementClass : '' }}"{{ utilities.attrGroup([ ['name', params.name], ['id', params.name], ['data-parsley-errors-container', params.errors ? '#error-' ~ params.name : false] ]) }}{{ validations.required ? ' required' : '' }}>
+		<div class="errors" {{- ( params.id is defined ? ' id="error-' ~ params.id ~ '"' : '' ) | raw -}}></div>
+		<select class="form-control{{ params.elementClass ? ' ' ~ params.elementClass : '' }}"{{ utilities.attrGroup([ ['name', params.name], ['id', params.id], ['data-parsley-errors-container', params.errors ? '#error-' ~ params.id : false] ]) }}{{ validations.required ? ' required' : '' }}>
 			{%- if params.placeholder -%}
 				<option value{{ params.value == false or params.value == "" ? ' selected' : '' }}>{{ params.placeholder | trans }}</option>
 				<option disabled>---</option>

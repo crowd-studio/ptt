@@ -4,6 +4,7 @@
 		elementClass: false,
 		outterClass: false,
 		name: false,
+		id: false,
 		value: false,
 		checked: false,
 		label: false,
@@ -19,7 +20,7 @@
 	<div class="form-group checkbox col-xs-12 {{utilities.getSize(params.size)}}{{ params.outterClass ? ' ' ~ params.outterClass : '' }}">
 		<div class="errors" {{- ( params.name is defined ? ' id="error-' ~ params.name ~ '"' : '' ) | raw -}}></div>
 		<label>
-			<input type="checkbox" class="checkbox{{ params.elementClass ? ' ' ~ params.elementClass : '' }}"{{ utilities.attrGroup([ ['name', params.name], ['value', params.value], ['data-parsley-errors-container', '#error-' ~ params.name] ]) }}{{ validations.required ? ' required' : '' }}{{ params.checked ? ' checked' : '' }}>
+			<input type="checkbox" class="checkbox{{ params.elementClass ? ' ' ~ params.elementClass : '' }}"{{ utilities.attrGroup([ ['name', params.name], ['id', params.id], ['value', params.value], ['data-parsley-errors-container', '#error-' ~ params.name] ]) }}{{ validations.required ? ' required' : '' }}{{ params.checked ? ' checked' : '' }}>
 			{%- if params.label and params.label != "" -%}
 				{%- set label = params.label -%}
 				{%- for key,item in params.replace %}
