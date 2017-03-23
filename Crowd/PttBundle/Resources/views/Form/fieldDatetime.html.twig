@@ -1,0 +1,13 @@
+{% set params = {
+	size: 'medium',
+	attr: [
+		'datetime'
+	],
+	addon: 'glyphicon glyphicon-calendar'
+} | merge (params | default({})) %}
+
+{% set params = params | merge({
+	type : 'text'
+}) %}
+
+{% include 'PttBundle:Form:fieldInput.html.twig' %}
