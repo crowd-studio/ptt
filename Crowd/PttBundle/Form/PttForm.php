@@ -182,8 +182,7 @@ class PttForm
 
     private function _validateField($field, $languageCode = false)
     {
-        $formValidation = PttClassNameGenerator::validation($field, $this, $languageCode);
-
+        PttClassNameGenerator::validation($field, $this, $languageCode);
         if (PttUtil::isMapped($field)) {
             $value = PttClassNameGenerator::sentValue($field, $this, $languageCode);
             $this->entityInfo->set($field['name'], $value, $languageCode);

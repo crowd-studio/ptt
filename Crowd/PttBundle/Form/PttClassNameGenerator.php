@@ -76,9 +76,9 @@ class PttClassNameGenerator
                     $capitalizedType .= ucfirst($type);
                 }
                 $className = 'Crowd\PttBundle\Form\PttFormValidation' . $capitalizedType;
-                return new $className($form, $field, $languageCode);
+                $formValidation = new $className($form, $field, $languageCode);
                 if (!$formValidation->isValid()) {
-                    $form->errors->add($field['name'], $message, $languageCode);
+                    $form->addError($field['name'], $message, $languageCode);
                 }
             }
         }

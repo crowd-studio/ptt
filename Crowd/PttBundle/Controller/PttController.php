@@ -106,7 +106,8 @@ class PttController extends Controller
                     break;
                   case 'copy':
                     $this->copyAction($request, $entity, $saveEntity->getId());
-                    $route = $this->generateUrl($request->get('_route'), $request->query->all());
+                    $array = array_merge(['entity' => $entity, 'id' => $id], $request->query->all());
+                    $route = $this->generateUrl($request->get('_route'), $array);
                     break;
                   default:
                     $route = $this->generateUrl('list', ['entity' => $entity]);

@@ -16,8 +16,9 @@ class PttFormValidationUnique extends PttFormValidation
         $exists = $this->entityInfo->getPttServices()->get($this->entityInfo->getEntityName(), [
             'where' => [['and' => [
                     ['column' => 'id', 'operator' => '!=', 'value' => ($this->entityInfo->get('id')) ? $this->entityInfo->get('id') : -1],
-                    ['column' => $this->field->name, 'operator' => '=', 'value' => $this->_sentValue()]
+                    ['column' => $this->field['name'], 'operator' => '=', 'value' => $this->_sentValue()]
             ]]]]);
+
         return (!isset($exists[0]));
     }
 }
