@@ -26,6 +26,7 @@
     "bootstrap-colorpicker": "^2.5.1",
     "bootstrap-datepicker": "^1.6.4",
     "dropzone": "^4.3.0",
+    "eonasdan-bootstrap-datetimepicker": "^4.17.47",
     "evaporate": "^2.0.8",
     "jquery": "^3.1.1",
     "lodash": "^4.17.4",
@@ -76,6 +77,11 @@
     "parsley-en": "./node_modules/parsleyjs/dist/i18n/en.js"
   },
   "browserify-shim": {
+    "eonasdan-bootstrap-datetimepicker": {
+      "depends": [
+        "jquery:$"
+      ]
+    },
     "parsleyjs": {
       "depends": [
         "jquery:jQuery"

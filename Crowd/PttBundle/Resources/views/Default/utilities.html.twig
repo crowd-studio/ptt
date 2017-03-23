@@ -42,13 +42,21 @@
 {% macro attrGroup(list) %}
 	{% import _self as utilities %}
 	{%- for item in list -%}
-	    {{ utilities.attr(item[0], item[1]) }}
+		{%- if item is iterable -%}
+	    	{{ utilities.attr(item[0], item[1]) }}
+    	{%- else -%}
+    		{{ utilities.attr(item) }}
+    	{%- endif -%}
 	{%- endfor -%}
 {% endmacro %}
 
 {# attr#}
 {% macro attr(name, value) %}
-	{{- value != false and value != "" ? (' ' ~ name ~ '="' ~ value ~ '"') | raw : '' -}}
+	{%- if value is null -%}
+		{{ (' ' ~ name ) }}
+	{%- else -%}
+		{{- value != false and value != "" ? (' ' ~ name ~ '="' ~ value ~ '"') | raw : '' -}}
+	{%- endif -%}
 {% endmacro %}
 
 {# embed #}
