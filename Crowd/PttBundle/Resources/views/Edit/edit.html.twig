@@ -7,7 +7,7 @@
 					<h2 class="title">{{ page.title }}</h2>
 				{% endif %}
 				<div class="actions">
-					<input type="hidden" name="_action" value="{[{action}]}">
+					<input type="hidden" name="_action" ng-model="action">
 					<a ng-click="saveEvent($event, 'edit')" class="btn btn-sm btn-success" >{{ 'save' | trans }}</a>
 					<a ng-click="saveEvent($event, 'list')" class="btn btn-sm btn-info">{{ 'saveAndClose' | trans }}</a>
 					<a ng-click="saveEvent($event, 'create')" class="btn btn-sm btn-info">{{ 'saveAndNew' | trans }}</a>

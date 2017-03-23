@@ -1,7 +1,6 @@
 'use strict';
 
 var $ = require('jquery');
-var simpleMDE = require('simplemde');
 
 module.exports = /*@ngInject*/
 function editController($scope, $element) {
@@ -36,7 +35,7 @@ function editController($scope, $element) {
 	$scope.saveEvent = function(ev,action){
 		ev.preventDefault();
 		$scope.action = action;
-		$scope.form.submit();
+		$scope.$$postDigest(()=>{$scope.form.submit();});
 	}
 
 	$element.removeClass('hide');
