@@ -12,6 +12,8 @@
 
 namespace Crowd\PttBundle\Form;
 
+use Crowd\PttBundle\Util\PttUtil;
+
 class PttClassNameGenerator
 {
     public static function field($type)
@@ -19,39 +21,74 @@ class PttClassNameGenerator
         return 'Crowd\PttBundle\Form\PttFormFieldType' . ucfirst($type);
     }
 
-    public static function save($type)
+    public static function saveForField($field, $formName, $entityInfo, $request, $sentData, $container, $languageCode)
+    {
+        if (PttUtil::isMapped($field) && strtolower($field['type']) != 'entity' && strtolower($field['type']) != 'multipleentity' && strtolower($field['type']) != 'gallery') {
+            $value = PttClassNameGenerator::save($field, $entityInfo, $request, $sentData, $container, $languageCode);
+
+            if (strtolower($field['type']) == 'selectmultiple') {
+                $entityInfo->set($field['name'] . '_model', $sentData[PttUtil::fieldName($formName, $field['name'] . '_model', $languageCode)]);
+            }
+
+            $entityInfo->set($field['name'], $value, $languageCode);
+        }
+    }
+
+    public static function save($field, $entityInfo, $request, $sentData, $container, $languageCode)
     {
         $name = 'Crowd\PttBundle\Form\PttFormSave';
-        $className = $name . ucfirst($type);
-        return (class_exists($className)) ? $className : $name . 'Default';
+        $className = $name . ucfirst($field['type']);
+        $className = (class_exists($className)) ? $className : $name . 'Default';
+
+        $formSave = new $className($field, $entityInfo, $request, $sentData, $container, $languageCode);
+        return $formSave->value();
     }
 
-    public static function sentValue($type)
+    public static function sentValue($field, $form, $languageCode)
     {
         $name = 'Crowd\PttBundle\Form\PttFormFieldSentValue';
-        $className = $name . ucfirst($type);
-        return (class_exists($className)) ? $className : $name . 'Default';
+        $className = $name . ucfirst($field['type']);
+        $className = (class_exists($className)) ? $className : $name . 'Default';
+
+        $sentValue = new $className($field, $form, $languageCode);
+        return $sentValue->value();
     }
 
-    public static function afterSave($type)
+    public static function afterSave($field, $entityInfo, $sentData, $formName, $languageCode)
     {
-        $className = 'Crowd\PttBundle\Form\PttFormAfterSave' . ucfirst($type);
-        return (!class_exists($className)) ? false : $className;
-    }
+        $className = 'Crowd\PttBundle\Form\PttFormAfterSave' . ucfirst($field['type']);
+        if (class_exists($className)) {
+            $name =  (strtolower($field['type']) != 'selectmultiple') ? $field['type'] : $field['type'] . '_model';
+            $sentData = PttUtil::getFieldData($sentData, $formName, $name, null, $languageCode);
+            $afterFormSave = new $className($field, $entityInfo, $sentData, $languageCode);
 
-    public static function validation($type)
-    {
-        $capitalizedType = '';
-        $typeArr = explode('_', $type);
-        foreach ($typeArr as $type) {
-            $capitalizedType .= ucfirst($type);
+            $afterFormSave->perform();
         }
-        return 'Crowd\PttBundle\Form\PttFormValidation' . $capitalizedType;
     }
 
-    public static function value($type)
+    public static function validation($field, $form, $languageCode)
     {
-        $className = 'Crowd\PttBundle\Form\PttFormFieldValue' . ucfirst($type);
-        return (!class_exists($className)) ? 'Crowd\PttBundle\Form\PttFormFieldValueDefault' : $className;
+        if (isset($field['validations'])) {
+            foreach ($field['validations'] as $type => $message) {
+                $capitalizedType = '';
+                $typeArr = explode('_', $type);
+                foreach ($typeArr as $type) {
+                    $capitalizedType .= ucfirst($type);
+                }
+                $className = 'Crowd\PttBundle\Form\PttFormValidation' . $capitalizedType;
+                return new $className($form, $field, $languageCode);
+                if (!$formValidation->isValid()) {
+                    $form->errors->add($field['name'], $message, $languageCode);
+                }
+            }
+        }
+    }
+
+    public static function value($field, $entityInfo, $sentData, $request, $languageCode)
+    {
+        $className = 'Crowd\PttBundle\Form\PttFormFieldValue' . ucfirst($field['type']);
+        $className = (!class_exists($className)) ? 'Crowd\PttBundle\Form\PttFormFieldValueDefault' : $className;
+        $formValue = new $className($field, $entityInfo, $sentData, $request, $languageCode);
+        return $formValue->value();
     }
 }

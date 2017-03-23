@@ -12,12 +12,13 @@ class PttHelperFormFieldTypeEntity
     private $entityInfo;
     private $relatedClassName;
     private $entity;
+    private $pttForm;
 
-    public function __construct(PttEntityInfo $entityInfo, $entity)
+    public function __construct(PttEntityInfo $entityInfo, PttForm $pttForm, $entity)
     {
         $this->entityInfo = $entityInfo;
         $this->entity = $entity;
-
+        $this->pttForm = $pttForm;
         $classNameArr = explode('\\', $this->entityInfo->getClassName());
         array_pop($classNameArr);
         $this->relatedClassName =  implode('\\', $classNameArr) . '\\' . $this->entity;
@@ -68,19 +69,16 @@ class PttHelperFormFieldTypeEntity
         return $entity;
     }
 
-    public function formForEntity($entity, $key = false, $errors = false)
+    public function formForEntity($entity, $key = false)
     {
-        $pttForm = $this->entityInfo->getForm();
-        $pttForm->setEntity($entity);
+        $this->pttForm->setFormName($this->pttForm->getFormName() . '[' . $key . ']');
+        $pttFormRender = new PttFormRender($this->pttForm, $entity, $this->fields);
+        return $pttFormRender->perform();
+    }
 
-        if ($errors != false) {
-            $pttForm->setErrors($errors);
-        }
-        if ($key === false) {
-            $key = ($entity->getPttId() != null) ? $entity->getPttId() : '{{index}}';
-        }
-
-        $pttForm->setFormName($this->field->getFormName() . '[' . $key . ']');
-        return $pttForm;
+    public function save($entity, $sentData)
+    {
+        $pttFormSave = new PttFormSave($this->pttForm, $entity, $this->fields, $sentData);
+        return $pttFormSave->perform();
     }
 }

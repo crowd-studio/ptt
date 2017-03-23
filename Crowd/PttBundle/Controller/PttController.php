@@ -95,7 +95,8 @@ class PttController extends Controller
                 // $this->get('session')->getFlashBag()->add('success', $pttForm->getSuccessMessage());
                 switch ($request->request->get('_action')) {
                   case 'edit':
-                    $route = $this->generateUrl($request->get('_route'), $request->query->all());
+                    $array = array_merge(['entity' => $entity, 'id' => $id], $request->query->all());
+                    $route = $this->generateUrl($request->get('_route'), $array);
                     break;
                   case 'list':
                     $route = $this->generateUrl('list', ['entity' => $entity]);

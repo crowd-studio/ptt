@@ -209,6 +209,14 @@ class PttUtil
         return $json['version'];
     }
 
+    public static function fields($kernel, $bundle, $entity)
+    {
+        $filePath = $kernel->locateResource('@' . $bundle . '/Form/' . $entity . '.yml');
+        $yaml = new Parser();
+
+        return $yaml->parse(file_get_contents($filePath));
+    }
+
     public static function fieldId($formName, $fieldName, $languageCode = false)
     {
         return ($languageCode) ? $formName . '_Trans_' . $languageCode . '_' . $fieldName : $formName . '_' . $fieldName;
@@ -232,5 +240,10 @@ class PttUtil
         } else {
             return $default;
         }
+    }
+
+    public static function isMapped($field)
+    {
+        return (isset($field['validations']['mapped']) && $field['validations']['mapped'] == false) ? false : true;
     }
 }
