@@ -189,6 +189,13 @@ class PttForm
 
     private function _validateField($field, $languageCode = false)
     {
+        if ($field['type'] == 'url') {
+            if (isset($field['type']['validations'])) {
+                $field['type']['validations'][] = ['url' => true];
+            } else {
+                $field['validations'] = ['url' => true];
+            }
+        }
         PttClassNameGenerator::validation($field, $this, $languageCode);
         if (PttUtil::isMapped($field)) {
             $value = PttClassNameGenerator::sentValue($field, $this, $languageCode);
