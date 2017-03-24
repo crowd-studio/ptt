@@ -64,11 +64,10 @@ www.crowd.st
 
     <script>
 		window.conf = {
+			lang: '{{ info.languages.active }}',
 			baseURL:  '{{ baseUrl }}',
-            {% if trans is defined %}
-                trans: {{ trans | raw }}
-            {% endif %}
-            
+			trans: {{ info.trans | raw }},
+			notifications : {{ info.notifications | raw }}
 		};
     </script>
 

@@ -2,23 +2,23 @@
 {% block content %}
 	<div class="content hide" ng-controller="listController">
 		<div class="content-header header-line">
-			{% if page.title is defined %}
-				<h2 class="title">{{ page.title }}</h2>
+			{% if data.title is defined %}
+				<h2 class="title">{{ 'listTitle' | trans | replace({'%entityname%': data.title}) | capitalize  }}</h2>
 			{% endif %}
 			<div class="actions">
-				{% if sortable %}
+				{% if data.sortable %}
 					<a ng-show="!changeOrder" ng-click="activeOrderEvent($event)" class="btn btn-default btn-sm btn-sort">{{ 'order' | trans }}</a>
 					<a ng-show="changeOrder" ng-click="cancelOrderEvent($event)" class="btn btn-sm btn-danger">{{ 'cancel' | trans }}</a>
 					<a ng-show="changeOrder" ng-click="saveOrderEvent($event)" class="btn btn-sm btn-success">{{ 'save' | trans }}</a>
 				{% endif %}
-				{% if filters|length > 0 %}
+				{% if data.filters|length > 0 %}
 					<a ng-click="showFilters = !showFilters" class="btn btn-default btn-sm btn-filter" ng-class="{'btn-primary': showFilters}">{{ 'filters' | trans }}</a>
 				{% endif %}
-				<a class="btn btn-success btn-sm" ng-show="!changeOrder" href="{{ path('create', {entity: entityConfigurationInfo.entityName}) }}">{{ 'createNew' | trans }} {{entityInfo.lowercase}}</a>
+				<a class="btn btn-success btn-sm" ng-show="!changeOrder" href="{{ path('create', {entity: entityConfigurationInfo.entityName}) }}">{{ 'createNew' | trans }} {{ data.title }}</a>
 			</div>
 		</div>
-		{% if filters|length > 0 %}
-			<div class="filters well" ng-show="showFilters" active-filters="{{ activeFilters | json_encode }}">
+		{% if data.filters|length > 0 %}
+			<div class="filters well" ng-show="showFilters" active-filters="{{ data.activeFilters | json_encode }}">
 				<form action="{{ path('list', {entity : entityConfigurationInfo.entityName}) }}" method="post" name="filter-{{ entityConfigurationInfo.entityName }}" class="row" style="margin:0;padding:0;">
 					<div class="filters-header header-line">
 						<h3>Filters</h3>
@@ -28,11 +28,11 @@
 						</div>
 					</div>
 					<div class="filters-content">
-						{% for key,f in filters %}
+						{% for key,f in data.filters %}
 							{% set name = 'filter-' ~ entityConfigurationInfo.entityName ~ '-' ~ f.field %}
 							{% if f.type == 'text' %}
 								<div class="form-group">
-									<input class="form-control" type="text" name="{{ name }}" placeholder="{{ f.label }}"{{ attribute(activeFilters, name) is defined ? (' value="' ~ attribute(activeFilters, name) ~ '"') | raw : '' }}>
+									<input class="form-control" type="text" name="{{ name }}" placeholder="{{ f.label }}"{{ attribute(data.activeFilters, name) is defined ? (' value="' ~ attribute(data.activeFilters, name) ~ '"') | raw : '' }}>
 								</div>
 							{% elseif f.type == 'select' %}
 								<div class="form-group">
@@ -40,7 +40,7 @@
 										<option value="" selected="">{{ f.label }}</option>
 										<option disabled="" value="---">---</option>
 										{% for value,label in f.options %}
-											<option value="{{ value }}"{{ attribute(activeFilters, name) is defined and attribute(activeFilters, name) == value ? (' selected') | raw : '' }}>{{ label }}</option>
+											<option value="{{ value }}"{{ attribute(data.activeFilters, name) is defined and attribute(data.activeFilters, name) == value ? (' selected') | raw : '' }}>{{ label }}</option>
 										{% endfor %}
 									</select>
 								</div>
@@ -51,17 +51,17 @@
 			</div>
 		{% endif %}
 		<div class="content-inner">
-			{% if rows | length > 0 %}
+			{% if data.table.rows | length > 0 %}
 				<table class="table table-striped">
 					<thead>
 						<tr>
-							{% if sortable %}<td class="handle" ng-show="changeOrder"></td>{% endif %}
-							{% for field in fields %}
+							{% if data.sortable %}<td class="handle" ng-show="changeOrder"></td>{% endif %}
+							{% for field in data.table.fields %}
 								<td{{ field.primary is defined and field.primary ? '' : ' class="hidden-xs"' | raw}}>
-									{%- if sortable -%}
+									{%- if data.sortable -%}
 										{{ field.label }}
 									{%- else -%}
-										<a href="{{ path('list', {entity : entityConfigurationInfo.entityName, order : field.field}) }}">{%- if order is not null and order[0] == field.field -%}{{ attribute(sprites,order[1]) }}{%- endif -%}{{field.label}}</a>
+										<a href="{{ path('list', {entity : entityConfigurationInfo.entityName, order : field.field}) }}">{%- if data.order is not null and data.order[0] == field.field -%}{{ attribute(sprites, data.order[1]) }}{%- endif -%}{{field.label}}</a>
 									{%- endif -%}
 								</td>
 							{% endfor %}
@@ -69,10 +69,10 @@
 						</tr>
 					</thead>
 					<tbody id="items" >
-						{% for row in rows %}
-							<tr{% if sortable %} data-id="{{row.id}}"{% endif %} ng-class="{'draggable': changeOrder}">
-							{% if sortable %}<td class="handle" ng-show="changeOrder">{{ sprites.order() }}</td>{% endif %}
-								{% for field in fields %}
+						{% for row in data.table.rows %}
+							<tr{% if data.sortable %} data-id="{{row.id}}"{% endif %} ng-class="{'draggable': changeOrder}">
+							{% if data.sortable %}<td class="handle" ng-show="changeOrder">{{ sprites.order() }}</td>{% endif %}
+								{% for field in data.table.fields %}
 									<td class="{{ field.primary is defined and field.primary ? '' : 'hidden-xs'}}">
 									{%- if row | dynamicValue(field.field).timestamp is defined -%}
 										{{ row | dynamicValue(field.field).date|date("d/m/Y") }}
@@ -82,13 +82,13 @@
 								{% endfor %}
 								<td class="actions" ng-show="!changeOrder">
 									<a href="{{ path('edit', {entity : entityConfigurationInfo.entityName, id : row.id}) }}" title="Edit">{{ sprites.edit() }}</a>
-									<a href="{{ path('delete', {entity : entityConfigurationInfo.entityName, id : row.id}) }}" alert='{{ 'delete_the_entity_name'|trans([entityInfo.lowercase, row]) }}' title="Delete">{{ sprites.delete() }}</a>
+									<a href="{{ path('delete', {entity : entityConfigurationInfo.entityName, id : row.id}) }}" alert='{{ 'delete_the_entity_name'|trans([data.title, row]) }}' title="Delete">{{ sprites.delete() }}</a>
 									</td>
 								</tr>
 						 {% endfor %}
 					 </tbody>
 				 </table>
-				{%- if pagination is defined and pagination.maxPages is defined and pagination.maxPages > 1 -%}
+				{%- if data.pagination is defined and data.pagination.maxPages is defined and data.pagination.maxPages > 1 -%}
 					<div class="pagination-block">
 						{% include 'PttBundle:Default:pagination.html.twig' %}
 					</div>

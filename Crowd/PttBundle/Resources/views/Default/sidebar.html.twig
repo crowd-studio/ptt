@@ -4,9 +4,9 @@
 <div class="sidebar">
 	<div class="sidebar-inner">
 		<div class="menu-container">
-			{{ sidebar.menu(info('admin').sidebar, page, true) }}
+			{{ sidebar.menu(info('admin').sidebar, info.actualPath, true) }}
 		</div>
-		<span class="copyright">Crowd Studio - {{ pttVersion }}</span>
+		<span class="copyright">Crowd Studio - {{ info.pttVersion }}</span>
 	</div>	
 </div>
 

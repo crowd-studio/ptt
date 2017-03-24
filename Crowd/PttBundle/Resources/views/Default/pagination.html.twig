@@ -1,39 +1,39 @@
-{% if pagination.maxPages > 1 %}
-    {% if pagination.currentPage is null %}
+{% if data.pagination.maxPages > 1 %}
+    {% if data.pagination.currentPage is null %}
         {% set pagination = {currentPage : 1} | extend(pagination) %}
     {% endif %}
 
     {% set limitVisible = 2 %}
 
     <ul class="pagination pagination-sm">
-        <li {{ pagination.currentPage == 1 ? 'class="disabled"' }}>
-            <a href="{{ path('list', {entity : entityConfigurationInfo.entityName, page : pagination.currentPage-1 < 1 ? 1 : pagination.currentPage-1 }) }}">&laquo;</a>
+        <li {{ data.pagination.currentPage == 1 ? 'class="disabled"' }}>
+            <a href="{{ path('list', {entity : entityConfigurationInfo.entityName, page : data.pagination.currentPage-1 < 1 ? 1 : data.pagination.currentPage-1 }) }}">&laquo;</a>
         </li>
 
-        {% if pagination.currentPage > limitVisible + 1 %}
+        {% if data.pagination.currentPage > limitVisible + 1 %}
             <li><a href="{{ path('list', {entity : entityConfigurationInfo.entityName, page : 1 }) }}">1</a></li>
-            {% if pagination.currentPage > limitVisible + 2 %}
+            {% if data.pagination.currentPage > limitVisible + 2 %}
                 <li class="disabled"><span>...</span></li>
             {% endif %}
         {% endif %}
 
-        {% for i in pagination.currentPage - limitVisible .. pagination.currentPage + limitVisible %}
-            {% if i > 0 and i <= pagination.maxPages %}
-                <li {{ pagination.currentPage == i ? 'class="active"' }}>
+        {% for i in data.pagination.currentPage - limitVisible .. data.pagination.currentPage + limitVisible %}
+            {% if i > 0 and i <= data.pagination.maxPages %}
+                <li {{ data.pagination.currentPage == i ? 'class="active"' }}>
                     <a href="{{ path('list', {entity : entityConfigurationInfo.entityName, page : i }) }}">{{ i }}</a>
                 </li>
             {% endif %}
         {% endfor %}
 
-        {% if pagination.currentPage <= pagination.maxPages - ( limitVisible + 1 ) %}
-            {% if pagination.currentPage < pagination.maxPages - ( limitVisible + 1) %}
+        {% if data.pagination.currentPage <= data.pagination.maxPages - ( limitVisible + 1 ) %}
+            {% if data.pagination.currentPage < data.pagination.maxPages - ( limitVisible + 1) %}
                 <li class="disabled"><span>...</span></li>
             {% endif %}
-            <li><a href="{{ path('list', {entity : entityConfigurationInfo.entityName, page : pagination.maxPages }) }}">{{ pagination.maxPages }}</a></li>
+            <li><a href="{{ path('list', {entity : entityConfigurationInfo.entityName, page : data.pagination.maxPages }) }}">{{ data.pagination.maxPages }}</a></li>
         {% endif %}
 
-        <li {{ pagination.currentPage == pagination.maxPages ? 'class="disabled"' }}>
-            <a href="{{ path('list', {entity : entityConfigurationInfo.entityName, page: pagination.currentPage+1 <= pagination.maxPages ? pagination.currentPage+1 : pagination.currentPage}) }}">&raquo;</a>
+        <li {{ data.pagination.currentPage == data.pagination.maxPages ? 'class="disabled"' }}>
+            <a href="{{ path('list', {entity : entityConfigurationInfo.entityName, page: data.pagination.currentPage+1 <= data.pagination.maxPages ? data.pagination.currentPage+1 : data.pagination.currentPage}) }}">&raquo;</a>
         </li>
     </ul>
 

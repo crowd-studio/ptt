@@ -61,3 +61,4 @@ saveAndNew: Save & New
 saveAsCopy: Save as Copy
 close: Close
 markdownHelp: 'Learn the <a href="https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet" target="_blank">Markdown basics</a>.'
+listTitle: "%entityname%'s list"
