@@ -34,12 +34,14 @@ class PttForm
     private $formName;
     private $fields;
     private $userId;
+    private $session;
 
     public function __construct(EntityManager $entityManager, TokenStorage $securityContext, ContainerInterface $serviceContainer)
     {
         $this->securityContext = $securityContext;
         $this->container = $serviceContainer;
         $this->twig = $this->container->get('twig');
+        $this->session = $this->container->get('session');
 
         $metadata = $this->container->get('pttEntityMetadata');
         $this->languages = $metadata->getLanguages();
@@ -135,20 +137,6 @@ class PttForm
     public function getContainer()
     {
         return $this->container;
-    }
-
-    protected function createNotification($type, $message, $variables = [], $timeout = 5000)
-    {
-        if (!$this->session) {
-            $this->session = new Session();
-        }
-
-        $this->session->getFlashBag()->add($type, ['message' => $message, 'variables' => $variables, 'timeout' => $timeout]);
-    }
-
-    protected function createPlainNotification($type, $message, $variables = [], $timeout = 5000)
-    {
-        return [$type => [['message' => $message, 'variables' => $variables, 'timeout' => $timeout]]];
     }
 
     public function createView($key = false)

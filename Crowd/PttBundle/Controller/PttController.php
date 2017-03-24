@@ -28,7 +28,6 @@ class PttController extends Controller
     private $bundle;
     private $repositoryName;
     private $pttServices;
-    private $session;
 
     /**
      * @Route("{entity}/list/{page}", name="list");
@@ -87,7 +86,7 @@ class PttController extends Controller
                 $pttForm->save();
 
                 $this->flushCache($saveEntity);
-                // $this->get('session')->getFlashBag()->add('success', $pttForm->getSuccessMessage());
+                $this->createNotification('success', $pttForm->getSuccessMessage());
                 switch ($request->request->get('_action')) {
                   case 'edit':
                     $array = array_merge(['entity' => $entity, 'id' => $id], $request->query->all());
@@ -112,8 +111,7 @@ class PttController extends Controller
 
                 return $this->redirect($route);
             } else {
-                var_dump('Validation Error');
-                die();
+                $this->createNotification('error', 'Validations Error');
             }
         }
 
@@ -138,9 +136,9 @@ class PttController extends Controller
         list($valid, $message) = $this->continueWithDeletion($deleteEntity);
         if ($valid) {
             $this->getPttServices()->remove($deleteEntity);
-            $this->get('session')->getFlashBag()->add('success', $this->get('pttTrans')->trans('the_entity_was_deleted', $this->_entityInfoValue('simple')));
+            $this->createNotification('success', $this->get('pttTrans')->trans('the_entity_was_deleted', $this->_entityInfoValue('simple')));
         } else {
-            $this->get('session')->getFlashBag()->add('error', $message);
+            $this->createNotification('error', $message);
         }
 
         return $this->redirect($this->generateUrl('list', ['entity' => $entity]));
@@ -477,9 +475,9 @@ class PttController extends Controller
         $yaml = new Parser();
         $trans = $yaml->parse(file_get_contents(__DIR__ . '/../Resources/translations/'. $language .'.yml'));
 
-        $this->session = $request->getSession();
-        $notifications = json_encode($this->session->getFlashBag()->all());
-        $this->session->getFlashBag()->clear();
+        $session = $request->getSession();
+        $notifications = json_encode($session->getFlashBag()->all());
+        $session->getFlashBag()->clear();
 
         $info = [
             'info' => [
@@ -495,6 +493,16 @@ class PttController extends Controller
         ];
 
         return $this->render($template, $info);
+    }
+
+    protected function createNotification($type, $message, $variables = [], $timeout = 5000)
+    {
+        $this->get('session')->getFlashBag()->add($type, ['message' => $message, 'variables' => $variables, 'timeout' => $timeout]);
+    }
+
+    protected function createPlainNotification($type, $message, $variables = [], $timeout = 5000)
+    {
+        return [$type => [['message' => $message, 'variables' => $variables, 'timeout' => $timeout]]];
     }
 
     protected function getPttServices()
