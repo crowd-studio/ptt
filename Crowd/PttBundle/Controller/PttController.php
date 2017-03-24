@@ -44,25 +44,38 @@ class PttController extends Controller
 
         $result = $this->_buildQuery($this->entityName, $filters, $order, $limit, $page);
 
+        $yaml = new Parser();
+        $trans = $yaml->parse(file_get_contents(__DIR__ . '/../Resources/translations/en.yml'));
+
         return $this->_renderTemplateForActionInfo('list', [
-            'entityInfo' => $this->entityInfo(),
-            'rows' => $result['content'],
-            'fields' => $this->fieldsToList(),
-            'pagination' => $result['pagination'],
-            'activeFilters' => $filters,
-            'filters' => $this->fieldsToFilter(),
-            'order' => $order,
-            'page' => [
-                'title' => $this->listTitle(),
-                'path' => 'list',
-                'parameters' => [
-                  'entity' => $entity,
-                  'page' => $page
-                ]
+            'info' => [
+                'pttVersion' => PttUtil::pttVersion(),
+                'trans' => json_encode($trans),
+                'languages' => [
+                   'active' => 'en'
+                ],
+                'actualPath' => [
+                    'title' => $this->listTitle(),
+                    'path' => 'list',
+                    'parameters' => [
+                      'entity' => $entity,
+                      'page' => $page
+                    ]
+                ],
+                'notifications' => [ ]
             ],
-            'pttVersion' => PttUtil::pttVersion(),
-            'sortable' => $this->isSortable(),
-            'copy' => $this->isCopy()
+            'data' => [
+                'title' => $this->_entityInfoValue('lowercase'),
+                'table' => [
+                  'rows' => $result['content'],
+                  'fields' => $this->fieldsToList()
+                ],
+                'order' => $order,
+                'pagination' => $result['pagination'],
+                'activeFilters' => $filters,
+                'filters' => $this->fieldsToFilter(),
+                'sortable' => $this->isSortable(),
+            ]
         ]);
     }
 
