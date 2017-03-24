@@ -492,7 +492,7 @@ class PttController extends Controller
                 'languages' => ['active' => $language],
                 'actualPath' => $path,
                 'notifications' => $notifications,
-                'entityConfigurationInfo' => ['entityName' => strtolower($this->entityName)],
+                'entityName' => strtolower($this->entityName),
                 'keymap' => PttUtil::pttConfiguration('google')["key"]
             ],
             'data' => $data
