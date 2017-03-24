@@ -86,7 +86,7 @@ class PttController extends Controller
                 $pttForm->save();
 
                 $this->flushCache($saveEntity);
-                $this->createNotification('success', $pttForm->getSuccessMessage());
+                $this->createNotification('success', 'form_saved');
                 switch ($request->request->get('_action')) {
                   case 'edit':
                     $array = array_merge(['entity' => $entity, 'id' => $id], $request->query->all());

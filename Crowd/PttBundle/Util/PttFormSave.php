@@ -21,6 +21,7 @@ class PttFormSave
         $this->form = $form;
         $this->entityInfo = $form->getEntityInfo();
         $this->languages = $form->getLanguages();
+        $this->preferredLanguage = $form->getPreferredLanguage();
         $this->userId = $form->getUserId();
 
         $this->entity = $entity;
@@ -61,7 +62,7 @@ class PttFormSave
     public function getSentData($fieldName = false, $languageCode = false)
     {
         if ($fieldName != false) {
-            return PttUtil::getFieldData($this->sentData, $entity->getClassName(), $fieldName, null, $languageCode);
+            return PttUtil::getFieldData($this->sentData, $this->entity->getClassName(), $fieldName, null, $languageCode);
         } else {
             return $this->sentData;
         }

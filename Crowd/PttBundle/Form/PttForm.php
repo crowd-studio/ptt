@@ -109,6 +109,11 @@ class PttForm
         return $this->languages;
     }
 
+    public function getPreferredLanguage()
+    {
+        return $this->preferredLanguage;
+    }
+
     public function getTwig()
     {
         return $this->twig;
