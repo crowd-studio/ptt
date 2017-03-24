@@ -1,65 +1,50 @@
 'use strict';
 
-var gulp = require('gulp');
+
+var watchify = require('watchify');
 var browserify = require('browserify');
+var gulp = require('gulp');
 var source = require('vinyl-source-stream');
 var buffer = require('vinyl-buffer');
-var browserifyShim = require('browserify-shim');
-var uglify = require('gulp-uglify');
+var gutil = require('gulp-util');
 var sourcemaps = require('gulp-sourcemaps');
+var assign = require('lodash.assign');
 var gulpif = require('gulp-if');
-var livereload = require('gulp-livereload');
+var browserifyShim = require('browserify-shim');
 var p = require('partialify/custom');
 var babelify = require('babelify');
-var chalk = require('chalk');
-var gutil = require('gulp-util');
-var plumber = require('gulp-plumber');
 var folderify = require('folderify');
+var livereload = require('gulp-livereload');
 
-function map_error(err) {
-    gutil.beep();
-    if (err.fileName) {
-    // regular error
-    gutil.log(chalk.red(err.name)
-      + ': '
-      + chalk.yellow(err.fileName.replace(__dirname + '/src/js/', ''))
-      + ': '
-      + 'Line '
-      + chalk.magenta(err.lineNumber)
-      + ' & '
-      + 'Column '
-      + chalk.magenta(err.columnNumber || err.column)
-      + ': '
-      + chalk.blue(err.description))
-    } else {
-    // browserify error..
-    gutil.log(chalk.red(err.name)
-      + ': '
-      + chalk.yellow(err.message))
-    }
+// add custom browserify options here
+var customOpts = {
+  entries: [config.paths.src.modules],
+  debug: (release == true) ? false : true
+};
+var opts = assign({}, watchify.args, customOpts);
+var b = watchify(browserify(opts))
 
-    this.emit('end');
+// add transformations here
+.transform(browserifyShim)
+.transform(p.alsoAllow(['twig']))
+.transform(babelify, {presets: ["es2015"]})
+.transform(folderify);
+
+gulp.task('browserify', bundle); // so you can run `gulp js` to build the file
+b.on('update', bundle); // on any dep update, runs the bundler
+b.on('log', gutil.log); // output build logs to terminal
+
+function bundle() {
+  return b.bundle()
+    // log errors if they happen
+    .on('error', gutil.log.bind(gutil, 'Browserify Error'))
+    .pipe(gulpif(release, source(config.filenames.release.scripts), source(config.filenames.build.scripts)))
+    // optional, remove if you don't need to buffer file contents
+    .pipe(buffer())
+    // optional, remove if you dont want sourcemaps
+    .pipe(sourcemaps.init({loadMaps: true})) // loads map from browserify file
+       // Add transformation tasks to the pipeline here.
+    .pipe(sourcemaps.write('./')) // writes .map file
+    .pipe(gulpif(release, gulp.dest(config.paths.dest.release.scripts), gulp.dest(config.paths.dest.build.scripts)))
+    .pipe(gulpif(!release, livereload()));
 }
-
-module.exports = gulp.task('browserify', function() {
-    return browserify({
-            entries: [config.paths.src.modules],
-            debug: (release == true) ? false : true
-        })
-        .transform(browserifyShim)
-        .transform(p.alsoAllow(['twig']))
-        .transform(babelify, {presets: ["es2015"]})
-        .transform(folderify)
-        .bundle()
-        .on('error', map_error)
-        .pipe(plumber(map_error))
-        .pipe(gulpif(release, source(config.filenames.release.scripts), source(config.filenames.build.scripts)))
-        .pipe(buffer())
-        .pipe(sourcemaps.init({loadMaps: true}))
-        // Add transformation tasks to the pipeline here.
-            // .pipe(gulpif(release, uglify()))
-            .on('error', gutil.log)
-        .pipe(sourcemaps.write('./'))
-        .pipe(gulp.dest(config.paths.dest.scripts))
-        .pipe(gulpif(!release, livereload()));
-});

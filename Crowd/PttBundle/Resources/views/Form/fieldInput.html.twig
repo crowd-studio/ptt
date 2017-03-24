@@ -18,6 +18,7 @@
 
 		attr : false,
 		addon: false,
+		format: false
 
 	} | merge (params) %}
 
@@ -42,10 +43,10 @@
 		{%- if params.addon -%}
 			<div class="input-group">
 		{%- endif -%}
-			<input class="form-control{{ params.elementClass ? ' ' ~ params.elementClass : '' }}"{{ utilities.attrGroup([ ['type', params.type], ['name', params.name], ['placeholder', params.placeholder], ['value', params.value], ['id', params.id], ['data-parsley-errors-container', params.errors ? '#error-' ~ params.id : false ],['maxlength', validations.maxlength],['minlength', validations.minlength], ['disabled', params.disabled] ]) }}{{ ( validations.equal ? ' data-parsley-equalto="#' ~ validations.equal ~ '"' : '') | raw }}{{ params.attr ? utilities.attrGroup(params.attr)}} {{ validations.required ? ' required' : '' }}>
+			<input class="form-control{{ params.elementClass ? ' ' ~ params.elementClass : '' }}"{{ utilities.attrGroup([ ['type', params.type], ['name', params.name], ['placeholder', params.placeholder], ['value', params.value], ['id', params.id], ['data-parsley-errors-container', params.errors ? '#error-' ~ params.id : false ],['maxlength', validations.maxlength],['minlength', validations.minlength], ['disabled', params.disabled], ['format', params.format] ]) }}{{ ( validations.equal ? ' data-parsley-equalto="#' ~ validations.equal ~ '"' : '') | raw }}{{ params.attr ? utilities.attrGroup(params.attr)}} {{ validations.required ? ' required' : '' }}>
 		{%- if params.addon -%}
 				<span class="input-group-addon">
-					<span class="{#{ params.addon }#}"></span>
+					<span class="{{ params.addon }}"></span>
 				</span>
 			</div>
 		{%- endif -%}
