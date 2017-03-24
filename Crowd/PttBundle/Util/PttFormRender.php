@@ -62,7 +62,7 @@ class PttFormRender
                 $html .= '<div class="form-group col-xs-12"><div class="tabs"><ul class="tab-nav list-inline">';
 
                 foreach ($this->languages as $k => $language) {
-                    $error = ($this->form->errors->hasErrors($language->getCode())) ? ' error' : '';
+                    $error = ($this->form->getErrors(false, $language->getCode())) ? ' error' : '';
                     $html .= '<li class="' . $error . '"><a data-toggle="#' . strtolower($block['title']) . '-' . $language->getCode() . '" ng-click="changeTabEvent($event)">' . $language->getTitle() . '</a></li>';
                 }
 
