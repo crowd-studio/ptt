@@ -25,7 +25,7 @@
 		{%- if params.label and params.label != "" -%}
 			<label{{ utilities.attr('for', params.id) }}>{{ params.label }}{{ validations.required ? ' *' : '' }}</label>
 		{%- endif -%}
-		<div class="errors" {{- ( params.name is defined ? ' id="error-' ~ params.name ~ '"' : '' ) | raw -}}></div>
+		<div class="errors" {{- ( params.id is defined ? ' id="error-' ~ params.id ~ '"' : '' ) | raw -}}></div>
 		<textarea class="form-control{{ params.elementClass ? ' ' ~ params.elementClass : '' }}"{{ utilities.attrGroup([ ['name', params.name], ['placeholder', params.placeholder], ['id', params.id], ['rows', params.rows], ['data-parsley-errors-container', '#error-' ~ params.id ],['maxlength', validations.maxlength],['minlength', validations.minlength] ]) }}{{ ( validations.equal ? ' data-parsley-equalto="#' ~ validations.equal ~ '"' : '') | raw }}{{ params.markdown ? utilities.attr('markdown')}}{{ validations.required ? ' required' : '' }}>
 		{{ params.value ? params.value : '' }}
 		</textarea>
