@@ -18,7 +18,9 @@
 
 		attrInputGroup : false,
 		addon: false,
-		realType: false
+		realType: false,
+		advise: false,
+		attrInput : false,
 
 	} | merge (params) %}
 
@@ -43,14 +45,16 @@
 		{%- if params.addon or params.attrInputGroup -%}
 			<div class="input-group" {{ params.attrInputGroup ? utilities.attrGroup(params.attrInputGroup)}}>
 		{%- endif -%}
-			<input class="form-control{{ params.elementClass ? ' ' ~ params.elementClass : '' }}"{{ utilities.attrGroup([ ['type', params.type], ['name', params.name], ['placeholder', params.placeholder], ['value', params.value], ['id', params.id], ['data-parsley-errors-container', params.errors ? '#error-' ~ params.id : false ],['maxlength', validations.maxlength],['minlength', validations.minlength], ['disabled', params.disabled] ]) }}{{ ( validations.equal ? ' data-parsley-equalto="#' ~ validations.equal ~ '"' : '') | raw }}{{ validations.required ? ' required' : '' }}>
+			<input class="form-control{{ params.elementClass ? ' ' ~ params.elementClass : '' }}"{{ utilities.attrGroup([ ['type', params.type], ['name', params.name], ['placeholder', params.placeholder], ['value', params.value], ['id', params.id], ['data-parsley-errors-container', params.errors ? '#error-' ~ params.id : false ],['maxlength', validations.maxlength],['minlength', validations.minlength], ['disabled', params.disabled] ]) }}{{ params.attrInput ? utilities.attrGroup(params.attrInput) }}{{ ( validations.equal ? ' data-parsley-equalto="#' ~ validations.equal ~ '"' : '') | raw }}{{ validations.required ? ' required' : '' }}>
 		{%- if params.addon -%}
 				<span class="input-group-addon">
 					<span class="{{ params.addon }}"></span>
 				</span>
 			</div>
 		{%- endif -%}
-		
+		{%- if params.advise -%}
+			<div class="advise">{{ params.advise }}</div>
+		{%- endif -%}
 	{%- if params.type != 'hidden' -%}
 	</div>
 	{%- endif -%}

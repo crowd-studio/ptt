@@ -1,13 +1,11 @@
 'use strict';
 
-//var Pikaday = require('pikaday');
 var $ = require('jquery');
-
 require('eonasdan-bootstrap-datetimepicker');
 
 module.exports = /*@ngInject*/
 function datetimeDirective() {
-    return {
+	return {
 		restrict:'A',
 		scope: {
 			alert: '@'
@@ -17,7 +15,6 @@ function datetimeDirective() {
 				format: $(element).attr('format'),
 				locale: window.conf.lang
 			});
-      		//var picker  = new Pikaday({ field: element[0] });
 		}
 	};
 };

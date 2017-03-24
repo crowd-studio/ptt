@@ -1,0 +1,5 @@
+{% set params = {
+	size: 'medium'
+} | merge (params | default({})) %}
+
+{% include 'PttBundle:Form:fieldInput.html.twig' %}
