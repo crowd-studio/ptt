@@ -2,8 +2,8 @@
 {% block content %}
 	<div class="content hide" ng-controller="listController">
 		<div class="content-header header-line">
-			{% if data.title is defined %}
-				<h2 class="title">{{ 'listTitle' | trans | replace({'%entityname%': data.title}) | capitalize  }}</h2>
+			{% if info.actualPath.title is defined %}
+				<h2 class="title">{{ 'listTitle' | trans | replace({'%entityname%': info.actualPath.title}) | capitalize  }}</h2>
 			{% endif %}
 			<div class="actions">
 				{% if data.sortable %}
@@ -14,22 +14,22 @@
 				{% if data.filters|length > 0 %}
 					<a ng-click="showFilters = !showFilters" class="btn btn-default btn-sm btn-filter" ng-class="{'btn-primary': showFilters}">{{ 'filters' | trans }}</a>
 				{% endif %}
-				<a class="btn btn-success btn-sm" ng-show="!changeOrder" href="{{ path('create', {entity: entityConfigurationInfo.entityName}) }}">{{ 'createNew' | trans }} {{ data.title }}</a>
+				<a class="btn btn-success btn-sm" ng-show="!changeOrder" href="{{ path('create', {entity: info.entityName}) }}">{{ 'createNew' | trans }} {{ info.actualPath.title is defined ? info.actualPath.title }}</a>
 			</div>
 		</div>
 		{% if data.filters|length > 0 %}
 			<div class="filters well" ng-show="showFilters" active-filters="{{ data.activeFilters | json_encode }}">
-				<form action="{{ path('list', {entity : entityConfigurationInfo.entityName}) }}" method="post" name="filter-{{ entityConfigurationInfo.entityName }}" class="row" style="margin:0;padding:0;">
+				<form action="{{ path('list', {entity : info.entityName}) }}" method="post" name="filter-{{ info.entityName }}" class="row" style="margin:0;padding:0;">
 					<div class="filters-header header-line">
 						<h3>Filters</h3>
 							<div class="actions">
-							<a href="{{ path('list', {entity : entityConfigurationInfo.entityName, filter:'reset'}) }}" class="btn btn-danger btn-cancel btn-xs">{{ 'clean' | trans }}</a>
+							<a href="{{ path('list', {entity : info.entityName, filter:'reset'}) }}" class="btn btn-danger btn-cancel btn-xs">{{ 'clean' | trans }}</a>
 							<button type="submit" class="btn btn-success btn-save btn-xs">{{ 'apply' | trans }}</button>
 						</div>
 					</div>
 					<div class="filters-content">
 						{% for key,f in data.filters %}
-							{% set name = 'filter-' ~ entityConfigurationInfo.entityName ~ '-' ~ f.field %}
+							{% set name = 'filter-' ~ info.entityName ~ '-' ~ f.field %}
 							{% if f.type == 'text' %}
 								<div class="form-group">
 									<input class="form-control" type="text" name="{{ name }}" placeholder="{{ f.label }}"{{ attribute(data.activeFilters, name) is defined ? (' value="' ~ attribute(data.activeFilters, name) ~ '"') | raw : '' }}>
@@ -61,7 +61,7 @@
 									{%- if data.sortable -%}
 										{{ field.label }}
 									{%- else -%}
-										<a href="{{ path('list', {entity : entityConfigurationInfo.entityName, order : field.field}) }}">{%- if data.order is not null and data.order[0] == field.field -%}{{ attribute(sprites, data.order[1]) }}{%- endif -%}{{field.label}}</a>
+										<a href="{{ path('list', {entity : info.entityName, order : field.field}) }}">{%- if data.order is not null and data.order[0] == field.field -%}{{ attribute(sprites, data.order[1]) }}{%- endif -%}{{field.label}}</a>
 									{%- endif -%}
 								</td>
 							{% endfor %}
@@ -81,8 +81,8 @@
 									{%- endif -%}</td>
 								{% endfor %}
 								<td class="actions" ng-show="!changeOrder">
-									<a href="{{ path('edit', {entity : entityConfigurationInfo.entityName, id : row.id}) }}" title="Edit">{{ sprites.edit() }}</a>
-									<a href="{{ path('delete', {entity : entityConfigurationInfo.entityName, id : row.id}) }}" alert='{{ 'delete_the_entity_name'|trans([data.title, row]) }}' title="Delete">{{ sprites.delete() }}</a>
+									<a href="{{ path('edit', {entity : info.entityName, id : row.id}) }}" title="Edit">{{ sprites.edit() }}</a>
+									<a href="{{ path('delete', {entity : info.entityName, id : row.id}) }}" alert='{{ info.actualPath.title is defined ? 'delete_the_entity_name'|trans([info.actualPath.title, row]) }}' title="Delete">{{ sprites.delete() }}</a>
 									</td>
 								</tr>
 						 {% endfor %}

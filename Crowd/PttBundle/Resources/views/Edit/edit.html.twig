@@ -1,10 +1,11 @@
 {% extends 'PttBundle:Default:base.html.twig' %}
 {% block content %}
 	<div class="content hide" ng-controller="editController">
-		<form action="{{ path('edit', {entity : entityConfigurationInfo.entityName, id : app.request.get('id')}) }}" class="edit" method="post" enctype="multipart/form-data">
+		<form action="{{ path('edit', {entity : info.entityName, id : app.request.get('id')}) }}" class="edit" method="post" enctype="multipart/form-data">
 			<div class="content-header header-line">
-				{% if page.title is defined %}
-					<h2 class="title">{{ page.title }}</h2>
+			{{dump(info.actualPath)}}
+				{% if info.actualPath.title is defined %}
+					<h2 class="title">{{ 'editTitle' | trans | replace({'%entityname%': info.actualPath.title}) | capitalize  }}</h2>
 				{% endif %}
 				<div class="actions">
 					<input type="hidden" name="_action" ng-value="action">
@@ -14,10 +15,10 @@
 					{%- if app.request.get('id') != null -%}
 						<a ng-click="saveEvent($event, 'copy')" class="btn btn-sm btn-info">{{ 'saveAsCopy' | trans }}</a>
 					{%- endif -%}
-					<a href="{{ path('list', {entity : entityConfigurationInfo.entityName}) }}" class="btn btn-sm btn-danger">{{ 'close' | trans }}</a>
+					<a href="{{ path('list', {entity : info.entityName}) }}" class="btn btn-sm btn-danger">{{ 'close' | trans }}</a>
 				</div>
 			</div>
-            {{ form.createView() | raw }}
+            {{ data.form.createView() | raw }}
         </form>
     </div>
 {% endblock %}
