@@ -1,0 +1,8 @@
+{% set params = {
+	attrInputGroup: [
+		'datetime',
+		['format','DD/MM/YYYY'],
+	]
+} | merge (params | default({})) %}
+
+{% include 'PttBundle:Form:fieldDateTime.html.twig' %}

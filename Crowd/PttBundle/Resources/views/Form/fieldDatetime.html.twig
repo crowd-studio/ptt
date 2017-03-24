@@ -1,13 +1,14 @@
 {% set params = {
 	size: 'medium',
-	format: 'DD/MM/YYYY HH:mm',
-	attr: [
-		'datetime'
+	attrInputGroup: [
+		'datetime',
+		['format','DD/MM/YYYY HH:mm'],
 	],
 	addon: 'glyphicon glyphicon-calendar'
 } | merge (params | default({})) %}
 
 {% set params = params | merge({
+	realType : params.type,
 	type : 'text'
 }) %}
 

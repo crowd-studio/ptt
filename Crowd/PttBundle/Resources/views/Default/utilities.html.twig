@@ -24,16 +24,16 @@
 {# getSize#}
 {% macro getSize(string) %}
 	{{- 'col-xs-12' -}} 
-	{%- if string == 'long' -%}
-
-	{%- elseif string == 'big' -%}
-		{{- ' col-md-9' -}}
-	{%- elseif string == 'medium' -%}
-	    {{- ' col-md-6' -}}
+	{%- if string == 'short' -%}
+		{{- ' col-md-3' -}}
 	{%- elseif string == 'small' -%}
 		{{- ' col-md-4' -}}
-	{%- elseif string == 'short' -%}
-	    {{- ' col-md-3' -}}
+	{%- elseif string == 'medium' -%}
+	    {{- ' col-md-6' -}}
+	{%- elseif string == 'big' -%}
+		{{- ' col-md-9' -}}
+	{#%- elseif string == 'long' -%#}
+	    
 	{%- endif -%}
 {% endmacro %}
 

@@ -15,7 +15,7 @@ function datetimeDirective() {
 		link: function(scope, element) {
 			$(element).datetimepicker({
 				format: $(element).attr('format'),
-				locale: 'en'
+				locale: window.conf.lang
 			});
       		//var picker  = new Pikaday({ field: element[0] });
 		}

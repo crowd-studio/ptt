@@ -1,0 +1,9 @@
+{% set params = {
+	attrInputGroup: [
+		'datetime',
+		['format','HH:mm'],
+	],
+	addon: 'glyphicon glyphicon-time'
+} | merge (params | default({})) %}
+
+{% include 'PttBundle:Form:fieldDateTime.html.twig' %}
