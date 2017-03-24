@@ -1,6 +1,8 @@
 'use strict';
 
 var $ = require('jquery');
+require('parsleyjs');
+require('parsleyjs/dist/i18n/en');
 
 module.exports = /*@ngInject*/
 function editController($scope, $element) {

@@ -56,7 +56,6 @@
     "gulp-jshint": "^2.0.4",
     "gulp-less": "^3.3.0",
     "gulp-livereload": "^3.8.1",
-    "gulp-plumber": "^1.1.0",
     "gulp-replace": "^0.5.4",
     "gulp-rimraf": "^0.2.1",
     "gulp-sourcemaps": "^2.4.1",
@@ -73,23 +72,17 @@
     "vinyl-source-stream": "^1.1.0",
     "yargs": "^6.6.0"
   },
-  "browser": {
-    "parsley-en": "./node_modules/parsleyjs/dist/i18n/en.js"
-  },
+  "browser": {},
   "browserify-shim": {
     "eonasdan-bootstrap-datetimepicker": {
       "depends": [
-        "jquery:$"
+        "jquery:$",
+        "moment"
       ]
     },
     "parsleyjs": {
       "depends": [
         "jquery:jQuery"
-      ]
-    },
-    "parsley-en": {
-      "depends": [
-        "jquery:$"
       ]
     }
   },
