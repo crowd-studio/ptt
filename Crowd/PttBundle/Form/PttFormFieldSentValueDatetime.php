@@ -11,6 +11,6 @@ class PttFormFieldSentValueDatetime extends PttFormFieldSentValue
 {
     public function value()
     {
-        return \DateTime::createFromFormat('d/m/Y H:m:s', $this->sentData . ':00');
+        return ($this->sentData != '') ? \DateTime::createFromFormat('d/m/Y H:i:s', $this->sentData . ':00') : null;
     }
 }
