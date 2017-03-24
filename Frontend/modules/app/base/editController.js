@@ -29,7 +29,8 @@ function editController($scope, $element) {
 	});
 
 	$scope.form = $($element).find('form');
-	$scope.form.parsley().on('form:error', function() {
+	$scope.form.parsley().on('field:validated', ()=>{$scope.scanTabs()});
+	$scope.scanTabs = function() {
 		angular.forEach($scope.form.find('.tabs'), function(tab) {
 			let withErrors = [];
 			angular.forEach($(tab).find('.tab-pane'), function(pane, index) {
@@ -43,7 +44,14 @@ function editController($scope, $element) {
 				}
 			});
 		});
+	}
+
+	$scope.form.parsley().on('form:validated', ()=>{
+		angular.forEach($scope.form.find('textarea'), function(textarea) {
+			console.log($(textarea).val());
+		});
 	});
+
 	$scope.saveEvent = function(ev,action){
 		ev.preventDefault();
 		$scope.action = action;
