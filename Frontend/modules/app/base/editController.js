@@ -18,6 +18,16 @@ function editController($scope, $element) {
 		}
 	});
 
+	window.Parsley.addValidator('url', {
+		requirementType: 'string',
+		validateString: function (value, requirement, parsleyInstance) {
+			return value.search(/(http|https):\/\//i) == 0;
+		},
+			messages: {
+			en: 'This value should be a valid url.'
+		}
+	});
+
 	$scope.form = $($element).find('form');
 	$scope.form.parsley().on('form:error', function() {
 		angular.forEach($scope.form.find('.tabs'), function(tab) {

@@ -63,3 +63,4 @@ close: Close
 markdownHelp: 'Learn the <a href="https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet" target="_blank">Markdown basics</a>.'
 listTitle: "%entityname% list"
 editTitle: "edit %entityname%"
+urlAdvise: Remember to add http:// or https://
