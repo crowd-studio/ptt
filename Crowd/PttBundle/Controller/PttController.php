@@ -28,6 +28,7 @@ class PttController extends Controller
     private $bundle;
     private $repositoryName;
     private $pttServices;
+    private $session;
 
     /**
      * @Route("{entity}/list/{page}", name="list");
@@ -44,27 +45,10 @@ class PttController extends Controller
 
         $result = $this->_buildQuery($this->entityName, $filters, $order, $limit, $page);
 
-        $yaml = new Parser();
-        $trans = $yaml->parse(file_get_contents(__DIR__ . '/../Resources/translations/en.yml'));
 
-        return $this->_renderTemplateForActionInfo('list', [
-            'info' => [
-                'pttVersion' => PttUtil::pttVersion(),
-                'trans' => json_encode($trans),
-                'languages' => [
-                   'active' => 'en'
-                ],
-                'actualPath' => [
-                    'title' => $this->listTitle(),
-                    'path' => 'list',
-                    'parameters' => [
-                      'entity' => $entity,
-                      'page' => $page
-                    ]
-                ],
-                'notifications' => [ ]
-            ],
-            'data' => [
+        return $this->_renderTemplateForActionInfo($request, 'list',
+            ['title' => $this->listTitle(), 'path' => 'list', 'parameters' => ['entity' => $entity, 'page' => $page]],
+            [
                 'title' => $this->_entityInfoValue('lowercase'),
                 'table' => [
                   'rows' => $result['content'],
@@ -75,7 +59,7 @@ class PttController extends Controller
                 'activeFilters' => $filters,
                 'filters' => $this->fieldsToFilter(),
                 'sortable' => $this->isSortable(),
-            ]
+
         ]);
     }
 
@@ -135,24 +119,12 @@ class PttController extends Controller
             }
         }
 
-        $yaml = new Parser();
-        $trans = $yaml->parse(file_get_contents(__DIR__ . '/../Resources/translations/en.yml'));
+
 
         $this->deleteTemp();
-        return $this->_renderTemplateForActionInfo('edit', [
-            'entityInfo' => $this->entityInfo(),
-            'form' => $pttForm,
-            'page' => [
-                'title' => $this->editTitle($id),
-                'path' => $request->get('_route'),
-                 'parameters' => [
-                   'entity' => $entity,
-                   'id' => $id
-                ]
-              ],
-            'pttVersion' => PttUtil::pttVersion(),
-            'trans' => json_encode($trans)
-        ]);
+        return $this->_renderTemplateForActionInfo($request, 'edit',
+          ['title' => $this->editTitle($id), 'path' => $request->get('_route'), 'parameters' => ['entity' => $entity, 'id' => $id]],
+          ['form' => $pttForm]);
     }
 
     /**
@@ -488,7 +460,7 @@ class PttController extends Controller
         return $activeFilters;
     }
 
-    protected function _renderTemplateForActionInfo($action, $info = [])
+    protected function _renderTemplateForActionInfo($request, $action, $path, $data = [], $language = 'en')
     {
         $filename = $action . '.html.twig';
 
@@ -506,11 +478,26 @@ class PttController extends Controller
             }
         }
 
-        if (!isset($info['entityConfigurationInfo'])) {
-            $info['entityConfigurationInfo'] = ['entityName' => strtolower($this->entityName)];
-        }
+        $yaml = new Parser();
+        $trans = $yaml->parse(file_get_contents(__DIR__ . '/../Resources/translations/'. $language .'.yml'));
 
-        $info["keymap"] = PttUtil::pttConfiguration('google')["key"];
+        $this->session = $request->getSession();
+        $notifications = json_encode($this->session->getFlashBag()->all());
+        $this->session->getFlashBag()->clear();
+
+        $info = [
+            'info' => [
+                'pttVersion' => PttUtil::pttVersion(),
+                'trans' => json_encode($trans),
+                'languages' => ['active' => $language],
+                'actualPath' => $path,
+                'notifications' => $notifications,
+                'entityConfigurationInfo' => ['entityName' => strtolower($this->entityName)],
+                'keymap' => PttUtil::pttConfiguration('google')["key"]
+            ],
+            'data' => $data
+        ];
+
         return $this->render($template, $info);
     }
 

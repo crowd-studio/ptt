@@ -137,6 +137,20 @@ class PttForm
         return $this->container;
     }
 
+    protected function createNotification($type, $message, $variables = [], $timeout = 5000)
+    {
+        if (!$this->session) {
+            $this->session = new Session();
+        }
+
+        $this->session->getFlashBag()->add($type, ['message' => $message, 'variables' => $variables, 'timeout' => $timeout]);
+    }
+
+    protected function createPlainNotification($type, $message, $variables = [], $timeout = 5000)
+    {
+        return [$type => [['message' => $message, 'variables' => $variables, 'timeout' => $timeout]]];
+    }
+
     public function createView($key = false)
     {
         $formRender = new PttFormRender($this, $this->entityInfo->getEntity(), $this->fields);
