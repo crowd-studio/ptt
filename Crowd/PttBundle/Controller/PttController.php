@@ -254,12 +254,10 @@ class PttController extends Controller
     public function loginAction(Request $request)
     {
         $helper = $this->get('security.authentication_utils');
-
-        return $this->render('PttBundle:Login:login.html.twig', [
-            'last_username' => $helper->getLastUsername(),
-            'error'         => $helper->getLastAuthenticationError(),
-            'keymap'        => ''
-        ]);
+        return $this->_renderTemplateForActionInfo($request, 'login',
+          ['title' => 'Login', 'path' => $request->get('_route'), 'parameters' => []],
+          ['last_username' => $helper->getLastUsername(), 'error' => $helper->getLastAuthenticationError(), 'keymap' => '']
+        );
     }
 
     /**
