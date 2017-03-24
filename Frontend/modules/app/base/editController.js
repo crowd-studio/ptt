@@ -46,12 +46,6 @@ function editController($scope, $element) {
 		});
 	}
 
-	$scope.form.parsley().on('form:validated', ()=>{
-		angular.forEach($scope.form.find('textarea'), function(textarea) {
-			console.log($(textarea).val());
-		});
-	});
-
 	$scope.saveEvent = function(ev,action){
 		ev.preventDefault();
 		$scope.action = action;

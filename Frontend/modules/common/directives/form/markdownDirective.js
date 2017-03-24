@@ -10,14 +10,11 @@ function markdownDirective() {
 			alert: '@'
 		},
 		link: function(scope, element) {
-			console.log(element[0].innerHTML);
 			var simplemde = new SimpleMDE({ 
 				element: element[0],
 				status: false,
-				spellChecker: false,
-				autofocus: true
+				spellChecker: false
 			});
-			simplemde.value(element[0].innerHTML);
 		}
 	};
 };
