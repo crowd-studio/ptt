@@ -45,7 +45,6 @@ class PttController extends Controller
 
         $result = $this->_buildQuery($this->entityName, $filters, $order, $limit, $page);
 
-
         return $this->_renderTemplateForActionInfo($request, 'list',
             ['title' => $this->listTitle(), 'path' => 'list', 'parameters' => ['entity' => $entity, 'page' => $page]],
             [
@@ -69,13 +68,13 @@ class PttController extends Controller
      */
     public function editAction(Request $request, $entity, $id = null)
     {
-        $this->entityName = ucfirst($entity);
+        $this->entityName = $entity;
         if ($id == null) {
             $saveEntity = $this->_initEntity();
         } else {
             $saveEntity = $this->getPttServices()->getOne($entity, $id);
             if ($saveEntity == null) {
-                throw $this->createNotFoundException($this->get('pttTrans')->trans('the_entity_does_not_exist', $this->_entityInfoValue('single')));
+                throw $this->createNotFoundException($this->get('pttTrans')->trans('the_entity_does_not_exist', $this->_entityInfoValue('simple')));
             }
         }
 
@@ -118,11 +117,9 @@ class PttController extends Controller
             }
         }
 
-
-
         $this->deleteTemp();
         return $this->_renderTemplateForActionInfo($request, 'edit',
-          ['title' => $this->editTitle($id), 'path' => $request->get('_route'), 'parameters' => ['entity' => $entity, 'id' => $id]],
+          ['title' => $this->editTitle(), 'path' => $request->get('_route'), 'parameters' => ['entity' => $entity, 'id' => $id]],
           ['form' => $pttForm]);
     }
 
@@ -135,13 +132,13 @@ class PttController extends Controller
         $this->entityName = ucfirst($entity);
         $deleteEntity = $this->getPttServices()->getOne($entity, $id);
         if ($deleteEntity == null) {
-            throw $this->createNotFoundException('The ' . $this->_entityInfoValue('single') . ' does not exist');
+            throw $this->createNotFoundException('The ' . $this->_entityInfoValue('simple') . ' does not exist');
         }
 
         list($valid, $message) = $this->continueWithDeletion($deleteEntity);
         if ($valid) {
             $this->getPttServices()->remove($deleteEntity);
-            $this->get('session')->getFlashBag()->add('success', $this->get('pttTrans')->trans('the_entity_was_deleted', $this->_entityInfoValue('single')));
+            $this->get('session')->getFlashBag()->add('success', $this->get('pttTrans')->trans('the_entity_was_deleted', $this->_entityInfoValue('simple')));
         } else {
             $this->get('session')->getFlashBag()->add('error', $message);
         }
@@ -162,7 +159,7 @@ class PttController extends Controller
             $this->getPttServices()->create($entityB);
             return $this->redirect($this->generateUrl('list', ['entity' => $entity]));
         } else {
-            throw $this->createNotFoundException('The ' . $this->_entityInfoValue('single') . ' does not exist');
+            throw $this->createNotFoundException('The ' . $this->_entityInfoValue('simple') . ' does not exist');
         }
     }
 
@@ -316,9 +313,9 @@ class PttController extends Controller
         return $this->_entityInfoValue('plural');
     }
 
-    protected function editTitle($id)
+    protected function editTitle()
     {
-        return $this->_entityInfoValue('single');
+        return $this->_entityInfoValue('simple');
     }
 
     protected function fieldsToList()
@@ -345,7 +342,7 @@ class PttController extends Controller
     {
         return [
             true,
-            $this->get('pttTrans')->trans('the_entity_couldnt_be_deleted', $this->_entityInfoValue('single'))
+            $this->get('pttTrans')->trans('the_entity_couldnt_be_deleted', $this->_entityInfoValue('simple'))
         ];
     }
 

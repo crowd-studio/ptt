@@ -222,6 +222,7 @@ class PttEntity
 
     public function entityInfo($entityName = false)
     {
+        $entityName = ($entityName) ? $entityName : $this->getClassName();
         return [
             'simple' => $entityName,
             'plural' => $entityName . 's'
