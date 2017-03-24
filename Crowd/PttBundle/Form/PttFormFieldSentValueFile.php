@@ -13,6 +13,7 @@ class PttFormFieldSentValueFile extends PttFormFieldSentValue
 {
     public function value()
     {
-        return $this->entityInfo->get($this->field->name, $this->languageCode);
+        $value = $this->entityInfo->get($this->field->name, $this->languageCode);
+        return ($value) ? $value : '';
     }
 }
