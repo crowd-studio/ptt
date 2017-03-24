@@ -10,7 +10,11 @@ function markdownDirective() {
 			alert: '@'
 		},
 		link: function(scope, element) {
-			var simplemde = new SimpleMDE({ element: element[0],status: false });
+			var simplemde = new SimpleMDE({ 
+				element: element[0],
+				status: false,
+				spellChecker: false
+			});
 		}
 	};
 };
