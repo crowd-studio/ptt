@@ -1,5 +1,7 @@
 'use strict';
 
+var $ = require('jquery');
+
 module.exports = /*@ngInject*/
 function tabsDirective($timeout) {
 	return {
