@@ -3,7 +3,6 @@
 	<div class="content hide" ng-controller="editController">
 		<form action="{{ path('edit', {entity : info.entityName, id : app.request.get('id')}) }}" class="edit" method="post" enctype="multipart/form-data">
 			<div class="content-header header-line">
-			{{dump(info.actualPath)}}
 				{% if info.actualPath.title is defined %}
 					<h2 class="title">{{ 'editTitle' | trans | replace({'%entityname%': info.actualPath.title}) | capitalize  }}</h2>
 				{% endif %}
