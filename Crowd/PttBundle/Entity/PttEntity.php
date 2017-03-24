@@ -224,7 +224,6 @@ class PttEntity
     {
         return [
             'simple' => $entityName,
-            'lowercase' => strtolower($entityName),
             'plural' => $entityName . 's'
         ];
     }
