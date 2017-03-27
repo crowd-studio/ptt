@@ -85,6 +85,11 @@ class PttForm
         $this->fields = PttUtil::fields($this->container->get('kernel'), $this->entityInfo->getBundle(), $this->entityInfo->getEntityName());
     }
 
+    public function setEntityInfo($entityInfo)
+    {
+        $this->entityInfo = $entityInfo;
+    }
+
     public function setFormName($formName)
     {
         $this->entityInfo->setFormName($formName);
@@ -156,7 +161,6 @@ class PttForm
 
         $this->entityInfo->getEntity()->beforeSave($this->sentData);
         $this->_validateFields();
-
         return !$this->errors->hasErrors();
     }
 
@@ -196,6 +200,7 @@ class PttForm
                 $field['validations'] = ['url' => true];
             }
         }
+
         PttClassNameGenerator::validation($field, $this, $languageCode);
         if (PttUtil::isMapped($field)) {
             $value = PttClassNameGenerator::sentValue($field, $this, $languageCode);

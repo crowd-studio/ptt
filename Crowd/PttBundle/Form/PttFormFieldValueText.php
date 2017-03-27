@@ -30,6 +30,7 @@ class PttFormFieldValueText extends PttFormFieldValue
                 }
             }
         }
+        
         return $value;
     }
 }

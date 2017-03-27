@@ -14,7 +14,8 @@ class PttFormSaveImage extends PttFormSave
 {
     public function value()
     {
-        $file = $this->request->files->get($this->entityInfo->getFormName())[$this->field['name']];
+        // $file = $this->request->files->get($this->entityInfo->getFormName())[$this->field['name']];
+        $file = null;
         if ($file) {
             $value = PttUploadFile::upload($file, $this->field);
         } else {

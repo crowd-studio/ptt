@@ -7,78 +7,81 @@
 
 namespace Crowd\PttBundle\Form;
 
+use Crowd\PttBundle\Util\PttFormRender;
+use Crowd\PttBundle\Util\PttFormSave;
+use Crowd\PttBundle\Util\PttUtil;
+
 class PttHelperFormFieldTypeEntity
 {
     private $entityInfo;
-    private $relatedClassName;
     private $entity;
     private $pttForm;
+    private $sentData;
+    private $fields;
+    private $formName;
+    private $formId;
 
-    public function __construct(PttEntityInfo $entityInfo, PttForm $pttForm, $entity)
+    public function __construct(PttEntityInfo $entityInfo, PttForm $pttForm, $entity, $formName = '', $formId = '', $sentData = false)
     {
         $this->entityInfo = $entityInfo;
         $this->entity = $entity;
         $this->pttForm = $pttForm;
-        $classNameArr = explode('\\', $this->entityInfo->getClassName());
-        array_pop($classNameArr);
-        $this->relatedClassName =  implode('\\', $classNameArr) . '\\' . $this->entity;
-    }
+        $this->sentData = $sentData;
+        $this->formName = $formName;
+        $this->formId = $formId;
 
-    public function cleanRelatedEntity()
-    {
-        $this->getRelatedEntity();
-    }
-
-    protected function getCleanRelatedEntity()
-    {
-        $entity = new $this->relatedClassName();
-        return $entity;
-    }
-
-    public function entityForDataArray($entityData)
-    {
-        if (!isset($entityData['id']) || $entityData['id'] == '') {
-            $entity = $this->cleanRelatedEntity();
-        } else {
-            $entity = $this->entityInfo->getPttServices()->getOne($this->entity, $entityData['id']);
-        }
-
-        foreach ($entityData as $key => $value) {
-            if ($key != 'id') {
-                $methodName = 'set' . ucfirst($key);
-                if (method_exists($entity, $methodName)) {
-                    $entity->{$methodName}($value);
-                }
-            }
-        }
-        return $entity;
-    }
-
-    public function entityWithData($entityData)
-    {
-        if (is_object($entityData)) {
-            if ($entityData->getPttId() == null) {
-                $entity = $this->cleanRelatedEntity();
-            } else {
-                $entity = $this->entityInfo->getPttServices()->getOne($this->entity, $entityData->getId());
-            }
-        } else {
-            return $this->entityForDataArray($entityData);
-        }
-
-        return $entity;
+        $this->fields = PttUtil::fields($this->pttForm->getContainer()->get('kernel'), $this->entityInfo->getBundle(), $this->entity->getClassName());
     }
 
     public function formForEntity($entity, $key = false)
     {
-        $this->pttForm->setFormName($this->pttForm->getFormName() . '[' . $key . ']');
-        $pttFormRender = new PttFormRender($this->pttForm, $entity, $this->fields);
-        return $pttFormRender->perform();
+        $pttFormRender = new PttFormRender($this->pttForm, $entity, $this->fields, $this->formName, $this->formId);
+        return $pttFormRender->perform('multi');
     }
 
-    public function save($entity, $sentData)
+    public function save()
     {
-        $pttFormSave = new PttFormSave($this->pttForm, $entity, $this->fields, $sentData);
+        $this->_updateFields();
+        $this->pttForm->setEntityInfo($this->entityInfo);
+        $pttFormSave = new PttFormSave($this->pttForm, $this->entity, $this->fields, $this->sentData);
+
         return $pttFormSave->perform();
+    }
+
+    private function _updateFields()
+    {
+        foreach ($this->fields['block'] as $key => $block) {
+            if ($block['static']) {
+                foreach ($block['static'] as $field) {
+                    $this->_updateField($field);
+                }
+            }
+
+            if ($this->pttForm->getLanguages() && isset($block['trans'])) {
+                foreach ($this->pttForm->getLanguages() as $language) {
+                    foreach ($block['trans'] as $field) {
+                        $this->_updateField($field, $language->getCode());
+                    }
+                }
+            }
+        }
+    }
+
+    private function _updateField($field, $languageCode = false)
+    {
+        if (PttUtil::isMapped($field)) {
+            $value = PttClassNameGenerator::sentValue($field, $this->pttForm, $languageCode);
+            $method = 'set' . $field['name'];
+
+            if ($languageCode) {
+                foreach ($this->entity->getTrans() as $key => $val) {
+                    if ($val->getLanguage()->getCode() == $languageCode) {
+                        $this->entity->getTrans()['$key']->$method($value);
+                    }
+                }
+            } else {
+                $this->entity->$method($value);
+            }
+        }
     }
 }

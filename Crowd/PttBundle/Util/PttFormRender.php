@@ -6,6 +6,8 @@ use Crowd\PttBundle\Form\PttEntityInfo;
 use Crowd\PttBundle\Form\PttForm;
 use Crowd\PttBundle\Form\PttClassNameGenerator;
 
+use Crowd\PttBundle\Form\PttHelperFormFieldTypeEntity;
+
 class PttFormRender
 {
     private $entityInfo;
@@ -14,14 +16,17 @@ class PttFormRender
     private $languages;
     private $entity;
     private $form;
+    private $formName;
 
-    public function __construct(PttForm $form, $entity, $fields)
+    public function __construct(PttForm $form, $entity, $fields, $formName = '', $formId = '')
     {
         $this->form = $form;
         $this->entity = $entity;
         $this->entityInfo = $form->getEntityInfo();
         $this->languages = $form->getLanguages();
         $this->fields = $fields;
+        $this->formName = $formName;
+        $this->formId = $formId;
         $this->htmlFields = [];
     }
 
@@ -108,44 +113,54 @@ class PttFormRender
 
     private function _renderField($field, $language = false)
     {
-        $field['value'] = PttClassNameGenerator::value($field, $this->entityInfo, $this->form->getSentData(), $this->form->getRequest(), $language);
+        if ($field['type'] == 'entity') {
+            $entity = $this->form->getContainer()->get('pttServices')->getOne(strtolower($field['entity']), 1);
+            $formName = ($this->formName != '') ? $this->formName : $this->entity->getClassName();
+            $formId = ($this->formId != '') ? $this->formId  : $this->entity->getClassName();
+            $helper = new PttHelperFormFieldTypeEntity($this->entityInfo, $this->form, $entity, $formName, $formId);
 
-        if ($field['type'] == 'image') {
-            if (isset($field['options']['sizes'][0])) {
-                $w = $field['options']['sizes'][0]['w'];
-                $h = $field['options']['sizes'][0]['h'];
-            } else {
-                $w = $h = 0;
+            return $helper->formForEntity($entity, 1);
+        } else {
+            $field['value'] = PttClassNameGenerator::value($field, $this->entityInfo, $this->entity, $this->form->getSentData(), $this->form->getRequest(), $language);
+
+            if ($field['type'] == 'image') {
+                if (isset($field['options']['sizes'][0])) {
+                    $w = $field['options']['sizes'][0]['w'];
+                    $h = $field['options']['sizes'][0]['h'];
+                } else {
+                    $w = $h = 0;
+                }
+                $field['url'] = ($field['value'] != '') ? $this->_urlPrefix($field) . $w . '-' . $h . '-' . $field['value'] : null;
             }
-            $field['url'] = ($field['value'] != '') ? $this->_urlPrefix($field) . $w . '-' . $h . '-' . $field['value'] : null;
-        }
 
-        if ($field['type'] == 'select') {
-            if (isset($field['entity'])) {
-                $field['list'] = $this->_selectEntity($field);
-            } else {
-                $method = 'getList' . ucfirst($field['name']);
-                $field['list'] = $this->entityInfo->getEntity()->$method();
+            if ($field['type'] == 'select') {
+                if (isset($field['entity'])) {
+                    $field['list'] = $this->_selectEntity($field);
+                } else {
+                    $method = 'getList' . ucfirst($field['name']);
+                    $field['list'] = $this->entity->$method();
+                }
             }
-        }
 
-        $entityName = $this->entity->getClassName();
-        $field['id'] = PttUtil::fieldId($entityName, $field['name'], $language);
-        if ($field['type'] == 'image' || $field['type'] == 'file') {
-            $field['check'] = PttUtil::fieldCheck($entityName, $field['name'], $language);
-        }
-        $field['name'] = PttUtil::fieldName($entityName, $field['name'], $language);
+            $entityName = ($this->formId != '') ? $this->formId . '_' .$this->entity->getClassName() : $this->entity->getClassName();
+            $field['id'] = PttUtil::fieldId($entityName, $field['name'], $language);
+            if ($field['type'] == 'image' || $field['type'] == 'file') {
+                $field['check'] = PttUtil::fieldCheck($entityName, $field['name'], $language);
+            }
+            $entityName = ($this->formName != '') ? $this->formName . '[' . $this->entity->getClassName() . ']' : $this->entity->getClassName();
+            $field['name'] = PttUtil::fieldName($entityName, $field['name'], $language);
 
-        $info = [
-        'type' => $this->_getFieldType($field),
-        'params' => $field
-    ];
+            $info = [
+                'type' => $this->_getFieldType($field),
+                'params' => $field
+            ];
 
-        if (isset($field['validations'])) {
-            $info['validations'] = $field['validations'];
-            unset($field['validations']);
+            if (isset($field['validations'])) {
+                $info['validations'] = $field['validations'];
+                unset($field['validations']);
+            }
+            return $this->form->getTwig()->render('PttBundle:Form:factory.html.twig', $info);
         }
-        return $this->form->getTwig()->render('PttBundle:Form:factory.html.twig', $info);
     }
 
     private function _selectEntity($field)

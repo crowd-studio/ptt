@@ -12,6 +12,10 @@ class PttFormFieldValueTime extends PttFormFieldValue
     public function value()
     {
         $value = $this->_get();
-        return ((int)$value->format('Y') > 0) ? $value->format('H:i') : '';
+        if ($value) {
+            return ((int)$value->format('Y') > 0) ? $value->format('H:i') : '';
+        } else {
+            return '';
+        }
     }
 }

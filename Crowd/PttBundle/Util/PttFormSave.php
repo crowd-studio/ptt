@@ -73,14 +73,16 @@ class PttFormSave
         foreach ($this->fields['block'] as $key => $block) {
             if ($block['static']) {
                 foreach ($block['static'] as $field) {
-                    PttClassNameGenerator::saveForField($field, $this->entity->getClassName(), $this->entityInfo, $this->form->getRequest(), $this->sentData, $this->form->getContainer(), false);
+                    $sentData = ($field['type'] == 'entity') ? $this->form->getSentData($field['entity']) : $this->sentData;
+                    PttClassNameGenerator::saveForField($field, $this->entity, $this->entityInfo, $this->form->getRequest(), $sentData, $this->form->getContainer(), false);
                 }
             }
 
             if ($this->languages && isset($block['trans'])) {
                 foreach ($this->languages as $language) {
                     foreach ($block['trans'] as $field) {
-                        PttClassNameGenerator::saveForField($field, $this->entity->getClassName(), $this->entityInfo, $this->form->getRequest(), $this->sentData, $this->form->getContainer(), $language->getCode());
+                        $sentData = ($field['type'] == 'entity') ? $this->form->getSentData($field['entity'], $language->getCode()) : $this->sentData;
+                        PttClassNameGenerator::saveForField($field, $this->entity, $this->entityInfo, $this->form->getRequest(), $sentData, $this->form->getContainer(), $language->getCode());
                     }
                 }
             }

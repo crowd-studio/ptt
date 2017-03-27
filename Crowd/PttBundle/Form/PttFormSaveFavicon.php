@@ -14,9 +14,9 @@ class PttFormSaveFavicon extends PttFormSave
 {
     private $faviconPath;
 
-    public function __construct($field, PttEntityInfo $entityInfo, Request $request, $sentData, $container, $languageCode = false)
+    public function __construct($field, $entity, PttEntityInfo $entityInfo, Request $request, $sentData, $container, $languageCode = false)
     {
-        parent::__construct($field, PttEntityInfo $entityInfo, Request $request, $sentData, $container, $languageCode = false)
+        parent::__construct($field, $entity, $entityInfo, $request, $sentData, $container, $languageCode)
         $this->$faviconPath = $container->getParameter('favicon');
     }
 

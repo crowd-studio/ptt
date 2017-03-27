@@ -14,21 +14,20 @@ class PttFormSavePassword extends PttFormSave
 {
     private $factory;
 
-    public function __construct($field, PttEntityInfo $entityInfo, Request $request, $sentData, $container, $languageCode = false)
+    public function __construct($field, $entity, PttEntityInfo $entityInfo, Request $request, $sentData, $container, $languageCode = false)
     {
-        parent::__construct($field, $entityInfo, $request, $sentData, $container, $languageCode);
+        parent::__construct($field, $entity, $entityInfo, $request, $sentData, $container, $languageCode);
         $this->factory = $container->get('security.encoder_factory');
     }
 
     public function value()
     {
-        $entity = $this->entityInfo->getEntity();
         $sentValue = $this->_sentValue([]);
         if (isset($sentValue['first']) && $sentValue['first'] != '') {
-            $encoder = $this->factory->getEncoder($entity);
-            $password = $encoder->encodePassword($sentValue['first'], $entity->getSalt());
+            $encoder = $this->factory->getEncoder($this->entity);
+            $password = $encoder->encodePassword($sentValue['first'], $this->entity->getSalt());
         } else {
-            $password = $entity->getPassword();
+            $password = $this->entity->getPassword();
         }
 
         return $password;

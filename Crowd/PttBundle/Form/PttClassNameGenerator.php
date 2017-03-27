@@ -21,26 +21,39 @@ class PttClassNameGenerator
         return 'Crowd\PttBundle\Form\PttFormFieldType' . ucfirst($type);
     }
 
-    public static function saveForField($field, $formName, $entityInfo, $request, $sentData, $container, $languageCode)
+    public static function saveForField($field, $entity, $entityInfo, $request, $sentData, $container, $languageCode)
     {
-        if (PttUtil::isMapped($field) && strtolower($field['type']) != 'entity' && strtolower($field['type']) != 'multipleentity' && strtolower($field['type']) != 'gallery') {
-            $value = PttClassNameGenerator::save($field, $entityInfo, $request, $sentData, $container, $languageCode);
+        if (PttUtil::isMapped($field) && strtolower($field['type']) != 'multipleentity' && strtolower($field['type']) != 'gallery') {
+            $value = PttClassNameGenerator::save($field, $entity, $entityInfo, $request, $sentData, $container, $languageCode);
 
             if (strtolower($field['type']) == 'selectmultiple') {
-                $entityInfo->set($field['name'] . '_model', $sentData[PttUtil::fieldName($formName, $field['name'] . '_model', $languageCode)]);
+                $entityInfo->set($field['name'] . '_model', $sentData[PttUtil::fieldName($entity->getClassName(), $field['name'] . '_model', $languageCode)]);
             }
 
-            $entityInfo->set($field['name'], $value, $languageCode);
+            $method = 'set' . ucfirst($field['name']);
+            if ($languageCode) {
+                if (method_exists($entity->getTrans()[0], $method)) {
+                    foreach ($entity->getTrans() as $key => $val) {
+                        if ($languageCode == $val->getLanguage()->getCode()) {
+                            $entity->getTrans()[$key]->$method($value);
+                        }
+                    }
+                }
+            } else {
+                if (method_exists($entity, $method)) {
+                    $entity->$method($value);
+                }
+            }
         }
     }
 
-    public static function save($field, $entityInfo, $request, $sentData, $container, $languageCode)
+    public static function save($field, $entity, $entityInfo, $request, $sentData, $container, $languageCode)
     {
         $name = 'Crowd\PttBundle\Form\PttFormSave';
         $className = $name . ucfirst($field['type']);
         $className = (class_exists($className)) ? $className : $name . 'Default';
 
-        $formSave = new $className($field, $entityInfo, $request, $sentData, $container, $languageCode);
+        $formSave = new $className($field, $entity, $entityInfo, $request, $sentData, $container, $languageCode);
         return $formSave->value();
     }
 
@@ -84,11 +97,11 @@ class PttClassNameGenerator
         }
     }
 
-    public static function value($field, $entityInfo, $sentData, $request, $languageCode)
+    public static function value($field, $entityInfo, $sentData, $entity, $request, $languageCode)
     {
         $className = 'Crowd\PttBundle\Form\PttFormFieldValue' . ucfirst($field['type']);
         $className = (!class_exists($className)) ? 'Crowd\PttBundle\Form\PttFormFieldValueDefault' : $className;
-        $formValue = new $className($field, $entityInfo, $sentData, $request, $languageCode);
+        $formValue = new $className($field, $entityInfo, $sentData, $entity, $request, $languageCode);
         return $formValue->value();
     }
 }
