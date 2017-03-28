@@ -17,15 +17,13 @@ use Crowd\PttBundle\Util\PttTrans;
 
 class PttTwigExtension extends Twig_Extension
 {
-    private $em;
     private $securityContext;
     private $request;
     private $kernel;
     private $pttTrans;
 
-    public function __construct(\Doctrine\ORM\EntityManager $em, $securityContext, KernelInterface $kernel)
+    public function __construct($securityContext, KernelInterface $kernel)
     {
-        $this->em = $em;
         $this->securityContext = $securityContext;
         $this->kernel = $kernel;
         $this->parsedown = new \Parsedown();

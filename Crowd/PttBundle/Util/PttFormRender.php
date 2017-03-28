@@ -2,7 +2,6 @@
 
 namespace Crowd\PttBundle\Util;
 
-use Crowd\PttBundle\Form\PttEntityInfo;
 use Crowd\PttBundle\Form\PttForm;
 use Crowd\PttBundle\Form\PttClassNameGenerator;
 
@@ -10,7 +9,6 @@ use Crowd\PttBundle\Form\PttHelperFormFieldTypeEntity;
 
 class PttFormRender
 {
-    private $entityInfo;
     private $htmlFields;
     private $fields;
     private $languages;
@@ -22,12 +20,19 @@ class PttFormRender
     {
         $this->form = $form;
         $this->entity = $entity;
-        $this->entityInfo = $form->getEntityInfo();
         $this->languages = $form->getLanguages();
         $this->fields = $fields;
         $this->formName = $formName;
         $this->formId = $formId;
         $this->htmlFields = [];
+
+        if (method_exists($entity, 'getTrans')) {
+            if (!count($entity->getTrans())) {
+                foreach ($languages as $language) {
+                    $this->entity->createTrans($language);
+                }
+            }
+        }
     }
 
     public function perform($key)
@@ -117,11 +122,11 @@ class PttFormRender
             $entity = $this->form->getContainer()->get('pttServices')->getOne(strtolower($field['entity']), 1);
             $formName = ($this->formName != '') ? $this->formName : $this->entity->getClassName();
             $formId = ($this->formId != '') ? $this->formId  : $this->entity->getClassName();
-            $helper = new PttHelperFormFieldTypeEntity($this->entityInfo, $this->form, $entity, $formName, $formId);
+            $helper = new PttHelperFormFieldTypeEntity($this, $this->form, $entity, $formName, $formId);
 
             return $helper->formForEntity($entity, 1);
         } else {
-            $field['value'] = PttClassNameGenerator::value($field, $this->entityInfo, $this->entity, $this->form->getSentData(), $this->form->getRequest(), $language);
+            $field['value'] = PttClassNameGenerator::value($field, $this, $this->entity, $this->form->getSentData(), $this->form->getRequest(), $language);
 
             if ($field['type'] == 'image') {
                 if (isset($field['options']['sizes'][0])) {
@@ -202,5 +207,47 @@ class PttFormRender
             return $field['type'];
             break;
         }
+    }
+
+    private function _methodExists($name, $languageCode)
+    {
+        $exists = ($languageCode) ? method_exists($this->entity->getTrans()[0], $name) : method_exists($this->entity, $name);
+
+        if ($exists) {
+            return true;
+        } else {
+            $string = ($languageCode) ? ' does not exist for trans entity ' : ' does not exist for entity ';
+            throw new \Exception('The method ' . $name . $string . $this->entity->getClassName());
+        }
+    }
+
+    public function getForm()
+    {
+        return $this->form;
+    }
+
+
+    public function get($name, $languageCode = false)
+    {
+        $name = 'get' . ucfirst($name);
+
+        return ($this->_methodExists($name, $languageCode)) ? $this->_fieldGet($name, $languageCode) : null;
+    }
+
+    private function _fieldGet($name, $languageCode)
+    {
+        return ($languageCode) ? $this->_transValue($name, $languageCode) : $this->entity->$name();
+    }
+
+    private function _transValue($name, $languageCode)
+    {
+        $val = null;
+        foreach ($this->entity->getTrans() as $value) {
+            if ($languageCode == $value->getLanguage()->getCode()) {
+                $val = $value->$name();
+            }
+        }
+
+        return $val;
     }
 }

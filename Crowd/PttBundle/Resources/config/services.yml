@@ -4,19 +4,19 @@ services:
         arguments: ["@doctrine.orm.entity_manager"]
     pttTrans:
         class: Crowd\PttBundle\Util\PttTrans
-        arguments: ["@doctrine.orm.entity_manager", "@security.token_storage", "@service_container"]
+        arguments: ["@security.token_storage", "@service_container"]
         calls:
             - ["setRequest", ["@request_stack"]]
     pttForm:
         class: Crowd\PttBundle\Form\PttForm
         shared: false
-        arguments: ["@doctrine.orm.entity_manager", "@security.token_storage", "@service_container"]
+        arguments: ["@security.token_storage", "@service_container"]
         calls:
             - ["setRequest", ["@request_stack"]]
             - ["setPttTrans", ["@pttTrans"]]
     pttTwigExtension:
         class: Crowd\PttBundle\Twig\PttTwigExtension
-        arguments: ["@doctrine.orm.entity_manager", "@security.token_storage", "@kernel", "@service_container"]
+        arguments: ["@security.token_storage", "@kernel"]
         tags:
             - { name: twig.extension }
         calls:

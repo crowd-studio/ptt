@@ -21,16 +21,17 @@ class PttHelperFormFieldTypeEntity
     private $formName;
     private $formId;
 
-    public function __construct(PttEntityInfo $entityInfo, PttForm $pttForm, $entity, $formName = '', $formId = '', $sentData = false)
+    public function __construct($entityInfo, $entity, $formName = '', $formId = '', $sentData = false)
     {
         $this->entityInfo = $entityInfo;
+        $this->pttForm = $entityInfo->getForm();
         $this->entity = $entity;
-        $this->pttForm = $pttForm;
+
         $this->sentData = $sentData;
         $this->formName = $formName;
         $this->formId = $formId;
 
-        $this->fields = PttUtil::fields($this->pttForm->getContainer()->get('kernel'), $this->entityInfo->getBundle(), $this->entity->getClassName());
+        $this->fields = PttUtil::fields($this->pttForm->getContainer()->get('kernel'), $this->form->getBundle(), $this->entity->getClassName());
     }
 
     public function formForEntity($entity, $key = false)
@@ -42,10 +43,17 @@ class PttHelperFormFieldTypeEntity
     public function save()
     {
         $this->_updateFields();
-        $this->pttForm->setEntityInfo($this->entityInfo);
         $pttFormSave = new PttFormSave($this->pttForm, $this->entity, $this->fields, $this->sentData);
 
         return $pttFormSave->perform();
+    }
+
+    public function validate()
+    {
+        $this->entity->beforeSave($this->sentData);
+
+        $pttFormValidation = new pttFormValidation($this->pttForm, $this->entity, $this->sentData);
+        $this->entity = $pttFormValidation->perform();
     }
 
     private function _updateFields()

@@ -8,21 +8,21 @@
 namespace Crowd\PttBundle\Form;
 
 use Symfony\Component\HttpFoundation\Request;
+use Crowd\PttBundle\Util\PttUtil;
+use Crowd\PttBundle\Util\PttFormValidations;
 
 class PttFormFieldSentValue
 {
     protected $field;
-    protected $entityInfo;
     protected $sentData;
     protected $languageCode;
     protected $errors;
 
-    public function __construct($field, PttForm $pttForm, $languageCode = false)
+    public function __construct($field, PttFormValidations $pttFormValidations, $sentData, $languageCode = false)
     {
         $this->field = $field;
         $this->languageCode = $languageCode;
-        $this->entityInfo = $pttForm->getEntityInfo();
-        $this->sentData = $pttForm->getSentData($field['name'], $this->languageCode);
-        $this->errors = $pttForm->getErrors($field['name'], $this->languageCode);
+        $this->sentData = $sentData;
+        $this->errors = $pttFormValidations->getForm()->getErrors($field['name'], $this->languageCode);
     }
 }

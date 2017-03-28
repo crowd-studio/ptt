@@ -14,9 +14,9 @@ class PttFormSavePassword extends PttFormSave
 {
     private $factory;
 
-    public function __construct($field, $entity, PttEntityInfo $entityInfo, Request $request, $sentData, $container, $languageCode = false)
+    public function __construct($field, $entity, $formSave, Request $request, $sentData, $container, $languageCode = false)
     {
-        parent::__construct($field, $entity, $entityInfo, $request, $sentData, $container, $languageCode);
+        parent::__construct($field, $entity, $formSave, $request, $sentData, $container, $languageCode);
         $this->factory = $container->get('security.encoder_factory');
     }
 

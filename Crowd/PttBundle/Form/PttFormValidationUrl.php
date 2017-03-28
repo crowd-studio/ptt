@@ -11,13 +11,17 @@ class PttFormValidationUrl extends PttFormValidation
 {
     public function isValid()
     {
-        $query = 'http://';
-        $valid = (substr($this->_sentValue(), 0, strlen($query)) === $query);
-        if (!$valid) {
-            $query = 'https://';
+        $valid = true;
+        if ($this->_sentValue() != '') {
+            $query = 'http://';
             $valid = (substr($this->_sentValue(), 0, strlen($query)) === $query);
+            if (!$valid) {
+                $query = 'https://';
+                $valid = (substr($this->_sentValue(), 0, strlen($query)) === $query);
+            }
         }
-        
+
+
         return $valid;
     }
 }

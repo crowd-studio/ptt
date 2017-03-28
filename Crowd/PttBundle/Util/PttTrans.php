@@ -16,16 +16,14 @@ use Symfony\Component\HttpFoundation\RequestStack;
 
 class PttTrans
 {
-    private $em;
     private $tokenStorage;
     private $container;
     private $request;
     private $languages;
     private $preferredLanguage;
 
-    public function __construct(EntityManager $entityManager, TokenStorage $tokenStorage, ContainerInterface $serviceContainer)
+    public function __construct(TokenStorage $tokenStorage, ContainerInterface $serviceContainer)
     {
-        $this->em = $entityManager;
         $this->tokenStorage = $tokenStorage;
         $this->container = $serviceContainer;
 

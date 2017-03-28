@@ -7,19 +7,21 @@
 
 namespace Crowd\PttBundle\Form;
 
+use Crowd\PttBundle\Util\PttFormValidations;
+
 class PttFormValidation
 {
-    protected $entityInfo;
+    protected $pttFormValidations;
     protected $sentData;
     protected $field;
     protected $container;
 
-    public function __construct(PttForm $pttForm, $field, $languageCode = false)
+    public function __construct(PttFormValidations $pttFormValidations, $field, $sentData, $languageCode = false)
     {
-        $this->container = $pttForm->getContainer();
-        $this->entityInfo = $pttForm->getEntityInfo();
+        $this->pttFormValidations = $pttFormValidations;
+        $this->container = $pttFormValidations->getForm()->getContainer();
         $this->field = $field;
-        $this->sentData = $pttForm->getSentData($this->field['name'], $languageCode);
+        $this->sentData = $sentData;
     }
 
     protected function _sentValue($default = '')

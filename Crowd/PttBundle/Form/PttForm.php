@@ -14,38 +14,40 @@ use Symfony\Component\HttpFoundation\RequestStack;
 
 use Crowd\PttBundle\Util\PttUtil;
 use Crowd\PttBundle\Util\PttFormRender;
-use Crowd\PttBundle\Util\PttFormSave;
+use Crowd\PttBundle\Util\PttSave;
+use Crowd\PttBundle\Util\PttFormValidations;
 use Crowd\PttBundle\Util\PttTrans;
 
 class PttForm
 {
     private $securityContext;
     private $container;
-    private $entityInfo;
     private $sentData;
-    private $sentDataTrans;
     private $errors;
     private $request;
     private $languages;
     private $preferredLanguage;
     private $pttTrans;
-    private $totalData = 0;
     private $twig;
     private $formName;
     private $fields;
     private $userId;
     private $session;
+    private $metadata;
+    private $entity;
+    private $pttServices;
 
-    public function __construct(EntityManager $entityManager, TokenStorage $securityContext, ContainerInterface $serviceContainer)
+    public function __construct(TokenStorage $securityContext, ContainerInterface $serviceContainer)
     {
         $this->securityContext = $securityContext;
         $this->container = $serviceContainer;
         $this->twig = $this->container->get('twig');
         $this->session = $this->container->get('session');
+        $this->pttServices = $this->container->get('pttServices');
 
-        $metadata = $this->container->get('pttEntityMetadata');
-        $this->languages = $metadata->getLanguages();
-        $this->preferredLanguage = $metadata->getPreferredLanguage();
+        $this->metadata = $this->container->get('pttEntityMetadata');
+        $this->languages = $this->metadata->getLanguages();
+        $this->preferredLanguage = $this->metadata->getPreferredLanguage();
 
         $this->userId = -1;
         if ($this->securityContext->getToken() != null && method_exists($this->securityContext->getToken()->getUser(), 'getId')) {
@@ -78,26 +80,26 @@ class PttForm
         return $this->request;
     }
 
-    public function setEntity($entity)
+    public function getPttServices()
     {
-        $this->entityInfo = new PttEntityInfo($entity, $this->container, $this->languages, $this->pttTrans);
-        $this->formName = $this->entityInfo->getEntityName();
-        $this->fields = PttUtil::fields($this->container->get('kernel'), $this->entityInfo->getBundle(), $this->entityInfo->getEntityName());
+        return $this->pttServices;
     }
 
-    public function setEntityInfo($entityInfo)
+    public function setEntity($entity)
     {
-        $this->entityInfo = $entityInfo;
+        $this->entity = $entity;
+        $this->formName = $entity->getClassName();
+        $this->fields = PttUtil::fields($this->container->get('kernel'), $this->metadata->bundle($entity), $this->formName);
     }
 
     public function setFormName($formName)
     {
-        $this->entityInfo->setFormName($formName);
+        $this->formName = $formName;
     }
 
-    public function getEntityInfo()
+    public function getFormName()
     {
-        return $this->entityInfo;
+        return $this->formName;
     }
 
     public function getSentData($fieldName = false, $languageCode = false)
@@ -149,9 +151,14 @@ class PttForm
         return $this->container;
     }
 
+    public function getBundle()
+    {
+        return $this->metadata->bundle($this->entity);
+    }
+
     public function createView($key = false)
     {
-        $formRender = new PttFormRender($this, $this->entityInfo->getEntity(), $this->fields);
+        $formRender = new PttFormRender($this, $this->entity, $this->fields);
         return $formRender->perform($key);
     }
 
@@ -159,52 +166,18 @@ class PttForm
     {
         $this->sentData = $this->request->request->all();
 
-        $this->entityInfo->getEntity()->beforeSave($this->sentData);
-        $this->_validateFields();
+        $this->entity->beforeSave($this->sentData);
+        $pttFormValidation = new PttFormValidations($this, $this->entity, $this->fields, $this->sentData);
+        $this->entity = $pttFormValidation->perform();
+
         return !$this->errors->hasErrors();
     }
 
     public function save()
     {
-        $pttFormSave = new PttFormSave($this, $this->entityInfo->getEntity(), $this->fields, $this->sentData);
-        $entityPrincipal = $pttFormSave->perform();
-        $this->container->get('pttServices')->persist($entityPrincipal);
-        $entityPrincipal->afterSave($this->sentData);
-    }
-
-    private function _validateFields()
-    {
-        foreach ($this->fields['block'] as $key => $block) {
-            if ($block['static']) {
-                foreach ($block['static'] as $field) {
-                    $this->_validateField($field);
-                }
-            }
-
-            if ($this->languages && isset($block['trans'])) {
-                foreach ($this->languages as $language) {
-                    foreach ($block['trans'] as $field) {
-                        $this->_validateField($field, $language->getCode());
-                    }
-                }
-            }
-        }
-    }
-
-    private function _validateField($field, $languageCode = false)
-    {
-        if ($field['type'] == 'url') {
-            if (isset($field['type']['validations'])) {
-                $field['type']['validations'][] = ['url' => true];
-            } else {
-                $field['validations'] = ['url' => true];
-            }
-        }
-
-        PttClassNameGenerator::validation($field, $this, $languageCode);
-        if (PttUtil::isMapped($field)) {
-            $value = PttClassNameGenerator::sentValue($field, $this, $languageCode);
-            $this->entityInfo->set($field['name'], $value, $languageCode);
-        }
+        $pttFormSave = new PttSave($this, $this->entity, $this->fields, $this->sentData);
+        $this->entity = $pttFormSave->perform();
+        $this->container->get('pttServices')->persist($this->entity);
+        $this->entity->afterSave($this->sentData);
     }
 }

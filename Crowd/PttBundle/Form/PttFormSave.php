@@ -9,57 +9,34 @@ namespace Crowd\PttBundle\Form;
 
 use Symfony\Component\HttpFoundation\Request;
 use Crowd\PttBundle\Util\PttUtil;
+use Crowd\PttBundle\Util\PttSave;
 
 class PttFormSave
 {
     protected $field;
-    protected $entityInfo;
+    protected $formSave;
     protected $request;
     protected $languageCode;
     protected $sentData;
     protected $entity;
 
-    public function __construct($field, $entity, PttEntityInfo $entityInfo, Request $request, $sentData, $container, $languageCode = false)
+    public function __construct($field, $entity, PttSave $formSave, Request $request, $sentData, $container, $languageCode = false)
     {
         $this->field = $field;
-        $this->entityInfo = $entityInfo;
+        $this->formSave = $formSave;
         $this->request = $request;
         $this->languageCode = $languageCode;
         $this->sentData = $sentData;
         $this->entity = $entity;
     }
 
-    private function _methodExists($name)
-    {
-        return ($this->languageCode) ? method_exists($this->entity->getTrans()[0], $name) : method_exists($this->entity, $name);
-    }
-
     protected function _value()
     {
-        $name = 'get' . ucfirst($this->field['name']);
-
-        return ($this->_methodExists($name)) ? $this->_fieldValue($name) : null;
-    }
-
-    private function _fieldValue($name)
-    {
-        return ($this->languageCode) ? $this->_transValue($name) : $this->entity->$name();
-    }
-
-    private function _transValue($name)
-    {
-        $val = null;
-        foreach ($this->entity->getTrans() as $value) {
-            if ($this->languageCode == $value->getLanguage()->getCode()) {
-                $val = $value->$name();
-            }
-        }
-
-        return $val;
+        return $this->formSave->get($this->field['name'], $this->languageCode);
     }
 
     protected function _sentValue($default = '')
     {
-        return PttUtil::getFieldData($this->sentData, $this->entityInfo->getFormName(), $this->field['name'], $default, $this->languageCode);
+        return PttUtil::getFieldData($this->sentData, $this->formSave->getFormName(), $this->field['name'], $default, $this->languageCode);
     }
 }
