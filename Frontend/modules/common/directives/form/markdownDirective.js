@@ -1,20 +1,20 @@
 'use strict';
 
-var SimpleMDE = require('simplemde');
+var $ = require('jquery');
+require('bootstrap-markdown');
 
 module.exports = /*@ngInject*/
 function markdownDirective() {
     return {
 		restrict:'A',
-		scope: {
-			alert: '@'
-		},
+		scope: true,
 		link: function(scope, element) {
-			var simplemde = new SimpleMDE({ 
-				element: element[0],
-				status: false,
-				spellChecker: false
-			});
+			let notElements = ['cmdPreview','cmdImage'];
+			$(element[0]).markdown({
+				hiddenButtons: notElements,
+				disabledButtons: notElements,
+				footer: window.conf.trans['markdownHelp'],
+			})
 		}
 	};
 };

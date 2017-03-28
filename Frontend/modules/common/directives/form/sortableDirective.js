@@ -3,14 +3,12 @@
 var Sortable = require('sortablejs');
 
 module.exports = /*@ngInject*/
-function markdownDirective() {
+function sortableDirective() {
     return {
 		restrict:'A',
-		scope: {
-			alert: '@'
-		},
-		link: function(scope, element) {
-      var sortable = new Sortable(element[0]);
+		scope: true,
+		link: function(element) {
+      		var sortable = new Sortable(element[0]);
 		}
 	};
 };

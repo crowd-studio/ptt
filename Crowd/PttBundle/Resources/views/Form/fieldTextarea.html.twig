@@ -29,8 +29,5 @@
 		<textarea class="form-control{{ params.elementClass ? ' ' ~ params.elementClass : '' }}"{{ utilities.attrGroup([ ['name', params.name], ['placeholder', params.placeholder], ['id', params.id], ['rows', params.rows], ['data-parsley-errors-container', '#error-' ~ params.id ],['maxlength', validations.maxlength],['minlength', validations.minlength] ]) }}{{ ( validations.equal ? ' data-parsley-equalto="#' ~ validations.equal ~ '"' : '') | raw }}{{ params.markdown ? utilities.attr('markdown')}}{{ validations.required ? ' required' : '' }}>
 		{{- params.value ? params.value : '' -}}
 		</textarea>
-		{%- if params.markdown -%}
-			<div class="markdown-help">{{ 'markdownHelp' | trans }}</div>
-		{%- endif -%}
 	</div>
 {%- endif -%}
