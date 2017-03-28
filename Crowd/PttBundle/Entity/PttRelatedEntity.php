@@ -21,13 +21,6 @@ class PttRelatedEntity extends PttEntity
     protected $_order;
 
     /**
-     * @var string
-     *
-     * @ORM\Column(name="_model", type="text")
-     */
-    protected $_model;
-
-    /**
      * Set _order
      *
      * @param integer $_order
@@ -49,29 +42,5 @@ class PttRelatedEntity extends PttEntity
     public function get_Order()
     {
         return $this->_order;
-    }
-
-    /**
-     * Set _model
-     *
-     * @param integer $_model
-     *
-     * @return Entity
-     */
-    public function set_Model($_model)
-    {
-        $this->_model = $_model;
-
-        return $this;
-    }
-
-    /**
-     * Get _model
-     *
-     * @return integer
-     */
-    public function get_Model()
-    {
-        return $this->_model;
     }
 }
