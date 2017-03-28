@@ -159,7 +159,7 @@ class PttForm
     public function createView($key = false)
     {
         $formRender = new PttFormRender($this, $this->entity, $this->fields);
-        return $formRender->perform($key);
+        return $formRender->perform();
     }
 
     public function isValid()

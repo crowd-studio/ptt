@@ -40,23 +40,23 @@ class PttHelperFormFieldTypeEntity
 
     public function formForEntity($entity, $key = false)
     {
-        $pttFormRender = new PttFormRender($this->pttForm, $entity, $this->fields, $this->formName . '['.$key.']', $this->formId . '_' . $key);
-        return $pttFormRender->perform('multi');
+        $pttFormRender = new PttFormRender($this->pttForm, $entity, $this->fields, $this->formName, $this->formId);
+        return $pttFormRender->perform($key);
     }
 
-    // public function save()
-    // {
-    //     $this->_updateFields();
-    //     $pttFormSave = new PttSave($this->pttForm, $this->entity, $this->fields, $this->sentData);
-    //
-    //     return $pttFormSave->perform();
-    // }
-    //
-    // public function validate()
-    // {
-    //     $this->entity->beforeSave($this->sentData);
-    //
-    //     $pttFormValidations = new PttFormValidations($this->pttForm, $this->entity, $this->fields, $this->sentData);
-    //     $this->entity = $pttFormValidations->perform();
-    // }
+    public function save()
+    {
+        $this->_updateFields();
+        $pttFormSave = new PttSave($this->pttForm, $this->entity, $this->fields, $this->sentData);
+
+        return $pttFormSave->perform();
+    }
+
+    public function validate()
+    {
+        $this->entity->beforeSave($this->sentData);
+
+        $pttFormValidations = new PttFormValidations($this->pttForm, $this->entity, $this->fields, $this->sentData);
+        $this->entity = $pttFormValidations->perform();
+    }
 }

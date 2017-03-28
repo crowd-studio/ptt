@@ -19,14 +19,6 @@
 		equal: false,
 	} | merge (validations | default({}) )  %}
 
-	{% set items = [
-		{id: 1, title: 'Tag', data:'<div class="form-group col-xs-12"><label>Title *</label><input class="form-control" type="text" value="Uno" required></div>'},
-		{id: 2, title: 'Tag', data:'<div class="form-group col-xs-12"><label>Title *</label><input class="form-control" type="text" value="Dos" required></div>'},
-		{id: 3, title: 'Tag', data:'<div class="form-group col-xs-12"><label>Title *</label><input class="form-control" type="text" value="Tres" required></div>'},
-		{id: 4, title: 'Tag', data:'<div class="form-group col-xs-12"><label>Title *</label><input class="form-control" type="text" value="Cuatro" required></div>'},
-		{id: 5, title: 'Tag', data:'<div class="form-group col-xs-12"><label>Title *</label><input class="form-control" type="text" value="Cinco" required></div>'}
-		] %}
-
 	<div class="form-group entity hide{{utilities.getSize(params.size)}}{{ params.outterClass ? ' ' ~ params.outterClass : '' }}" ng-controller="entityController">
 		{%- if params.label and params.label != "" -%}
 			<h4>{{ params.label }}{{ validations.required ? ' *' : '' }}</h4>
@@ -36,9 +28,9 @@
 				<a ng-show="!changeOrder" ng-click="newEvent($event)" class="btn btn-default btn-sm btn-sort">{{ 'addNew' | trans }} {{ params.entity is defined ? params.entity }}</a>
 				<a ng-show="!changeOrder" ng-click="activeOrderEvent($event)" class="btn btn-default btn-sm btn-sort">{{ 'order' | trans }}</a>
 				<a ng-show="changeOrder" ng-click="cancelOrderEvent($event)" class="btn btn-sm btn-danger">{{ 'cancel' | trans }}</a>
-				<a ng-show="changeOrder" ng-click="saveOrderEvent($event)" class="btn btn-sm btn-success">{{ 'save' | trans }}</a>	
+				<a ng-show="changeOrder" ng-click="saveOrderEvent($event)" class="btn btn-sm btn-success">{{ 'save' | trans }}</a>
 			</div>
-				
+
 			<table class="table">
 				<thead>
 					<tr>
@@ -47,7 +39,7 @@
 					</tr>
 				</thead>
 				<tbody class="items-to-order">
-					{% for item in items %}
+					{% for item in params.value %}
 						<tr data-id="{{ item.id }}" ng-class="{'draggable': changeOrder}">
 							<td class="handle ng-hide show-entity" ng-show="changeOrder">{{ sprites.order() }}</td>
 							<td ng-show="changeOrder">{{ item.title }}</td>
