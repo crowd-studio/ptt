@@ -17,7 +17,7 @@
 		required: false,
 	} | merge (validations | default({}) )  %}
 
-	<div class="form-group checkbox {{utilities.getSize(params.size)}}{{ params.outterClass ? ' ' ~ params.outterClass : '' }}">
+	<div class="form-group checkbox{{utilities.getSize(params.size)}}{{ params.outterClass ? ' ' ~ params.outterClass : '' }}">
 		<div class="errors" {{- ( params.name is defined ? ' id="error-' ~ params.name ~ '"' : '' ) | raw -}}></div>
 		<label>
 			<input type="checkbox" class="checkbox{{ params.elementClass ? ' ' ~ params.elementClass : '' }}"{{ utilities.attrGroup([ ['name', params.name], ['id', params.id], ['value', params.value], ['data-parsley-errors-container', '#error-' ~ params.name] ]) }}{{ validations.required ? ' required' : '' }}{{ params.value == 1 ? ' checked' : '' }}>

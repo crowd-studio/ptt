@@ -33,7 +33,7 @@
 	} | merge (validations | default({}) )  %}
 
 	{%- if params.type != 'hidden' -%}
-	<div class="form-group {{utilities.getSize(params.size)}}{{ params.outterClass ? ' ' ~ params.outterClass : '' }}">
+	<div class="form-group{{utilities.getSize(params.size)}}{{ params.outterClass ? ' ' ~ params.outterClass : '' }}">
 	{%- endif -%}
 		
 		{%- if params.label and params.label != "" -%}

@@ -1,0 +1,70 @@
+{%- if params -%}
+	{% import 'PttBundle:Default:utilities.html.twig' as utilities %}
+	{% import 'PttBundle:Default:sprites.html.twig' as sprites %}
+
+	{% set params = {
+
+		label: false,
+
+		outterClass: false,
+		size: 'long',
+
+	} | merge (params) %}
+
+	{% set validations = {
+		mapped: true,
+		required: false,
+		minlength: false,
+		maxlength: false,
+		equal: false,
+	} | merge (validations | default({}) )  %}
+
+	{% set items = [
+		{id: 1, title: 'Tag', data:'<div class="form-group col-xs-12"><label>Title *</label><input class="form-control" type="text" value="Uno" required></div>'},
+		{id: 2, title: 'Tag', data:'<div class="form-group col-xs-12"><label>Title *</label><input class="form-control" type="text" value="Dos" required></div>'},
+		{id: 3, title: 'Tag', data:'<div class="form-group col-xs-12"><label>Title *</label><input class="form-control" type="text" value="Tres" required></div>'},
+		{id: 4, title: 'Tag', data:'<div class="form-group col-xs-12"><label>Title *</label><input class="form-control" type="text" value="Cuatro" required></div>'},
+		{id: 5, title: 'Tag', data:'<div class="form-group col-xs-12"><label>Title *</label><input class="form-control" type="text" value="Cinco" required></div>'}
+		] %}
+
+	<div class="form-group entity hide{{utilities.getSize(params.size)}}{{ params.outterClass ? ' ' ~ params.outterClass : '' }}" ng-controller="entityController">
+		{%- if params.label and params.label != "" -%}
+			<h4>{{ params.label }}{{ validations.required ? ' *' : '' }}</h4>
+		{%- endif -%}
+		<div class="entity-block container-fluid">
+			<div class="actions">
+				<a ng-show="!changeOrder" ng-click="newEvent($event)" class="btn btn-default btn-sm btn-sort">{{ 'addNew' | trans }} {{ params.entity is defined ? params.entity }}</a>
+				<a ng-show="!changeOrder" ng-click="activeOrderEvent($event)" class="btn btn-default btn-sm btn-sort">{{ 'order' | trans }}</a>
+				<a ng-show="changeOrder" ng-click="cancelOrderEvent($event)" class="btn btn-sm btn-danger">{{ 'cancel' | trans }}</a>
+				<a ng-show="changeOrder" ng-click="saveOrderEvent($event)" class="btn btn-sm btn-success">{{ 'save' | trans }}</a>	
+			</div>
+				
+			<table class="table">
+				<thead>
+					<tr>
+						<th ng-show="changeOrder" class="handle"></th>
+						<th><span class="title">Title</span></th>
+					</tr>
+				</thead>
+				<tbody class="items-to-order">
+					{% for item in items %}
+						<tr data-id="{{ item.id }}" ng-class="{'draggable': changeOrder}">
+							<td class="handle ng-hide show-entity" ng-show="changeOrder">{{ sprites.order() }}</td>
+							<td ng-show="changeOrder">{{ item.title }}</td>
+							<td ng-show="!changeOrder">
+								<div class="title">
+									<a ng-click="toggleEntityEvent($event,'{{ item.id }}')">{{ sprites.right() }}{{ sprites.down() }}<span>{{ item.title }}</span></a>
+								</div>
+								<div class="data well container-fluid">
+									<div class="row">
+										{{ item.data | raw }}
+									</div>
+								</div>
+							</td>
+						</tr>
+					{% endfor %}
+				</tbody>
+			</table>
+		</div>
+	</div>
+{% endif %}

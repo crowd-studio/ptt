@@ -181,6 +181,78 @@ form,
 			}
 		}
 	}
+	.entity{
+		.entity-block{
+			padding-top: (@grid-gutter-width / 2);
+			padding-bottom: (@grid-gutter-width / 2);
+			background: #f1f1f1;
+			.actions{
+				text-align: right;
+				>*:not(:first-child){
+					margin-left: 5px;
+				}
+			}
+			table{
+				margin-top: (@grid-gutter-width / 2);
+				margin-bottom:0;
+
+				th{
+					.title{
+						padding-left: 20px;
+
+					}
+				}
+					
+				tr{
+					.handle{
+						width:30px;
+						cursor:pointer;
+					}
+					svg{
+						.size(18px);
+						path{
+							fill: @text;
+						}
+						&.right-svg,
+						&.down-svg{
+							display:inline-block;
+							margin-top: 3px;
+							.size(12px);
+							margin-right: 8px;
+						}
+						&.down-svg{
+							display:none;
+						}
+					}
+					.title{
+						a{
+							color: #999;
+							cursor:pointer;
+						}
+					}
+					.data{
+						display:none;
+						margin-top: 5px;
+						margin-bottom:0;
+					}
+					&.opened{
+						.data{
+							display:block;
+						}
+						svg{
+							&.right-svg{
+								display:none;
+							}
+							&.down-svg{
+								display:inline-block;
+							}
+						}
+					}
+				}
+					
+			}
+		}	
+	}
 	.phrases{
 		margin-top: 20px;
 		text-align: center;
@@ -209,41 +281,6 @@ form,
 			cursor: auto;
 			background-color: @gray!important;
 			border-color: @gray!important;
-		}
-	}
-	tags-input{
-		.tags{
-			.tag-item{
-				background: @blue;
-				border-color: transparent;
-				.remove-button{
-					color: white;
-				}
-			}
-			&.focused{
-				border-color: @input-border;
-				.box-shadow(none);
-			}
-		}
-		.autocomplete{
-			.suggestion-list{
-				li{
-					&,em{
-						color: @gray;
-					}
-					
-					em{
-						font-weight: normal;
-						text-decoration: underline;
-					}
-					&:hover{
-						&,em{
-							color: @gray-dark;
-							background: lighten(@brand-info, 37%);
-						}
-					}
-				}
-			}
 		}
 	}
 }
