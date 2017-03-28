@@ -119,12 +119,16 @@ class PttFormRender
     private function _renderField($field, $language = false)
     {
         if ($field['type'] == 'entity') {
-            $entity = $this->form->getContainer()->get('pttServices')->getOne(strtolower($field['entity']), 1);
             $formName = ($this->formName != '') ? $this->formName : $this->entity->getClassName();
             $formId = ($this->formId != '') ? $this->formId  : $this->entity->getClassName();
-            $helper = new PttHelperFormFieldTypeEntity($this, $this->form, $entity, $formName, $formId);
+            $helper = new PttHelperFormFieldTypeEntity($this, $field, $formName, $formId);
 
-            return $helper->formForEntity($entity, 1);
+            $html = '';
+            foreach ($this->get($field['name']) as $key => $value) {
+                $html .= $helper->formForEntity($value, $key);
+            }
+
+            return $html;
         } else {
             $field['value'] = PttClassNameGenerator::value($field, $this, $this->entity, $this->form->getSentData(), $this->form->getRequest(), $language);
 
