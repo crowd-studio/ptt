@@ -7,9 +7,7 @@ module.exports = /*@ngInject*/
 function datetimeDirective() {
 	return {
 		restrict:'A',
-		scope: {
-			alert: '@'
-		},
+		scope: true,
 		link: function(scope, element) {
 			$(element).datetimepicker({
 				format: $(element).attr('format'),

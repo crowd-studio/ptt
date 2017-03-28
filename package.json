@@ -25,6 +25,7 @@
     "angular": "^1.6.2",
     "bootstrap-colorpicker": "^2.5.1",
     "bootstrap-datepicker": "^1.6.4",
+    "bootstrap-markdown": "^2.10.0",
     "dropzone": "^4.3.0",
     "eonasdan-bootstrap-datetimepicker": "^4.17.47",
     "evaporate": "^2.0.8",
@@ -72,8 +73,15 @@
     "vinyl-source-stream": "^1.1.0",
     "yargs": "^6.6.0"
   },
-  "browser": {},
+  "browser": {
+    "bootstrap-markdown": "./node_modules/bootstrap-markdown/js/bootstrap-markdown.js"
+  },
   "browserify-shim": {
+    "bootstrap-markdown": {
+      "depends": [
+        "jquery:jQuery"
+      ]
+    },
     "eonasdan-bootstrap-datetimepicker": {
       "depends": [
         "jquery:$",
