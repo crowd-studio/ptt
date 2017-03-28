@@ -4,6 +4,7 @@ cancel : Cancel
 content_was_saved : The content was saved
 create : Create
 createNew : Create new
+addNew: Add new
 delete : Delete
 delete_the_entity_name : Delete the %@ "%@"?
 download_file : Download file

@@ -24,7 +24,7 @@
 		required: false,
 	} | merge (params.validations | default({}) )  %}
 
-	<div class="form-group {{utilities.getSize(params.size)}}{{ params.outterClass ? ' ' ~ params.outterClass : '' }}">
+	<div class="form-group{{utilities.getSize(params.size)}}{{ params.outterClass ? ' ' ~ params.outterClass : '' }}">
 		{%- if params.label and params.label != "" -%}
 			<label{{ utilities.attr('for', params.id) }}>{{ params.label }}{{ validations.required ? ' *' : '' }}</label>
 		{%- endif -%}

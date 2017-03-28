@@ -10,12 +10,23 @@
 	<svg class="loader-svg" viewBox="0 0 105 105" xmlns="http://www.w3.org/2000/svg" fill="#fff"><circle cx="12.5" cy="12.5" r="12.5"><animate attributeName="fill-opacity" begin="0s" dur="1s" values="1;.2;1" calcMode="linear" repeatCount="indefinite"/></circle><circle cx="12.5" cy="52.5" r="12.5" fill-opacity=".5"><animate attributeName="fill-opacity" begin="100ms" dur="1s" values="1;.2;1" calcMode="linear" repeatCount="indefinite"/></circle><circle cx="52.5" cy="12.5" r="12.5"><animate attributeName="fill-opacity" begin="300ms" dur="1s" values="1;.2;1" calcMode="linear" repeatCount="indefinite"/></circle><circle cx="52.5" cy="52.5" r="12.5"><animate attributeName="fill-opacity" begin="600ms" dur="1s" values="1;.2;1" calcMode="linear" repeatCount="indefinite"/></circle><circle cx="92.5" cy="12.5" r="12.5"><animate attributeName="fill-opacity" begin="800ms" dur="1s" values="1;.2;1" calcMode="linear" repeatCount="indefinite"/></circle><circle cx="92.5" cy="52.5" r="12.5"><animate attributeName="fill-opacity" begin="400ms" dur="1s" values="1;.2;1" calcMode="linear" repeatCount="indefinite"/></circle><circle cx="12.5" cy="92.5" r="12.5"><animate attributeName="fill-opacity" begin="700ms" dur="1s" values="1;.2;1" calcMode="linear" repeatCount="indefinite"/></circle><circle cx="52.5" cy="92.5" r="12.5"><animate attributeName="fill-opacity" begin="500ms" dur="1s" values="1;.2;1" calcMode="linear" repeatCount="indefinite"/></circle><circle cx="92.5" cy="92.5" r="12.5"><animate attributeName="fill-opacity" begin="200ms" dur="1s" values="1;.2;1" calcMode="linear" repeatCount="indefinite"/></circle></svg>
 {% endmacro %}
 
-{% macro asc() %}
-	<svg class="asc-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000"><path d="M579.5 879.8c-43.7 75.7-115.3 75.7-159 0L28.7 201.1c-43.7-75.7-8-137.7 79.5-137.7h783.7c87.5 0 123.2 62 79.5 137.7L579.5 879.8z"/></svg>
+{% macro asc() %}{{ _self.down() }}{% endmacro %}
+{% macro desc() %}{{ _self.up() }}{% endmacro %}
+
+{% macro down() %}
+	<svg class="down-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000"><path d="M579.5 879.8c-43.7 75.7-115.3 75.7-159 0L28.7 201.1c-43.7-75.7-8-137.7 79.5-137.7h783.7c87.5 0 123.2 62 79.5 137.7L579.5 879.8z"/></svg>
 {% endmacro %}
 
-{% macro desc() %}
-	<svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 15 15"><path d="M6.309 1.802c.655-1.135 1.729-1.135 2.384 0l5.877 10.18c.656 1.137.12 2.066-1.192 2.065H1.623c-1.313 0-1.848-.93-1.191-2.065l5.877-10.18z"/></svg>
+{% macro up() %}
+	<svg class="up-svg" xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 15 15"><path d="M6.309 1.802c.655-1.135 1.729-1.135 2.384 0l5.877 10.18c.656 1.137.12 2.066-1.192 2.065H1.623c-1.313 0-1.848-.93-1.191-2.065l5.877-10.18z"/></svg>
+{% endmacro %}
+
+{% macro right() %}
+	<svg class="right-svg" xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 15 15"><path d="M13.198 6.308c1.135.655 1.135 1.729 0 2.384l-10.18 5.877c-1.136.656-2.065.12-2.065-1.192V1.622c0-1.313.93-1.848 2.065-1.191l10.18 5.877z"/></svg>
+{% endmacro %}
+
+{% macro left() %}
+	<svg class="left-svg" xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 15 15"><path d="M1.803 8.692c-1.135-.655-1.135-1.729 0-2.384L11.984.431c1.136-.656 2.065-.12 2.065 1.192v11.755c0 1.313-.93 1.848-2.065 1.191L1.803 8.692z"/></svg>
 {% endmacro %}
 
 {% macro order() %}

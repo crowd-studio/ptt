@@ -118,7 +118,7 @@ class PttFormRender
 
     private function _renderField($field, $language = false)
     {
-        if ($field['type'] == 'entity') {
+        if (false) {
             $entity = $this->form->getContainer()->get('pttServices')->getOne(strtolower($field['entity']), 1);
             $formName = ($this->formName != '') ? $this->formName : $this->entity->getClassName();
             $formId = ($this->formId != '') ? $this->formId  : $this->entity->getClassName();
