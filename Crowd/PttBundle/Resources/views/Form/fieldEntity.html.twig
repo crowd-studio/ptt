@@ -5,7 +5,6 @@
 	{% set params = {
 
 		label: false,
-
 		outterClass: false,
 		size: 'long',
 
@@ -39,6 +38,7 @@
 					</tr>
 				</thead>
 				<tbody class="items-to-order">
+					<script>{{params.script | raw}}</script>
 					{% for item in params.value %}
 						<tr data-id="{{ item.id }}" ng-class="{'draggable': changeOrder}">
 							<td class="handle ng-hide show-entity" ng-show="changeOrder">{{ sprites.order() }}</td>

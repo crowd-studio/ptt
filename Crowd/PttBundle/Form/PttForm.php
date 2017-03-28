@@ -92,6 +92,11 @@ class PttForm
         $this->fields = PttUtil::fields($this->container->get('kernel'), $this->metadata->bundle($entity), $this->formName);
     }
 
+    public function getEntity()
+    {
+        return $this->entity;
+    }
+
     public function setFormName($formName)
     {
         $this->formName = $formName;

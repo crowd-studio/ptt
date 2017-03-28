@@ -142,6 +142,7 @@ class PttFormRender
                 $formId = ($this->formId != '') ? $this->formId  : $this->entity->getClassName();
                 $helper = new PttHelperFormFieldTypeEntity($this, $field, $formName, $formId);
 
+                $field['script'] = $helper->emptyForm();
                 $field['value'] = [];
                 foreach ($this->get($field['name']) as $key => $value) {
                     $field['value'][] = [
