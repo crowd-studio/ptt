@@ -9,7 +9,7 @@
 				{% if data.sortable %}
 					<a ng-show="!changeOrder" ng-click="activeOrderEvent($event)" class="btn btn-default btn-sm btn-sort">{{ 'order' | trans }}</a>
 					<a ng-show="changeOrder" ng-click="cancelOrderEvent($event)" class="btn btn-sm btn-danger">{{ 'cancel' | trans }}</a>
-					<a ng-show="changeOrder" ng-click="saveOrderEvent($event)" class="btn btn-sm btn-success">{{ 'save' | trans }}</a>
+					<a ng-show="changeOrder" ng-click="saveOrderEvent($event,'{{ path('order',{entity:'sortable'}) }}')" class="btn btn-sm btn-success">{{ 'save' | trans }}</a>
 				{% endif %}
 				{% if data.filters|length > 0 %}
 					<a ng-click="showFilters = !showFilters" class="btn btn-default btn-sm btn-filter" ng-class="{'btn-primary': showFilters}">{{ 'filters' | trans }}</a>

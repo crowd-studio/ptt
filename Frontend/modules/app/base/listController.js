@@ -28,8 +28,8 @@ function listController($scope, $element, $http, loader) {
 		$scope.sortable.sort($scope.actualOrder);
 	}
 
-	$scope.saveOrderEvent = function(e){e.preventDefault();$scope.saveOrder()}
-	$scope.saveOrder = function(){
+	$scope.saveOrderEvent = function(e,path){e.preventDefault();$scope.saveOrder(path)}
+	$scope.saveOrder = function(path){
 		let data = [];
 		angular.forEach($scope.sortable.toArray(), function(value, key) {
 			data.push({id: value, _order: key});
@@ -38,7 +38,7 @@ function listController($scope, $element, $http, loader) {
 		loader.show();
 		$http({
 				method: 'PUT',
-				url: window.conf.baseURL + 'admin_panel/sortable/order',
+				url: path,
 				data
 			}).then(function successCallback(response) {
 				loader.hide();
