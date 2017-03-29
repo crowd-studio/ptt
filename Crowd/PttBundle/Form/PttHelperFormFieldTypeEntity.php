@@ -41,6 +41,10 @@ class PttHelperFormFieldTypeEntity
             'type' => 'hidden',
             'validations' => ['mapped' => false]
         ];
+        $this->fields['block'][0]['static'][] = [
+            'name' => '_Order',
+            'type' => 'hidden'
+        ];
     }
 
     public function className()
@@ -106,8 +110,8 @@ class PttHelperFormFieldTypeEntity
                   $feat->set_Order($key);
               }
 
-              $obj = [$this->field['entity'] => $obj];
-              $validation = new PttFormValidations($this->pttForm, $feat, $this->fields, $obj, $this->field['entity']);
+              $obj = [$this->field['name'] => $obj];
+              $validation = new PttFormValidations($this->pttForm, $feat, $this->fields, $obj, $this->field['name']);
               $feat = $validation->perform();
               $save = new PttSave($this->pttForm, $feat, $this->fields, $obj);
               $feat = $save->perform();

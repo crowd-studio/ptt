@@ -139,7 +139,9 @@ class PttFormRender
                 break;
             case 'entity':
                 $formName = ($this->formName != '') ? $this->formName : $this->entity->getClassName();
+                $formName .= '['.$field['name'].']';
                 $formId = ($this->formId != '') ? $this->formId  : $this->entity->getClassName();
+                $formId .= '_'.$field['name'];
                 $helper = new PttHelperFormFieldTypeEntity($this, $field, $language, $formName, $formId);
 
                 $field['scripts'] = [[
@@ -158,10 +160,10 @@ class PttFormRender
         }
 
 
-        $entityName = ($this->formId != '') ? $this->formId . '_' .$this->entity->getClassName() : $this->entity->getClassName();
+        $entityName = ($this->formId != '') ? $this->formId : $this->entity->getClassName();
         $entityNameId = ($keystone !== false) ? $entityName . '_' . $keystone : $entityName;
 
-        $entityName = ($this->formName != '') ? $this->formName . '[' . $this->entity->getClassName() . ']' : $this->entity->getClassName();
+        $entityName = ($this->formName != '') ? $this->formName  : $this->entity->getClassName();
         $entityNameName = ($keystone !== false) ? $entityName . '[' . $keystone . ']' : $entityName;
         $field['name'] = PttUtil::fieldName($entityNameName, $field['name'], $language);
 
@@ -174,6 +176,7 @@ class PttFormRender
             $info['validations'] = $field['validations'];
             unset($field['validations']);
         }
+
         return $this->form->getTwig()->render('PttBundle:Form:factory.html.twig', $info);
     }
 

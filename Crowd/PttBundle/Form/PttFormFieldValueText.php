@@ -11,7 +11,7 @@ class PttFormFieldValueText extends PttFormFieldValue
 {
     public function value()
     {
-        $value = $this->_get();
+        $value = (string)$this->_get();
         if (isset($this->field['disabled']) && $this->field['disabled']) {
             if (isset($this->field['field'])) {
                 if (isset($this->field['entity'])) {
@@ -30,7 +30,6 @@ class PttFormFieldValueText extends PttFormFieldValue
                 }
             }
         }
-        
         return $value;
     }
 }
