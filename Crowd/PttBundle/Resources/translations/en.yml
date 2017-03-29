@@ -1,4 +1,4 @@
-reaactions : Actions
+actions : Actions
 add : Add
 cancel : Cancel
 content_was_saved : The content was saved
@@ -6,6 +6,7 @@ create : Create
 createNew : Create new
 addNew: Add new
 delete : Delete
+sureDelete: Are you sure to delete?
 delete_the_entity_name : Delete the %@ "%@"?
 download_file : Download file
 edit : Edit
@@ -48,6 +49,8 @@ validation_errors_were_found : Validation errors were found
 view_in_larger_size : View in larger size
 yes : Yes
 order: Order
+changeOrder: Change order
+accept: Accept
 collapse: Collapse
 expand: Expand
 pick_file: Choose file

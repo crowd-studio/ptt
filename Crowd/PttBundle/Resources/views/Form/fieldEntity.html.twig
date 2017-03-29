@@ -3,7 +3,8 @@
 	{% import 'PttBundle:Default:sprites.html.twig' as sprites %}
 
 	{% set params = {
-
+		value: false,
+		scripts: false,
 		label: false,
 		outterClass: false,
 		size: 'long',
@@ -22,14 +23,17 @@
 		{%- if params.label and params.label != "" -%}
 			<h4>{{ params.label }}{{ validations.required ? ' *' : '' }}</h4>
 		{%- endif -%}
-		<div class="entity-block container-fluid">
-			<div class="actions">
+		<div class="entity-block container-fluid" items="{{params.value | json_encode }}" templates="{{params.scripts | json_encode }}">
+			<div class="form-group-sm form-inline actions">
+				{%- if params.scripts -%}
+					<select class="form-control new-select" ng-model="selectedTemplate" ng-options="template as template.title for template in templates track by template.title" ng-init="selectedTemplate = templates[0]">
+	                </select>
+				{%- endif -%}	
 				<a ng-show="!changeOrder" ng-click="newEvent($event)" class="btn btn-default btn-sm btn-sort">{{ 'addNew' | trans }} {{ params.entity is defined ? params.entity }}</a>
-				<a ng-show="!changeOrder" ng-click="activeOrderEvent($event)" class="btn btn-default btn-sm btn-sort">{{ 'order' | trans }}</a>
+				<a ng-show="!changeOrder" ng-click="activeOrderEvent($event)" class="btn btn-default btn-sm btn-sort">{{ 'changeOrder' | trans }}</a>
 				<a ng-show="changeOrder" ng-click="cancelOrderEvent($event)" class="btn btn-sm btn-danger">{{ 'cancel' | trans }}</a>
-				<a ng-show="changeOrder" ng-click="saveOrderEvent($event)" class="btn btn-sm btn-success">{{ 'save' | trans }}</a>
+				<a ng-show="changeOrder" ng-click="saveOrderEvent($event)" class="btn btn-sm btn-success">{{ 'accept' | trans }}</a>
 			</div>
-
 			<table class="table">
 				<thead>
 					<tr>
@@ -38,23 +42,22 @@
 					</tr>
 				</thead>
 				<tbody class="items-to-order">
-					<script>{{params.scripts[0]['data'] | raw}}</script>
-					{% for item in params.value %}
-						<tr data-id="{{ item.id }}" ng-class="{'draggable': changeOrder}">
-							<td class="handle ng-hide show-entity" ng-show="changeOrder">{{ sprites.order() }}</td>
-							<td ng-show="changeOrder">{{ item.title }}</td>
-							<td ng-show="!changeOrder">
-								<div class="title">
-									<a ng-click="toggleEntityEvent($event,'{{ item.id }}')">{{ sprites.right() }}{{ sprites.down() }}<span>{{ item.title }}</span></a>
+					<tr ng-repeat="item in items track by $index"ng-class="{'draggable': changeOrder, 'opened':item.opened}">
+						<td class="handle ng-hide show-entity" ng-show="changeOrder">{{ sprites.order() }}</td>
+						<td ng-show="changeOrder">{[{ item.title }]}</td>
+						<td ng-show="!changeOrder">
+							<div class="title">
+								<a ng-click="toggleEntityEvent($event,$index)">{{ sprites.right() }}{{ sprites.down() }}<span>{[{ item.title }]}</span></a>
+								<div class="actions">
+									<a ng-click="deleteEntityEvent($event,$index)">{{ sprites.delete() }}</a>
 								</div>
-								<div class="data well container-fluid">
-									<div class="row">
-										{{ item.data | raw }}
-									</div>
+							</div>
+							<div class="data well container-fluid">
+								<div data-html="true" class="row" ng-bind-html="renderHtml(item.data)">
 								</div>
-							</td>
-						</tr>
-					{% endfor %}
+							</div>
+						</td>
+					</tr>
 				</tbody>
 			</table>
 		</div>
