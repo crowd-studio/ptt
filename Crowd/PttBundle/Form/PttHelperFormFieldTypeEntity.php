@@ -22,8 +22,9 @@ class PttHelperFormFieldTypeEntity
     private $formName;
     private $formId;
     private $rows;
+    private $languageCode;
 
-    public function __construct($entityInfo, $field, $formName = '', $formId = '', $sentData = false)
+    public function __construct($entityInfo, $field, $languageCode, $formName = '', $formId = '', $sentData = false)
     {
         $this->entityInfo = $entityInfo;
         $this->pttForm = $entityInfo->getForm();
@@ -31,8 +32,15 @@ class PttHelperFormFieldTypeEntity
         $this->sentData = $sentData;
         $this->formName = $formName;
         $this->formId = $formId;
+        $this->languageCode = $languageCode;
 
         $this->fields = PttUtil::fields($this->pttForm->getContainer()->get('kernel'), $this->pttForm->getBundle(), $this->field['entity']);
+
+        $this->fields['block'][0]['static'][] = [
+            'name' => 'id',
+            'type' => 'hidden',
+            'validations' => ['mapped' => false]
+        ];
     }
 
     public function className()
@@ -56,6 +64,65 @@ class PttHelperFormFieldTypeEntity
     {
         $pttFormRender = new PttFormRender($this->pttForm, $entity, $this->fields, $this->formName, $this->formId);
         return $pttFormRender->perform($key);
+    }
+
+    public function sentValue()
+    {
+        $array = $this->entityInfo->get($this->field['name'], $this->languageCode);
+        if (is_array($this->sentData)) {
+            // Esborrem els sobrers
+          for ($iterator = $array->getIterator(); $iterator->valid(); $iterator->next()) {
+              $exists = false;
+              foreach ($this->sentData as $key => $obj) {
+                  if (isset($obj['id'])) {
+                      if ($iterator->current()->getPttId() == $obj['id']) {
+                          $exists = true;
+                      }
+                  }
+              }
+              if (!$exists) {
+                  $array->removeElement($iterator->current());
+              }
+          }
+
+          // Sobreescrivim
+          foreach ($this->sentData as $key => $obj) {
+              $feat = false;
+              if (isset($obj['id']) && $obj['id'] != '') {
+                  for ($iterator = $array->getIterator(); $iterator->valid(); $iterator->next()) {
+                      if ($iterator->current()->getPttId() == $obj['id']) {
+                          $feat = $iterator->current();
+                          $index = $iterator->key();
+                      }
+                  }
+                  $update = true;
+              } else {
+                  $update = false;
+                  $name = PttUtil::pttConfiguration('bundles')[0]["bundle"] . '\\Entity\\' . $this->field['entity'];
+                  $feat = new $name();
+              }
+
+              if (method_exists($feat, 'set_Order')) {
+                  $feat->set_Order($key);
+              }
+
+              $obj = [$this->field['entity'] => $obj];
+              $validation = new PttFormValidations($this->pttForm, $feat, $this->fields, $obj, $this->field['entity']);
+              $feat = $validation->perform();
+              $save = new PttSave($this->pttForm, $feat, $this->fields, $obj);
+              $feat = $save->perform();
+              if ($update) {
+                  $array->set($index, $feat);
+              } else {
+                  // AFEGIR UN DE NOU
+                  // $array = $this->addOne($array, $feat, $newMethod);
+              }
+          }
+        } else {
+            $array = $this->sentData;
+        }
+
+        return $array;
     }
 
     public function save($entity, $sentData)

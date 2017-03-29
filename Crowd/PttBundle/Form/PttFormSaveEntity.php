@@ -13,8 +13,6 @@ class PttFormSaveEntity extends PttFormSave
 {
     public function value()
     {
-        $entity = $this->_value();
-        $helper = new PttHelperFormFieldTypeEntity($this->formSave, $entity, '', '', $this->sentData);
-        return $helper->save();
+        return $this->_value();
     }
 }

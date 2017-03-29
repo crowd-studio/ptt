@@ -38,7 +38,7 @@
 					</tr>
 				</thead>
 				<tbody class="items-to-order">
-					<script>{{params.script | raw}}</script>
+					<script>{{params.scripts[0]['data'] | raw}}</script>
 					{% for item in params.value %}
 						<tr data-id="{{ item.id }}" ng-class="{'draggable': changeOrder}">
 							<td class="handle ng-hide show-entity" ng-show="changeOrder">{{ sprites.order() }}</td>

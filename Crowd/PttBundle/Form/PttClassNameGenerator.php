@@ -25,7 +25,7 @@ class PttClassNameGenerator
     {
         if (PttUtil::isMapped($field) && strtolower($field['type']) != 'multipleentity' && strtolower($field['type']) != 'gallery') {
             $value = PttClassNameGenerator::save($field, $entity, $formSave, $request, $sentData, $container, $languageCode);
-        
+
             if (strtolower($field['type']) == 'selectmultiple') {
                 $formSave->set($field['name'] . '_model', $sentData[PttUtil::fieldName($entity->getClassName(), $field['name'] . '_model', $languageCode)]);
             }
@@ -43,13 +43,13 @@ class PttClassNameGenerator
         return $formSave->value();
     }
 
-    public static function sentValue($field, $form, $languageCode)
+    public static function sentValue($field, $form, $sentData, $languageCode)
     {
         $name = 'Crowd\PttBundle\Form\PttFormFieldSentValue';
         $className = $name . ucfirst($field['type']);
         $className = (class_exists($className)) ? $className : $name . 'Default';
 
-        $sentValue = new $className($field, $form, $languageCode);
+        $sentValue = new $className($field, $form, $sentData, $languageCode);
         return $sentValue->value();
     }
 

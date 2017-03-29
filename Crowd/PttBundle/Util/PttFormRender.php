@@ -140,9 +140,12 @@ class PttFormRender
             case 'entity':
                 $formName = ($this->formName != '') ? $this->formName : $this->entity->getClassName();
                 $formId = ($this->formId != '') ? $this->formId  : $this->entity->getClassName();
-                $helper = new PttHelperFormFieldTypeEntity($this, $field, $formName, $formId);
+                $helper = new PttHelperFormFieldTypeEntity($this, $field, $language, $formName, $formId);
 
-                $field['script'] = $helper->emptyForm();
+                $field['scripts'] = [[
+                  'title' => $field['entity'],
+                  'data' => $helper->emptyForm()
+                ]];
                 $field['value'] = [];
                 foreach ($this->get($field['name']) as $key => $value) {
                     $field['value'][] = [

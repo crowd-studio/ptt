@@ -11,6 +11,7 @@ class PttFormFieldSentValueEntity extends PttFormFieldSentValue
 {
     public function value()
     {
-        return $this->entityInfo->get($this->field['name'], $this->languageCode);
+        $helper = new PttHelperFormFieldTypeEntity($this->pttFormValidations, $this->field, $this->languageCode, '', '', $this->sentData);
+        return $helper->sentValue();
     }
 }

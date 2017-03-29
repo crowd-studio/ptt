@@ -61,7 +61,8 @@ class PttFormValidations
             }
         }
 
-        $sentData = PttUtil::getFieldData($this->sentData, $this->formName, $field['name'], null, $languageCode);
+        $name = ($field['type'] == 'entity') ? $field['entity'] : $field['name'];
+        $sentData = PttUtil::getFieldData($this->sentData, $this->formName, $name, null, $languageCode);
         PttClassNameGenerator::validation($field, $this, $sentData, $languageCode);
         if (PttUtil::isMapped($field)) {
             $value = PttClassNameGenerator::sentValue($field, $this, $sentData, $languageCode);

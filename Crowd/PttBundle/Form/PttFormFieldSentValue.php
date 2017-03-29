@@ -17,12 +17,14 @@ class PttFormFieldSentValue
     protected $sentData;
     protected $languageCode;
     protected $errors;
+    protected $pttFormValidations;
 
     public function __construct($field, PttFormValidations $pttFormValidations, $sentData, $languageCode = false)
     {
         $this->field = $field;
         $this->languageCode = $languageCode;
         $this->sentData = $sentData;
+        $this->pttFormValidations = $pttFormValidations;
         $this->errors = $pttFormValidations->getForm()->getErrors($field['name'], $this->languageCode);
     }
 }
