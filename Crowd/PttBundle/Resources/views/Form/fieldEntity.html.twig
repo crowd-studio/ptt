@@ -8,6 +8,7 @@
 		label: false,
 		outterClass: false,
 		size: 'long',
+		placeholder : 'selectOneOption',
 
 	} | merge (params) %}
 
@@ -26,10 +27,13 @@
 		<div class="entity-block container-fluid" items="{{params.value | json_encode }}" templates="{{params.scripts | json_encode }}">
 			<div class="form-group-sm form-inline actions">
 				{%- if params.scripts -%}
-					<select class="form-control new-select" ng-model="selectedTemplate" ng-options="template as template.title for template in templates track by template.title" ng-init="selectedTemplate = templates[0]">
+					<select class="form-control new-select" ng-model="selectedTemplate" ng-init="templates.length > 1 ? selectedTemplate = '' : selectedTemplate = templates[0]" ng-show="templates.length > 1">
+						<option value="" ng-if="templates.length > 1">{{ params.placeholder | trans }}</option>
+						<option disabled>---</option>
+						<option ng-repeat="template in templates track by template.title" ng-value="template">{[{template.title}]}</option>
 	                </select>
 				{%- endif -%}	
-				<a ng-show="!changeOrder" ng-click="newEvent($event)" class="btn btn-default btn-sm btn-sort">{{ 'addNew' | trans }} {{ params.entity is defined ? params.entity }}</a>
+				<a ng-show="!changeOrder" ng-disabled="selectedTemplate == ''" ng-click="newEvent($event)" class="btn btn-default btn-sm btn-sort">{{ 'addNew' | trans }} {{ params.entity is defined ? params.entity }}</a>
 				<a ng-show="!changeOrder" ng-click="activeOrderEvent($event)" class="btn btn-default btn-sm btn-sort">{{ 'changeOrder' | trans }}</a>
 				<a ng-show="changeOrder" ng-click="cancelOrderEvent($event)" class="btn btn-sm btn-danger">{{ 'cancel' | trans }}</a>
 				<a ng-show="changeOrder" ng-click="saveOrderEvent($event)" class="btn btn-sm btn-success">{{ 'accept' | trans }}</a>

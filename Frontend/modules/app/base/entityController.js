@@ -40,7 +40,11 @@ function entityController($scope, $element, $http, loader, $sce) {
 
 	$scope.newEvent = function(){$scope.new();}
 	$scope.new = function (){
-		$scope.items.push($scope.selectedTemplate);
+		if($scope.selectedTemplate !== ''){
+			let newTemplate = angular.copy($scope.selectedTemplate);
+			newTemplate.data = newTemplate.data.split('[{key}]').join('['+$scope.items.length+']')
+			$scope.items.push(newTemplate);
+		}		
 	}
 
 	$scope.toggleEntityEvent = function(e,index) {e.preventDefault();$scope.toggleEntity(index)}
@@ -60,7 +64,6 @@ function entityController($scope, $element, $http, loader, $sce) {
 	
 
 	$scope.renderHtml = function(html_code){return $sce.trustAsHtml(html_code);};
-
 
 	$scope.setSortable(false);
 
