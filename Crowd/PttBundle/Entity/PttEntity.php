@@ -22,7 +22,7 @@ class PttEntity
     {
         if (method_exists($this, 'getTitle')) {
             return (string)$this->getTitle();
-        } else if (method_exists($this, 'getReference')) {
+        } elseif (method_exists($this, 'getReference')) {
             return (string)$this->getReference();
         } else {
             return (string)$this->getId();
@@ -101,7 +101,6 @@ class PttEntity
      */
     public function setUpdateDate($updateDate)
     {
-
         $this->updateDate = $updateDate;
 
         return $this;
@@ -192,31 +191,37 @@ class PttEntity
         // do stuff
     }
 
-    public function beforeSave(){
-
+    public function beforeSave()
+    {
     }
 
-    public function afterSave($entity = false){
+    public function afterSave($entity = false)
+    {
         return [];
     }
 
-    public function fieldsToFilter(){
+    public function fieldsToFilter()
+    {
         return false;
     }
 
-    public function enableFilters(){
+    public function enableFilters()
+    {
         return false;
     }
 
-    public function orderList(){
+    public function orderList()
+    {
         return 'asc';
     }
 
-    public function fieldsToList(){
+    public function fieldsToList()
+    {
         return false;
     }
 
-    public function entityInfo($entityName = false){
+    public function entityInfo($entityName = false)
+    {
         return [
             'simple' => $entityName,
             'lowercase' => strtolower($entityName),
@@ -224,7 +229,8 @@ class PttEntity
         ];
     }
 
-    public function flushCache($entity){
+    public function flushCache($entity)
+    {
         $cache = new PttCache();
         $cache->removeAll();
     }
@@ -240,23 +246,25 @@ class PttEntity
         $this->updateUserId = $userId;
     }
 
-    public function getClassName(){
+    public function getClassName()
+    {
         return (new \ReflectionClass($this))->getShortName();
     }
 
-    protected function setOne($array, $objects, $entity, $newMethod){
-        if(is_array($objects)){
+    protected function setOne($array, $objects, $entity, $newMethod)
+    {
+        if (is_array($objects)) {
             // Esborrem els sobrers
-            for($iterator = $array->getIterator(); $iterator->valid(); $iterator->next()) {
+            for ($iterator = $array->getIterator(); $iterator->valid(); $iterator->next()) {
                 $exists = false;
                 foreach ($objects as $key => $obj) {
-                    if(isset($obj['id'])){
-                        if($iterator->current()->getPttId() == $obj['id']){
+                    if (isset($obj['id'])) {
+                        if ($iterator->current()->getPttId() == $obj['id']) {
                             $exists = true;
                         }
                     }
                 }
-                if(!$exists){
+                if (!$exists) {
                     $array->removeElement($iterator->current());
                 }
             }
@@ -264,9 +272,9 @@ class PttEntity
             // Sobreescrivim
             foreach ($objects as $key => $obj) {
                 $feat = false;
-                if(isset($obj['id']) && $obj['id'] != ''){
-                    for($iterator = $array->getIterator(); $iterator->valid(); $iterator->next()) {
-                        if($iterator->current()->getPttId() == $obj['id']){
+                if (isset($obj['id']) && $obj['id'] != '') {
+                    for ($iterator = $array->getIterator(); $iterator->valid(); $iterator->next()) {
+                        if ($iterator->current()->getPttId() == $obj['id']) {
                             $feat = $iterator->current();
                             $index = $iterator->key();
                         }
@@ -274,19 +282,19 @@ class PttEntity
                 }
 
                 $update = ($feat) ? true : false;
-                if(!$update){
+                if (!$update) {
                     $name = PttUtil::pttConfiguration('bundles')[0]["bundle"] . '\\Entity\\' . $entity;
                     $feat = new $name();
                 }
 
                 foreach ($obj as $meth => $value) {
                     $method = 'set' . ucfirst($meth);
-                    if(method_exists($feat, $method)){
+                    if (method_exists($feat, $method)) {
                         $feat->$method($value);
                     }
                 }
 
-                if($update){
+                if ($update) {
                     $array->set($index, $feat);
                 } else {
                     $array = $this->addOne($array, $feat, $newMethod);
@@ -299,43 +307,45 @@ class PttEntity
         return $array;
     }
 
-    protected function addOne($array, $new, $setMethod){
+    protected function addOne($array, $new, $setMethod)
+    {
         if ($array->contains($new)) {
             return $array;
         }
         $array->add($new);
 
         $setMethod = 'set' . $setMethod;
-        if(method_exists($new, $setMethod)){
+        if (method_exists($new, $setMethod)) {
             $new->$setMethod($this);
         }
 
-        if(method_exists($new, 'set_Order')){
-            if(!$new->get_Order()){
+        if (method_exists($new, 'set_Order')) {
+            if (!$new->get_Order()) {
                 $new->set_Order(-1);
             }
         }
-        if(method_exists($new, 'set_Model')){
+        if (method_exists($new, 'set_Model')) {
             $new->set_Model($this->getClassName());
         }
 
-        if(method_exists($new, 'setUpdateObjectValues')){
+        if (method_exists($new, 'setUpdateObjectValues')) {
             $new->setUpdateObjectValues(1);
         }
 
 
-        if(method_exists($new, 'setSlug')){
+        if (method_exists($new, 'setSlug')) {
             $new->setSlug(PttUtil::slugify((string)$new));
         }
 
         return $array;
     }
 
-    protected function setMany($array, $objects, $method){
-        if(is_array($objects)){
+    protected function setMany($array, $objects, $method)
+    {
+        if (is_array($objects)) {
             // Esborrem els sobrers
             foreach ($array as $key => $obj) {
-                if(!in_array($obj, $objects)){
+                if (!in_array($obj, $objects)) {
                     $array->removeElement($obj);
                 }
             }
@@ -353,19 +363,21 @@ class PttEntity
         return $array;
     }
 
-    protected function addMany($array, $new, $setMethod){
+    protected function addMany($array, $new, $setMethod)
+    {
         if ($array->contains($new)) {
             return $array;
         }
         $array->add($new);
         $setMethod = 'set' . $setMethod;
-        if(method_exists($new, $setMethod)){
+        if (method_exists($new, $setMethod)) {
             $new->$setMethod($this);
         }
         return $array;
     }
 
-    public function getJSON(){
+    public function getJSON()
+    {
         return 'This entity does not have JSON parser';
     }
 }
