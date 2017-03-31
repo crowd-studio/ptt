@@ -152,7 +152,7 @@ class PttFormRender
                 foreach ($this->get($field['name']) as $key => $value) {
                     $field['value'][] = [
                         'id' => $value->getId(),
-                        'title' => $value->getClassName() . ': ' . $value->__toString(),
+                        'title' => $value->getClassName(),
                         'data' => $helper->formForEntity($value, $key)
                       ];
                 }
