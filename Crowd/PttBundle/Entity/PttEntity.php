@@ -320,7 +320,7 @@ class PttEntity
         }
 
         if (method_exists($new, 'set_Order')) {
-            if (!$new->get_Order()) {
+            if ($new->get_Order() !== 0) {
                 $new->set_Order(-1);
             }
         }

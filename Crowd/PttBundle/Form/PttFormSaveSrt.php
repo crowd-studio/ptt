@@ -25,17 +25,17 @@ class PttFormSaveSrt extends PttFormSave
         if ($file) {
             // CREAR
             $entity  = $this->classNameForRelatedEntity();
-            $lines   = file('test.srt');
 
             $subs    = [];
-            $state   = SRT_STATE_SUBNUMBER;
+            $state   = 0;
             $subText = '';
             $subTime = '';
             $id = 0;
 
-            foreach ($lines as $line) {
+            foreach (file($file) as $line) {
                 switch ($state) {
                     case 0:
+
                         $state  = 1;
                         break;
 
@@ -51,18 +51,18 @@ class PttFormSaveSrt extends PttFormSave
                             list($horas, $minutos, $segundos) = explode(':', $time);
                             $hora_en_segundos = ($horas * 3600) + ($minutos * 60) + $segundos;
 
-                            $sub = new $entity();
-                            $sub->setText($subText);
-                            $sub->setSecond($hora_en_segundos);
-                            $sub->setVideo($this->entityInfo->getEntity());
-                            $sub->set_Order($id);
-                            $sub->set_Model($this->entityInfo->getEntityName());
-                            $sub->setUpdateObjectValues();
+                            $sub = [
+                              'text'  => trim(preg_replace("/\r|\n/", " ", strip_tags($subText))),
+                              'second' => $hora_en_segundos,
+                              'video' => $this->entityInfo->getEntity(),
+                              '_Order' => $id
+                            ];
 
                             $subText     = '';
                             $state       = 0;
                             $id++;
-                            $subs[]      = $sub;
+
+                            $value[]      = $sub;
                         } else {
                             $subText .= $line;
                         }

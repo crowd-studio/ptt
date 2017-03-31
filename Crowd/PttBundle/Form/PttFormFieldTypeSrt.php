@@ -13,13 +13,11 @@ class PttFormFieldTypeSrt extends PttFormFieldType
 {
     public function field()
     {
-        var_dump($this->value);
-        die();
         $html = $this->start();
         $html .= $this->label();
 
         $htmlField = '<div class="upload-file-container ';
-        if ($this->value != '') {
+        if (!count($this->value)) {
             $htmlField .= 'hidden';
         }
 
@@ -50,10 +48,8 @@ class PttFormFieldTypeSrt extends PttFormFieldType
 
     private function _file($boolRemove)
     {
-        $extension = str_replace('.', '', PttUtil::extension($this->value));
-
         $name = $this->field->getFormName($this->languageCode);
-        $name = substr($name, 0, strlen($name) - 1) . '-delete]';
+        $name = $name . '-delete]';
 
         $delete = '';
         if ($boolRemove) {
@@ -62,9 +58,8 @@ class PttFormFieldTypeSrt extends PttFormFieldType
 
         $html = '
     		<div class="preview file">
-      			<div class="extension">' . $extension . '</div>
       			<div class="action">
-      				<a title="' . $this->pttTrans->trans('download_file') . '" href="' . $this->_urlPrefix() . $this->value . '" target="_blank">' . $this->pttTrans->trans('download_file') . '</a>
+      				<a title="' . $this->pttTrans->trans('download_file') . '" target="_blank">' . $this->pttTrans->trans('download_file') . '</a>
       			</div>
       			<input type="hidden" name="' . $name . '" value="0">
       			'.$delete.'
