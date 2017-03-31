@@ -13,6 +13,8 @@ class PttFormFieldTypeSrt extends PttFormFieldType
 {
     public function field()
     {
+        var_dump($this->value);
+        die();
         $html = $this->start();
         $html .= $this->label();
 
