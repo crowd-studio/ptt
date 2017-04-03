@@ -12,7 +12,7 @@
 {% block body %}{% endblock %}
 
 <!-- <script src="http://imsky.github.io/holder/holder.js"></script> -->
-<script src="https://maps.googleapis.com/maps/api/js?key={{keymap}}"></script>
+{% if keymap is defined and keymap != '' %}<script src="https://maps.googleapis.com/maps/api/js?key={{keymap}}"></script>{%  endif %}
 
 {% if isDebug() %}
 <script type="text/javascript" src="{{ asset('bundles/ptt/admin/scripts/require.js') }}" data-main="{{ asset('bundles/ptt/admin/dev/admin') }}"></script>
