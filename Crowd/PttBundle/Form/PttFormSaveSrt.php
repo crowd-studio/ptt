@@ -48,7 +48,19 @@ class PttFormSaveSrt extends PttFormSave
                         if (trim($line) == '') {
                             $time = explode(' --> ', $subTime)[0];
                             $time = explode(',', $time)[0];
-                            list($horas, $minutos, $segundos) = explode(':', $time);
+                            $timeArr = explode(':', $time);
+                            $pos = 0;
+                            switch (count($timeArr)) {
+                                case 3:
+                                    $horas = $timeArr[$pos];
+                                    $pos++;
+                                case 2:
+                                    $minutos = $timeArr[$pos];
+                                    $pos++;
+                                case 1:
+                                    $segundos = $timeArr[$pos];
+                                break;
+                            }
                             $hora_en_segundos = ($horas * 3600) + ($minutos * 60) + $segundos;
 
                             $sub = [
