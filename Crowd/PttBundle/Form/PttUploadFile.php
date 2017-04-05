@@ -31,9 +31,9 @@ class PttUploadFile
                 $saveThumbPath = WEB_DIR . $uploadsUrl . $filename;
 
                 $realSize = getimagesize($file);
-                if($height == 'm'){
-                   $height = $width;
-                    if($realSize[0] > $realSize[1]){ // Més ample
+                if ($height == 'm') {
+                    $height = $width;
+                    if ($realSize[0] > $realSize[1]) { // Més ample
                         $height = round(($size['w'] * $realSize[1]) / $realSize[0]);
                     } else { // Més alta o igual
                         $width = round(($size['w'] * $realSize[0]) / $realSize[1]);
@@ -58,7 +58,8 @@ class PttUploadFile
         return $uploadName;
     }
 
-    public static function generateFavicon($fileName, $favicon, $url){
+    public static function generateFavicon($fileName, $favicon, $url)
+    {
         $s3 = PttUtil::pttConfiguration('s3');
         $uploadUrl = (isset($s3['force']) && $s3['force']) ? $s3['prodUrl'] . $s3['dir'] . '/' : $url . '/uploads/';
 
@@ -66,22 +67,23 @@ class PttUploadFile
         // $prefix = '740-400-';
         $prefix = '512-512-';
         $file = $uploadUrl . $prefix . $fileName;
-        
+
         $generator = new PttFaviconGenerator($favicon['key']);
         $options = $favicon['options'];
         $options['general']['src'] = $file;
         $response = $generator->generateFavicon($options);
         PttUploadFile::deleteFavicons();
-        
+
 
         $response->downloadAndUnpack('_/', 'favicon');
         unlink(__DIR__ . '/../../../../../../web/_/favicon.zip'); //delete zip file
     }
 
-    public static function deleteFavicons(){
+    public static function deleteFavicons()
+    {
         $files = glob(__DIR__ . '/../../../../../../web/_/favicon/*'); // get all file names
-        foreach($files as $file){ // iterate files
-            if(is_file($file)) {
+        foreach ($files as $file) { // iterate files
+            if (is_file($file)) {
                 unlink($file); // delete file
             }
         }
@@ -114,14 +116,14 @@ class PttUploadFile
         }
     }
 
-    public static function parseCsv($file, $field = false, $em, $entity = false){
-
+    public static function parseCsv($file, $field = false, $em, $entity = false)
+    {
         $csv = array_map('str_getcsv', file($file));
         foreach ($csv as $k => $c) {
             $csv[$k] = explode(';', $c[0]);
         }
 
-        array_walk($csv, function(&$a) use ($csv) {
+        array_walk($csv, function (&$a) use ($csv) {
             $a = array_combine($csv[0], $a);
         });
 
@@ -135,7 +137,7 @@ class PttUploadFile
                 $obj->$setMethod($value);
             }
 
-            if(isset($field->options['related'])){
+            if (isset($field->options['related'])) {
                 $setMethod = 'set' . ucfirst($field->options['related']);
                 $obj->$setMethod($entity);
                 $obj->set_Order($num);
@@ -150,7 +152,8 @@ class PttUploadFile
         $em->flush();
     }
 
-    private static function _getClassName($entityName){
+    private static function _getClassName($entityName)
+    {
         $entityClassArr[] = PttUtil::pttConfiguration('bundles')[0]["bundle"];
         $entityClassArr[] = 'Entity';
         $entityClassArr[] = ucfirst($entityName);
@@ -195,10 +198,10 @@ class PttUploadFile
                     $height = $size['h'];
                     $width = $size['w'];
 
-                    if ($height == 'm'){
+                    if ($height == 'm') {
                         $height = $width;
-                        if($realSize[0] > $width || $realSize[1] > $height){
-                            if($realSize[0] > $realSize[1]){
+                        if ($realSize[0] > $width || $realSize[1] > $height) {
+                            if ($realSize[0] > $realSize[1]) {
                                 // Més ample
                                 $height = round(($size['w'] * $realSize[1]) / $realSize[0]);
                             } else {
@@ -206,9 +209,9 @@ class PttUploadFile
                                 $width = round(($size['w'] * $realSize[0]) / $realSize[1]);
                             }
                         }
-                    } elseif ($size['w'] == 0){
+                    } elseif ($size['w'] == 0) {
                         $width = round(($size['h'] * $realSize[0]) / $realSize[1]);
-                    } elseif ($size['h'] == 0){
+                    } elseif ($size['h'] == 0) {
                         $height = round(($size['w'] * $realSize[1]) / $realSize[0]);
                     }
 
@@ -224,7 +227,6 @@ class PttUploadFile
                     if ($uploadToS3 || $uploadToCDN) {
                         PttUploadFile::_uploadToS3($saveThumbPath, $filename);
                     }
-
                 }
             }
         } else {
@@ -284,18 +286,18 @@ class PttUploadFile
         }
     }
 
-    private static function _delete($name){
+    private static function _delete($name)
+    {
         try {
-            $uploadsUrl = PttUtil::pttConfiguration('images');
             foreach (glob(WEB_DIR . "*-". $name) as $filename) {
                 unlink($filename);
             }
         } catch (Exception $e) {
-            
         }
     }
 
-    private static function _deleteS3($name){
+    private static function _deleteS3($name)
+    {
         // $s3 = PttUtil::pttConfiguration('s3');
 
         // \S3::setAuth($s3['accessKey'], $s3['secretKey']);
