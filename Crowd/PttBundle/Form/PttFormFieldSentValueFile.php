@@ -11,6 +11,6 @@ class PttFormFieldSentValueFile extends PttFormFieldSentValue
 {
     public function value()
     {
-        return $this->entityInfo->get($this->field['name'], $this->languageCode);
+        return $this->pttFormValidations->get($this->field['name'], $this->languageCode);
     }
 }

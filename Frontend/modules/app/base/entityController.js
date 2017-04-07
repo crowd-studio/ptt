@@ -4,8 +4,7 @@ var Sortable = require('sortablejs');
 require('angular-sanitize');
 
 module.exports = /*@ngInject*/
-function entityController($scope, $element, $http, loader, $sce) {
-
+function entityController($scope, $element, $http, loader, $sce) { 
 	$scope.items = JSON.parse($element[0].querySelector('.entity-block').getAttribute('items'));
 	$scope.templates = JSON.parse($element[0].querySelector('.entity-block').getAttribute('templates'));
 
@@ -42,9 +41,10 @@ function entityController($scope, $element, $http, loader, $sce) {
 	$scope.new = function (){
 		if($scope.selectedTemplate !== ''){
 			let newTemplate = angular.copy($scope.selectedTemplate);
-			newTemplate.data = newTemplate.data.split('[{key}]').join('['+$scope.items.length+']')
+
+			newTemplate.data = newTemplate.data.split('[{key}]').join('['+$scope.items.length+']');
 			$scope.items.push(newTemplate);
-		}		
+		}
 	}
 
 	$scope.toggleEntityEvent = function(e,index) {e.preventDefault();$scope.toggleEntity(index)}
@@ -61,7 +61,7 @@ function entityController($scope, $element, $http, loader, $sce) {
 	$scope.deleteEntity = function(index){
 		$scope.items.splice(index, 1);
 	}
-	
+
 
 	$scope.renderHtml = function(html_code){return $sce.trustAsHtml(html_code);};
 

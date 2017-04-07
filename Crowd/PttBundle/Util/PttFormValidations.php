@@ -51,6 +51,11 @@ class PttFormValidations
         return $this->form;
     }
 
+    public function getEntity()
+    {
+        return $this->entity;
+    }
+
     private function _validateField($field, $languageCode = false)
     {
         if ($field['type'] == 'url') {

@@ -14,16 +14,15 @@ class PttFormSaveImage extends PttFormSave
 {
     public function value()
     {
-        // $file = $this->request->files->get($this->entityInfo->getFormName())[$this->field['name']];
-        $file = null;
+        $file = $this->request->files->get($this->entity->getClassName())[$this->field['name']];
         if ($file) {
             $value = PttUploadFile::upload($file, $this->field);
         } else {
             $value = $this->_value();
             if ($this->languageCode) {
-                $deleteValue = (isset($this->sentData['check'][$this->entityInfo->getFormName()][$this->languageCode][$this->field['name']])) ? $this->sentData['check'][$this->entityInfo->getFormName()][$this->languageCode][$this->field['name']] : null;
+                $deleteValue = (isset($this->sentData['check'][$this->entity->getClassName()][$this->languageCode][$this->field['name']])) ? $this->sentData['check'][$this->entity->getClassName()][$this->languageCode][$this->field['name']] : null;
             } else {
-                $deleteValue = (isset($this->sentData['check'][$this->entityInfo->getFormName()][$this->field['name']])) ? $this->sentData['check'][$this->entityInfo->getFormName()][$this->field['name']] : null;
+                $deleteValue = (isset($this->sentData['check'][$this->entity->getClassName()][$this->field['name']])) ? $this->sentData['check'][$this->entity->getClassName()][$this->field['name']] : null;
             }
 
             if ($deleteValue === 'true') {

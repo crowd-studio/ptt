@@ -124,10 +124,10 @@ class PttFormRender
                     $w = $h = 0;
                 }
                 $field['url'] = ($field['value'] != '') ? $this->_urlPrefix($field) . $w . '-' . $h . '-' . $field['value'] : null;
-                $field['check'] = PttUtil::fieldCheck($entityName, $field['name'], $language);
+                $field['check'] = PttUtil::fieldCheck($this->entity->getClassName(), $field['name'], $language);
                 break;
             case 'file':
-                $field['check'] = PttUtil::fieldCheck($entityName, $field['name'], $language);
+                $field['check'] = PttUtil::fieldCheck($this->entity->getClassName(), $field['name'], $language);
                 break;
             case 'select':
                 if (isset($field['entity'])) {
@@ -162,6 +162,7 @@ class PttFormRender
 
         $entityName = ($this->formId != '') ? $this->formId : $this->entity->getClassName();
         $entityNameId = ($keystone !== false) ? $entityName . '_' . $keystone : $entityName;
+        $field['id'] = PttUtil::fieldId($entityNameId, $field['name'], $language);
 
         $entityName = ($this->formName != '') ? $this->formName  : $this->entity->getClassName();
         $entityNameName = ($keystone !== false) ? $entityName . '[' . $keystone . ']' : $entityName;

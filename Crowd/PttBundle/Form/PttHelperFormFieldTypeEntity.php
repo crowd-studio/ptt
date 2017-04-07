@@ -41,10 +41,10 @@ class PttHelperFormFieldTypeEntity
             'type' => 'hidden',
             'validations' => ['mapped' => false]
         ];
-        $this->fields['block'][0]['static'][] = [
-            'name' => '_Order',
-            'type' => 'hidden'
-        ];
+        // $this->fields['block'][0]['static'][] = [
+        //     'name' => '_Order',
+        //     'type' => 'hidden'
+        // ];
     }
 
     public function className()
@@ -90,43 +90,61 @@ class PttHelperFormFieldTypeEntity
           }
 
           // Sobreescrivim
-          foreach ($this->sentData as $key => $obj) {
-              $feat = false;
-              if (isset($obj['id']) && $obj['id'] != '') {
-                  for ($iterator = $array->getIterator(); $iterator->valid(); $iterator->next()) {
-                      if ($iterator->current()->getPttId() == $obj['id']) {
-                          $feat = $iterator->current();
-                          $index = $iterator->key();
-                      }
-                  }
-                  $update = true;
-              } else {
-                  $update = false;
-                  $name = PttUtil::pttConfiguration('bundles')[0]["bundle"] . '\\Entity\\' . $this->field['entity'];
-                  $feat = new $name();
-              }
+          $i = 0;
+            foreach ($this->sentData as $key => $obj) {
+                $feat = false;
+                if (isset($obj['id']) && $obj['id'] != '') {
+                    for ($iterator = $array->getIterator(); $iterator->valid(); $iterator->next()) {
+                        if ($iterator->current()->getPttId() == $obj['id']) {
+                            $feat = $iterator->current();
+                            $index = $iterator->key();
+                        }
+                    }
+                    $update = true;
+                } else {
+                    $update = false;
+                    $name = PttUtil::pttConfiguration('bundles')[0]["bundle"] . '\\Entity\\' . $this->field['entity'];
+                    $feat = new $name();
+                }
 
-              if (method_exists($feat, 'set_Order')) {
-                  $feat->set_Order($key);
-              }
+                if (method_exists($feat, 'set_Order')) {
+                    $feat->set_Order($i);
+                }
 
-              $obj = [$this->field['name'] => $obj];
-              $validation = new PttFormValidations($this->pttForm, $feat, $this->fields, $obj, $this->field['name']);
-              $feat = $validation->perform();
-              $save = new PttSave($this->pttForm, $feat, $this->fields, $obj);
-              $feat = $save->perform();
-              if ($update) {
-                  $array->set($index, $feat);
-              } else {
-                  // AFEGIR UN DE NOU
-                  // $array = $this->addOne($array, $feat, $newMethod);
-              }
-          }
+                $obj = [$this->field['name'] => $obj];
+                $validation = new PttFormValidations($this->pttForm, $feat, $this->fields, $obj, $this->field['name']);
+                $feat = $validation->perform();
+                $save = new PttSave($this->pttForm, $feat, $this->fields, $obj);
+                $feat = $save->perform();
+                if ($update) {
+                    $array->set($index, $feat);
+                } else {
+                    $array->add($this->addOne($feat));
+                }
+                $i++;
+            }
         } else {
             $array = $this->sentData;
         }
 
         return $array;
+    }
+
+    private function addOne($new)
+    {
+        if (method_exists($new, 'setRelatedid')) {
+            $new->setRelatedid($this->entityInfo->getEntity());
+        }
+
+        if (method_exists($new, 'setUpdateObjectValues')) {
+            $new->setUpdateObjectValues(1);
+        }
+
+        if (method_exists($new, 'setSlug')) {
+            $new->setSlug(PttUtil::slugify((string)$new));
+        }
+
+        return $new;
     }
 
     public function save($entity, $sentData)
