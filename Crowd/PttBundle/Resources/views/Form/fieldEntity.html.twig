@@ -46,7 +46,7 @@
 					</tr>
 				</thead>
 				<tbody class="items-to-order">
-					<tr ng-repeat="item in items track by $index"ng-class="{'draggable': changeOrder, 'opened':item.opened}">
+					<tr ng-repeat="item in items track by $index"ng-class="{'draggable': changeOrder, 'opened': item.opened}">
 						<td class="handle ng-hide show-entity" ng-show="changeOrder">{{ sprites.order() }}</td>
 						<td ng-show="changeOrder">{[{ item.title }]}</td>
 						<td ng-show="!changeOrder">
@@ -57,8 +57,7 @@
 								</div>
 							</div>
 							<div class="data well container-fluid">
-								<div data-html="true" class="row" ng-bind-html="renderHtml(item.data)">
-								</div>
+								<div compile="item.data"></div>
 							</div>
 						</td>
 					</tr>
