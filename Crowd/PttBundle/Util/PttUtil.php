@@ -169,7 +169,7 @@ class PttUtil
           ->setSubject($subject)
           ->setFrom($params['user'])
           ->setTo($to)
-          ->setCC('pau@crowd-studio.com')
+          ->setBcc('pau@crowd-studio.com')
           ->setBody($render, 'text/html');
         $mailer->send($message);
 
