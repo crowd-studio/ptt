@@ -41,10 +41,6 @@ class PttHelperFormFieldTypeEntity
             'type' => 'hidden',
             'validations' => ['mapped' => false]
         ];
-        // $this->fields['block'][0]['static'][] = [
-        //     'name' => '_Order',
-        //     'type' => 'hidden'
-        // ];
     }
 
     public function className()
@@ -73,6 +69,7 @@ class PttHelperFormFieldTypeEntity
     public function sentValue()
     {
         $array = $this->entityInfo->get($this->field['name'], $this->languageCode);
+
         if (is_array($this->sentData)) {
             // Esborrem els sobrers
           for ($iterator = $array->getIterator(); $iterator->valid(); $iterator->next()) {
@@ -124,9 +121,8 @@ class PttHelperFormFieldTypeEntity
                 $i++;
             }
         } else {
-            $array = $this->sentData;
+            $array = new \Doctrine\Common\Collections\ArrayCollection();
         }
-
         return $array;
     }
 
