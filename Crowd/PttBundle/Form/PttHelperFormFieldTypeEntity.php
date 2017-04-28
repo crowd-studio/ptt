@@ -121,7 +121,11 @@ class PttHelperFormFieldTypeEntity
                 $i++;
             }
         } else {
+            for ($iterator = $array->getIterator(); $iterator->valid(); $iterator->next()) {
+                $array->removeElement($iterator->current());
+            }
             $array = new \Doctrine\Common\Collections\ArrayCollection();
+
         }
         return $array;
     }
