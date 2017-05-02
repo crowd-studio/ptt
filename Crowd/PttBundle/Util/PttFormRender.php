@@ -139,8 +139,10 @@ class PttFormRender
                 break;
             case 'entity':
                 $formName = ($this->formName != '') ? $this->formName : $this->entity->getClassName();
+                $formName .= ($keystone !== false) ? '['.$keystone.']' : '';
                 $formName .= '['.$field['name'].']';
                 $formId = ($this->formId != '') ? $this->formId  : $this->entity->getClassName();
+                $formId .= ($keystone !== false) ? '_'.$keystone : '';
                 $formId .= '_'.$field['name'];
                 $helper = new PttHelperFormFieldTypeEntity($this, $field, $language, $formName, $formId);
 
