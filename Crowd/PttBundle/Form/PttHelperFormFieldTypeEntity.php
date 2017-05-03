@@ -57,7 +57,7 @@ class PttHelperFormFieldTypeEntity
         $entity = new $className();
 
         $pttFormRender = new PttFormRender($this->pttForm, $entity, $this->fields, $this->formName, $this->formId);
-        return $pttFormRender->perform('{key_order_entity}');
+        return $pttFormRender->perform('{key_order_entity_'. strtolower($this->field['entity']) .'}');
     }
 
     public function formForEntity($entity, $key = false)
