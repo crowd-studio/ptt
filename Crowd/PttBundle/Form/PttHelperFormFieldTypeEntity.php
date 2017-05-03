@@ -57,7 +57,7 @@ class PttHelperFormFieldTypeEntity
         $entity = new $className();
 
         $pttFormRender = new PttFormRender($this->pttForm, $entity, $this->fields, $this->formName, $this->formId);
-        return $pttFormRender->perform('{key}');
+        return $pttFormRender->perform('{key_order_entity}');
     }
 
     public function formForEntity($entity, $key = false)
@@ -125,7 +125,6 @@ class PttHelperFormFieldTypeEntity
                 $array->removeElement($iterator->current());
             }
             $array = new \Doctrine\Common\Collections\ArrayCollection();
-
         }
         return $array;
     }
