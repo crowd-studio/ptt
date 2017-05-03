@@ -14,7 +14,7 @@ form,
 	h4{
 		margin-bottom: 15px;
 	}
-		
+
 	label{
 		margin-bottom: 10px;
 		color: @gray-dark;
@@ -59,7 +59,7 @@ form,
 			margin-bottom: 10px;
 			text-align:center;
 			font-size: 1.5em;
-				
+
 			&:hover{
 				text-decoration: none;
 			}
@@ -96,7 +96,7 @@ form,
 				top: 10px;
 			}
 		}
-		
+
 		.preview-block{
 			text-align:center;
 			position:relative;
@@ -155,7 +155,7 @@ form,
 			label{
 				font-size: 13px;
 				font-weight: normal;
-				
+
 			}
 		}
 	}
@@ -196,13 +196,13 @@ form,
 				margin-top: (@grid-gutter-width / 2);
 				margin-bottom:0;
 
-				th{
+				>thead>tr:not(.draggable){
 					.title{
 						padding-left: 20px;
 
 					}
 				}
-					
+
 				tr{
 					.handle{
 						width:30px;
@@ -229,39 +229,45 @@ form,
 							color: #999;
 							cursor:pointer;
 						}
+						.actions{
+							.pull-right();
+						}
 					}
 					.data{
 						display:none;
 						margin-top: 5px;
 						margin-bottom:0;
 					}
-					.actions{
-						.pull-right();
-					}
+
 					&.opened{
-						.data{
-							display:block;
-						}
-						svg{
-							&.right-svg{
-								display:none;
+						>td{
+							>.title{
+								svg{
+									&.right-svg{
+										display:none;
+									}
+									&.down-svg{
+										display:inline-block;
+									}
+								}
 							}
-							&.down-svg{
-								display:inline-block;
+							>.data{
+								display:block;
 							}
 						}
+
 					}
 				}
-					
+
 			}
-		}	
+		}
 	}
 	.phrases{
 		margin-top: 20px;
 		text-align: center;
 	}
 	.form_message{
-		
+
 		text-align:right;
 		color: @brand-success;
 		font-weight: bold;
@@ -302,7 +308,7 @@ form,
 				}
 				&:last-child{
 					padding-left: (@grid-gutter-width / 2);
-					
+
 				}
 			}
 		}
