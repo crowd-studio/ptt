@@ -4,7 +4,7 @@ var Sortable = require('sortablejs');
 require('angular-sanitize');
 
 module.exports = /*@ngInject*/
-function entityController($scope, $element, $http, loader, $sce) { 
+function entityController($scope, $element, $http, loader, $sce) {
 	$scope.items = JSON.parse($element[0].querySelector('.entity-block').getAttribute('items'));
 	$scope.templates = JSON.parse($element[0].querySelector('.entity-block').getAttribute('templates'));
 
@@ -20,16 +20,9 @@ function entityController($scope, $element, $http, loader, $sce) {
 		$scope.setSortable(true);
 	}
 
-	$scope.cancelOrderEvent = function(e){e.preventDefault();$scope.cancelOrder()}
-	$scope.cancelOrder = function(){
-		$scope.setSortable(false);
-		$scope.sortable.sort($scope.actualOrder);
-	}
-
 	$scope.saveOrderEvent = function(e){e.preventDefault();$scope.saveOrder()}
 	$scope.saveOrder = function(path){
 		$scope.setSortable(false);
-		$scope.actualOrder = $scope.sortable.toArray();
 	}
 
 	$scope.setSortable = function(value){
@@ -47,19 +40,23 @@ function entityController($scope, $element, $http, loader, $sce) {
 		}
 	}
 
-	$scope.toggleEntityEvent = function(e,index) {e.preventDefault();$scope.toggleEntity(index)}
-	$scope.toggleEntity = function(index){
-		$scope.items[index].opened = $scope.items[index].opened == undefined ? true : !$scope.items[index].opened;
+	$scope.toggleEntityEvent = function(e,item) {e.preventDefault();$scope.toggleEntity(item)}
+	$scope.toggleEntity = function(item){
+		item.opened = item.opened == undefined ? true : !item.opened;
 	}
 
-	$scope.deleteEntityEvent = function(e,index) {
+	$scope.deleteEntityEvent = function(e,list,index) {
 		e.preventDefault();
 		if(confirm(window.conf.trans['sureDelete'] )){
-			$scope.deleteEntity(index);
+			$scope.deleteEntity(list,index);
 		}
 	}
-	$scope.deleteEntity = function(index){
-		$scope.items.splice(index, 1);
+	$scope.deleteEntity = function(list,index){
+		list.splice(index, 1);
+	}
+
+	$scope.isOpened = function(item){
+		return item.opened == true
 	}
 
 

@@ -32,28 +32,27 @@
 						<option disabled>---</option>
 						<option ng-repeat="template in templates track by template.title" ng-value="template">{[{template.title}]}</option>
 	                </select>
-				{%- endif -%}	
+				{%- endif -%}
 				<a ng-show="!changeOrder" ng-disabled="selectedTemplate == ''" ng-click="newEvent($event)" class="btn btn-default btn-sm btn-sort">{{ 'addNew' | trans }} {{ params.entity is defined ? params.entity }}</a>
 				<a ng-show="!changeOrder" ng-click="activeOrderEvent($event)" class="btn btn-default btn-sm btn-sort">{{ 'changeOrder' | trans }}</a>
-				<a ng-show="changeOrder" ng-click="cancelOrderEvent($event)" class="btn btn-sm btn-danger">{{ 'cancel' | trans }}</a>
 				<a ng-show="changeOrder" ng-click="saveOrderEvent($event)" class="btn btn-sm btn-success">{{ 'accept' | trans }}</a>
 			</div>
 			<table class="table">
 				<thead>
-					<tr>
+					<tr ng-class="{'draggable': changeOrder}">
 						<th ng-show="changeOrder" class="handle"></th>
 						<th><span class="title">Title</span></th>
 					</tr>
 				</thead>
 				<tbody class="items-to-order">
-					<tr ng-repeat="item in items track by $index"ng-class="{'draggable': changeOrder, 'opened': item.opened}">
+					<tr ng-repeat="item in items track by $index" ng-class="{'draggable': changeOrder, 'opened': isOpened(item)}">
 						<td class="handle ng-hide show-entity" ng-show="changeOrder">{{ sprites.order() }}</td>
 						<td ng-show="changeOrder">{[{ item.title }]}</td>
 						<td ng-show="!changeOrder">
 							<div class="title">
-								<a ng-click="toggleEntityEvent($event,$index)">{{ sprites.right() }}{{ sprites.down() }}<span>{[{ item.title }]}</span></a>
+								<a ng-click="toggleEntityEvent($event,item)">{{ sprites.right() }}{{ sprites.down() }}<span>{[{ item.title }]}</span></a>
 								<div class="actions">
-									<a ng-click="deleteEntityEvent($event,$index)">{{ sprites.delete() }}</a>
+									<a ng-click="deleteEntityEvent($event,items,$index)">{{ sprites.delete() }}</a>
 								</div>
 							</div>
 							<div class="data well container-fluid">
