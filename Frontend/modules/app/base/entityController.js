@@ -34,8 +34,8 @@ function entityController($scope, $element, $http, loader, $sce) {
 	$scope.new = function (){
 		if($scope.selectedTemplate !== ''){
 			let newTemplate = angular.copy($scope.selectedTemplate);
-
-			newTemplate.data = newTemplate.data.split('[{key}]').join('['+$scope.items.length+']');
+			newTemplate.data = newTemplate.data.split('{key_order_entity_'+newTemplate.title.toLowerCase()+'}').join($scope.items.length);
+			newTemplate.opened = true;
 			$scope.items.push(newTemplate);
 		}
 	}

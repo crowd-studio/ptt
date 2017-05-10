@@ -6,7 +6,6 @@ function compileDirective($compile) {
 		restrict:'A',
 		scope: true,
 		link: function(scope, element, attrs) {
-			console.log("compile");
 			scope.$watch(
 				function(scope) {
 				    // watch the 'compile' expression for changes
