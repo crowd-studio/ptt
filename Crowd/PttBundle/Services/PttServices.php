@@ -204,10 +204,7 @@ class PttServices
 
     public function remove($object)
     {
-        $this->em->remove($object);
-        $this->em->flush();
-        $this->_deleteCache();
-        return true;
+        return $this->removeAll([$object]);
     }
 
     public function removeAll($objects)

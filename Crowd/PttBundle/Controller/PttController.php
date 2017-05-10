@@ -118,7 +118,7 @@ class PttController extends Controller
         $this->deleteTemp();
         return $this->_renderTemplateForActionInfo($request, 'edit',
           ['title' => $this->editTitle(), 'path' => $request->get('_route'), 'parameters' => ['entity' => $entity, 'id' => $id]],
-          ['form' => $pttForm]);
+          ['form' => $pttForm, 'listable' => $this->isListable()]);
     }
 
     /**
@@ -332,6 +332,11 @@ class PttController extends Controller
     protected function fieldsToFilter()
     {
         return $this->_initEntity()->fieldsToFilter();
+    }
+
+    protected function isListable()
+    {
+        return $this->_initEntity()->isListable();
     }
 
     protected function continueWithDeletion($entity)

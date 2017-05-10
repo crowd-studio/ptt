@@ -18,7 +18,7 @@ use Symfony\Component\HttpFoundation\Cookie;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 
 use Crowd\PttBundle\Util\PttUtil;
-use Crowd\PttBundle\Form\PttUploadFile;
+use Crowd\PttBundle\Util\PttUploadFile;
 
 class PttMediaController extends Controller
 {
@@ -34,7 +34,7 @@ class PttMediaController extends Controller
             $uploadUrl = PttUtil::pttConfiguration('images');
             $pttInfo = PttUtil::pttConfiguration('s3');
             $uploadToS3 = (isset($pttInfo['force']) && $pttInfo['force']);
-
+º
             $width = ($request->get('width', false)) ? $request->get('width') : 0;
             $height = ($request->get('height', false)) ? $request->get('height') : 0;
 

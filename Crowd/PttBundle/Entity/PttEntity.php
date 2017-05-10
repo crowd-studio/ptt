@@ -251,6 +251,11 @@ class PttEntity
         return (new \ReflectionClass($this))->getShortName();
     }
 
+    public function isListable()
+    {
+        return true;
+    }
+
     protected function setOne($array, $objects, $entity, $newMethod)
     {
         if (is_array($objects)) {

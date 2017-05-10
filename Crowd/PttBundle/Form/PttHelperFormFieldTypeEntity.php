@@ -34,35 +34,37 @@ class PttHelperFormFieldTypeEntity
         $this->formId = $formId;
         $this->languageCode = $languageCode;
 
-        $this->fields = PttUtil::fields($this->pttForm->getContainer()->get('kernel'), $this->pttForm->getBundle(), $this->field['entity']);
-
-        $this->fields['block'][0]['static'][] = [
-            'name' => 'id',
-            'type' => 'hidden',
-            'validations' => ['mapped' => false]
-        ];
+        $this->fields = [];
+        foreach ($this->field['modules'] as $key => $value) {
+            $this->fields[$key] = PttUtil::fields($this->pttForm->getContainer()->get('kernel'), $this->pttForm->getBundle(), $key);
+            $this->fields[$key]['block'][0]['static'][] = [
+                'name' => 'id',
+                'type' => 'hidden',
+                'validations' => ['mapped' => false]
+            ];
+        }
     }
 
-    public function className()
+    public function className($key)
     {
         $className = get_class($this->entityInfo->getForm()->getEntity());
         $classNameArr = explode('\\', $className);
         array_pop($classNameArr);
-        return implode('\\', $classNameArr) . '\\' . $this->field['entity'];
+        return implode('\\', $classNameArr) . '\\' . $key;
     }
 
-    public function emptyForm()
+    public function emptyForm($key)
     {
-        $className = $this->className();
+        $className = $this->className($key);
         $entity = new $className();
 
-        $pttFormRender = new PttFormRender($this->pttForm, $entity, $this->fields, $this->formName, $this->formId);
-        return $pttFormRender->perform('{key_order_entity_'. strtolower($this->field['entity']) .'}');
+        $pttFormRender = new PttFormRender($this->pttForm, $entity, $this->fields[$key], $this->formName, $this->formId);
+        return $pttFormRender->perform('{key_order_entity_'. strtolower($key) .'}');
     }
 
-    public function formForEntity($entity, $key = false)
+    public function formForEntity($entity, $type, $key = false)
     {
-        $pttFormRender = new PttFormRender($this->pttForm, $entity, $this->fields, $this->formName, $this->formId);
+        $pttFormRender = new PttFormRender($this->pttForm, $entity, $this->fields['type'], $this->formName, $this->formId);
         return $pttFormRender->perform($key);
     }
 
@@ -121,10 +123,12 @@ class PttHelperFormFieldTypeEntity
                 $i++;
             }
         } else {
-            for ($iterator = $array->getIterator(); $iterator->valid(); $iterator->next()) {
-                $array->removeElement($iterator->current());
+            if ($array) {
+                for ($iterator = $array->getIterator(); $iterator->valid(); $iterator->next()) {
+                    $array->removeElement($iterator->current());
+                }
+                $array = new \Doctrine\Common\Collections\ArrayCollection();
             }
-            $array = new \Doctrine\Common\Collections\ArrayCollection();
         }
         return $array;
     }

@@ -7,6 +7,7 @@
 
 namespace Crowd\PttBundle\Form;
 
+use Crowd\PttBundle\Util\PttUploadFile;
 use Crowd\PttBundle\Form\PttFormSave;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 

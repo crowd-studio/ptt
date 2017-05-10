@@ -9,6 +9,7 @@ namespace Crowd\PttBundle\Form;
 
 use Crowd\PttBundle\Form\PttFormSave;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Crowd\PttBundle\Util\PttUploadFile;
 
 class PttFormSaveFavicon extends PttFormSave
 {

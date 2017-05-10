@@ -8,6 +8,7 @@
 namespace Crowd\PttBundle\Form;
 
 use Crowd\PttBundle\Util\PttUtil;
+use Crowd\PttBundle\Util\PttUploadFile;
 
 class PttFormFieldTypeFile extends PttFormFieldType
 {

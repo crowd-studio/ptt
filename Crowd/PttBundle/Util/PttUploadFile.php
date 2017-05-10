@@ -5,10 +5,8 @@
  * All rights reserved. No part of this publication may be reproduced, distributed, or transmitted in any form or by any means, including photocopying, recording, or other electronic or mechanical methods, without the prior written permission of the publisher.
  */
 
-namespace Crowd\PttBundle\Form;
+namespace Crowd\PttBundle\Util;
 
-use Crowd\PttBundle\Util\PttUtil;
-use Crowd\PttBundle\Util\PttFaviconGenerator;
 use WideImage;
 
 class PttUploadFile
