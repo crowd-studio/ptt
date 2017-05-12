@@ -1,0 +1,10 @@
+{% set validations = {
+	mimetype: 'image'
+} | merge (validations | default({})) %}
+
+{% set params = {
+	maxWidth: params.options.sizes[0].w,
+	maxHeight: params.options.sizes[0].h
+} | merge (params | default({})) %}
+
+{% include 'PttBundle:Form:fieldFile.html.twig' %}

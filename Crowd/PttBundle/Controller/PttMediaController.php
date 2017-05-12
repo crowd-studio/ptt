@@ -34,7 +34,7 @@ class PttMediaController extends Controller
             $uploadUrl = PttUtil::pttConfiguration('images');
             $pttInfo = PttUtil::pttConfiguration('s3');
             $uploadToS3 = (isset($pttInfo['force']) && $pttInfo['force']);
-º
+
             $width = ($request->get('width', false)) ? $request->get('width') : 0;
             $height = ($request->get('height', false)) ? $request->get('height') : 0;
 
