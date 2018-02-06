@@ -55,6 +55,9 @@ class PttTwigExtension extends Twig_Extension
             new \Twig_SimpleFilter('order', array($this, 'order'), array(
                 'is_safe' => array('html')
             )),
+            new \Twig_SimpleFilter('extend', array($this, 'extend'), array(
+                'is_safe' => array('html')
+            )),
             new \Twig_SimpleFilter('md2html', array($this, 'md2html'), array(
                 'is_safe' => array('html')
             )),
@@ -146,6 +149,15 @@ class PttTwigExtension extends Twig_Extension
             }
         } else {
             return $text;
+        }
+    }
+
+    public function extend($base, $new)
+    {
+        if (isset($base)) {
+            return array_merge($new, $base);
+        } else {
+            return $new;
         }
     }
 
