@@ -441,9 +441,8 @@ define([
                 var index = this.$el.find('li.entity').length +1;
                 var template = this.$el.find('.template[data-type="'+ selectedEntity +'"]').html();
                 var relatedMultilpleEntitiesDetailView = new RelatedMultilpleEntitiesDetailView({index: index, template: template});
-
                 this.$el.find('.multi-sortable').append(relatedMultilpleEntitiesDetailView.render().$el);
-                this.$el.find('select[data-selector]').val(-1);
+                //this.$el.find('select[data-selector]').val(-1);
                 relatedMultilpleEntitiesDetailView.initPlugins();
             }
 
@@ -1162,7 +1161,7 @@ define([
                 this.selected_file = fileInput.files[0];
                 var progressBar = this.loadmode.find('.progress-bar');
                 var percent = progressBar.find('span');
-                
+
                 // SHOW LOAD MODE
                 this.uploadcontainer.toggleClass('hidden', true);
                 this.loadmode.toggleClass('hidden', false);
@@ -1193,14 +1192,14 @@ define([
                     .then(function (awsKey) {
                         // COMPLETE => SET VALUE & SHOW VIEW MODE
                         that.loadmode.toggleClass('hidden', true);
-                        
+
                         var download = that.viewmode.find('.btn-download').attr('href');
 
                         if (download.slice(-1) != '/'){
                             var fileName = download.split('/').pop();
                             download = download.slice(0, download.length - fileName.length);
                         }
-                        
+
                         download = download + that.name;
 
                         that.viewmode.find('.btn-download').attr('href', download);
@@ -1240,7 +1239,7 @@ define([
             this.uploadcontainer.toggleClass('hidden', false);
             this.result.toggleClass('hidden', true);
         },
-        cancel : function(e){            
+        cancel : function(e){
             e.preventDefault();
             var that = this;
 

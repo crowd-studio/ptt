@@ -200,7 +200,7 @@ class PttFormFieldType
 		if (isset($this->field->options['master']) && $this->field->options['master'] === true) {
 			$extraAttrs['master'] = $this->field->name;
 		}
-		
+
 		$attrs = '';
 		if ($extraAttrs) {
 			foreach ($extraAttrs as $extraAttrKey => $extraAttrValue) {

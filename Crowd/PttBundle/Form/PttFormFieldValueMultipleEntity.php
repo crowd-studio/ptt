@@ -16,26 +16,8 @@ class PttFormFieldValueMultipleEntity extends PttFormFieldValue
         if ($this->request->getMethod() == 'POST') {
             return ($this->sentData != null) ? $this->sentData : array();
         } else {
-            return $this->_valueForRelatedEntities();
-        }
-    }
-
-    private function _valueForRelatedEntities()
-    {
-        if (isset($this->field->options['modules'])) {
-            $array = array();
-            foreach ($this->field->options['modules'] as $key => $value) {
-                $dql = 'select e from ' . $this->entityInfo->getBundle() . ':' . $value['entity'] . ' e where e.relatedid = :id and e._model = :model';
-                $em = $this->entityInfo->getEntityManager();
-                $query = $em->createQuery($dql);
-                $query->setParameter('id', $this->entityInfo->get('pttId'));
-                $query->setParameter('model', $this->field->getSimpleFormName());
-                array_push($array, $query->getResult());
-            }
-
-            return $array;
-        } else {
-            return null;
+            $method = 'get' . ucfirst($this->field->name);
+            return $this->entityInfo->getEntity()->$method();
         }
     }
 }

@@ -23,22 +23,39 @@ class PttFormAfterSaveMultipleEntity extends PttFormAfterSave
         $em = $this->entityInfo->getEntityManager();
 
         if (is_array($this->sentData) && count($this->sentData)) {
-            $index = 0;
             foreach ($this->sentData as $key => $entityData) {
                 if ($key != -1) {
                     $type = $entityData["type"];
                     $pttHelper = new PttHelperFormFieldTypeMultipleEntity($this->entityInfo, $this->field, $this->container, $em, $type);
 
+                    $entityName = $this->entityInfo->getBundle() . ':' . 'Material';
+                    $entityData['material'] = $em->find($entityName, $entityData['material']);
+
+                    $entityData['creationDate'] = new \DateTime('now');
+                    $entityData['updateDate'] = new \DateTime('now');
+                    $entityData['creationUserId'] = 1;
+                    $entityData['updateUserId'] = 1;
+                    $entityData['slug'] = 'hack by crowd team';
+                    $entityNameFather = $this->entityInfo->getBundle() . ':' . 'Petition';
+                    $entityData['petition'] =  $em->find($entityNameFather, $this->entityInfo->get('pttId'));;
+
+                    //var_dump();die();
+
+                    //$entityData['material']->setCreationDate(New Date());
+
+
                     $entity = $pttHelper->entityForDataArray($entityData);
-                    $form = $pttHelper->formForEntity($entity, $key);
-                    
-                    $form->isValid();
-                    $form->save();
-                    $index += 1;
-                    if (isset($entityRemains[$type])){
-                        $entityRemains[$type] = $entityRemains[$type] . ',' . $entity->getPttId();
-                    } else {
-                        $entityRemains[$type] = $entity->getPttId();    
+
+
+
+                    $em->persist($entity);
+            		$em->flush();
+                    if (!is_null($entity->getPttId()) ){
+                        if(!isset($entityRemains[$type])){
+                            $entityRemains[$type] = $entity->getPttId();
+                        }else{
+                            $entityRemains[$type] = $entityRemains[$type] . ',' . $entity->getPttId();
+                        }
                     }
                 }
             }
@@ -65,7 +82,7 @@ class PttFormAfterSaveMultipleEntity extends PttFormAfterSave
 
             $dql = '
             delete ' . $entityRepository . ' e
-            where e.relatedid = :id and e._model = :model';
+            where e.' . strtolower($this->entityInfo->getEntityName()) . ' = :id and e._model = :model';
             if (isset($entityRemains[$value['entity']]) && count($entityRemains[$value['entity']])) {
                 $dql .= '
                 and e.id not in (' . $entityRemains[$value['entity']] . ')';

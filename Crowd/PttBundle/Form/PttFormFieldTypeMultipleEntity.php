@@ -9,7 +9,7 @@ namespace Crowd\PttBundle\Form;
 
 use Crowd\PttBundle\Util\PttUtil;
 
-class PttFormFieldTypeMultipleEntity extends PttFormFieldType 
+class PttFormFieldTypeMultipleEntity extends PttFormFieldType
 {
 	public function field() {
 		$name = false;
@@ -17,7 +17,7 @@ class PttFormFieldTypeMultipleEntity extends PttFormFieldType
 		$html = $this->start();
 		$html .= $this->label();
 
-		$htmlField = '<div class="multi-selector-container"><div class="col-sm-6 nopadding selector-container"><select class="multi-selector form-control" ';
+		$htmlField = '<div class="multi-selector-container"><div class="col-sm-6 nopadding selector-container"><select style="display:none" class="multi-selector form-control" ';
 		$htmlField .= $this->attributes(false, $name);
 		$htmlField .= ' data-selector>';
 
@@ -83,8 +83,8 @@ class PttFormFieldTypeMultipleEntity extends PttFormFieldType
             	$data = $this->value;
             }
             usort($data, array($this, "moduleSort"));
-            
-            $size = count($data);	
+
+            $size = count($data);
             $moduleTitles = array();
             foreach($this->field->options['modules'] as $key => $value){
             	$moduleTitles[$value['entity']] = $value['label'];
@@ -95,11 +95,11 @@ class PttFormFieldTypeMultipleEntity extends PttFormFieldType
                 	if(!is_array($data[$i])){
 						$class = explode('\\', (string)get_class($data[$i]));
                 		$entity = array_pop($class);
-                	} else {	
+                	} else {
                 		$entity = $data[$i]['type'];
 
                 	}
-                	
+
                     $pttHelper = new PttHelperFormFieldTypeMultipleEntity($this->entityInfo, $this->field, $this->container, $this->em, $entity);
                     $errors = (isset($formErrors[$key])) ? $formErrors[$key] : false;
                     $form = $pttHelper->formForEntity($pttHelper->entityWithData($data[$i]), $index, $errors);
@@ -114,7 +114,7 @@ class PttFormFieldTypeMultipleEntity extends PttFormFieldType
                     $htmlField .= '<div class="collapse-body hidden">' . $form->createView('multi') . '<input type="hidden" id="'. $this->field->getFormName() . '-' . $index .'-type" name="'. $this->field->getFormName() . '[' . $index . ']' .'[type]" data-required="false" class="form-control" value="'. $entity .'">';
                     $htmlField .= '<input type="hidden" id="'. $this->field->getFormName() . '-' . $index .'-_order" name="'. $this->field->getFormName() . '[' . $index . ']' .'[_order]" data-required="false" class="form-control field-order" value="'. $index .'">';
                     $htmlField .= '<input type="hidden" id="'. $this->field->getFormName() . '-' . $index .'-_model" name="'. $this->field->getFormName() . '[' . $index . ']' .'[_model]" data-required="false" class="form-control" value="'. $this->pttForm->getEntityInfo()->getEntityName() .'"></div></li>';
-                    
+
                     $index++;
                 }
             }
