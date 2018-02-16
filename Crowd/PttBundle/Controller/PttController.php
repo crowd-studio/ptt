@@ -120,6 +120,8 @@ class PttController extends Controller
                 }
             } else {
                 $this->get('session')->getFlashBag()->add('error', $pttForm->getErrorMessage());
+                $this->self = $request->query->get('self');
+                $this->get('session')->set('self', $this->self);
             }
         } else {
             $this->self = $request->query->get('self');
