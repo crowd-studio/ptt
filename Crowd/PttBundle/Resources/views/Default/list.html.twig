@@ -26,6 +26,24 @@
 						<input class="form-control" type="text" id="filter-{{ entityConfigurationInfo.entityName }}-{{ key }}" name="filter-{{ entityConfigurationInfo.entityName }}-{{ key }}" placeholder="{{ filter.label }}" value="{{ filter(key, entityConfigurationInfo.entityName) }}">
 					</div>
 				{% endif %}
+				{% if filter.type == 'select' %}
+					<div class="form-group col-xs-12 col-sm-12 col-md-12" style="margin:0;">
+						<label for="filter-{{ entityConfigurationInfo.entityName }}-{{ key }}">{{ filter.label }}</label>
+
+						<select class="form-control" id="filter-{{ entityConfigurationInfo.entityName }}-{{ key }}" name="filter-{{ entityConfigurationInfo.entityName }}-{{ key }}" >
+							{% set actualValue = filter(key, entityConfigurationInfo.entityName) %}
+							<option value=""{{ actualValue ? '' : ' selected'}}></option>
+							{% for option, label in filter.options %}
+								{% set selected = '' %}
+								{% if (option) == actualValue %}
+						           {% set selected = 'selected' %}
+						        {% endif %}
+								<option value="{{option}}" {{selected}}>{{label}}</option>
+							{% endfor %}
+						</select>
+
+					</div>
+				{% endif %}
 			{% endfor %}
 			<div class="form-group submit col-xs-12" style="margin-top:20px;text-align:end">
 				<button type="submit" class="btn btn-save">{{'filter'|trans}}</button>

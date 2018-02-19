@@ -267,6 +267,58 @@ class PttController extends Controller
     }
 
     /**
+     * @Route("petition/{state}/{page}", name="listpending");
+     * @Template()
+     */
+    public function listPendingAction(Request $request, $state, $page = null){
+        $entity = 'petition';
+        $this->deleteTemp();
+        $this->entityName = $entity;
+
+        $response = $this->_order($request);
+        if ($response) {
+            return $response;
+        }
+
+        $response = $this->_filter($request, $entity);
+        if ($response) {
+            return $response;
+        }
+
+        $em = $this->get('doctrine')->getManager();
+
+        if ($this->isSortable()) {
+            $order = [
+                '_order',
+                $this->orderList()
+            ];
+        } else {
+            $order = $this->_currentOrder($request);
+        }
+
+        $filters = $this->_currentFilters($request);
+
+        $filters['state'] = strtoupper($state);
+
+        list($pagination, $offset, $limit) = $this->_paginationForPage($page, $this->_repositoryName(), $filters);
+        $entities = $this->_buildQuery($this->_repositoryName(), $filters, $order, $limit, $offset, $page);
+
+        return $this->_renderTemplateForActionInfo('list', [
+            'entityInfo' => $this->entityInfo(),
+            'fields' => $this->fieldsToList(),
+            'rows' => $entities,
+            'pagination' => $pagination,
+            'filters' => $this->fieldsToFilter(),
+            'page' => [
+                'title' => $this->listTitlePetition($state)
+            ],
+            'sortable' => $this->isSortable(),
+            'csvexport' => $this->isCsvExport(),
+            'copy' => $this->isCopy()
+        ]);
+    }
+
+    /**
      * @Route("/s3-sign", name="sign");
      * @Template()
      */
@@ -359,6 +411,10 @@ class PttController extends Controller
 
     protected function listTitle(){
         return $this->get('pttTrans')->trans('list') . ' ' . $this->_entityInfoValue('plural');
+    }
+
+    protected function listTitlePetition($state){
+        return $this->get('pttTrans')->trans('list') . ' ' . $this->_entityInfoValue('plural') . ' '. $state;
     }
 
     protected function editTitle($id){
