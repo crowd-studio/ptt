@@ -35,6 +35,7 @@ sign_in : Accedir
 snap_picture : Fer foto
 the_current_user_cant_access : No es pot accedir al contingut sol·licitat amb l'usuari actual
 the_entity_couldnt_be_deleted : %@ no s'ha pogut eliminar
+the_entity_has_connections : %@ té connexions amb altres objectes. Abans d'eliminar s'han d'esborrar les relacions.
 the_entity_does_not_exist : El %@ no existeix
 the_entity_was_deleted : %@ s'ha eliminat
 title : Títol

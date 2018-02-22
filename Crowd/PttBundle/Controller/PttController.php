@@ -153,13 +153,21 @@ class PttController extends Controller
 
         list($valid, $message) = $this->continueWithDeletion($deleteEntity);
         if ($valid) {
-            $this->beforeDeletion($deleteEntity);
-            $this->flushCache($deleteEntity);
-
-            $em->remove($deleteEntity);
-            $em->flush();
-
-            $this->get('session')->getFlashBag()->add('success', $this->get('pttTrans')->trans('the_entity_was_deleted', $this->_entityInfoValue('lowercase')));
+            try{
+                $this->beforeDeletion($deleteEntity);
+                $this->flushCache($deleteEntity);
+                $em->remove($deleteEntity);
+                $em->flush();
+                $this->get('session')->getFlashBag()->add('success', $this->get('pttTrans')->trans('the_entity_was_deleted', $this->_entityInfoValue('lowercase')));
+            } catch (\Doctrine\DBAL\DBALException $e) {
+                $exception_code = $e->getPrevious()->getCode();
+                $exception_message = $e->getPrevious()->getMessage();
+                $messageToShow = $exception_code . ': ' . $exception_message;
+                switch($exception_code){
+                    case 23000: $messageToShow = $this->get('pttTrans')->trans('the_entity_has_connections', $this->_entityInfoValue('lowercase'));break;
+                }
+                $this->get('session')->getFlashBag()->add('error', $messageToShow);
+            }
         } else {
             $this->get('session')->getFlashBag()->add('error', $message);
         }

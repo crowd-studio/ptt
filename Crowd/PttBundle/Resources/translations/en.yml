@@ -35,6 +35,7 @@ sign_in : Sign in
 snap_picture : Snap picture
 the_current_user_cant_access : The current user can\'t access to this content
 the_entity_couldnt_be_deleted : The %@ couldn\'t be deleted
+the_entity_has_connections : The %@ has connections with other objects. Before to delete you have to delete this relations.
 the_entity_does_not_exist : The %@ does not exist
 the_entity_was_deleted : The %@ was deleted
 title : Title
