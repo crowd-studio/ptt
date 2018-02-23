@@ -9,29 +9,40 @@
 				.content{
 					position: relative;
 					padding-top: 15px;
+					.well{
+						background: #f2c629;
+						.form-group.submit{
+							>*{
+								margin-left: 10px;
+							}
+						}
+					}
 					form {
 						margin-top: 50px;
 
 						.block-container {
 							padding: 0;
 							.block-header {
-								background-color: #e1e4e9;
+								background-color: #f2c629;
 								// border: 1px solid #dadada;
 								margin-bottom: 0;
 								padding-left:15px;
+								//border: 1px solid black;
+								//border-bottom: none;
 								p {
 									margin: 0;
-									font-weight: bold;
-									line-height: 35px;
+									//font-weight: bold;
+									line-height: 40px;
 									color: #2c3e50;
-									font-size: 16px;
+									font-size: 22px;
+
 								}
 							}
 							.block-body {
 								margin-top: 0;
 								padding-bottom: 20px;
 								background-color: #fff;
-								border: 1px solid #dadada;
+								border: 1px solid #f2c629;
 
 								input.form-control[disabled] {
 									background-color: #cfd9db !important;
@@ -42,30 +53,40 @@
 								}
 							}
 						}
+						.right-container{
+							>*{
+								margin-left: 10px;
+							}
+						}
 					}
 					a{
 						text-decoration: none;
+						cursor:pointer;
 						&:hover{
 							text-decoration: underline;
 						}
 					}
 					h1{
 						font-size: 30px;
-						color: #2c3e50;
+						color: black;
 						margin: 21px 0 20px;
 					}
 					.nav.nav-pills{
 						position: absolute;
     					top: 38px;
-    					right: 30px;
+    					right: 0px;
 
     					a {
     						color: #fff;
     						line-height: 14px;
-    						background-color: #6EC346;
+    						background-color: @brand-primary;
     						text-align: center;
     						font-size: 16px;
     						text-transform: uppercase;
+
+							&.btn-sort{
+								background: #666;
+							}
 
     						&.btn-master {
     							background-color: #f0a005;
@@ -75,7 +96,7 @@
 					form{
 						input {
 							background-color: #fafafa;
-							border: 1px solid #dddee2;
+							border: 1px solid black;
 						}
 						&.processing{
 							input.btn-save{
@@ -155,7 +176,7 @@
 								div.action-buttons {
 									a.btn-cancel{
 										border-color: #fd4343;
-									} 
+									}
 								}
 							}
 
@@ -169,7 +190,7 @@
 									    text-transform: uppercase;
 									    color: white;
 									    background-color: #fd4343;
-									} 
+									}
 								}
 
 								.action-buttons {
@@ -244,7 +265,7 @@
 								}
 								.action{
 									display:inline-block;
-									
+
 									background-color: #dedede;
 									a{
 										padding: 0px 20px;
@@ -336,7 +357,7 @@
 		margin: 0;
 		padding: 0;
 		li.head {
-			background: #c2c2c2 !important;
+			background: #f2c629 !important;
 			line-height: 50px;
 			color: #fff;
 
@@ -347,7 +368,7 @@
 			}
 
 			.display(flex);
-			
+
 				&.entity {
 					.flex-direction(column);
 					.collapse-head {
@@ -376,7 +397,7 @@
 			line-height: 50px;
 
 			.display(flex);
-			
+
 				&.entity {
 					.flex-direction(column);
 					.collapse-head {
@@ -431,7 +452,7 @@
 			}
 
 			padding: 0px 7px 0px 20px;
-			
+
 			a.list-editar, a.list-eliminar {
 				padding-right: 30px;
 				color: #949494;
@@ -440,7 +461,7 @@
 			}
 
 			a.list-editar {
-				background: url(../images/editar.png) no-repeat left; 
+				background: url(../images/editar.png) no-repeat left;
 			}
 
 			a.list-eliminar {
@@ -491,7 +512,7 @@
 
 			a.triangle-closed {
 				border-width: 7px 0 7px 10px;
-				border-color: transparent transparent transparent #c1c1c1;	
+				border-color: transparent transparent transparent #c1c1c1;
 			}
 			span.handle {
 				height: 20px;

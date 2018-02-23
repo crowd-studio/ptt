@@ -16,7 +16,7 @@
 
 html,body{
 	height:100%;
-    background-color: #f2f9fd;
+    background-color: white;
 	&.nav-active{
 		background:@brand-primary;
 	}
@@ -101,9 +101,15 @@ table{
 }
 
 .add, .add-multi, .add-multi:hover, .add-multi:active {
-    background-color: #8cc152;
-    border-color: #8cc152;
+    background-color: #f2c629;
+    border-color: #f2c629;
+	font-weight: bold;
     width: 140px;
+	margin-left:0!important;
+	&:hover{
+		background-color: darken(#f2c629,10%);
+	    border-color: darken(#f2c629,10%);
+	}
 }
 
 .upload-file-container {

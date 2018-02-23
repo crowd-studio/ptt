@@ -60,6 +60,11 @@
                     .menu-container
                     {
                         .flex(1);
+                        .logo{
+                            text-align: center;
+                            img{
+                                max-width: 100%;                          }
+                        }
                     }
                 }
                 h3
@@ -187,7 +192,8 @@
                             right: 0;
                             top: 0;
                             height: 1px;
-                            background-color: #3e5771;
+                            background-color: #fff;
+                            opacity: .5;
                         }
                         &.subSections
                         {
@@ -199,7 +205,7 @@
                                 height: 0;
                                 border-style: solid;
                                 border-width: 5px 0 5px 10px;
-                                border-color: transparent transparent transparent #18BC9C;
+                                border-color: transparent transparent transparent #fff;
                                 top: 17px;
                                 left: 7px;
                             }
@@ -232,7 +238,7 @@
                                 &:before
                                 {
                                     border-width: 10px 5px 0 5px;
-                                    border-color: #18BC9C transparent transparent transparent;
+                                    border-color: #fff transparent transparent transparent;
                                 }
                                 & > ul {
                                     display: block;
@@ -270,7 +276,7 @@
                                     .align-items(center);
                                     .img-container
                                     {
-                                        background-color: @gray;
+                                        background-color: white;
                                         background-size: cover;
 
                                         .size(30px);
