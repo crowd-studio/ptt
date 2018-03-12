@@ -39,13 +39,13 @@ class PttFormFieldTypeEntity extends PttFormFieldType
         $htmlField = '';
         if($this->value && !is_array($this->value)){
             $pttHelper = new PttHelperFormFieldTypeEntity($this->entityInfo, $this->field, $this->container, $this->em);
-            for ($i=0; $i < count($this->value); $i++) { 
+            for ($i=0; $i < count($this->value); $i++) {
                 $ent = $this->value->get($i);
 
                 $htmlField .= '<li class="entity">' . $this->_getHtml($i+1, $this->field->options['label'], $pttHelper->formForEntity($ent, $i+1, (isset($formErrors[$i])) ? $formErrors[$i] : false)) . '</li>';
             }
         }
-        
+
         return $htmlField;
     }
 
