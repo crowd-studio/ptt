@@ -32,6 +32,71 @@ class PttController extends Controller
     private $repositoryName;
 
     /**
+     * @Route("/dashboard", name="dashboard");
+     * @Template()
+     */
+     public function DashboardAction(Request $request){
+         $all = $this->countQuery($this->_repositoryName('petition'));
+         $pending = $this->countQuery($this->_repositoryName('petition'),['state' => 'pending']);
+         $accepted = $this->countQuery($this->_repositoryName('petition'),['state' => 'accepted']);
+         $denied = $this->countQuery($this->_repositoryName('petition'),['state' => 'denied']);
+
+         $material = $this->countQuery($this->_repositoryName('material'));
+         $data = [
+             'boxes' => [
+                 [
+                     'title' => 'Peticiones recibidas',
+                     'value' => $all . ' peticiones',
+                     'link' => [
+                         'name' => 'list',
+                         'params' => [
+                             'entity' => 'petition'
+                         ]
+                     ]
+                 ],[
+                     'title' => 'Peticiones pendientes',
+                     'value' => $pending . ' peticiones',
+                     'link' => [
+                         'name' => 'listpending',
+                         'params' => [
+                             'state' => 'pending'
+                         ]
+                     ]
+                 ],[
+                     'title' => 'Peticiones aceptadas',
+                     'value' => $accepted . ' peticiones',
+                     'link' => [
+                         'name' => 'listpending',
+                         'params' => [
+                             'state' => 'accepted'
+                         ]
+                     ]
+                 ],[
+                     'title' => 'Peticiones denegadas',
+                     'value' => $denied . ' peticiones',
+                     'link' => [
+                         'name' => 'listpending',
+                         'params' => [
+                             'state' => 'denied'
+                         ]
+                     ]
+                 ],[
+                     'title' => 'Productos',
+                     'value' => $material . ' productos diferentes',
+                     'link' => [
+                         'name' => 'list',
+                         'params' => [
+                             'entity' => 'material'
+                         ]
+                     ]
+                 ]
+             ]
+         ];
+
+         return $this->render('PttBundle:Default:dashboard.html.twig', $data);
+    }
+
+    /**
      * @Route("{entity}/list/{page}", name="list");
      * @Template()
      */
@@ -370,7 +435,11 @@ class PttController extends Controller
         if ($this->container->get('security.authorization_checker')->isGranted('IS_AUTHENTICATED_REMEMBERED')){
             $configuration = PttUtil::pttConfiguration('admin');
 
-            $route = (isset($configuration) && isset($configuration['sidebar'])) ? $this->generateUrl($configuration['default_url'], ['entity' => $configuration['default_entity']]) : $this->generateUrl('list', ['entity' => 'user']);
+            $defaultEntity = isset($configuration['default_entity']) ? ['entity' => $configuration['default_entity']] : [];
+
+            $route = (isset($configuration) && isset($configuration['sidebar'])) ?
+                $this->generateUrl($configuration['default_url'], $defaultEntity) :
+                $this->generateUrl('list', ['entity' => 'user']);
         } else {
             $route = $this->generateUrl('admin_login');
         }
@@ -498,6 +567,32 @@ class PttController extends Controller
 
     protected function urlPath(){
         return strtolower($this->entityName);
+    }
+
+    protected function countQuery($repositoryName, $filters = []){
+        $em = $this->get('doctrine')->getManager();
+
+        $dql = 'select count(ptt) FROM ' . $this->_repositoryName() . ' ptt';
+
+        if (count($filters)) {
+            $filterDql = [];
+            foreach ($filters as $key => $value) {
+                $filterDql[] = 'ptt.' . $key . ' like :' . $key;
+            }
+            $dql .= ' where ' . implode(' and ', $filterDql);
+        }
+
+        $query = $em->createQuery($dql);
+
+        if (count($filters)) {
+            foreach ($filters as $key => $value) {
+                $query->setParameter($key, '%' . $value . '%');
+            }
+        }
+
+        $results = $query->getResult();
+
+        return $results[0][1];
     }
 
     protected function _buildQuery($repositoryName, $filters, $order, $limit, $offset, $page){
@@ -724,7 +819,11 @@ class PttController extends Controller
         return $this->bundle;
     }
 
-    protected function _repositoryName(){
+    protected function _repositoryName($entityName = null){
+        if(isset($entityName)){
+            $this->repositoryName = $this->_bundle() . ':' . ucfirst($entityName);
+            return $this->repositoryName;
+        }
         if ($this->repositoryName == null) {
             $this->repositoryName = $this->_bundle() . ':' . ucfirst($this->entityName);
         }

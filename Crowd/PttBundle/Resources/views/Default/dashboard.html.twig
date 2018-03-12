@@ -1,0 +1,13 @@
+{% extends 'PttBundle:Default:base.html.twig' %}
+{% block content %}
+{% if page.title is defined %}
+	<h1>{{page.title|trans}}</h1>
+{% endif %}
+    {% for key,box in boxes %}
+    <div class="box">
+        <h3>{{box.title}}</h3>
+        <p>{{box.value}}</p>
+        <a href="{{ path(box.link.name, box.link.params) }}">ver</a>
+    </div>
+    {% endfor %}
+{% endblock %}
