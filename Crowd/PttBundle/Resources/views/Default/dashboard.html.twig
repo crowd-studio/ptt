@@ -6,26 +6,34 @@
 	<div class="boxes">
 	    {% for box in boxes %}
 		    <div class="box">
-		        <h3>{{box.title}}</h3>
-		        <p>{{box.value}}</p>
-		        <a href="{{ path(box.link.name, box.link.params) }}">ver</a>
+				<div class="box-inner">
+			        <h4>{{box.title}}</h4>
+			        <p>{{box.value}}</p>
+			        <a href="{{ path(box.link.name, box.link.params) }}">ver</a>
+				</div>
 		    </div>
 	    {% endfor %}
 	</div>
-	<ul class="materials-list">
-		{% for material in topMaterials %}
-		    <li class="materials-list-item">
-		        <h3>{{material.title}}</h3>
-		        <p>{{material.total}} unidades</p>
-		    </li>
-	    {% endfor %}
-	</ul>
-	<ul class="types-list">
-		{% for type in topTypes %}
-		    <li class="types-list-item">
-		        <h3>{{type.title}}</h3>
-		        <p>{{type.total}} pedidos</p>
-		    </li>
-	    {% endfor %}
-	</ul>
+	<div class="dashboard-blocks">
+		<div class="dashboard-block">
+			<div class="dashboard-block-inner">
+				<h3>Productos más ofrecidos</h3>
+				<ul class="dashboard-block-list">
+					{% for material in topMaterials %}
+					    <li class="dashboard-block-list-item">{{material.title}}<span class="value">{{material.total}} unidades</span></li>
+				    {% endfor %}
+				</ul>
+			</div>
+		</div>
+		<div class="dashboard-block">
+			<div class="dashboard-block-inner">
+				<h3>Actividades más demandadas</h3>
+				<ul class="dashboard-block-list">
+					{% for type in topTypes %}
+					    <li class="dashboard-block-list-item">{{type.title}} <span class="value">{{type.total}} pedidos</span></li>
+				    {% endfor %}
+				</ul>
+			</div>
+		</div>
+	</div>
 {% endblock %}

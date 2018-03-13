@@ -84,7 +84,7 @@ class PttController extends Controller
                          ]
                      ]
                  ],[
-                     'title' => 'Productos',
+                     'title' => 'Productos a entregar',
                      'value' => $material . ' productos diferentes',
                      'link' => [
                          'name' => 'list',
@@ -621,7 +621,18 @@ class PttController extends Controller
 
         $em = $this->get('doctrine')->getManager();
         $conn = $em->getConnection();
-        $result= $conn->query($dql)->fetchAll();
+        $result= [];
+        foreach ($conn->query($dql)->fetchAll() as $type) {
+            switch($type['title']){
+                case 'football': $type['title'] = 'Fútbol';break;
+                case 'basquetball': $type['title'] = 'Básquet';break;
+                case 'tennis': $type['title'] = 'Tennis';break;
+                case 'handbol': $type['title'] = 'Handbol';break;
+                case 'trail': $type['title'] = 'Trail / Running';break;
+                case 'skateboard': $type['title'] = 'Skateboard';break;
+            }
+            array_push($result,$type);
+        }
         return $result;
     }
 
