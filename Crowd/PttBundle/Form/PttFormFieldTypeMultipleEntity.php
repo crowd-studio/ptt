@@ -112,8 +112,8 @@ class PttFormFieldTypeMultipleEntity extends PttFormFieldType
 			        );
 
 					//hack for colacao by Situ
-					$entity = $pttHelper->entityWithData($data[$i]);
-					$titleToShow = $entity->getMaterial()->getTitle() . '  -  ' . $entity->getQuantity();
+					$entityExample = $pttHelper->entityWithData($data[$i]);
+					$titleToShow = $entityExample->getMaterial()->getTitle() . '  -  ' . $entityExample->getQuantity();
                     $htmlField .= '<li class="entity"><div class="collapse-head"><span class="handle hidden"></span><span class="title-triangle"><a class="triangle-closed triangle"></a><a class="title title-closed">'. $titleToShow .'</a></span><a class="remove list-eliminar"></a></div>';
                     $htmlField .= '<div class="collapse-body hidden">' . $form->createView('multi') . '<input type="hidden" id="'. $this->field->getFormName() . '-' . $index .'-type" name="'. $this->field->getFormName() . '[' . $index . ']' .'[type]" data-required="false" class="form-control" value="'. $entity .'">';
                     $htmlField .= '<input type="hidden" id="'. $this->field->getFormName() . '-' . $index .'-_order" name="'. $this->field->getFormName() . '[' . $index . ']' .'[_order]" data-required="false" class="form-control field-order" value="'. $index .'">';
