@@ -40,8 +40,11 @@ class PttController extends Controller
          $pending = $this->countQuery($this->_repositoryName('petition'),['state' => 'pending']);
          $accepted = $this->countQuery($this->_repositoryName('petition'),['state' => 'accepted']);
          $denied = $this->countQuery($this->_repositoryName('petition'),['state' => 'denied']);
-
          $material = $this->countQuery($this->_repositoryName('material'));
+
+         $topMaterial = $this->topMaterials();
+         $topTypes = $this->topTypes();
+
          $data = [
              'boxes' => [
                  [
@@ -90,7 +93,9 @@ class PttController extends Controller
                          ]
                      ]
                  ]
-             ]
+             ],
+             'topMaterials' => $topMaterial,
+             'topTypes' => $topTypes
          ];
 
          return $this->render('PttBundle:Default:dashboard.html.twig', $data);
@@ -574,6 +579,8 @@ class PttController extends Controller
 
         $dql = 'select count(ptt) FROM ' . $this->_repositoryName() . ' ptt';
 
+        //var_dump($this->_repositoryName());die();
+
         if (count($filters)) {
             $filterDql = [];
             foreach ($filters as $key => $value) {
@@ -594,6 +601,30 @@ class PttController extends Controller
 
         return $results[0][1];
     }
+
+    protected function topMaterials(){
+        $dql = "select m.title as title, SUM(d.quantity) as total
+  from demand d
+  left join material m on m.id = d.material
+  left join petition p on p.id = petition
+  WHERE p.state = 'ACCEPTED'
+  GROUP BY d.material ORDER by total DESC LIMIT 5";
+
+        $em = $this->get('doctrine')->getManager();
+        $conn = $em->getConnection();
+        $result= $conn->query($dql)->fetchAll();
+        return $result;
+    }
+
+    protected function topTypes(){
+        $dql = 'select activityType as title, count(*) as total from petition group by activityType LIMIT 5';
+
+        $em = $this->get('doctrine')->getManager();
+        $conn = $em->getConnection();
+        $result= $conn->query($dql)->fetchAll();
+        return $result;
+    }
+
 
     protected function _buildQuery($repositoryName, $filters, $order, $limit, $offset, $page){
         $em = $this->get('doctrine')->getManager();

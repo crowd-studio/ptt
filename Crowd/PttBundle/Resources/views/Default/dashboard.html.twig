@@ -3,11 +3,29 @@
 {% if page.title is defined %}
 	<h1>{{page.title|trans}}</h1>
 {% endif %}
-    {% for key,box in boxes %}
-    <div class="box">
-        <h3>{{box.title}}</h3>
-        <p>{{box.value}}</p>
-        <a href="{{ path(box.link.name, box.link.params) }}">ver</a>
-    </div>
-    {% endfor %}
+	<div class="boxes">
+	    {% for box in boxes %}
+		    <div class="box">
+		        <h3>{{box.title}}</h3>
+		        <p>{{box.value}}</p>
+		        <a href="{{ path(box.link.name, box.link.params) }}">ver</a>
+		    </div>
+	    {% endfor %}
+	</div>
+	<ul class="materials-list">
+		{% for material in topMaterials %}
+		    <li class="materials-list-item">
+		        <h3>{{material.title}}</h3>
+		        <p>{{material.total}} unidades</p>
+		    </li>
+	    {% endfor %}
+	</ul>
+	<ul class="types-list">
+		{% for type in topTypes %}
+		    <li class="types-list-item">
+		        <h3>{{type.title}}</h3>
+		        <p>{{type.total}} pedidos</p>
+		    </li>
+	    {% endfor %}
+	</ul>
 {% endblock %}
