@@ -17,7 +17,7 @@
 	<div class="dashboard-blocks">
 		<div class="dashboard-block">
 			<div class="dashboard-block-inner">
-				<h3>Productos más ofrecidos</h3>
+				<h4>Productos más ofrecidos</h4>
 				<ul class="dashboard-block-list">
 					{% for material in topMaterials %}
 					    <li class="dashboard-block-list-item">{{material.title}}<span class="value">{{material.total}} unidades</span></li>
@@ -27,7 +27,7 @@
 		</div>
 		<div class="dashboard-block">
 			<div class="dashboard-block-inner">
-				<h3>Actividades más demandadas</h3>
+				<h4>Actividades más demandadas</h4>
 				<ul class="dashboard-block-list">
 					{% for type in topTypes %}
 					    <li class="dashboard-block-list-item">{{type.title}} <span class="value">{{type.total}} pedidos</span></li>
