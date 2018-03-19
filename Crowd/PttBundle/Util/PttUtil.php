@@ -162,7 +162,7 @@ class PttUtil
     static public function sendMail($to, $subject, $render){
         $params = PttUtil::pttConfiguration('mailer');
 
-        $transporter = \Swift_SmtpTransport::newInstance($params['host'], $params['port'])->setUsername($params['user'])->setPassword($params['password']);
+        $transporter = \Swift_SmtpTransport::newInstance($params['host'], $params['port'], 'tls')->setUsername($params['user'])->setPassword($params['password']);
         $mailer = \Swift_Mailer::newInstance($transporter);
 
         $message = \Swift_Message::newInstance()
