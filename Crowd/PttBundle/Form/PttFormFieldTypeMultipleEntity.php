@@ -47,7 +47,7 @@ class PttFormFieldTypeMultipleEntity extends PttFormFieldType
 				$pttHelper = new PttHelperFormFieldTypeMultipleEntity($this->entityInfo, $this->field, $this->container, $this->em, $value['entity'], $value['label']);
         		$form = $pttHelper->formForEntity($pttHelper->cleanRelatedEntity());
 
-                $htmlField .= '<script type="text/template" class="template" data-type="' . $value['entity'] . '"><div class="collapse-head"><span class="handle hidden"></span><span class="title-triangle"><a class="triangle-open triangle"></a><a class="title title-open">'. $value['label'] .'</a></span><a class="remove list-eliminar"></a></div><div class="collapse-body">' . $form->createView('multi');
+                $htmlField .= '<script type="text/template" class="template" data-type="' . $value['entity'] . '"><div class="collapse-head"><span class="handle hidden"></span><span class="title-triangle hidden"><a class="triangle-open triangle"></a><a class="title title-open">'. $value['label'] .'</a></span><div class="collapse-body">' . $form->createView('multi') . '</div><a class="remove list-eliminar"></a></div>';
                 $htmlField .= '<input type="hidden" id="'. $this->field->getFormName() . '-{{index}}-type" name="'. $this->field->getFormName() . '[{{index}}]' .'[type]" data-required="false" class="form-control" value="'. $value['entity'] .'">';
                 $htmlField .= '<input type="hidden" id="'. $this->field->getFormName() . '-{{index}}-_order" name="'. $this->field->getFormName() . '[{{index}}]' .'[_order]" data-required="false" class="form-control field-order" value="{{index}}">';
                 $htmlField .= '<input type="hidden" id="'. $this->field->getFormName() . '-{{index}}-_model" name="'. $this->field->getFormName() . '[{{index}}]' .'[_model]" data-required="false" class="form-control" value="'. $this->pttForm->getEntityInfo()->getEntityName() .'"> </div></script>';
@@ -114,10 +114,11 @@ class PttFormFieldTypeMultipleEntity extends PttFormFieldType
 					//hack for colacao by Situ
 					$entityExample = $pttHelper->entityWithData($data[$i]);
 					$titleToShow = $entityExample->getMaterial()->getTitle() . '  -  ' . $entityExample->getQuantity();
-                    $htmlField .= '<li class="entity"><div class="collapse-head"><span class="handle hidden"></span><span class="title-triangle"><a class="triangle-closed triangle"></a><a class="title title-closed">'. $titleToShow .'</a></span><a class="remove list-eliminar"></a></div>';
-                    $htmlField .= '<div class="collapse-body hidden">' . $form->createView('multi') . '<input type="hidden" id="'. $this->field->getFormName() . '-' . $index .'-type" name="'. $this->field->getFormName() . '[' . $index . ']' .'[type]" data-required="false" class="form-control" value="'. $entity .'">';
+                    $htmlField .= '<li class="entity"><div class="collapse-head"><span class="handle hidden"></span><span class="title-triangle hidden">'. $titleToShow .'</span>';
+                    $htmlField .= '<div class="collapse-body">' . $form->createView('multi') . '<input type="hidden" id="'. $this->field->getFormName() . '-' . $index .'-type" name="'. $this->field->getFormName() . '[' . $index . ']' .'[type]" data-required="false" class="form-control" value="'. $entity .'">';
                     $htmlField .= '<input type="hidden" id="'. $this->field->getFormName() . '-' . $index .'-_order" name="'. $this->field->getFormName() . '[' . $index . ']' .'[_order]" data-required="false" class="form-control field-order" value="'. $index .'">';
-                    $htmlField .= '<input type="hidden" id="'. $this->field->getFormName() . '-' . $index .'-_model" name="'. $this->field->getFormName() . '[' . $index . ']' .'[_model]" data-required="false" class="form-control" value="'. $this->pttForm->getEntityInfo()->getEntityName() .'"></div></li>';
+                    $htmlField .= '<input type="hidden" id="'. $this->field->getFormName() . '-' . $index .'-_model" name="'. $this->field->getFormName() . '[' . $index . ']' .'[_model]" data-required="false" class="form-control" value="'. $this->pttForm->getEntityInfo()->getEntityName() .'"></div>';
+					$htmlField .= '<a class="remove list-eliminar"></a></div></li>';
 
                     $index++;
                 }

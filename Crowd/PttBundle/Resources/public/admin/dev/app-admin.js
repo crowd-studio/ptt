@@ -555,12 +555,15 @@ define([
             this.$el.find('.title').removeClass('title-closed');
             this.$el.find('.handle').removeClass('hidden');
             this.$el.find('.list-eliminar').addClass('hidden');
+            this.$el.find('.title-triangle').removeClass('hidden');
         },
         stopSort: function(){
+            this.expand();
             this.$el.find('.handle').addClass('hidden');
             this.$el.find('.triangle').addClass('triangle-closed');
             this.$el.find('.title').addClass('title-closed');
             this.$el.find('.list-eliminar').removeClass('hidden');
+            this.$el.find('.title-triangle').addClass('hidden');
         },
         expand : function(e)
         {
