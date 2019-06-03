@@ -170,6 +170,9 @@ class PttUtil
           ->setFrom($params['user_mail'])
           ->setTo($to)
           ->setBody($render, 'text/html');
+
+        if (isset($params['user_replyTo'])) $message->setReplyTo($params['user_replyTo']);
+        
         $mailer->send($message);
 
         return true;
