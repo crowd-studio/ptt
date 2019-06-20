@@ -269,8 +269,8 @@ class PttUploadFile
 
         $s3 = PttUtil::pttConfiguration('s3');
 
-        \S3::setAuth($s3['accessKey'], $s3['secretKey']);
-        \S3::putObject(\S3::inputFile($filepath, false), $s3['bucket'], $s3['dir'] . '/' . $filename, \S3::ACL_PUBLIC_READ);
+        $s3Uploader = new \S3($s3['accessKey'], $s3['secretKey'], false, 's3.amazonaws.com', $s3['region']);
+        $s3Uploader->putObject(\S3::inputFile($filepath, false), $s3['bucket'], $s3['dir'] . '/' . $filename, \S3::ACL_PUBLIC_READ);
         unlink($filepath);
     }
 
